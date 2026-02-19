@@ -36,8 +36,7 @@ export default function HeroSection() {
                     className="object-cover w-full h-full"
                     poster="https://images.unsplash.com/photo-1588258387711-540e53db3838?q=80&w=1920&auto=format&fit=crop"
                 >
-                    <source src="https://videos.pexels.com/video-files/2435348/2435348-uhd_2560_1440_30fps.mp4" type="video/mp4" />
-                    {/* Fallback image if video fails or blocked */}
+                    <source src="/Hero-Section.mp4" type="video/mp4" />
                     <div className="absolute inset-0 bg-ocean-900" />
                 </video>
                 {/* Overlay */}
