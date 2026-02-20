@@ -83,6 +83,67 @@
   }
 }
 
+/* ============================================
+   Liquid Glass Navigation Bar
+   ============================================ */
+.navbar-liquid-glass {
+  background: linear-gradient(135deg,
+      rgba(248, 248, 248, 0.72) 0%,
+      rgba(255, 255, 255, 0.55) 40%,
+      rgba(248, 248, 248, 0.68) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow:
+    0 1px 3px rgba(4, 57, 39, 0.04),
+    0 8px 32px rgba(4, 57, 39, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Currency Toggle – Distinctive Golden Pill */
+.currency-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.15) 100%);
+  color: #043927;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.currency-toggle-btn:hover {
+  border-color: rgba(212, 175, 55, 0.8);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.25) 100%);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.2);
+  transform: translateY(-1px);
+}
+
+.currency-toggle-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D4AF37, #C5A028);
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
+  animation: currencyPulse 2s ease-in-out infinite;
+}
+
+@keyframes currencyPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 4px rgba(212, 175, 55, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+  }
+}
+
 @layer components {
 
   /* Premium glass card effect */
