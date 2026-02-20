@@ -81,7 +81,7 @@ export async function POST(request: Request) {
             if (booking && booking.status === BookingStatus.NEW) {
                 // You could change status to something else, or leave it and handle via admin
                 // For now, let's just add a note or modify status if required
-                booking.status = BookingStatus.CONFIRMED;
+                booking.status = BookingStatus.ADVANCE_PAID;
                 await booking.save();
             }
         }

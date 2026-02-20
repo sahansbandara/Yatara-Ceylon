@@ -29,11 +29,11 @@ export function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-3 group">
                     <Image
-                        src="/images/logo.svg"
+                        src="/images/yatara-brand-block.svg"
                         alt="Yatara Ceylon Logo"
-                        width={200}
-                        height={40}
-                        className="object-contain h-10 w-auto group-hover:scale-105 transition-transform duration-500"
+                        width={240}
+                        height={48}
+                        className="object-contain h-12 w-auto group-hover:scale-[1.02] transition-transform duration-500"
                     />
                 </Link>
 

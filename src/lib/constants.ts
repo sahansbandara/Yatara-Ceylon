@@ -20,6 +20,7 @@ export const BookingTypes = {
 export const BookingStatus = {
     NEW: 'NEW',
     CONTACTED: 'CONTACTED',
+    ADVANCE_PAID: 'Advance Paid',
     CONFIRMED: 'CONFIRMED',
     COMPLETED: 'COMPLETED',
     CANCELLED: 'CANCELLED',

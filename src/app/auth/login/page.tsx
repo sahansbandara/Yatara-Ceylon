@@ -8,15 +8,33 @@ import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
 
 export default function EliteLoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [role, setRole] = useState('ADMIN');
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate login delay
-        setTimeout(() => setLoading(false), 1500);
+        try {
+            const res = await fetch('/api/auth/mock-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role })
+            });
+
+            if (res.ok) {
+                // Route directly to the appropriate allowed dashboard section
+                if (role === 'ADMIN' || role === 'STAFF') window.location.href = '/dashboard';
+                else if (role === 'VEHICLE_OWNER') window.location.href = '/dashboard/vehicles';
+                else if (role === 'HOTEL_OWNER') window.location.href = '/dashboard/partners';
+                else window.location.href = '/dashboard/my-journeys';
+            } else {
+                alert('Login failed');
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -60,32 +78,22 @@ export default function EliteLoginPage() {
 
                 {/* Login Form */}
                 <form onSubmit={handleLogin} className="space-y-6">
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                         <label className="text-xs font-serif uppercase tracking-widest text-antique-gold/80 block">
-                            Email Address
+                            Privilege Level
                         </label>
-                        <Input
-                            type="email"
-                            placeholder="concierge@yataraceylon.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-12 rounded-none focus-visible:ring-antique-gold font-light tracking-wide backdrop-blur-sm"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-xs font-serif uppercase tracking-widest text-antique-gold/80 block">
-                            Private Access Code
-                        </label>
-                        <Input
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-12 rounded-none focus-visible:ring-antique-gold font-light tracking-wide backdrop-blur-sm"
-                        />
+                        <select
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            className="w-full bg-white/10 border border-white/20 text-white h-12 px-4 rounded-none focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm appearance-none"
+                            style={{ backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7em top 50%', backgroundSize: '.65em auto' }}
+                        >
+                            <option value="ADMIN" className="bg-emerald-950 text-white">Administrator (Finance & Master)</option>
+                            <option value="STAFF" className="bg-emerald-950 text-white">Concierge Staff</option>
+                            <option value="USER" className="bg-emerald-950 text-white">Guest / User</option>
+                            <option value="VEHICLE_OWNER" className="bg-emerald-950 text-white">Fleet Partner</option>
+                            <option value="HOTEL_OWNER" className="bg-emerald-950 text-white">Hotel Partner</option>
+                        </select>
                     </div>
 
                     <Button

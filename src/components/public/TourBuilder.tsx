@@ -236,12 +236,12 @@ export default function TourBuilder({ districts, places }: TourBuilderProps) {
                 {step === 2 && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-2xl font-serif text-deep-emerald">Select Destinations</h3>
+                            <h3 className="text-2xl font-serif text-deep-emerald">Select Your Sovereign Gems</h3>
                             <span className="text-sm tracking-wider font-light text-deep-emerald/60">{formData.selectedPlaces.length} places selected</span>
                         </div>
 
                         <p className="text-sm font-light text-deep-emerald/80 mb-6">
-                            Click directly on the map to select a district and reveal its bespoke experiences.
+                            Click directly on the map to select a district and reveal its Sovereign Gems.
                         </p>
 
                         {/* Interactive Map */}
@@ -257,7 +257,7 @@ export default function TourBuilder({ districts, places }: TourBuilderProps) {
                             {/* Places List for Selected Districts */}
                             {formData.selectedDistricts.length > 0 ? (
                                 <div className="space-y-4">
-                                    <h4 className="font-serif tracking-widest uppercase text-sm text-antique-gold">Experiences in selected regions</h4>
+                                    <h4 className="font-serif tracking-widest uppercase text-sm text-antique-gold">Sovereign Gems in selected regions</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {places
                                             .filter(p => formData.selectedDistricts.includes(p.districtId || p.district))
@@ -277,7 +277,7 @@ export default function TourBuilder({ districts, places }: TourBuilderProps) {
                                 </div>
                             ) : (
                                 <div className="text-center py-8 text-deep-emerald/50 font-light italic">
-                                    Please select a region on the map to view available destination experiences.
+                                    Please select a region on the map to view available Sovereign Gems.
                                 </div>
                             )}
                         </div>

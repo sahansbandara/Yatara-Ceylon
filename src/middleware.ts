@@ -9,8 +9,8 @@ const ROLE_ACCESS: Record<string, string[]> = {
     ADMIN: ['/dashboard'], // Has access to wildcard /dashboard
     STAFF: ['/dashboard'],
     USER: ['/dashboard/my-journeys', '/dashboard/custom-builder'],
-    VEHICLE_OWNER: ['/dashboard/vehicles'],
-    HOTEL_OWNER: ['/dashboard/hotels'],
+    VEHICLE_OWNER: ['/dashboard/vehicles', '/dashboard/maintenance'],
+    HOTEL_OWNER: ['/dashboard/partners', '/dashboard/supplier-rate-cards'],
 };
 
 export async function middleware(request: NextRequest) {

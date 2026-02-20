@@ -25,7 +25,7 @@ export default function MapWrapper({ places, selectedPlaces, onSelectPlace, sele
 
     useEffect(() => {
         // Fetch Sri Lanka District GeoJSON securely from public folder
-        fetch('/srilanka-districts.geojson')
+        fetch('/districts_master.json')
             .then(res => res.json())
             .then(data => setGeoData(data))
             .catch(err => console.error("Could not load GeoJSON", err));
