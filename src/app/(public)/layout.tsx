@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import ConciergeButton from '@/components/public/ConciergeButton';
 
 export default function PublicLayout({
     children,
@@ -11,6 +12,10 @@ export default function PublicLayout({
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
+
+            {/* The Luxury Custom Concierge Trigger */}
+            <ConciergeButton />
+
             {/* Tawk.to Live Chat Widget */}
             <script
                 dangerouslySetInnerHTML={{

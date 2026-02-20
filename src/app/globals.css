@@ -46,9 +46,15 @@
     @apply bg-background text-foreground font-sans antialiased tracking-widest;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-display tracking-tight;
   }
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -78,6 +84,7 @@
 }
 
 @layer components {
+
   /* Premium glass card effect */
   .glass-card {
     @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg;
@@ -95,33 +102,20 @@
 
   /* Premium button styles */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-full
-           bg-gradient-to-r from-ocean-600 to-ocean-700 text-white font-semibold
-           shadow-lg shadow-ocean-600/25 hover:shadow-xl hover:shadow-ocean-600/30
-           hover:-translate-y-0.5 transition-all duration-300
-           focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-ocean-600 to-ocean-700 text-white font-semibold shadow-lg shadow-ocean-600/25 hover:shadow-xl hover:shadow-ocean-600/30 hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-full
-           bg-white text-ocean-700 font-semibold border-2 border-ocean-200
-           hover:bg-ocean-50 hover:border-ocean-300
-           hover:-translate-y-0.5 transition-all duration-300
-           focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full bg-white text-ocean-700 font-semibold border-2 border-ocean-200 hover:bg-ocean-50 hover:border-ocean-300 hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:ring-offset-2;
   }
 
   .btn-whatsapp {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-full
-           bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold
-           shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30
-           hover:-translate-y-0.5 transition-all duration-300;
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-0.5 transition-all duration-300;
   }
 
   /* Dashboard sidebar */
   .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium
-           text-ocean-800/70 hover:text-ocean-800 hover:bg-ocean-50
-           transition-all duration-200;
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-ocean-800/70 hover:text-ocean-800 hover:bg-ocean-50 transition-all duration-200;
   }
 
   .sidebar-link-active {
@@ -132,24 +126,48 @@
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
   }
-  .badge-new { @apply bg-blue-100 text-blue-800; }
-  .badge-contacted { @apply bg-yellow-100 text-yellow-800; }
-  .badge-confirmed { @apply bg-green-100 text-green-800; }
-  .badge-completed { @apply bg-gray-100 text-gray-800; }
-  .badge-cancelled { @apply bg-red-100 text-red-800; }
-  .badge-draft { @apply bg-gray-100 text-gray-600; }
-  .badge-published { @apply bg-green-100 text-green-700; }
+
+  .badge-new {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  .badge-contacted {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-confirmed {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-completed {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  .badge-cancelled {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .badge-draft {
+    @apply bg-gray-100 text-gray-600;
+  }
+
+  .badge-published {
+    @apply bg-green-100 text-green-700;
+  }
 
   /* Data table styles */
   .data-table {
     @apply w-full text-sm;
   }
+
   .data-table th {
     @apply px-4 py-3 text-left font-semibold text-ocean-800 bg-ocean-50/50 border-b border-ocean-100;
   }
+
   .data-table td {
     @apply px-4 py-3 border-b border-ocean-100/50;
   }
+
   .data-table tr:hover td {
     @apply bg-ocean-50/30;
   }
@@ -171,21 +189,35 @@
     text-wrap: balance;
   }
 
-  .animate-delay-100 { animation-delay: 100ms; }
-  .animate-delay-200 { animation-delay: 200ms; }
-  .animate-delay-300 { animation-delay: 300ms; }
-  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-500 {
+    animation-delay: 500ms;
+  }
 
   /* Scrollbar styling */
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
   }
+
   .scrollbar-thin::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
+
   .scrollbar-thin::-webkit-scrollbar-thumb {
     @apply bg-ocean-200 rounded-full;
   }
+
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     @apply bg-ocean-300;
   }
@@ -197,7 +229,13 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Hide default Tawk.to widget */
+  iframe[title="chat widget"] {
+    display: none !important;
   }
 }
