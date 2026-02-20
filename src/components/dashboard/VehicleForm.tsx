@@ -30,7 +30,17 @@ export default function VehicleForm({ initialData, isEdit = false }: VehicleForm
         status: initialData?.status || VehicleStatus.AVAILABLE,
         images: initialData?.images || [],
         features: initialData?.features || [],
+        transferTypes: initialData?.transferTypes || [],
     });
+
+    const toggleTransferType = (type: string) => {
+        setFormData(prev => ({
+            ...prev,
+            transferTypes: prev.transferTypes.includes(type)
+                ? prev.transferTypes.filter((t: string) => t !== type)
+                : [...prev.transferTypes, type]
+        }));
+    };
 
     const [imagesText, setImagesText] = useState(initialData?.images?.join('\n') || '');
     const [featuresText, setFeaturesText] = useState(initialData?.features?.join('\n') || '');
@@ -116,7 +126,7 @@ export default function VehicleForm({ initialData, isEdit = false }: VehicleForm
                             <Input id="luggage" type="number" min={0} value={formData.luggage} onChange={(e) => setFormData({ ...formData, luggage: Number(e.target.value) })} />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="dailyRate">Daily Rate ($)</Label>
+                            <Label htmlFor="dailyRate">Daily Rate (LKR)</Label>
                             <Input id="dailyRate" type="number" required min={0} value={formData.dailyRate} onChange={(e) => setFormData({ ...formData, dailyRate: Number(e.target.value) })} />
                         </div>
                     </div>
@@ -138,6 +148,25 @@ export default function VehicleForm({ initialData, isEdit = false }: VehicleForm
                                     ))}
                                 </SelectContent>
                             </Select>
+                        </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>Transfer Types / Categories</Label>
+                        <div className="flex gap-4 items-center mt-2">
+                            {['AIRPORT_PICKUP', 'AIRPORT_DROP', 'CITY_TOUR'].map(type => (
+                                <label key={type} className="flex items-center space-x-2 border p-3 rounded cursor-pointer hover:bg-slate-50">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.transferTypes.includes(type)}
+                                        onChange={() => toggleTransferType(type)}
+                                        className="h-4 w-4"
+                                    />
+                                    <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                        {type.replace('_', ' ')}
+                                    </span>
+                                </label>
+                            ))}
                         </div>
                     </div>
 

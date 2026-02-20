@@ -113,6 +113,7 @@ export const createVehicleSchema = z.object({
     status: z.enum(['AVAILABLE', 'MAINTENANCE', 'UNAVAILABLE']).optional().default('AVAILABLE'),
     images: z.array(z.string()).optional().default([]),
     features: z.array(z.string()).optional().default([]),
+    transferTypes: z.array(z.enum(['AIRPORT_PICKUP', 'AIRPORT_DROP', 'CITY_TOUR'])).optional().default([]),
 });
 export const updateVehicleSchema = createVehicleSchema.partial();
 

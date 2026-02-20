@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import connectDB from '@/lib/mongodb';
 import Vehicle from '@/models/Vehicle';
+import VehicleBlock from '@/models/VehicleBlock';
 import { Metadata } from 'next';
+import VehicleBlockManager from '@/components/dashboard/VehicleBlockManager';
 
 export const metadata: Metadata = {
     title: 'Edit Vehicle | Dashboard',
@@ -17,7 +19,13 @@ async function getVehicle(id: string) {
         await connectDB();
         const vehicle = await Vehicle.findById(id).lean();
         if (!vehicle) return null;
-        return JSON.parse(JSON.stringify(vehicle));
+
+        const blocks = await VehicleBlock.find({ vehicleId: id }).sort({ from: 1 }).lean();
+
+        return {
+            vehicle: JSON.parse(JSON.stringify(vehicle)),
+            blocks: JSON.parse(JSON.stringify(blocks)),
+        };
     } catch (error) {
         console.error("Failed to fetch vehicle:", error);
         return null;
@@ -29,11 +37,13 @@ type Params = Promise<{ id: string }>;
 
 export default async function EditVehiclePage({ params }: { params: Params }) {
     const { id } = await params;
-    const vehicle = await getVehicle(id);
+    const data = await getVehicle(id);
 
-    if (!vehicle) {
+    if (!data) {
         notFound();
     }
+
+    const { vehicle, blocks } = data;
 
     return (
         <div className="flex flex-col gap-6 p-6">
@@ -45,11 +55,13 @@ export default async function EditVehiclePage({ params }: { params: Params }) {
                 </Link>
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Edit Vehicle</h1>
-                    <p className="text-muted-foreground">Update vehicle details.</p>
+                    <p className="text-muted-foreground">Update vehicle details and availability blocks.</p>
                 </div>
             </div>
 
             <VehicleForm initialData={vehicle} isEdit={true} />
+
+            <VehicleBlockManager vehicleId={vehicle._id} initialBlocks={blocks} />
         </div>
     );
 }

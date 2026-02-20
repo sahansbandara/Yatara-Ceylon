@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
+import VehicleBlock from '@/models/VehicleBlock';
 import { staffOrAdmin } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { updateBookingStatusSchema, assignBookingSchema } from '@/lib/validations';
@@ -46,12 +47,30 @@ export const PATCH = staffOrAdmin(async (request, context) => {
         if (body.status) {
             const result = updateBookingStatusSchema.safeParse(body);
             if (!result.success) return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+
+            const currentBooking = await Booking.findOne({ _id: id, isDeleted: false });
+            if (!currentBooking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
             const booking = await Booking.findOneAndUpdate(
                 { _id: id, isDeleted: false },
                 { $set: { status: result.data.status } },
                 { new: true }
             );
-            if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+            if (result.data.status === 'CONFIRMED' && currentBooking.status !== 'CONFIRMED' && booking?.assignedVehicleId) {
+                // Auto block vehicle
+                await VehicleBlock.create({
+                    vehicleId: booking.assignedVehicleId,
+                    from: booking.dates.from,
+                    to: booking.dates.to,
+                    reason: 'BOOKING',
+                    bookingId: booking._id,
+                });
+            } else if (result.data.status === 'CANCELLED' && currentBooking.status !== 'CANCELLED') {
+                // Unblock vehicle
+                await VehicleBlock.deleteMany({ bookingId: booking?._id });
+            }
+
             await logAudit({ actorUserId: context.user.userId, action: 'STATUS_CHANGE', entity: 'Booking', entityId: id, meta: { status: result.data.status } });
             return NextResponse.json({ booking });
         }
@@ -60,6 +79,9 @@ export const PATCH = staffOrAdmin(async (request, context) => {
         if (body.assignedStaffId !== undefined || body.assignedVehicleId !== undefined) {
             const result = assignBookingSchema.safeParse(body);
             if (!result.success) return NextResponse.json({ error: 'Invalid assignment' }, { status: 400 });
+
+            const currentBooking = await Booking.findOne({ _id: id, isDeleted: false });
+
             const update: Record<string, unknown> = {};
             if (result.data.assignedStaffId) update.assignedStaffId = result.data.assignedStaffId;
             if (result.data.assignedVehicleId) update.assignedVehicleId = result.data.assignedVehicleId;
@@ -69,6 +91,18 @@ export const PATCH = staffOrAdmin(async (request, context) => {
                 { new: true }
             );
             if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+            if (result.data.assignedVehicleId && currentBooking?.status === 'CONFIRMED') {
+                await VehicleBlock.deleteMany({ bookingId: booking._id });
+                await VehicleBlock.create({
+                    vehicleId: booking.assignedVehicleId,
+                    from: booking.dates.from,
+                    to: booking.dates.to,
+                    reason: 'BOOKING',
+                    bookingId: booking._id,
+                });
+            }
+
             await logAudit({ actorUserId: context.user.userId, action: 'ASSIGN', entity: 'Booking', entityId: id, meta: update });
             return NextResponse.json({ booking });
         }

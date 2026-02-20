@@ -12,12 +12,14 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const type = searchParams.get('type');
         const status = searchParams.get('status');
+        const transferType = searchParams.get('transferType');
         const from = searchParams.get('from');
         const to = searchParams.get('to');
 
         const filter: Record<string, unknown> = { isDeleted: false };
         if (type) filter.type = type;
         if (status) filter.status = status;
+        if (transferType) filter.transferTypes = transferType;
 
         let vehicles = await Vehicle.find(filter).sort({ createdAt: -1 }).lean();
 

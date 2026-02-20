@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
             success: true,
             bookingNo: booking.bookingNo,
+            bookingId: booking._id,
             message: 'Your booking request has been submitted. We will contact you shortly!',
         }, { status: 201 });
     } catch (error) {

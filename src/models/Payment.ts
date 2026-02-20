@@ -4,8 +4,14 @@ export interface IPayment extends Document {
     bookingId: Types.ObjectId;
     invoiceId?: Types.ObjectId;
     amount: number;
-    method: 'CASH' | 'BANK' | 'CARD_OTHER';
-    paidAt: Date;
+    provider: 'PAYHERE' | 'MANUAL';
+    status: 'INITIATED' | 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELED' | 'CHARGEDBACK';
+    orderId?: string;
+    payherePaymentId?: string;
+    md5sigVerified?: boolean;
+    rawNotifyPayload?: any;
+    method?: 'CASH' | 'BANK' | 'CARD_OTHER' | 'ONLINE';
+    paidAt?: Date;
     reference?: string;
     type: 'PAYMENT' | 'REFUND';
     notes?: string;
@@ -26,12 +32,26 @@ const PaymentSchema = new Schema<IPayment>(
         },
         invoiceId: { type: Schema.Types.ObjectId, ref: 'Invoice' },
         amount: { type: Number, required: true, min: 0 },
+        provider: {
+            type: String,
+            enum: ['PAYHERE', 'MANUAL'],
+            default: 'MANUAL',
+        },
+        status: {
+            type: String,
+            enum: ['INITIATED', 'PENDING', 'SUCCESS', 'FAILED', 'CANCELED', 'CHARGEDBACK'],
+            default: 'SUCCESS', // Default for backward compatibility with existing manual payments
+        },
+        orderId: { type: String, unique: true, sparse: true },
+        payherePaymentId: { type: String },
+        md5sigVerified: { type: Boolean },
+        rawNotifyPayload: { type: Schema.Types.Mixed },
         method: {
             type: String,
-            enum: ['CASH', 'BANK', 'CARD_OTHER'],
-            required: true,
+            enum: ['CASH', 'BANK', 'CARD_OTHER', 'ONLINE'],
+            required: false, // Made optional for initiated payments
         },
-        paidAt: { type: Date, required: true, default: Date.now },
+        paidAt: { type: Date },
         reference: String,
         type: {
             type: String,

@@ -20,7 +20,9 @@ interface Payment {
     amount: number;
     method: string;
     type: string;
-    paidAt: string;
+    paidAt?: string;
+    provider?: string;
+    status?: string;
 }
 
 interface PaymentTableProps {
@@ -35,6 +37,8 @@ export default function PaymentTable({ payments }: PaymentTableProps) {
                     <TableRow>
                         <TableHead>Booking Ref</TableHead>
                         <TableHead>Type</TableHead>
+                        <TableHead>Provider</TableHead>
+                        <TableHead>Status</TableHead>
                         <TableHead>Amount</TableHead>
                         <TableHead>Method</TableHead>
                         <TableHead>Date</TableHead>
@@ -55,11 +59,22 @@ export default function PaymentTable({ payments }: PaymentTableProps) {
                                         {payment.type}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className={payment.type === 'REFUND' ? 'text-red-600' : 'text-green-600'}>
-                                    {payment.type === 'REFUND' ? '-' : '+'}${payment.amount.toLocaleString()}
+                                <TableCell>
+                                    <Badge variant="secondary">{payment.provider || 'MANUAL'}</Badge>
                                 </TableCell>
-                                <TableCell>{payment.method}</TableCell>
-                                <TableCell>{format(new Date(payment.paidAt), 'MMM d, yyyy')}</TableCell>
+                                <TableCell>
+                                    <Badge variant={
+                                        payment.status === 'SUCCESS' ? 'default' :
+                                            payment.status === 'FAILED' ? 'destructive' : 'outline'
+                                    }>
+                                        {payment.status || 'SUCCESS'}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className={payment.type === 'REFUND' ? 'text-red-600' : 'text-green-600'}>
+                                    {payment.type === 'REFUND' ? '-' : '+'}LKR {payment.amount.toLocaleString()}
+                                </TableCell>
+                                <TableCell>{payment.method || 'N/A'}</TableCell>
+                                <TableCell>{payment.paidAt ? format(new Date(payment.paidAt), 'MMM d, yyyy') : 'N/A'}</TableCell>
                             </TableRow>
                         ))
                     ) : (

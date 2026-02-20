@@ -7,10 +7,11 @@ export interface IVehicle extends Omit<Document, 'model'> {
     plateNumber?: string;
     seats: number;
     luggage?: number;
-    dailyRate: number;
+    dailyRate: number; // Stored in LKR by default
     status: keyof typeof VehicleStatus;
     images: string[];
     features: string[];
+    transferTypes: ('AIRPORT_PICKUP' | 'AIRPORT_DROP' | 'CITY_TOUR')[];
     isDeleted: boolean;
     deletedAt?: Date;
     createdAt: Date;
@@ -37,6 +38,10 @@ const VehicleSchema = new Schema<IVehicle>(
         },
         images: [String],
         features: [String],
+        transferTypes: [{
+            type: String,
+            enum: ['AIRPORT_PICKUP', 'AIRPORT_DROP', 'CITY_TOUR']
+        }],
         isDeleted: { type: Boolean, default: false },
         deletedAt: Date,
     },
