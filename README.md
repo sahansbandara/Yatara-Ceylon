@@ -6,7 +6,7 @@ A comprehensive, responsive tourism website and management dashboard built for S
 
 ## 🚀 Live Demo
 
-**Public URL**: [https://itp-project-tourism-web.vercel.app](https://itp-project-tourism-web.vercel.app)
+**Public URL**: https://yatara-ceylon.vercel.app
 
 **Admin Portal Access**:
 To access the management dashboard, use the following credentials:
