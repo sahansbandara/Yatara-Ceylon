@@ -7,6 +7,7 @@ import { Menu, X, Palmtree } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 const navLinks = [
     { href: '/', label: 'Home' },
@@ -21,14 +22,17 @@ export function Navbar() {
     const [open, setOpen] = useState(false);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-off-white/95 backdrop-blur supports-[backdrop-filter]:bg-off-white/80">
+        <header className="fixed top-0 z-50 w-full border-b border-off-white/10 bg-black/20 backdrop-blur-md supports-[backdrop-filter]:bg-black/20">
             <div className="section-container flex h-20 items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-3 group">
-                    <Palmtree className="h-8 w-8 text-antique-gold group-hover:scale-105 transition-transform duration-500" />
-                    <span className="font-serif text-2xl font-semibold tracking-[0.15em] uppercase text-deep-emerald">
-                        Yatara Ceylon
-                    </span>
+                    <Image
+                        src="/images/yatara-ceylon-logo.svg"
+                        alt="Yatara Ceylon Logo"
+                        width={200}
+                        height={40}
+                        className="object-contain h-10 w-auto group-hover:scale-105 transition-transform duration-500"
+                    />
                 </Link>
 
                 {/* Desktop Nav */}
@@ -40,8 +44,8 @@ export function Navbar() {
                             className={cn(
                                 'px-4 py-2 text-[11px] font-semibold tracking-[0.2em] uppercase transition-all duration-300 border-b-2',
                                 pathname === link.href
-                                    ? 'text-deep-emerald border-antique-gold'
-                                    : 'text-gray-500 border-transparent hover:text-deep-emerald hover:border-antique-gold/50'
+                                    ? 'text-antique-gold border-antique-gold'
+                                    : 'text-off-white/70 border-transparent hover:text-antique-gold hover:border-antique-gold/50'
                             )}
                         >
                             {link.label}
@@ -61,8 +65,8 @@ export function Navbar() {
                 {/* Mobile Menu */}
                 <Sheet open={open} onOpenChange={setOpen}>
                     <SheetTrigger asChild className="lg:hidden">
-                        <Button variant="ghost" size="icon" className="hover:bg-gray-100">
-                            <Menu className="h-6 w-6 text-deep-emerald" />
+                        <Button variant="ghost" size="icon" className="hover:bg-off-white/10 text-off-white">
+                            <Menu className="h-6 w-6" />
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="right" className="w-80 bg-off-white border-l border-gray-100">

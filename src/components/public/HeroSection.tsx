@@ -38,8 +38,9 @@ export default function HeroSection() {
                 >
                     <source src="/Hero-Section.mp4" type="video/mp4" />
                 </video>
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/40 bg-gradient-to-b from-deep-emerald/80 via-transparent to-deep-emerald/90" />
+                {/* Overlay - Subtler luxury tint */}
+                <div className="absolute inset-0 bg-deep-emerald/30 mix-blend-multiply" />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep-emerald/90 via-deep-emerald/20 to-transparent" />
             </div>
 
             {/* Content */}
@@ -66,7 +67,7 @@ export default function HeroSection() {
                 </div>
 
                 {/* Search Box - Luxury Redesign */}
-                <div className="w-full max-w-4xl bg-deep-emerald/40 backdrop-blur-xl border border-antique-gold/20 rounded-none p-4 md:p-2 shadow-2xl animate-in fade-in zoom-in duration-1000 delay-300">
+                <div className="w-full max-w-4xl bg-black/20 backdrop-blur-md border border-off-white/10 rounded-none p-4 md:p-2 shadow-2xl animate-in fade-in zoom-in duration-1000 delay-300">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         {/* Location Input */}
                         <div className="relative group">
@@ -76,7 +77,7 @@ export default function HeroSection() {
                             <input
                                 type="text"
                                 placeholder="Where to?"
-                                className="w-full h-12 pl-10 pr-4 bg-deep-emerald/50 border border-antique-gold/20 rounded-none focus:outline-none focus:ring-1 focus:ring-antique-gold focus:bg-deep-emerald/80 text-off-white placeholder:text-off-white/50 transition-all font-light tracking-wide"
+                                className="w-full h-12 pl-10 pr-4 bg-black/20 border border-off-white/10 rounded-none focus:outline-none focus:ring-1 focus:ring-antique-gold focus:bg-black/40 text-off-white placeholder:text-off-white/50 transition-all font-light tracking-wide"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                             />
@@ -89,7 +90,7 @@ export default function HeroSection() {
                                     <Button
                                         variant="outline"
                                         className={cn(
-                                            "w-full h-12 justify-start text-left font-light tracking-wide bg-deep-emerald/50 border-antique-gold/20 text-off-white hover:bg-deep-emerald/80 hover:text-off-white focus:ring-1 focus:ring-antique-gold rounded-none",
+                                            "w-full h-12 justify-start text-left font-light tracking-wide bg-black/20 border-off-white/10 text-off-white hover:bg-black/40 hover:text-off-white focus:ring-1 focus:ring-antique-gold rounded-none",
                                             !date && "text-off-white/50"
                                         )}
                                     >
@@ -112,7 +113,7 @@ export default function HeroSection() {
                         {/* Package Type */}
                         <div className="relative">
                             <Select>
-                                <SelectTrigger className="w-full h-12 bg-deep-emerald/50 border-antique-gold/20 text-off-white hover:bg-deep-emerald/80 focus:ring-1 focus:ring-antique-gold rounded-none font-light tracking-wide">
+                                <SelectTrigger className="w-full h-12 bg-black/20 border-off-white/10 text-off-white hover:bg-black/40 focus:ring-1 focus:ring-antique-gold rounded-none font-light tracking-wide">
                                     <SelectValue placeholder="Tour Type" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-deep-emerald border-antique-gold/20 text-off-white rounded-none">
@@ -125,7 +126,7 @@ export default function HeroSection() {
                         </div>
 
                         {/* Search Button */}
-                        <Button className="h-12 w-full bg-antique-gold hover:bg-antique-gold/80 text-deep-emerald font-semibold uppercase tracking-widest rounded-none transition-all flex items-center justify-center gap-2">
+                        <Button className="h-12 w-full bg-antique-gold hover:bg-antique-gold/80 hover:scale-[1.02] text-deep-emerald font-semibold uppercase tracking-widest rounded-none transition-all duration-300 flex items-center justify-center gap-2">
                             <Search className="h-4 w-4" />
                             Search
                         </Button>
