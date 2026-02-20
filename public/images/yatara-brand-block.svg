@@ -4,21 +4,21 @@
     <!-- Outer dashed elite ring -->
     <circle cx="35" cy="42" r="30" stroke="#D4AF37" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.8"/>
     <!-- Inner solid subtle ring -->
-    <circle cx="35" cy="42" r="24" stroke="#F8F8F8" stroke-width="1" opacity="0.3"/>
+    <circle cx="35" cy="42" r="24" stroke="#043927" stroke-width="1" opacity="0.3"/>
     
     <!-- Compass points (Gold backing) -->
     <path d="M35 7 L40 37 L70 42 L40 47 L35 77 L30 47 L0 42 L30 37 Z" fill="#D4AF37"/>
-    <!-- Compass bevel highlights (Off-white) -->
-    <path d="M35 7 L40 37 L35 42 Z" fill="#F8F8F8" opacity="0.9"/>
-    <path d="M70 42 L40 47 L35 42 Z" fill="#F8F8F8" opacity="0.9"/>
-    <path d="M35 77 L30 47 L35 42 Z" fill="#F8F8F8" opacity="0.9"/>
-    <path d="M0 42 L30 37 L35 42 Z" fill="#F8F8F8" opacity="0.9"/>
+    <!-- Compass bevel highlights (Emerald) -->
+    <path d="M35 7 L40 37 L35 42 Z" fill="#043927" opacity="0.9"/>
+    <path d="M70 42 L40 47 L35 42 Z" fill="#043927" opacity="0.9"/>
+    <path d="M35 77 L30 47 L35 42 Z" fill="#043927" opacity="0.9"/>
+    <path d="M0 42 L30 37 L35 42 Z" fill="#043927" opacity="0.9"/>
     
     <!-- High-contrast center pip -->
-    <circle cx="35" cy="42" r="4" fill="#043927"/>
+    <circle cx="35" cy="42" r="4" fill="#F8F8F8"/>
   </g>
   
-  <!-- Sleek, prominent text designed for dark/glass backgrounds -->
-  <text x="95" y="55" font-family="serif" font-size="46" font-weight="600" fill="#F8F8F8" letter-spacing="0.06em">YATARA</text>
-  <text x="100" y="82" font-family="sans-serif" font-size="16" letter-spacing="0.4em" font-weight="400" fill="#D4AF37">CEYLON</text>
+  <!-- Sleek, prominent text designed for light/transparent backgrounds -->
+  <text x="95" y="55" font-family="serif" font-size="46" font-weight="800" fill="#043927" letter-spacing="0.06em">YATARA</text>
+  <text x="100" y="82" font-family="sans-serif" font-size="16" letter-spacing="0.4em" font-weight="500" fill="#D4AF37">CEYLON</text>
 </svg>

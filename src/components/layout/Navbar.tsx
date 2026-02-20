@@ -8,16 +8,19 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useCurrency } from '@/lib/CurrencyContext';
 
 const navLinks = [
     { href: '/packages', label: 'SIGNATURE JOURNEYS' },
-    { href: '/build-tour', label: 'SOVEREIGN CANVAS' },
+    { href: '/build-tour', label: 'BESPOKE BUILDER' },
     { href: '/destinations', label: 'DESTINATIONS' },
+    { href: '/vehicles', label: 'PRIVATE FLEET' },
 ];
 
 export function Navbar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const { currency, setCurrency } = useCurrency();
 
     return (
         <header className="sticky top-0 z-50 w-full bg-emerald-950/20 backdrop-blur-lg border-b border-white/10">
@@ -27,7 +30,7 @@ export function Navbar() {
                     <Image
                         src="/images/yatara-brand-block.svg"
                         alt="Yatara Ceylon Logo"
-                        width={200}
+                        width={225}
                         height={50}
                         className="object-contain h-[50px] w-auto hover:opacity-90 transition-opacity"
                     />
@@ -39,7 +42,7 @@ export function Navbar() {
                         SIGNATURE JOURNEYS
                     </Link>
                     <Link href="/build-tour" className="text-[13px] xl:text-[14px] font-sans tracking-widest text-white hover:text-[#D4AF37] transition-colors border-b border-[#D4AF37] pb-1 whitespace-nowrap">
-                        SOVEREIGN CANVAS
+                        BESPOKE BUILDER
                     </Link>
                     <Link href="/destinations" className="text-[13px] xl:text-[14px] font-sans tracking-widest text-white hover:text-[#D4AF37] transition-colors whitespace-nowrap">
                         DESTINATIONS
@@ -48,8 +51,14 @@ export function Navbar() {
 
                 {/* Desktop Right Actions */}
                 <div className="hidden lg:flex items-center gap-6 shrink-0">
+                    <button
+                        onClick={() => setCurrency(currency === 'LKR' ? 'USD' : 'LKR')}
+                        className="text-[13px] xl:text-[14px] font-sans tracking-widest text-white hover:text-[#D4AF37] transition-colors whitespace-nowrap"
+                    >
+                        {currency}
+                    </button>
                     <Link href="/dashboard/my-journeys" className="text-[13px] xl:text-[14px] font-sans tracking-widest text-white hover:text-[#D4AF37] transition-colors whitespace-nowrap">
-                        MY LEDGER
+                        MY JOURNEYS
                     </Link>
                     <Link href="/auth/login">
                         <Button className="h-10 px-6 bg-transparent text-white hover:bg-[#D4AF37] hover:text-emerald-950 tracking-widest text-[13px] xl:text-[14px] rounded-none border border-[#D4AF37] transition-all duration-300 font-sans whitespace-nowrap">
@@ -79,8 +88,14 @@ export function Navbar() {
                                 </Link>
                             ))}
                             <div className="border-t border-[#D4AF37]/20 pt-8 mt-4 flex flex-col gap-6">
+                                <button
+                                    onClick={() => { setCurrency(currency === 'LKR' ? 'USD' : 'LKR'); setOpen(false); }}
+                                    className="text-left text-[14px] font-sans tracking-widest text-[#D4AF37] transition-colors"
+                                >
+                                    CURRENCY: {currency}
+                                </button>
                                 <Link href="/dashboard/my-journeys" onClick={() => setOpen(false)} className="text-[14px] font-sans tracking-widest text-white hover:text-[#D4AF37] transition-colors">
-                                    MY LEDGER
+                                    MY JOURNEYS
                                 </Link>
                                 <Link href="/auth/login" onClick={() => setOpen(false)}>
                                     <Button className="w-full h-12 bg-transparent text-white hover:bg-[#D4AF37] hover:text-emerald-950 tracking-widest text-[14px] rounded-none border border-[#D4AF37] transition-all duration-300 font-sans">
