@@ -5,25 +5,25 @@ import SectionHeading from './SectionHeading';
 
 const signatureExperiences = [
     {
-        id: 'hill-country',
-        title: 'The Hill Country Tea Trail',
-        price: 'LKR 86,800',
-        image: '/images/tea-trail.jpg',
-        href: '/packages/hill-country',
+        id: 'ramayana-heritage-trail',
+        title: 'The Ramayana Heritage Trail',
+        price: 'LKR 128,000',
+        image: 'https://images.unsplash.com/photo-1590123767956-2b7f3e541866?w=800&auto=format&fit=crop&q=80',
+        href: '/packages/ramayana-heritage-trail',
     },
     {
-        id: 'cultural-triangle',
-        title: 'Cultural Triangle Explorer',
-        price: 'LKR 139,500',
-        image: '/images/cultural-triangle.jpg',
-        href: '/packages/cultural-triangle',
-    },
-    {
-        id: 'wildlife-safari',
-        title: 'Wildlife Safari Adventure',
+        id: 'ceylon-highlights-express',
+        title: 'Ceylon Highlights Express',
         price: 'LKR 155,000',
-        image: '/images/wildlife-safari.jpg',
-        href: '/packages/wildlife-safari',
+        image: 'https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=800&auto=format&fit=crop&q=80',
+        href: '/packages/ceylon-highlights-express',
+    },
+    {
+        id: 'heritage-wildlife-adventure',
+        title: 'Heritage & Wildlife Adventure',
+        price: 'LKR 195,000',
+        image: 'https://images.unsplash.com/photo-1616422345026-6b21857908da?w=800&auto=format&fit=crop&q=80',
+        href: '/packages/heritage-wildlife-adventure',
     },
 ];
 
