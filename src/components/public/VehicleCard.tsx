@@ -1,8 +1,11 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Users, Briefcase, Car, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
 
 interface VehicleCardProps {
     vehicle: {
@@ -18,6 +21,8 @@ interface VehicleCardProps {
 }
 
 export default function VehicleCard({ vehicle }: VehicleCardProps) {
+    const { currency, convertRate } = useCurrency();
+
     return (
         <div className="group bg-white rounded-none overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-off-white/20 flex flex-col h-full">
             {/* Image section */}
@@ -50,7 +55,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                     </h3>
                     <div className="text-right">
                         <span className="text-[10px] text-gray-400 font-semibold tracking-widest uppercase block">From</span>
-                        <span className="text-lg font-serif text-deep-emerald">LKR {vehicle.dailyRate.toLocaleString()}</span>
+                        <span className="text-lg font-serif text-deep-emerald">{formatPrice(vehicle.dailyRate, currency, convertRate)}</span>
                     </div>
                 </div>
 

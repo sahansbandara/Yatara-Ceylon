@@ -88,7 +88,7 @@ export default function TourBuilder({ districts, places }: TourBuilderProps) {
                         Duration: ${formData.duration} days
                         Adults: ${formData.adults}, Children: ${formData.children}
                         Arrival: ${formData.arrivalDate ? format(formData.arrivalDate, 'yyyy-MM-dd') : 'Not set'}
-                        Budget: ${formData.budget}
+                        Investment Scale: ${formData.budget}
                         Interests: ${formData.interests.join(', ')}
                         Selected Places: ${formData.selectedPlaces.map(pid => places.find(p => p._id === pid)?.name).join(', ')}
                         Notes: ${formData.message}
@@ -279,14 +279,14 @@ export default function TourBuilder({ districts, places }: TourBuilderProps) {
                                 <label className="text-sm font-medium">WhatsApp / Phone</label>
                                 <Input value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} placeholder="+1 234 567 890" />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Approx. Budget (USD per person)</label>
+                            <div className="space-y-4">
+                                <label className="text-sm font-serif tracking-widest uppercase text-deep-emerald">Investment Scale (Per Person)</label>
                                 <Select value={formData.budget} onValueChange={(val) => setFormData({ ...formData, budget: val })}>
-                                    <SelectTrigger><SelectValue placeholder="Select budget" /></SelectTrigger>
+                                    <SelectTrigger className="h-12 border-off-white/20 rounded-none bg-off-white/50 focus:ring-antique-gold font-light"><SelectValue placeholder="Select scale" /></SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="standard">LKR 50 - LKR 100 / day</SelectItem>
-                                        <SelectItem value="premium">LKR 100 - LKR 200 / day</SelectItem>
-                                        <SelectItem value="luxury">LKR 200+ / day</SelectItem>
+                                        <SelectItem value="250-500">Standard Luxury (USD 250 - 500/day)</SelectItem>
+                                        <SelectItem value="500-1000">Premium Bespoke (USD 500 - 1000/day)</SelectItem>
+                                        <SelectItem value="1000+">Sovereign Access (USD 1000+/day)</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

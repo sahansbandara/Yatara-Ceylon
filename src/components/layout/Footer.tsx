@@ -37,7 +37,7 @@ export function Footer() {
 
                     {/* Explore Links */}
                     <div>
-                        <h4 className="text-off-white font-serif text-lg font-semibold tracking-wider mb-6">Explore</h4>
+                        <h4 className="text-antique-gold font-serif text-lg font-semibold tracking-widest uppercase mb-6">Explore</h4>
                         <ul className="space-y-4">
                             {[
                                 { href: '/packages', label: 'The Curated Collection' },
@@ -60,7 +60,7 @@ export function Footer() {
 
                     {/* Contact Info */}
                     <div>
-                        <h4 className="text-off-white font-serif text-lg font-semibold tracking-wider mb-6">Contact</h4>
+                        <h4 className="text-antique-gold font-serif text-lg font-semibold tracking-widest uppercase mb-6">Contact</h4>
                         <ul className="space-y-4 font-light text-sm">
                             <li className="flex items-start gap-4">
                                 <MapPin className="h-5 w-5 text-antique-gold shrink-0 mt-0.5" strokeWidth={1.5} />
@@ -79,8 +79,8 @@ export function Footer() {
 
                     {/* Newsletter */}
                     <div>
-                        <h4 className="text-off-white font-serif text-lg font-semibold tracking-wider mb-6">The Dispatch</h4>
-                        <p className="text-sm font-light mb-4">
+                        <h4 className="text-antique-gold font-serif text-lg font-semibold tracking-widest uppercase mb-6">The Dispatch</h4>
+                        <p className="text-sm font-light mb-4 text-off-white/80 leading-relaxed">
                             Subscribe to receive exclusive itineraries and insider access to luxury Ceylon.
                         </p>
                         <form className="relative mt-2">

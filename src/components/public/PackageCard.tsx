@@ -1,8 +1,11 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Clock, ArrowRight, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
 
 interface PackageCardProps {
     pkg: {
@@ -17,6 +20,8 @@ interface PackageCardProps {
 }
 
 export default function PackageCard({ pkg }: PackageCardProps) {
+    const { currency, convertRate } = useCurrency();
+
     return (
         <div className="group rounded-none overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 border border-off-white/20 flex flex-col h-full">
             {/* Image */}
@@ -55,7 +60,7 @@ export default function PackageCard({ pkg }: PackageCardProps) {
                     <div>
                         <p className="text-[10px] text-gray-400 font-semibold tracking-widest uppercase mb-1">Starting from</p>
                         <p className="text-2xl font-serif text-deep-emerald">
-                            LKR {pkg.priceMin.toLocaleString()}
+                            {formatPrice(pkg.priceMin, currency, convertRate)}
                         </p>
                     </div>
                     <Link href={`/packages/${pkg.slug}`}>

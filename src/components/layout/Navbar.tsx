@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useCurrency } from '@/lib/CurrencyContext';
 
 const navLinks = [
     { href: '/', label: 'Home' },
@@ -20,6 +21,7 @@ const navLinks = [
 export function Navbar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const { currency, setCurrency } = useCurrency();
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-off-white/10 bg-emerald-950/10 backdrop-blur-md supports-[backdrop-filter]:bg-emerald-950/10">
@@ -53,8 +55,14 @@ export function Navbar() {
                     ))}
                 </nav>
 
-                {/* Desktop CTA */}
-                <div className="hidden lg:flex items-center gap-3">
+                {/* Desktop CTA & Currency */}
+                <div className="hidden lg:flex items-center gap-4">
+                    <button
+                        onClick={() => setCurrency(currency === 'LKR' ? 'USD' : 'LKR')}
+                        className="text-[10px] font-semibold tracking-widest uppercase text-off-white hover:text-antique-gold transition-colors duration-300"
+                    >
+                        {currency}
+                    </button>
                     <Link href="/contact">
                         <Button className="h-11 px-8 bg-deep-emerald text-antique-gold hover:bg-deep-emerald/90 uppercase tracking-[0.2em] text-[10px] rounded-none border border-deep-emerald transition-all duration-500">
                             Plan Your Journey
@@ -86,7 +94,15 @@ export function Navbar() {
                                     {link.label}
                                 </Link>
                             ))}
-                            <div className="border-t border-gray-200 pt-8 mt-4 px-4">
+                            <div className="border-t border-gray-200 pt-8 mt-4 px-4 flex flex-col gap-4">
+                                <div className="flex justify-center mb-2">
+                                    <button
+                                        onClick={() => setCurrency(currency === 'LKR' ? 'USD' : 'LKR')}
+                                        className="text-xs font-serif tracking-widest uppercase text-deep-emerald border border-deep-emerald/20 px-4 py-1"
+                                    >
+                                        Currency: {currency}
+                                    </button>
+                                </div>
                                 <Link href="/contact" onClick={() => setOpen(false)}>
                                     <Button className="w-full h-12 bg-deep-emerald text-antique-gold hover:bg-deep-emerald/90 uppercase tracking-[0.2em] text-[11px] rounded-none border border-deep-emerald transition-all duration-500">
                                         Plan Your Journey
