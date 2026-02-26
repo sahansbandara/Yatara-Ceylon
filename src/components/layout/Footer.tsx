@@ -44,6 +44,8 @@ export function Footer() {
                                 { href: '/destinations', label: 'Destinations' },
                                 { href: '/build-tour', label: 'Bespoke Planning' },
                                 { href: '/vehicles', label: 'Private Transfers' },
+                                { href: '/guide', label: 'Sri Lanka Guide' },
+                                { href: '/inquire', label: 'Request a Proposal' },
                             ].map((link) => (
                                 <li key={link.href}>
                                     <Link

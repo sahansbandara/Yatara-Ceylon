@@ -1,37 +1,13 @@
 'use client';
 
-import { Suspense, useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Search } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function HeroSection() {
-    const router = useRouter();
-    const [date, setDate] = useState<Date>();
-    const [location, setLocation] = useState('');
-    const [tourType, setTourType] = useState('');
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    const handleSearch = () => {
-        if (!location && !date && !tourType) {
-            alert('Please fill in at least one field to search.');
-            return;
-        }
-        const params = new URLSearchParams();
-        if (location) params.set('location', location);
-        if (date) params.set('date', format(date, 'yyyy-MM-dd'));
-        if (tourType) params.set('type', tourType);
-        router.push(`/packages?${params.toString()}`);
-    };
-
-    // Attempted autoplay fix
     useEffect(() => {
         if (videoRef.current) {
             videoRef.current.play().catch(e => console.log("Autoplay prevented:", e));
@@ -39,7 +15,7 @@ export default function HeroSection() {
     }, []);
 
     return (
-        <div className="relative h-[85vh] w-full overflow-hidden bg-deep-emerald font-sans">
+        <div className="relative h-[92vh] w-full overflow-hidden bg-deep-emerald font-sans">
             {/* Background Video/Image */}
             <div className="absolute inset-0 w-full h-full">
                 <video
@@ -49,112 +25,59 @@ export default function HeroSection() {
                     muted
                     playsInline
                     className="object-cover w-full h-full"
-                    poster="https://picsum.photos/seed/hero-ceylon/1920/1080"
+                    poster="/images/home/hero-poster.png"
                 >
                     <source src="/Hero-Section.mp4" type="video/mp4" />
                 </video>
-                {/* Overlay - Subtler luxury tint */}
-                <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/40 to-transparent" />
+                {/* Overlay - deeper luxury gradient */}
+                <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/50 via-emerald-950/20 to-emerald-950/60" />
             </div>
 
             {/* Content */}
-            <div className="relative z-10 h-full flex flex-col justify-center items-center text-off-white px-4 md:px-8 max-w-7xl mx-auto pt-20">
-                <div className="text-center space-y-6 mb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                    <span className="inline-block py-1 px-4 text-xs tracking-[0.2em] uppercase font-medium text-antique-gold border border-antique-gold/30 rounded-none bg-deep-emerald/40 backdrop-blur-md">
-                        High-End Boutique Travel
+            <div className="relative z-10 h-full flex flex-col justify-center items-center text-off-white px-4 md:px-8 max-w-5xl mx-auto">
+                <div className="text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                    <span className="inline-block py-1.5 px-5 text-[11px] tracking-[0.25em] uppercase font-medium text-antique-gold border border-antique-gold/30 bg-deep-emerald/40 backdrop-blur-md">
+                        Tailor-Made Sri Lanka
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-serif tracking-normal leading-tight">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif tracking-normal leading-[1.1]">
                         <span className="italic font-light">The Soul of Your</span> <br />
                         Island Journey.
                     </h1>
                     <p className="text-lg md:text-xl text-off-white/80 max-w-2xl mx-auto font-light leading-relaxed">
-                        Experience a synchronized odyssey through the heart of Ceylon.
-                        Bespoke itineraries, private transitions, and heritage unlocked.
+                        Bespoke itineraries, private chauffeur-guides, and heritage unlocked —
+                        crafted around you by our Sri Lanka concierge team.
                     </p>
 
-                    {/* Minimalist CTA */}
-                    <div className="mt-8">
-                        <Link href="/packages">
-                            <Button className="h-12 px-8 bg-transparent border border-antique-gold text-antique-gold hover:bg-antique-gold hover:text-deep-emerald font-medium uppercase tracking-widest text-sm transition-all duration-300 rounded-none">
-                                Begin Your Journey
+                    {/* Primary CTA */}
+                    <div className="mt-10 flex flex-col items-center gap-4">
+                        <Link href="/inquire">
+                            <Button className="h-14 px-10 bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold uppercase tracking-[0.2em] text-sm transition-all duration-300 rounded-none flex items-center gap-3 shadow-lg hover:shadow-xl hover:scale-[1.02]">
+                                Request a Curated Proposal
+                                <ArrowRight className="w-4 h-4" />
                             </Button>
                         </Link>
+                        <p className="text-off-white/50 text-xs tracking-[0.15em] uppercase font-light">
+                            Reply within 2 hours · No obligation · Fully bespoke
+                        </p>
                     </div>
                 </div>
 
-                {/* Search Box - Luxury Redesign */}
-                <div className="w-full max-w-4xl bg-black/20 backdrop-blur-md border border-off-white/10 rounded-none p-4 md:p-2 shadow-2xl animate-in fade-in zoom-in duration-1000 delay-300">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        {/* Location Input */}
-                        <div className="relative group">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-antique-gold/50 group-focus-within:text-antique-gold transition-colors">
-                                <MapPin className="h-5 w-5" />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Where to?"
-                                className="w-full h-12 pl-10 pr-4 bg-black/20 border border-off-white/10 rounded-none focus:outline-none focus:ring-1 focus:ring-antique-gold focus:bg-black/40 text-off-white placeholder:text-off-white/50 transition-all font-light tracking-wide"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                            />
-                        </div>
-
-                        {/* Date Picker */}
-                        <div className="relative">
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className={cn(
-                                            "w-full h-12 justify-start text-left font-light tracking-wide bg-black/20 border-off-white/10 text-off-white hover:bg-black/40 hover:text-off-white focus:ring-1 focus:ring-antique-gold rounded-none",
-                                            !date && "text-off-white/50"
-                                        )}
-                                    >
-                                        <Calendar className="mr-2 h-4 w-4 text-antique-gold/50" />
-                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0 border-antique-gold/20 bg-deep-emerald text-off-white rounded-none" align="start">
-                                    <CalendarComponent
-                                        mode="single"
-                                        selected={date}
-                                        onSelect={setDate}
-                                        initialFocus
-                                        className="bg-deep-emerald text-off-white font-sans"
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                        </div>
-
-                        {/* Package Type */}
-                        <div className="relative">
-                            <Select value={tourType} onValueChange={setTourType}>
-                                <SelectTrigger className="w-full h-12 bg-black/20 border-off-white/10 text-off-white hover:bg-black/40 focus:ring-1 focus:ring-antique-gold rounded-none font-light tracking-wide">
-                                    <SelectValue placeholder="Tour Type" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-deep-emerald border-antique-gold/20 text-off-white rounded-none">
-                                    <SelectItem value="beach" className="focus:bg-antique-gold/20 focus:text-antique-gold">Beach Relax</SelectItem>
-                                    <SelectItem value="adventure" className="focus:bg-antique-gold/20 focus:text-antique-gold">Adventure</SelectItem>
-                                    <SelectItem value="cultural" className="focus:bg-antique-gold/20 focus:text-antique-gold">Cultural</SelectItem>
-                                    <SelectItem value="wildlife" className="focus:bg-antique-gold/20 focus:text-antique-gold">Wildlife</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Search Button */}
-                        <Button
-                            onClick={handleSearch}
-                            className="h-12 w-full bg-antique-gold hover:bg-antique-gold/80 hover:scale-[1.02] text-deep-emerald font-semibold uppercase tracking-widest rounded-none transition-all duration-300 flex items-center justify-center gap-2"
-                        >
-                            <Search className="h-4 w-4" />
-                            Search
-                        </Button>
+                {/* Trust micro-badges — floating at bottom */}
+                <div className="absolute bottom-12 left-0 right-0 flex justify-center">
+                    <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-off-white/50 text-[11px] tracking-[0.15em] uppercase font-light">
+                        <span className="flex items-center gap-2">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-antique-gold/60" />
+                            Private Transfers
+                        </span>
+                        <span className="flex items-center gap-2">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-antique-gold/60" />
+                            24/7 Concierge
+                        </span>
+                        <span className="flex items-center gap-2">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-antique-gold/60" />
+                            Fixed-Price Guarantee
+                        </span>
                     </div>
-                </div>
-
-                {/* Scrolldown indicator */}
-                <div className="absolute bottom-8 animate-bounce hidden md:block">
-                    <span className="text-antique-gold/60 text-xs tracking-[0.3em] uppercase">Scroll to explore</span>
                 </div>
             </div>
         </div>

@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
 import HeroSection from '@/components/public/HeroSection';
+import SocialProof from '@/components/public/SocialProof';
+import HowItWorks from '@/components/public/HowItWorks';
 import SignatureExperiences from '@/components/public/SignatureExperiences';
 import CuratedCollection from '@/components/public/CuratedCollection';
 import HeritageStory from '@/components/public/HeritageStory';
@@ -11,7 +13,13 @@ export default async function HomePage() {
             {/* The Cinematic Hero Section */}
             <HeroSection />
 
-            {/* Signature Experiences Details */}
+            {/* Social Proof — Trust signals right after hero */}
+            <SocialProof />
+
+            {/* How It Works — 3-step concierge flow */}
+            <HowItWorks />
+
+            {/* Signature Experiences — Editorial layout */}
             <SignatureExperiences />
 
             {/* The Curated Collection Grid */}

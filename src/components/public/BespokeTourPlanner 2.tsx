@@ -62,7 +62,6 @@ interface GemPlace {
     districtName: string;
     districtId: string;
     visit_minutes_est: number;
-    image_hint: string;
     isHidden?: boolean;
 }
 
@@ -202,23 +201,6 @@ function getCategoryColor(cat: string): string {
     return CATEGORY_COLORS[cat?.toUpperCase()] || '#6B7280';
 }
 
-function getCategoryHint(cat: string): string {
-    const map: Record<string, string> = {
-        TEMPLE: '/images/hints/temple.jpg',
-        BEACH: '/images/hints/beach.jpg',
-        NATURE: '/images/hints/nature.jpg',
-        HERITAGE: '/images/hints/heritage.jpg',
-        WILDLIFE: '/images/hints/wildlife.jpg',
-        ADVENTURE: '/images/hints/adventure.jpg',
-        CITY: '/images/hints/city.jpg',
-        FOOD: '/images/hints/food.jpg',
-        CULTURE: '/images/hints/culture.jpg',
-        SCENIC: '/images/hints/scenic.jpg',
-        OTHER: '/images/hints/other.jpg',
-    };
-    return map[cat?.toUpperCase()] || '/images/hints/other.jpg';
-}
-
 // ─── MapController (uses react-leaflet useMap) ──────────────────────────────
 
 function MapControllerInner({
@@ -271,175 +253,16 @@ const MapController = dynamic(
     { ssr: false }
 );
 
-function OrbitGemsOverlayInner({
-    selectedDistrict,
-    activeGemPlaces,
-    addToBasket,
-    isInBasket,
-    onGemTabChange,
-    gemTab
-}: any) {
-    const { useMap } = require('react-leaflet');
-    const map = useMap();
-    const [centerPixel, setCenterPixel] = useState<{ x: number; y: number } | null>(null);
-
-    const updatePixel = useCallback(() => {
-        if (selectedDistrict && map) {
-            const L = require('leaflet');
-            const latLng = L.latLng(selectedDistrict.coordinates[0], selectedDistrict.coordinates[1]);
-            const pt = map.latLngToContainerPoint(latLng);
-            setCenterPixel({ x: pt.x, y: pt.y });
-        } else {
-            setCenterPixel(null);
-        }
-    }, [selectedDistrict, map]);
-
-    useEffect(() => {
-        if (!map) return;
-        updatePixel();
-        map.on('move', updatePixel);
-        map.on('zoom', updatePixel);
-        map.on('resize', updatePixel);
-        return () => {
-            map.off('move', updatePixel);
-            map.off('zoom', updatePixel);
-            map.off('resize', updatePixel);
-        };
-    }, [map, updatePixel]);
-
-    if (!selectedDistrict || !centerPixel || activeGemPlaces.length === 0) return null;
-
-    return (
-        <div className="absolute inset-0 z-[1000] pointer-events-none overflow-hidden">
-            {/* Tab controls centered near top of the orbit */}
-            <div
-                className="absolute pointer-events-auto flex gap-2 transition-all duration-300"
-                style={{
-                    left: `${centerPixel.x}px`,
-                    top: `${centerPixel.y - 180}px`,
-                    transform: 'translate(-50%, -50%)',
-                }}
-            >
-                <button
-                    onClick={(e) => { e.stopPropagation(); onGemTabChange('signature'); }}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-serif uppercase tracking-wider transition-all ${gemTab === 'signature'
-                        ? 'bg-antique-gold/90 text-deep-emerald shadow-lg'
-                        : 'bg-deep-emerald/80 text-white/70 border border-white/10 hover:bg-white/10 backdrop-blur-md'
-                        }`}
-                >
-                    <Sparkles className="w-3 h-3" />
-                    Signature
-                </button>
-                <button
-                    onClick={(e) => { e.stopPropagation(); onGemTabChange('hidden'); }}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-serif uppercase tracking-wider transition-all ${gemTab === 'hidden'
-                        ? 'bg-antique-gold/90 text-deep-emerald shadow-lg'
-                        : 'bg-deep-emerald/80 text-white/70 border border-white/10 hover:bg-white/10 backdrop-blur-md'
-                        }`}
-                >
-                    <Compass className="w-3 h-3" />
-                    Hidden Gems
-                </button>
-            </div>
-
-            {activeGemPlaces.map((gem: any, idx: number) => {
-                const total = activeGemPlaces.length;
-                // Distribute evenly around a circle
-                const angle = (Math.PI * 2 * idx) / total - Math.PI / 2;
-                const radiusX = 260;
-                const radiusY = 220;
-
-                const x = centerPixel.x + Math.cos(angle) * radiusX;
-                const y = centerPixel.y + Math.sin(angle) * radiusY;
-
-                const inBasket = isInBasket(gem.id);
-
-                return (
-                    <div
-                        key={gem.id}
-                        className={`absolute pointer-events-auto transition-all duration-700 ease-out gem-place-card rounded-xl p-3 w-[220px] bg-deep-emerald/90 backdrop-blur-md border border-antique-gold/20 shadow-xl overflow-hidden cursor-pointer ${inBasket ? 'ring-2 ring-antique-gold shadow-[0_0_15px_rgba(212,175,55,0.3)] opacity-80 scale-[0.98]' : 'hover:scale-105 hover:border-antique-gold/60'}`}
-                        style={{
-                            left: `${x}px`,
-                            top: `${y}px`,
-                            transform: 'translate(-50%, -50%)',
-                            animation: `fadeInScale 0.6s ease-out backwards`,
-                            animationDelay: `${idx * 80}ms`,
-                        }}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            if (!inBasket) addToBasket(gem);
-                        }}
-                    >
-                        {/* Thumbnail */}
-                        <div className="w-full h-[90px] rounded-lg mb-3 overflow-hidden border border-white/10 bg-white/5 relative group-hover:border-antique-gold/30 transition-colors">
-                            <img src={gem.image_hint} alt={gem.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
-                            {inBasket && (
-                                <div className="absolute inset-0 bg-deep-emerald/40 flex items-center justify-center backdrop-blur-[2px]">
-                                    <span className="bg-antique-gold text-deep-emerald px-3 py-1 rounded-full text-[10px] font-serif uppercase tracking-widest flex items-center gap-1">
-                                        Added ✓
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Card content */}
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-1">
-                                <span className="text-[8px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full"
-                                    style={{ backgroundColor: getCategoryColor(gem.category) + '25', color: getCategoryColor(gem.category) }}>
-                                    {gem.category}
-                                </span>
-                                {gem.isHidden && (
-                                    <span className="text-[8px] text-antique-gold/70 uppercase tracking-wider pl-1 font-medium">Hidden</span>
-                                )}
-                            </div>
-                        </div>
-                        <h4 className="font-serif text-white text-[13px] leading-tight mb-1.5 line-clamp-1">{gem.name}</h4>
-                        <p className="text-white/40 text-[9px] font-light leading-relaxed line-clamp-2">{gem.teaser}</p>
-
-                        {!inBasket && (
-                            <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between">
-                                {gem.visit_minutes_est > 0 ? (
-                                    <span className="text-white/30 text-[8px] flex items-center gap-1">
-                                        <Clock className="w-2.5 h-2.5" /> ~{gem.visit_minutes_est}M
-                                    </span>
-                                ) : <span />}
-                                <div className="flex items-center gap-1 text-antique-gold/70 group-hover:text-antique-gold transition-colors">
-                                    <Sparkles className="w-2.5 h-2.5" />
-                                    <span className="text-[9px] font-serif uppercase tracking-wider">Add</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                );
-            })}
-        </div>
-    );
-}
-
-const OrbitGemsOverlay = dynamic(
-    () => Promise.resolve(OrbitGemsOverlayInner),
-    { ssr: false }
-);
-
 // ─── Sortable Basket Item ───────────────────────────────────────────────────
 
 function SortableBasketItem({
     place,
     index,
-    isFirst,
-    isLast,
     onRemove,
-    onMoveUp,
-    onMoveDown,
 }: {
     place: GemPlace;
     index: number;
-    isFirst: boolean;
-    isLast: boolean;
     onRemove: (id: string) => void;
-    onMoveUp: (id: string) => void;
-    onMoveDown: (id: string) => void;
 }) {
     const {
         attributes,
@@ -489,19 +312,13 @@ function SortableBasketItem({
                 style={{ backgroundColor: getCategoryColor(place.category) }}
             />
 
-            {/* Mobile Controls & Remove */}
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 lg:opacity-0 transition-opacity flex-shrink-0">
-                <div className="flex flex-col gap-0.5 lg:hidden mr-1">
-                    <button onClick={(e) => { e.stopPropagation(); onMoveUp(place.id); }} disabled={isFirst} className="p-0.5 text-white/30 hover:text-white disabled:opacity-30"><ChevronUp className="w-3 h-3" /></button>
-                    <button onClick={(e) => { e.stopPropagation(); onMoveDown(place.id); }} disabled={isLast} className="p-0.5 text-white/30 hover:text-white disabled:opacity-30"><ChevronDown className="w-3 h-3" /></button>
-                </div>
-                <button
-                    onClick={(e) => { e.stopPropagation(); onRemove(place.id); }}
-                    className="p-1 hover:bg-white/10 rounded transition-all"
-                >
-                    <X className="w-3 h-3 text-white/50 hover:text-red-400" />
-                </button>
-            </div>
+            {/* Remove */}
+            <button
+                onClick={(e) => { e.stopPropagation(); onRemove(place.id); }}
+                className="p-1 opacity-0 group-hover:opacity-100 hover:bg-white/10 rounded transition-all flex-shrink-0"
+            >
+                <X className="w-3 h-3 text-white/50 hover:text-red-400" />
+            </button>
         </div>
     );
 }
@@ -599,22 +416,6 @@ export default function BespokeTourPlanner() {
         setBasket(prev => prev.filter(p => p.id !== gemId));
     }, []);
 
-    const moveBasketItemUp = useCallback((id: string) => {
-        setBasket(prev => {
-            const index = prev.findIndex(p => p.id === id);
-            if (index > 0) return arrayMove(prev, index, index - 1);
-            return prev;
-        });
-    }, []);
-
-    const moveBasketItemDown = useCallback((id: string) => {
-        setBasket(prev => {
-            const index = prev.findIndex(p => p.id === id);
-            if (index < prev.length - 1) return arrayMove(prev, index, index + 1);
-            return prev;
-        });
-    }, []);
-
     const handleDragEnd = useCallback((event: DragEndEvent) => {
         const { active, over } = event;
         if (over && active.id !== over.id) {
@@ -640,7 +441,6 @@ export default function BespokeTourPlanner() {
                 districtName: selectedDistrict.name,
                 districtId: selectedDistrict.id,
                 visit_minutes_est: 60,
-                image_hint: getCategoryHint(data.category),
             };
         });
     }, [selectedDistrict]);
@@ -658,7 +458,6 @@ export default function BespokeTourPlanner() {
             districtId: selectedDistrict.id,
             visit_minutes_est: hg.visit_minutes_est,
             isHidden: true,
-            image_hint: getCategoryHint(hg.category),
         }));
     }, [selectedDistrict]);
 
@@ -939,23 +738,8 @@ export default function BespokeTourPlanner() {
                         </div>
 
                         {/* Summary footer */}
-                        <div className="p-5 border-t border-white/5 space-y-4">
-                            <button
-                                onClick={() => {
-                                    const itinerary = basket.map(p => p.name).join(', ');
-                                    const districts = Array.from(new Set(basket.map(p => p.districtName))).join(', ');
-                                    const params = new URLSearchParams({
-                                        itinerary,
-                                        districts,
-                                        source: 'build-tour'
-                                    });
-                                    window.location.href = `/inquire?${params.toString()}`;
-                                }}
-                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-antique-gold text-deep-emerald font-serif text-[12px] uppercase tracking-widest rounded-lg hover:shadow-lg hover:shadow-antique-gold/30 transition-all font-semibold"
-                            >
-                                Send Plan to Concierge
-                            </button>
-                            <p className="text-white/30 text-[10px] font-light tracking-wider leading-relaxed text-center">
+                        <div className="p-5 border-t border-white/5">
+                            <p className="text-white/30 text-[10px] font-light tracking-wider leading-relaxed">
                                 {basket.length} destinations across Sri Lanka · Your concierge will finalize the route, transfers, and timing based on your preferences.
                             </p>
                         </div>
@@ -1000,14 +784,6 @@ export default function BespokeTourPlanner() {
                             selectedDistrict={selectedDistrict}
                             geoData={geoData}
                             sriLankaBounds={sriLankaBounds}
-                        />
-                        <OrbitGemsOverlay
-                            selectedDistrict={selectedDistrict}
-                            activeGemPlaces={activeGemPlaces}
-                            addToBasket={addToBasket}
-                            isInBasket={isInBasket}
-                            onGemTabChange={setGemTab}
-                            gemTab={gemTab}
                         />
                     </MapContainer>
                 )}
@@ -1073,7 +849,92 @@ export default function BespokeTourPlanner() {
                 </div>
             )}
 
-            {/* ── Gem Place Cards (Rendered via Map overlay) ──────────────── */}
+            {/* ── Gem Place Cards Overlay ──────────────────────────────── */}
+            {viewState === 'district' && selectedDistrict && (
+                <div className="absolute bottom-4 lg:bottom-8 left-4 lg:left-6 right-4 lg:right-[400px] z-20">
+                    {/* Tab buttons */}
+                    <div className="flex gap-2 mb-3">
+                        <button
+                            onClick={() => setGemTab('signature')}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-serif uppercase tracking-wider transition-all ${gemTab === 'signature'
+                                    ? 'bg-antique-gold/20 text-antique-gold border border-antique-gold/40'
+                                    : 'bg-white/5 text-white/40 border border-white/10 hover:bg-white/10'
+                                }`}
+                        >
+                            <Sparkles className="w-3 h-3" />
+                            Signature
+                        </button>
+                        <button
+                            onClick={() => setGemTab('hidden')}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-serif uppercase tracking-wider transition-all ${gemTab === 'hidden'
+                                    ? 'bg-antique-gold/20 text-antique-gold border border-antique-gold/40'
+                                    : 'bg-white/5 text-white/40 border border-white/10 hover:bg-white/10'
+                                }`}
+                        >
+                            <Compass className="w-3 h-3" />
+                            Hidden Gems
+                        </button>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin" style={{ scrollSnapType: 'x mandatory' }}>
+                        {activeGemPlaces.map((gem, idx) => {
+                            const inBasket = isInBasket(gem.id);
+                            return (
+                                <div
+                                    key={gem.id}
+                                    onClick={() => !inBasket && addToBasket(gem)}
+                                    className={`gem-place-card place-card-enter flex-shrink-0 w-[260px] lg:w-[280px] rounded-xl p-4 ${inBasket ? 'added' : ''}`}
+                                    style={{
+                                        animationDelay: `${idx * 100}ms`,
+                                        scrollSnapAlign: 'start',
+                                    }}
+                                >
+                                    {/* Category chip + hidden badge */}
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-1.5">
+                                            <span
+                                                className="text-[9px] uppercase tracking-wider font-semibold px-2.5 py-1 rounded-full"
+                                                style={{
+                                                    backgroundColor: getCategoryColor(gem.category) + '25',
+                                                    color: getCategoryColor(gem.category),
+                                                }}
+                                            >
+                                                {gem.category}
+                                            </span>
+                                            {gem.isHidden && (
+                                                <span className="text-[8px] text-antique-gold/50 uppercase tracking-wider">Hidden</span>
+                                            )}
+                                        </div>
+                                        {inBasket && (
+                                            <span className="text-[9px] text-antique-gold uppercase tracking-wider">Added ✓</span>
+                                        )}
+                                    </div>
+
+                                    {/* Name */}
+                                    <h4 className="font-serif text-white text-[15px] leading-tight mb-2">{gem.name}</h4>
+
+                                    {/* Teaser */}
+                                    <p className="text-white/40 text-[11px] font-light leading-relaxed line-clamp-2">{gem.teaser}</p>
+
+                                    {/* Visit time + CTA */}
+                                    <div className="flex items-center justify-between mt-3">
+                                        {gem.visit_minutes_est > 0 && (
+                                            <span className="text-white/25 text-[9px] flex items-center gap-1">
+                                                <Clock className="w-2.5 h-2.5" /> ~{gem.visit_minutes_est} min
+                                            </span>
+                                        )}
+                                        {!inBasket && (
+                                            <div className="flex items-center gap-1.5 text-antique-gold/60">
+                                                <Sparkles className="w-3 h-3" />
+                                                <span className="text-[10px] font-serif uppercase tracking-wider">Add to journey</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
             {/* ── Floating Glass Plan Drawer ──────────────────────────── */}
             <div className={`absolute z-30 transition-all duration-500 ease-out
@@ -1132,11 +993,7 @@ export default function BespokeTourPlanner() {
                                                 key={place.id}
                                                 place={place}
                                                 index={idx}
-                                                isFirst={idx === 0}
-                                                isLast={idx === basket.length - 1}
                                                 onRemove={removeFromBasket}
-                                                onMoveUp={moveBasketItemUp}
-                                                onMoveDown={moveBasketItemDown}
                                             />
                                         ))}
                                     </div>

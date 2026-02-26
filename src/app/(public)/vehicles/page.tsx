@@ -18,7 +18,7 @@ const TRANSFERS = [
         seats: 3,
         luggage: 2,
         dailyRate: 32000,
-        images: ['https://picsum.photos/seed/mercedes/800/600'],
+        images: ['/images/home/heritage-story.png'], // Stand-in for Sedan
         transferTypes: ['Airport Pickup', 'Airport Drop', 'VIP Transfer'],
         category: 'airport',
     },
@@ -29,7 +29,7 @@ const TRANSFERS = [
         seats: 4,
         luggage: 4,
         dailyRate: 28000,
-        images: ['https://picsum.photos/seed/landcruiser/800/600'],
+        images: ['/images/home/curated-hillcountry.png'], // Stand-in for SUV
         transferTypes: ['Airport Pickup', 'Inter-City', 'Safari Transfer'],
         category: 'airport',
     },
@@ -40,7 +40,7 @@ const TRANSFERS = [
         seats: 6,
         luggage: 6,
         dailyRate: 35000,
-        images: ['https://picsum.photos/seed/alphard/800/600'],
+        images: ['/images/home/pkg_classic_ceylon.png'], // Stand-in for Van
         transferTypes: ['Airport Pickup', 'Group Transfer', 'Family Tour'],
         category: 'airport',
     },
@@ -51,7 +51,7 @@ const TRANSFERS = [
         seats: 6,
         luggage: 5,
         dailyRate: 42000,
-        images: ['https://picsum.photos/seed/vclass/800/600'],
+        images: ['/images/home/pkg_classic_ceylon.png'],
         transferTypes: ['VIP Transfer', 'Corporate Charter'],
         category: 'intercity',
     },
@@ -62,7 +62,7 @@ const TRANSFERS = [
         seats: 3,
         luggage: 2,
         dailyRate: 18000,
-        images: ['https://picsum.photos/seed/bmw5/800/600'],
+        images: ['/images/home/heritage-story.png'],
         transferTypes: ['City Tour', 'Half-Day Tour'],
         category: 'city',
     },
@@ -73,7 +73,7 @@ const TRANSFERS = [
         seats: 5,
         luggage: 3,
         dailyRate: 22000,
-        images: ['https://picsum.photos/seed/prado/800/600'],
+        images: ['/images/home/curated-hillcountry.png'],
         transferTypes: ['City Tour', 'Full-Day Tour'],
         category: 'city',
     },
@@ -84,7 +84,7 @@ const TRANSFERS = [
         seats: 10,
         luggage: 10,
         dailyRate: 48000,
-        images: ['https://picsum.photos/seed/hiace/800/600'],
+        images: ['/images/home/pkg_classic_ceylon.png'],
         transferTypes: ['Group Transfer', 'Multi-Day Tour', 'Inter-City'],
         category: 'intercity',
     },
@@ -95,7 +95,7 @@ const TRANSFERS = [
         seats: 2,
         luggage: 1,
         dailyRate: 12000,
-        images: ['https://picsum.photos/seed/fiat500/800/600'],
+        images: ['/images/home/curated-southcoast.png'],
         transferTypes: ['City Tour', 'Photo Tour', 'Heritage Experience'],
         category: 'city',
     },
@@ -106,7 +106,7 @@ const TRANSFERS = [
         seats: 4,
         luggage: 3,
         dailyRate: 55000,
-        images: ['https://picsum.photos/seed/lexuslx/800/600'],
+        images: ['/images/home/curated-hillcountry.png'],
         transferTypes: ['Airport Drop', 'Inter-City', 'VIP Service'],
         category: 'intercity',
     },
@@ -120,31 +120,31 @@ export default function VehiclesPage() {
         : TRANSFERS.filter(v => v.category === activeCategory);
 
     return (
-        <div className="min-h-screen bg-off-white pt-32 pb-20">
+        <div className="min-h-screen bg-off-white pt-32 pb-24">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
                 {/* Header */}
-                <div className="mb-12 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                    <span className="inline-block py-1 px-4 text-xs tracking-[0.2em] uppercase font-medium text-antique-gold border border-antique-gold/30 mb-6 bg-deep-emerald/5">
+                <div className="mb-20 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 max-w-3xl mx-auto">
+                    <span className="inline-block py-1.5 px-5 text-xs tracking-[0.2em] uppercase font-medium text-antique-gold border border-antique-gold/30 mb-8 bg-deep-emerald/5">
                         Seamless Journeys
                     </span>
-                    <h1 className="text-4xl md:text-5xl font-serif text-deep-emerald mb-4">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-deep-emerald mb-6 leading-tight">
                         Private Transfers
                     </h1>
-                    <p className="text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
+                    <p className="text-gray-600 text-lg font-light leading-relaxed">
                         Arrive in elegance. Explore our premium fleet of chauffeur-driven vehicles for airport pickups, drops, city tours, and bespoke inter-city transfers.
                     </p>
                 </div>
 
                 {/* Category Tabs */}
-                <div className="flex flex-wrap justify-center gap-3 mb-12">
+                <div className="flex flex-wrap justify-center gap-4 mb-16">
                     {VEHICLE_CATEGORIES.map((cat) => (
                         <button
                             key={cat.id}
                             onClick={() => setActiveCategory(cat.id)}
-                            className={`px-6 py-2.5 text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 border
+                            className={`px-8 py-3.5 text-[11px] tracking-[0.2em] uppercase font-semibold transition-all duration-500 border
                                 ${activeCategory === cat.id
                                     ? 'bg-deep-emerald text-antique-gold border-deep-emerald shadow-lg'
-                                    : 'bg-white text-deep-emerald/70 border-deep-emerald/15 hover:border-antique-gold/50 hover:text-deep-emerald'
+                                    : 'bg-white text-deep-emerald/70 border-deep-emerald/15 hover:border-antique-gold/50 hover:text-deep-emerald hover:bg-off-white/50'
                                 }`}
                         >
                             {cat.label}
@@ -152,7 +152,7 @@ export default function VehiclesPage() {
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 lg:gap-10 max-w-5xl mx-auto">
                     {filteredVehicles.map((vehicle: any) => (
                         <VehicleCard key={vehicle._id} vehicle={vehicle} />
                     ))}

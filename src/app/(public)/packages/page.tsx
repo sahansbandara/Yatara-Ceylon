@@ -17,7 +17,7 @@ const PACKAGES = [
         priceMin: 128000,
         durationDays: 6,
         durationNights: 5,
-        images: ['https://picsum.photos/seed/ramayana/800/600'],
+        images: ['/images/home/pkg_ramayana_1772119639135.png'],
         difficulty: 'LEISURE',
         tags: ['Families', 'Pilgrims', 'Culture'],
     },
@@ -29,7 +29,7 @@ const PACKAGES = [
         priceMin: 155000,
         durationDays: 7,
         durationNights: 6,
-        images: ['https://picsum.photos/seed/ceylon/800/600'],
+        images: ['/images/home/pkg_ceylon_express_1772119662402.png'],
         difficulty: 'EASY',
         tags: ['First-Time Visitors', 'Couples', 'Families'],
     },
@@ -41,7 +41,7 @@ const PACKAGES = [
         priceMin: 168000,
         durationDays: 7,
         durationNights: 6,
-        images: ['https://picsum.photos/seed/cultural/800/600'],
+        images: ['/images/home/pkg_cultural_scenic_1772119769964.png'],
         difficulty: 'MODERATE',
         tags: ['Culture Enthusiasts', 'Couples'],
     },
@@ -53,7 +53,7 @@ const PACKAGES = [
         priceMin: 195000,
         durationDays: 7,
         durationNights: 6,
-        images: ['https://picsum.photos/seed/wildlife/800/600'],
+        images: ['/images/home/pkg_heritage_wildlife_1772119687299.png'],
         difficulty: 'MODERATE',
         tags: ['Wildlife Lovers', 'History Buffs'],
     },
@@ -65,7 +65,7 @@ const PACKAGES = [
         priceMin: 142000,
         durationDays: 7,
         durationNights: 6,
-        images: ['https://picsum.photos/seed/classic/800/600'],
+        images: ['/images/home/pkg_classic_ceylon_1772119707902.png'],
         difficulty: 'EASY',
         tags: ['General Travelers', 'Families'],
     },
@@ -77,7 +77,7 @@ const PACKAGES = [
         priceMin: 175000,
         durationDays: 8,
         durationNights: 7,
-        images: ['https://picsum.photos/seed/eastcoast/800/600'],
+        images: ['/images/home/pkg_east_coast_1772119793935.png'],
         difficulty: 'LEISURE',
         tags: ['Beach Lovers', 'Summer Travelers'],
     },
@@ -89,7 +89,7 @@ const PACKAGES = [
         priceMin: 189000,
         durationDays: 8,
         durationNights: 7,
-        images: ['https://picsum.photos/seed/teatemples/800/600'],
+        images: ['/images/home/pkg_tea_temples_1772119728527.png'],
         difficulty: 'MODERATE',
         tags: ['Nature Lovers', 'History Buffs'],
     },
@@ -97,45 +97,43 @@ const PACKAGES = [
 
 export default function PackagesPage() {
     return (
-        <div className="min-h-screen bg-off-white pt-32 pb-20">
+        <div className="min-h-screen bg-off-white pt-32 pb-24">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
                 {/* Header */}
-                <div className="mb-16 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                    <span className="inline-block py-1 px-4 text-xs tracking-[0.2em] uppercase font-medium text-antique-gold border border-antique-gold/30 mb-6 bg-deep-emerald/5">
+                <div className="mb-20 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 max-w-3xl mx-auto">
+                    <span className="inline-block py-1.5 px-5 text-xs tracking-[0.2em] uppercase font-medium text-antique-gold border border-antique-gold/30 mb-8 bg-deep-emerald/5">
                         Our Signature Itineraries
                     </span>
-                    <h1 className="text-4xl md:text-5xl font-serif text-deep-emerald mb-4">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-deep-emerald mb-6 leading-tight">
                         Signature Journeys
                     </h1>
-                    <p className="text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
-                        Handcrafted luxury itineraries for the discerning traveler. Each journey is meticulously designed to unveil the authentic soul of Ceylon.
+                    <p className="text-gray-600 text-lg font-light leading-relaxed">
+                        Handcrafted luxury itineraries for the discerning traveler. Each journey is meticulously designed to unveil the authentic soul of Ceylon with private guides and elite comforts.
                     </p>
                 </div>
 
-                {/* Top Row — 5 cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-6">
-                    {PACKAGES.slice(0, 5).map((pkg: any) => (
+                {/* Grid Layout - 2 columns on desktop for larger, more luxurious cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 mb-16">
+                    {PACKAGES.map((pkg: any) => (
                         <PackageCard key={pkg._id} pkg={pkg} />
                     ))}
                 </div>
 
-                {/* Bottom Row — 2 cards + View All */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-                    {PACKAGES.slice(5).map((pkg: any) => (
-                        <PackageCard key={pkg._id} pkg={pkg} />
-                    ))}
-                    {/* Spacer for alignment */}
-                    <div className="hidden xl:block" />
-                    {/* View All Tours CTA */}
-                    <div className="xl:col-span-2 flex items-center justify-center">
-                        <Link
-                            href="/build-tour"
-                            className="inline-flex items-center gap-3 px-10 py-4 bg-deep-emerald text-antique-gold hover:bg-deep-emerald/90 border border-antique-gold/30 hover:border-antique-gold/60 font-serif uppercase tracking-[0.2em] text-sm transition-all duration-300 shadow-lg hover:shadow-xl"
-                        >
-                            View All Tours
-                            <ArrowRight className="w-4 h-4" />
-                        </Link>
-                    </div>
+                {/* View All Tours / Inquiry CTA */}
+                <div className="mt-20 flex flex-col md:flex-row items-center justify-center gap-6">
+                    <Link
+                        href="/build-tour"
+                        className="inline-flex items-center gap-3 px-10 py-5 bg-deep-emerald text-antique-gold hover:bg-deep-emerald/90 border border-antique-gold/30 font-serif uppercase tracking-[0.2em] text-sm transition-all duration-300 shadow-lg"
+                    >
+                        Build Custom Tour
+                        <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <Link
+                        href="/inquire"
+                        className="inline-flex items-center gap-3 px-10 py-5 bg-white text-deep-emerald hover:bg-off-white border border-deep-emerald/30 font-serif uppercase tracking-[0.2em] text-sm transition-all duration-300"
+                    >
+                        Request A Proposal
+                    </Link>
                 </div>
             </div>
         </div>

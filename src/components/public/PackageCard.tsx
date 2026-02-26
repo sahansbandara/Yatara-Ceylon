@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Clock, ArrowRight, Star } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
@@ -25,39 +25,32 @@ export default function PackageCard({ pkg }: PackageCardProps) {
     const { currency, convertRate } = useCurrency();
 
     return (
-        <div className="group rounded-none overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 border border-off-white/20 flex flex-col h-full">
+        <div className="group rounded-none overflow-hidden bg-white hover:bg-off-white/50 border border-transparent hover:border-antique-gold/30 transition-all duration-700 flex flex-col h-full shadow-sm">
             {/* Image */}
-            <div className="relative h-52 overflow-hidden">
+            <div className="relative h-[280px] overflow-hidden">
                 <Image
-                    src={pkg.images[0] || 'https://picsum.photos/seed/pkg-fallback/800/600'}
+                    src={pkg.images[0]}
                     alt={pkg.title}
                     fill
-                    className="object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    className="object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out"
                 />
-                <div className="absolute top-3 right-3">
-                    <Badge className="bg-white/90 text-deep-emerald hover:bg-white backdrop-blur-sm font-serif shadow-sm rounded-none tracking-widest text-[9px] uppercase">
-                        {pkg.durationDays}-Day, {pkg.durationNights || pkg.durationDays - 1}-Night
+                <div className="absolute top-4 right-4">
+                    <Badge className="bg-white/90 text-deep-emerald hover:bg-white backdrop-blur-sm font-serif shadow-sm rounded-none tracking-widest text-[10px] uppercase px-3 py-1.5">
+                        {pkg.durationDays} Days, {pkg.durationNights || pkg.durationDays - 1} Nights
                     </Badge>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep-emerald/80 via-transparent to-transparent opacity-40 group-hover:opacity-60 transition-opacity duration-700" />
             </div>
 
-            {/* Content */}
-            <div className="p-5 flex flex-col flex-grow">
-                <h3 className="text-lg font-serif text-deep-emerald group-hover:text-antique-gold transition-colors duration-500 mb-2 line-clamp-2 leading-snug">
-                    {pkg.title}
-                </h3>
-                <p className="text-gray-500 font-light text-xs line-clamp-3 leading-relaxed mb-3">
-                    {pkg.description}
-                </p>
-
+            {/* Content gap-8 for spaciousness */}
+            <div className="p-8 flex flex-col flex-grow">
                 {/* Tags */}
                 {pkg.tags && pkg.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                        {pkg.tags.map((tag) => (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {pkg.tags.slice(0, 2).map((tag) => (
                             <span
                                 key={tag}
-                                className="text-[9px] tracking-widest uppercase font-medium text-antique-gold/80 bg-antique-gold/8 border border-antique-gold/15 px-2 py-0.5"
+                                className="text-[10px] tracking-[0.2em] uppercase font-medium text-antique-gold"
                             >
                                 {tag}
                             </span>
@@ -65,19 +58,27 @@ export default function PackageCard({ pkg }: PackageCardProps) {
                     </div>
                 )}
 
-                <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                <h3 className="text-2xl font-serif text-deep-emerald group-hover:text-antique-gold transition-colors duration-500 mb-4 leading-snug">
+                    {pkg.title}
+                </h3>
+
+                <p className="text-gray-500 font-light text-sm line-clamp-3 leading-relaxed mb-8 flex-grow">
+                    {pkg.description}
+                </p>
+
+                <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
                     <div>
-                        <p className="text-[9px] text-gray-400 font-semibold tracking-widest uppercase mb-0.5">Starting from</p>
+                        <p className="text-[10px] text-gray-400 font-semibold tracking-widest uppercase mb-1">Starting from</p>
                         <p className="text-xl font-serif text-deep-emerald">
                             {formatPrice(pkg.priceMin, currency, convertRate)}
                         </p>
                     </div>
                     <Link href={`/packages/${pkg.slug}`}>
                         <Button
-                            size="icon"
-                            className="bg-deep-emerald/5 border border-deep-emerald/10 text-deep-emerald hover:bg-antique-gold hover:text-white rounded-none transition-all duration-300 h-10 w-10 group-hover:scale-110"
+                            variant="outline"
+                            className="border-deep-emerald text-deep-emerald hover:bg-deep-emerald hover:text-white rounded-none transition-all duration-500 h-10 px-6 uppercase tracking-widest text-xs font-semibold group-hover:bg-deep-emerald group-hover:text-white"
                         >
-                            <ArrowRight className="h-4 w-4" />
+                            Explore
                         </Button>
                     </Link>
                 </div>

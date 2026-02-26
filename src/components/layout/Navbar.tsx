@@ -14,6 +14,7 @@ const navLinks = [
     { href: '/destinations', label: 'THE DESTINATIONS' },
     { href: '/vehicles', label: 'PRIVATE TRANSFERS' },
     { href: '/build-tour', label: 'BESPOKE PLANNING' },
+    { href: '/guide', label: 'GUIDE' },
 ];
 
 export function Navbar() {
@@ -70,10 +71,10 @@ export function Navbar() {
                         </span>
                     </button>
 
-                    {/* Concierge Access - Highlighted CTA */}
-                    <Link href="/auth/login">
+                    {/* Request A Proposal - Primary CTA */}
+                    <Link href="/inquire">
                         <Button className="h-10 px-7 bg-deep-emerald text-white hover:bg-deep-emerald/85 tracking-[0.15em] text-[12px] rounded-full border border-deep-emerald transition-all duration-300 font-semibold shadow-md hover:shadow-lg whitespace-nowrap">
-                            CONCIERGE ACCESS
+                            REQUEST A PROPOSAL
                         </Button>
                     </Link>
                 </div>
@@ -111,9 +112,9 @@ export function Navbar() {
                                         {currency}
                                     </span>
                                 </button>
-                                <Link href="/auth/login" onClick={() => setOpen(false)}>
+                                <Link href="/inquire" onClick={() => setOpen(false)}>
                                     <Button className="w-full h-12 bg-deep-emerald text-white hover:bg-deep-emerald/85 tracking-[0.15em] text-[13px] rounded-full font-semibold shadow-md border border-deep-emerald">
-                                        CONCIERGE ACCESS
+                                        REQUEST A PROPOSAL
                                     </Button>
                                 </Link>
                             </div>
