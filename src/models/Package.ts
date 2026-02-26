@@ -45,7 +45,7 @@ const ItineraryDaySchema = new Schema<IItineraryDay>(
 const PackageSchema = new Schema<IPackage>(
     {
         title: { type: String, required: true, trim: true },
-        slug: { type: String, required: true, unique: true, lowercase: true },
+        slug: { type: String, required: true, lowercase: true },
         summary: { type: String, required: true },
         fullDescription: String,
         duration: { type: String, required: true },

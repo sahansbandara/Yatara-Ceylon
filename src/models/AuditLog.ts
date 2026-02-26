@@ -17,7 +17,7 @@ const AuditLogSchema = new Schema<IAuditLog>({
     entityId: String,
     meta: Schema.Types.Mixed,
     ip: String,
-    at: { type: Date, default: Date.now, index: true },
+    at: { type: Date, default: Date.now },
 });
 
 // TTL index: auto-delete logs after 1 year

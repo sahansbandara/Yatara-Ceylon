@@ -17,7 +17,7 @@ export interface IDestination extends Document {
 const DestinationSchema = new Schema<IDestination>(
     {
         title: { type: String, required: true, trim: true },
-        slug: { type: String, required: true, unique: true, lowercase: true },
+        slug: { type: String, required: true, lowercase: true },
         description: { type: String, required: true },
         longDescription: String,
         location: String,

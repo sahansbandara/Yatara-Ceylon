@@ -30,7 +30,7 @@ export interface IBooking extends Document {
 
 const BookingSchema = new Schema<IBooking>(
     {
-        bookingNo: { type: String, unique: true },
+        bookingNo: { type: String },
         customerName: { type: String, required: true, trim: true },
         phone: { type: String, required: true, trim: true },
         email: { type: String, lowercase: true, trim: true },
