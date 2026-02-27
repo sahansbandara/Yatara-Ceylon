@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Menu, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
@@ -39,22 +39,9 @@ const navLinks = [
 export function Navbar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { currency, setCurrency } = useCurrency();
-
-    // Check if on homepage for transparent navbar
-    const isHomePage = pathname === '/';
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 60);
-        };
-        handleScroll(); // check on mount
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     const isActive = (href: string) => {
         if (href === '/') return pathname === '/';
@@ -72,33 +59,17 @@ export function Navbar() {
         }, 200);
     };
 
-    // Determine navbar style based on page and scroll
-    const navbarClass = isHomePage && !scrolled
-        ? 'navbar-transparent'
-        : 'navbar-scrolled';
-
-    // Text color based on state
-    const textColor = isHomePage && !scrolled
-        ? 'text-white/90'
-        : 'text-[#043927]/90';
-
-    const activeColor = 'text-[#D4AF37]';
-
-    const logoFilter = isHomePage && !scrolled
-        ? 'brightness-0 invert drop-shadow-md'
-        : 'drop-shadow-sm';
-
     return (
-        <header className={`fixed top-0 z-50 w-full ${navbarClass}`}>
-            <div className="section-container flex h-20 items-center justify-between px-4 lg:px-8">
+        <header className="fixed top-0 z-50 w-full bg-[#0a1f15]/80 backdrop-blur-md border-b border-white/5">
+            <div className="section-container flex h-16 items-center justify-between px-4 lg:px-8">
                 {/* Logo */}
                 <Link href="/" className="flex items-center shrink-0">
                     <Image
                         src="/images/yatara-brand-block.svg"
                         alt="Yatara Ceylon Logo"
-                        width={200}
-                        height={46}
-                        className={`object-contain h-[46px] w-auto hover:opacity-90 transition-all duration-500 ${logoFilter}`}
+                        width={180}
+                        height={40}
+                        className="object-contain h-[40px] w-auto hover:opacity-90 transition-all duration-500 brightness-0 invert drop-shadow-md"
                     />
                 </Link>
 
@@ -115,8 +86,8 @@ export function Navbar() {
                                 href={link.href}
                                 className={`text-[12px] 2xl:text-[13px] font-sans tracking-[0.15em] transition-all duration-300 whitespace-nowrap relative py-1 flex items-center gap-1
                                     ${isActive(link.href)
-                                        ? `${activeColor} after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#D4AF37]`
-                                        : `${textColor} hover:${activeColor}`
+                                        ? 'text-[#D4AF37] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#D4AF37]'
+                                        : 'text-white/70 hover:text-white'
                                     }`}
                             >
                                 {link.label}
@@ -128,12 +99,12 @@ export function Navbar() {
                             {/* Dropdown Panel */}
                             {link.dropdown && activeDropdown === link.label && (
                                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 animate-slide-down">
-                                    <div className="navbar-dropdown rounded-xl py-4 px-2 min-w-[220px]">
+                                    <div className="bg-[#0a1f15]/95 backdrop-blur-xl border border-white/10 rounded-xl py-4 px-2 min-w-[220px] shadow-2xl">
                                         {link.dropdown.map((item) => (
                                             <Link
                                                 key={item.href}
                                                 href={item.href}
-                                                className="block px-4 py-2.5 text-[11px] tracking-[0.15em] text-[#043927]/80 hover:text-[#D4AF37] hover:bg-[#D4AF37]/5 rounded-lg transition-all duration-200 font-medium"
+                                                className="block px-4 py-2.5 text-[11px] tracking-[0.15em] text-white/60 hover:text-[#D4AF37] hover:bg-white/5 rounded-lg transition-all duration-200 font-medium"
                                             >
                                                 {item.label}
                                             </Link>
@@ -147,19 +118,17 @@ export function Navbar() {
 
                 {/* Desktop Right Actions */}
                 <div className="hidden xl:flex items-center gap-6 shrink-0">
-                    {/* Login Link */}
                     <Link
                         href="/auth/login"
-                        className={`text-[11px] font-sans tracking-[0.2em] hover:text-[#D4AF37] transition-colors font-semibold uppercase ${textColor}`}
+                        className="text-[11px] font-sans tracking-[0.2em] text-white/70 hover:text-[#D4AF37] transition-colors font-semibold uppercase"
                     >
                         LOGIN
                     </Link>
 
-                    {/* Distinctive Currency Toggle */}
                     <button
                         onClick={() => setCurrency(currency === 'LKR' ? 'USD' : 'LKR')}
                         className="currency-toggle-btn"
-                        style={isHomePage && !scrolled ? { borderColor: 'rgba(255,255,255,0.4)', color: 'white' } : {}}
+                        style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'white' }}
                     >
                         <span className="currency-toggle-indicator" />
                         <span className="text-[11px] font-semibold tracking-[0.2em]">
@@ -167,15 +136,8 @@ export function Navbar() {
                         </span>
                     </button>
 
-                    {/* Request A Proposal — Glass CTA */}
                     <Link href="/inquire">
-                        <Button
-                            className={`h-10 px-7 tracking-[0.15em] text-[12px] rounded-full transition-all duration-500 font-semibold shadow-md hover:shadow-lg whitespace-nowrap border
-                                ${isHomePage && !scrolled
-                                    ? 'bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white hover:text-deep-emerald'
-                                    : 'bg-deep-emerald text-white hover:bg-deep-emerald/85 border-deep-emerald'
-                                }`}
-                        >
+                        <Button className="h-9 px-7 tracking-[0.15em] text-[11px] rounded-full transition-all duration-500 font-semibold shadow-md hover:shadow-lg whitespace-nowrap bg-[#D4AF37] text-[#0a1f15] hover:bg-[#D4AF37]/90 border-0">
                             INQUIRE
                         </Button>
                     </Link>
@@ -184,21 +146,15 @@ export function Navbar() {
                 {/* Mobile Menu */}
                 <Sheet open={open} onOpenChange={setOpen}>
                     <SheetTrigger asChild className="xl:hidden">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className={`${isHomePage && !scrolled ? 'text-white hover:bg-white/10' : 'text-[#043927] hover:bg-[#043927]/10'}`}
-                        >
+                        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                             <Menu className="h-6 w-6" />
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="right" className="w-80 p-0 border-l border-[#D4AF37]/20 overflow-hidden">
-                        {/* Glass Background */}
                         <div className="absolute inset-0 liquid-glass-dark" />
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
 
                         <div className="relative z-10 flex flex-col gap-6 mt-16 px-6">
-                            {/* Decorative gold line */}
                             <div className="h-px w-16 bg-gradient-to-r from-[#D4AF37] to-transparent mb-4" />
 
                             {navLinks.map((link, idx) => (
@@ -214,7 +170,6 @@ export function Navbar() {
                                     >
                                         {link.label}
                                     </Link>
-                                    {/* Mobile sub-links */}
                                     {link.dropdown && (
                                         <div className="ml-4 mt-2 space-y-2">
                                             {link.dropdown.slice(1).map((sub) => (
@@ -233,11 +188,7 @@ export function Navbar() {
                             ))}
 
                             <div className="border-t border-[#D4AF37]/20 pt-8 mt-4 flex flex-col gap-6">
-                                <Link
-                                    href="/auth/login"
-                                    onClick={() => setOpen(false)}
-                                    className="text-[14px] font-sans tracking-[0.15em] text-white/80 hover:text-[#D4AF37] transition-colors"
-                                >
+                                <Link href="/auth/login" onClick={() => setOpen(false)} className="text-[14px] font-sans tracking-[0.15em] text-white/80 hover:text-[#D4AF37] transition-colors">
                                     LOGIN
                                 </Link>
                                 <button
@@ -246,18 +197,15 @@ export function Navbar() {
                                     style={{ borderColor: 'rgba(212,175,55,0.5)', color: 'white' }}
                                 >
                                     <span className="currency-toggle-indicator" />
-                                    <span className="text-[11px] font-semibold tracking-[0.2em]">
-                                        {currency}
-                                    </span>
+                                    <span className="text-[11px] font-semibold tracking-[0.2em]">{currency}</span>
                                 </button>
                                 <Link href="/inquire" onClick={() => setOpen(false)}>
-                                    <Button className="w-full h-12 bg-white/10 backdrop-blur-md border border-white/30 text-white hover:bg-white hover:text-deep-emerald tracking-[0.15em] text-[13px] rounded-full font-semibold shadow-md transition-all duration-500">
+                                    <Button className="w-full h-12 bg-[#D4AF37] text-[#0a1f15] hover:bg-[#D4AF37]/90 tracking-[0.15em] text-[13px] rounded-full font-semibold shadow-md transition-all duration-500">
                                         INQUIRE NOW
                                     </Button>
                                 </Link>
                             </div>
 
-                            {/* Bottom decorative gold accent */}
                             <div className="absolute bottom-8 left-6 right-6">
                                 <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-transparent" />
                                 <p className="text-center text-[9px] tracking-[0.3em] text-white/20 mt-4 uppercase">

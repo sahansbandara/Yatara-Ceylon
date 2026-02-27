@@ -1,21 +1,23 @@
 import { Suspense } from 'react';
-import HeroSection from '@/components/public/HeroSection';
-import SocialProof from '@/components/public/SocialProof';
+import HeroSplit from '@/components/public/HeroSplit';
+import TourCategoriesCarousel from '@/components/public/TourCategoriesCarousel';
+import TestimonialsOverlay from '@/components/public/TestimonialsOverlay';
 import HowItWorks from '@/components/public/HowItWorks';
 import SignatureExperiences from '@/components/public/SignatureExperiences';
 import CuratedCollection from '@/components/public/CuratedCollection';
 import HeritageStory from '@/components/public/HeritageStory';
-import YataraStandard from '@/components/public/YataraStandard';
 import DestinationShowcase from '@/components/public/DestinationShowcase';
+import YataraStandard from '@/components/public/YataraStandard';
+import ParallaxDivider from '@/components/public/ParallaxDivider';
 
 export default async function HomePage() {
     return (
         <div className="min-h-screen bg-off-white flex flex-col">
-            {/* The Cinematic Hero Section */}
-            <HeroSection />
+            {/* The Split Hero Section — Walkers-style 3-column */}
+            <HeroSplit />
 
-            {/* Social Proof — Trust signals right after hero */}
-            <SocialProof />
+            {/* Tour Categories — Swiper carousel with tinted bg */}
+            <TourCategoriesCarousel />
 
             {/* How It Works — 3-step concierge flow */}
             <HowItWorks />
@@ -23,11 +25,11 @@ export default async function HomePage() {
             {/* Signature Experiences — Editorial layout */}
             <SignatureExperiences />
 
-            {/* Glass Divider */}
-            <div className="section-divider-glass my-4" />
-
             {/* The Curated Collection Carousel */}
             <CuratedCollection />
+
+            {/* Testimonials — Background overlay + watermark typography */}
+            <TestimonialsOverlay />
 
             {/* Why Sri Lanka — Destination Showcase + Marquee */}
             <DestinationShowcase />
@@ -35,10 +37,10 @@ export default async function HomePage() {
             {/* The Founders / Heritage Story */}
             <HeritageStory />
 
-            {/* Glass Divider */}
-            <div className="section-divider-glass my-4" />
+            {/* Parallax Scroll Divider */}
+            <ParallaxDivider />
 
-            {/* Yatara Trust Badges */}
+            {/* Yatara Trust Badges — 2-column layout */}
             <YataraStandard />
         </div>
     );

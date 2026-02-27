@@ -1075,3 +1075,251 @@
     display: none !important;
   }
 }
+
+/* ============================================
+   🎠 SWIPER OVERRIDES — Yatara Theme
+   ============================================ */
+
+/* Hide default Swiper navigation arrows (we use custom ones) */
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+/* Testimonial fade carousel */
+.testimonial-swiper .swiper-slide {
+  opacity: 0 !important;
+  transition: opacity 0.7s ease;
+}
+
+.testimonial-swiper .swiper-slide-active {
+  opacity: 1 !important;
+}
+
+/* Ensure slides don't overflow */
+.swiper-slide {
+  height: auto;
+}
+
+/* ============================================
+   🗺️ BUILD TOUR V2 - MAP BUILDER STYLES
+   ============================================ */
+
+/* Left command panel styling */
+.build-tour-panel {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.45) 0%,
+      rgba(4, 57, 39, 0.35) 100%);
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+}
+
+@media (max-width: 1024px) {
+  .build-tour-panel {
+    background: linear-gradient(145deg,
+        rgba(2, 28, 19, 0.92) 0%,
+        rgba(4, 57, 39, 0.95) 100%);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-top: 1px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Custom scrollbar for builder panels */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.3);
+}
+
+/* Map Markers */
+.build-tour-pin-wrapper {
+  background: transparent;
+  border: none;
+}
+
+.build-tour-pin {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--pin-color, #D4AF37);
+  border: 2px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.build-tour-pin:hover {
+  transform: scale(1.3);
+  z-index: 1000 !important;
+}
+
+.build-tour-pin.in-stops {
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.build-tour-pin .pin-dot {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Marker Clusters */
+.build-tour-cluster-wrapper {
+  background: transparent;
+  border: none;
+}
+
+.build-tour-cluster {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(4, 57, 39, 0.9);
+  border: 2px solid #D4AF37;
+  color: #D4AF37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.build-tour-cluster:hover {
+  transform: scale(1.1);
+  background: rgba(212, 175, 55, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+/* Leaflet Popup overrides for dark luxury theme */
+.build-tour-popup-wrapper .leaflet-popup-content-wrapper {
+  background: rgba(4, 57, 39, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.build-tour-popup-wrapper .leaflet-popup-tip {
+  background: rgba(4, 57, 39, 0.95);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.build-tour-popup-wrapper .leaflet-popup-close-button {
+  color: rgba(255, 255, 255, 0.5) !important;
+  right: 8px !important;
+  top: 8px !important;
+}
+
+.build-tour-popup {
+  padding: 16px;
+  width: 240px;
+}
+
+.build-tour-popup .popup-category {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+  font-family: var(--font-cormorant), serif;
+  font-weight: 600;
+}
+
+.build-tour-popup .popup-name {
+  color: white;
+  font-size: 16px;
+  font-family: var(--font-cormorant), serif;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.build-tour-popup .popup-district {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.build-tour-popup .popup-teaser {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  font-weight: 300;
+}
+
+.build-tour-popup .popup-add-btn {
+  width: 100%;
+  padding: 8px 0;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #D4AF37;
+  border-radius: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.build-tour-popup .popup-add-btn:hover {
+  background: rgba(212, 175, 55, 0.25);
+}
+
+.build-tour-popup .popup-added {
+  width: 100%;
+  padding: 8px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* District Tooltip */
+.build-tour-district-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.leaflet-tooltip-left.build-tour-district-tooltip::before,
+.leaflet-tooltip-right.build-tour-district-tooltip::before {
+  display: none !important;
+}
+
+/* Route Info overlay */
+.build-tour-route-label {
+  background: rgba(4, 57, 39, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}

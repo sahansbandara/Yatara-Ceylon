@@ -1,47 +1,16 @@
 'use client';
 
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectFade, Autoplay } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import { testimonials, trustStats } from '@/data/testimonials';
 
-const testimonials = [
-    {
-        name: 'Charlotte & James',
-        country: 'United Kingdom',
-        quote: 'Yatara didn\'t just plan our honeymoon — they orchestrated a love letter to Sri Lanka. Every detail, from the private tuk-tuk through Galle Fort to sunrise at Sigiriya, was flawless.',
-        rating: 5,
-    },
-    {
-        name: 'Marc Delafosse',
-        country: 'France',
-        quote: 'As someone who has traveled extensively through Asia, I can say the level of personal attention Yatara provides is genuinely rare. Our guide felt like a friend, not a service.',
-        rating: 5,
-    },
-    {
-        name: 'Sarah Mitchell',
-        country: 'Australia',
-        quote: 'We had three children under 10 and Yatara made it effortless. The private vehicle, the curated kid-friendly stops, the concierge checking in daily — it was a dream.',
-        rating: 5,
-    },
-    {
-        name: 'Thomas & Anna Weber',
-        country: 'Germany',
-        quote: 'The fixed-price guarantee gave us peace of mind, and the itinerary exceeded our expectations in every way. We\'re already planning our return.',
-        rating: 5,
-    },
-    {
-        name: 'Yuki Tanaka',
-        country: 'Japan',
-        quote: 'The attention to culinary detail was extraordinary. Every meal was a discovery — from street-side hoppers to private dining at a tea estate. Unforgettable.',
-        rating: 5,
-    },
-];
+import 'swiper/css';
+import 'swiper/css/effect-fade';
 
-const stats = [
-    { value: 500, suffix: '+', label: 'Bespoke Journeys Crafted' },
-    { value: 4.9, suffix: ' / 5', label: 'Average Guest Rating', isFloat: true },
-    { value: 12, suffix: '+', label: 'Years of Excellence' },
-];
-
+/* ─── Animated Counter (reused pattern) ─── */
 function AnimatedCounter({ value, suffix, isFloat }: { value: number; suffix: string; isFloat?: boolean }) {
     const [display, setDisplay] = useState(0);
     const ref = useRef<HTMLDivElement>(null);
@@ -80,25 +49,17 @@ function AnimatedCounter({ value, suffix, isFloat }: { value: number; suffix: st
     );
 }
 
-export default function SocialProof() {
-    const [current, setCurrent] = useState(0);
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
+export default function TestimonialsOverlay() {
+    const swiperRef = useRef<SwiperType | null>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
 
-    const next = useCallback(() => {
-        setCurrent((prev) => (prev + 1) % testimonials.length);
+    const goPrev = useCallback(() => {
+        swiperRef.current?.slidePrev();
     }, []);
 
-    const prev = useCallback(() => {
-        setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    const goNext = useCallback(() => {
+        swiperRef.current?.slideNext();
     }, []);
-
-    // Auto-advance every 6 seconds
-    useEffect(() => {
-        timerRef.current = setInterval(next, 6000);
-        return () => { if (timerRef.current) clearInterval(timerRef.current); };
-    }, [next]);
-
-    const t = testimonials[current];
 
     return (
         <section className="relative overflow-hidden">
@@ -106,73 +67,100 @@ export default function SocialProof() {
             <div className="absolute inset-0">
                 <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{ backgroundImage: "url('/images/home/heritage-story.png')" }}
+                    style={{ backgroundImage: "url('/images/home/testimonials-bg.png')" }}
                 />
                 <div className="absolute inset-0 bg-deep-emerald/90" />
                 <div className="absolute inset-0 bg-gradient-to-b from-deep-emerald/60 via-transparent to-deep-emerald/80" />
             </div>
 
-            <div className="relative z-10 py-28">
+            {/* Giant watermark word (Walkers pattern) */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+                <span className="text-[8rem] md:text-[12rem] lg:text-[16rem] font-display font-bold text-white/[0.03] uppercase tracking-wider whitespace-nowrap">
+                    real stories
+                </span>
+            </div>
+
+            <div className="relative z-10 py-24 md:py-28">
                 <div className="max-w-5xl mx-auto px-4 md:px-8">
+                    {/* Section Heading */}
                     <div className="text-center mb-16">
                         <span className="inline-block mb-4 text-xs tracking-[0.3em] font-medium text-antique-gold uppercase">
-                            Trusted by Discerning Travelers
+                            Real Stories · Real Experiences
                         </span>
                         <h2 className="text-4xl md:text-6xl font-display text-off-white leading-tight">
                             Voices from <span className="italic font-light text-antique-gold">Our Guests</span>
                         </h2>
                     </div>
 
-                    {/* Featured Testimonial Carousel */}
+                    {/* Testimonial Carousel */}
                     <div className="relative max-w-3xl mx-auto">
                         {/* Navigation Arrows */}
                         <button
-                            onClick={prev}
+                            onClick={goPrev}
+                            aria-label="Previous testimonial"
                             className="absolute -left-4 md:-left-16 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:text-antique-gold hover:border-antique-gold/50 transition-all z-20 backdrop-blur-sm bg-white/5"
                         >
                             <ChevronLeft className="w-5 h-5" />
                         </button>
                         <button
-                            onClick={next}
+                            onClick={goNext}
+                            aria-label="Next testimonial"
                             className="absolute -right-4 md:-right-16 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:text-antique-gold hover:border-antique-gold/50 transition-all z-20 backdrop-blur-sm bg-white/5"
                         >
                             <ChevronRight className="w-5 h-5" />
                         </button>
 
-                        {/* Card */}
-                        <div className="text-center px-4 md:px-12 transition-all duration-700">
-                            <Quote className="w-12 h-12 text-antique-gold/20 mx-auto mb-8" />
+                        {/* Swiper fade carousel */}
+                        <Swiper
+                            modules={[EffectFade, Autoplay]}
+                            effect="fade"
+                            fadeEffect={{ crossFade: true }}
+                            autoplay={{ delay: 6000, disableOnInteraction: false }}
+                            loop
+                            onSwiper={(swiper) => { swiperRef.current = swiper; }}
+                            onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+                            className="testimonial-swiper"
+                        >
+                            {testimonials.map((t, idx) => (
+                                <SwiperSlide key={idx}>
+                                    <div className="text-center px-4 md:px-12">
+                                        <Quote className="w-12 h-12 text-antique-gold/20 mx-auto mb-8" />
 
-                            {/* Stars */}
-                            <div className="flex gap-1.5 justify-center mb-8">
-                                {Array.from({ length: t.rating }).map((_, i) => (
-                                    <Star key={i} className="w-5 h-5 fill-antique-gold text-antique-gold" />
-                                ))}
-                            </div>
+                                        {/* Stars */}
+                                        <div className="flex gap-1.5 justify-center mb-8">
+                                            {Array.from({ length: t.rating }).map((_, i) => (
+                                                <Star key={i} className="w-5 h-5 fill-antique-gold text-antique-gold" />
+                                            ))}
+                                        </div>
 
-                            <p className="text-off-white/90 font-light leading-relaxed text-xl md:text-2xl italic mb-10 min-h-[120px]">
-                                &ldquo;{t.quote}&rdquo;
-                            </p>
+                                        {/* Quote */}
+                                        <p className="text-off-white/90 font-light leading-relaxed text-xl md:text-2xl italic mb-10 min-h-[120px]">
+                                            &ldquo;{t.quote}&rdquo;
+                                        </p>
 
-                            {/* Author */}
-                            <div className="flex items-center justify-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-antique-gold/20 border border-antique-gold/30 flex items-center justify-center text-antique-gold font-display text-lg">
-                                    {t.name[0]}
-                                </div>
-                                <div className="text-left">
-                                    <p className="text-antique-gold font-medium text-base tracking-wide">{t.name}</p>
-                                    <p className="text-off-white/40 text-xs tracking-[0.15em] uppercase mt-0.5">{t.country}</p>
-                                </div>
-                            </div>
-                        </div>
+                                        {/* Author */}
+                                        <div className="flex items-center justify-center gap-4">
+                                            <div className="w-12 h-12 rounded-full bg-antique-gold/20 border border-antique-gold/30 flex items-center justify-center text-antique-gold font-display text-lg">
+                                                {t.name[0]}
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-antique-gold font-medium text-base tracking-wide">{t.name}</p>
+                                                <p className="text-off-white/40 text-xs tracking-[0.15em] uppercase mt-0.5">{t.country}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
 
                         {/* Dot Indicators */}
                         <div className="flex gap-2.5 justify-center mt-12">
                             {testimonials.map((_, idx) => (
                                 <button
                                     key={idx}
-                                    onClick={() => setCurrent(idx)}
-                                    className={`h-1.5 rounded-full transition-all duration-500 ${idx === current
+                                    onClick={() => swiperRef.current?.slideToLoop(idx)}
+                                    aria-label={`Go to testimonial ${idx + 1}`}
+                                    className={`h-1.5 rounded-full transition-all duration-500 ${idx === activeIndex
                                         ? 'bg-antique-gold w-8'
                                         : 'bg-white/20 w-1.5 hover:bg-white/40'
                                         }`}
@@ -181,10 +169,10 @@ export default function SocialProof() {
                         </div>
                     </div>
 
-                    {/* Animated Trust Indicators */}
+                    {/* Animated Trust Stats */}
                     <div className="border-t border-off-white/10 pt-16 mt-20">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                            {stats.map((stat, idx) => (
+                            {trustStats.map((stat, idx) => (
                                 <div key={idx} className="group">
                                     <AnimatedCounter value={stat.value} suffix={stat.suffix} isFloat={stat.isFloat} />
                                     <p className="text-xs tracking-[0.2em] uppercase text-off-white/40 font-light group-hover:text-off-white/60 transition-colors">

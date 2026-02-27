@@ -1,15 +1,23 @@
 import { Metadata } from 'next';
-import BespokeMapSection from '@/components/public/BespokeMapSection';
+import BuildTourHero from './_components/BuildTourHero';
+import BuildTourShell from './_components/BuildTourShell.client';
+import ThemeCarousel from './_components/ThemeCarousel';
+import Testimonials from './_components/Testimonials';
+import FooterOverlayCTA from './_components/FooterOverlayCTA';
 
 export const metadata: Metadata = {
     title: 'Bespoke Planning | Yatara Ceylon',
-    description: 'Design your perfect Sri Lanka itinerary. Select districts on our interactive map and curate a luxury journey tailored to you.',
+    description: 'Design your perfect Sri Lanka itinerary. Select destinations on our interactive map and curate a luxury journey tailored to you.',
 };
 
-export default async function BuildTourPage() {
+export default function BuildTourPage() {
     return (
-        <div className="h-screen w-screen overflow-hidden bg-[#0a0f0d] relative">
-            <BespokeMapSection />
-        </div>
+        <main className="bg-[#0a0f0d] min-h-screen">
+            <BuildTourHero />
+            <BuildTourShell />
+            <ThemeCarousel />
+            <Testimonials />
+            <FooterOverlayCTA />
+        </main>
     );
 }

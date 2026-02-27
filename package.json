@@ -40,6 +40,7 @@
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
     "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "lucide-react": "^0.563.0",
     "mongoose": "^8.9.5",
     "next": "^15.1.0",
@@ -48,9 +49,11 @@
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
     "slugify": "^1.6.6",
+    "swiper": "^12.1.2",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",

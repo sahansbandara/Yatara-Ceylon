@@ -2,51 +2,88 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import SectionHeading from '@/components/public/SectionHeading';
 import PackageCard from '@/components/public/PackageCard';
 import connectDB from '@/lib/mongodb';
 import Destination from '@/models/Destination';
 import Package from '@/models/Package';
-import { MapPin, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Compass, MapPin, Sparkles } from 'lucide-react';
+import { DESTINATION_BY_SLUG } from '@/data/destinations';
 
-// Force dynamic rendering
 export const dynamic = 'force-dynamic';
+
+interface DestinationDetail {
+    title: string;
+    slug: string;
+    description: string;
+    longDescription?: string;
+    location?: string;
+    images?: string[];
+}
+
+const districtImage = (slug: string) => `/images/districts/${slug}.svg`;
+
+function toDestinationDetail(raw: any): DestinationDetail {
+    return {
+        title: raw.title,
+        slug: raw.slug,
+        description: raw.description,
+        longDescription: raw.longDescription,
+        location: raw.location,
+        images: raw.images,
+    };
+}
 
 async function getDestination(slug: string) {
     await connectDB();
-    const dest: any = await Destination.findOne({ slug, isPublished: true, isDeleted: false }).lean();
-    if (!dest) return null;
 
-    // Fetch related packages (simple matching by title in tags or summary)
-    // Using regex for flexibility
-    const relatedPackages = await Package.find({
-        isPublished: true,
-        isDeleted: false,
-        $or: [
-            { tags: { $in: [new RegExp(dest.title, 'i'), new RegExp(dest.slug, 'i')] } },
-            { summary: { $regex: dest.title, $options: 'i' } }
-        ]
-    })
-        .sort({ rating: -1 })
-        .limit(3)
-        .lean();
+    const dbDestination: any = await Destination.findOne({ slug, isPublished: true, isDeleted: false }).lean();
+
+    const fallbackDestination = DESTINATION_BY_SLUG[slug] ?? null;
+
+    const destination = dbDestination
+        ? toDestinationDetail(JSON.parse(JSON.stringify(dbDestination)))
+        : fallbackDestination;
+
+    if (!destination) {
+        return null;
+    }
+
+    const relatedPackages = dbDestination
+        ? await Package.find({
+            isPublished: true,
+            isDeleted: false,
+            $or: [
+                { tags: { $in: [new RegExp(destination.title, 'i'), new RegExp(destination.slug, 'i')] } },
+                { summary: { $regex: destination.title, $options: 'i' } },
+            ],
+        })
+            .sort({ rating: -1 })
+            .limit(3)
+            .lean()
+        : [];
 
     return {
-        destination: JSON.parse(JSON.stringify(dest)),
-        relatedPackages: JSON.parse(JSON.stringify(relatedPackages))
+        destination,
+        relatedPackages: JSON.parse(JSON.stringify(relatedPackages)),
     };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
+
     await connectDB();
-    const dest: any = await Destination.findOne({ slug, isPublished: true, isDeleted: false }).lean();
-    if (!dest) return { title: 'Destination Not Found' };
+    const dbDestination: any = await Destination.findOne({ slug, isPublished: true, isDeleted: false }).lean();
+    const fallbackDestination = DESTINATION_BY_SLUG[slug] ?? null;
+    const destination = dbDestination ? toDestinationDetail(dbDestination) : fallbackDestination;
+
+    if (!destination) {
+        return { title: 'Destination Not Found | Yatara Ceylon' };
+    }
+
     return {
-        title: `${dest.title} | Yatara Ceylon`,
-        description: dest.description,
+        title: `${destination.title} | Yatara Ceylon`,
+        description: destination.description,
     };
 }
 
@@ -60,89 +97,93 @@ export default async function DestinationDetailPage({ params }: { params: Promis
 
     const { destination, relatedPackages } = data;
 
+    const heroImage = destination.images?.[0] ?? districtImage(destination.slug || slug);
+    const galleryImages = destination.images && destination.images.length > 1
+        ? destination.images.slice(1)
+        : [districtImage(destination.slug || slug), districtImage(destination.slug || slug)];
+
     return (
-        <div className="min-h-screen bg-white pb-20">
-            {/* Hero Image */}
-            <div className="relative h-[60vh] w-full">
+        <div className="min-h-screen bg-off-white pb-24">
+            <div className="relative h-[65vh] min-h-[460px] w-full overflow-hidden">
                 <Image
-                    src={destination.images[0] || 'https://images.unsplash.com/photo-1546708773-e57be64fa2e3?w=1200'}
+                    src={heroImage}
                     alt={destination.title}
                     fill
                     className="object-cover"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 w-full p-8 md:p-16">
-                    <div className="max-w-7xl mx-auto">
-                        <Link href="/destinations" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors">
+                <div className="absolute inset-0 bg-gradient-to-t from-deep-emerald via-deep-emerald/50 to-black/20" />
+
+                <div className="absolute inset-0">
+                    <div className="max-w-7xl mx-auto px-4 md:px-8 h-full flex flex-col justify-end pb-12 md:pb-16">
+                        <Link href="/destinations" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors w-fit text-sm tracking-[0.1em] uppercase">
                             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Destinations
                         </Link>
-                        <h1 className="text-5xl md:text-7xl font-bold text-white mb-4">{destination.title}</h1>
-                        <div className="flex items-center text-white/90 text-lg">
-                            <MapPin className="h-5 w-5 mr-2" />
-                            {destination.location || 'Sri Lanka'}
+
+                        <div className="max-w-4xl">
+                            <span className="inline-flex items-center gap-2 mb-5 py-1.5 px-4 text-[11px] tracking-[0.2em] uppercase border border-antique-gold/35 text-antique-gold bg-black/20 backdrop-blur-sm">
+                                <Sparkles className="h-3.5 w-3.5" /> Curated District Guide
+                            </span>
+                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-5 leading-tight">{destination.title}</h1>
+                            <div className="flex flex-wrap items-center gap-4 text-white/90">
+                                <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {destination.location || 'Sri Lanka'}</span>
+                                <span className="hidden md:inline text-antique-gold/70">•</span>
+                                <span className="inline-flex items-center gap-2"><Compass className="h-4 w-4" /> Private Journey Ready</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    {/* Content */}
+            <div className="max-w-7xl mx-auto px-4 md:px-8 pt-16">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     <div className="lg:col-span-2">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-6">About {destination.title}</h2>
-                        <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed">
-                            <p className="text-xl font-medium text-gray-800 mb-6">
-                                {destination.description}
+                        <div className="rounded-2xl border border-deep-emerald/10 bg-white p-8 md:p-10 mb-10">
+                            <h2 className="text-3xl font-serif text-deep-emerald mb-6">About {destination.title}</h2>
+                            <p className="text-xl text-deep-emerald/85 font-light mb-6 leading-relaxed">{destination.description}</p>
+                            <p className="text-gray-600 font-light leading-relaxed whitespace-pre-wrap">
+                                {destination.longDescription || 'Discover signature landscapes, cultural depth, and refined experiences designed around your travel pace. This district can be integrated into a bespoke itinerary with private transfers and curated local access.'}
                             </p>
-                            <div className="whitespace-pre-wrap">
-                                {destination.longDescription || "Experience the magic of this incredible destination. From its stunning vistas to its rich cultural heritage, there is something for everyone to discover."}
-                            </div>
                         </div>
 
-                        {/* Gallery */}
-                        {destination.images && destination.images.length > 1 && (
-                            <div className="mt-12">
-                                <h3 className="text-2xl font-bold text-gray-900 mb-6">Gallery</h3>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    {destination.images.slice(1).map((img: string, idx: number) => (
-                                        <div key={idx} className="relative h-48 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                            <Image
-                                                src={img}
-                                                alt={`${destination.title} ${idx + 2}`}
-                                                fill
-                                                className="object-cover hover:scale-110 transition-transform duration-500"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
+                        <div>
+                            <h3 className="text-2xl font-serif text-deep-emerald mb-5">Gallery</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                {galleryImages.map((img: string, idx: number) => (
+                                    <div key={`${img}-${idx}`} className="relative h-64 rounded-2xl overflow-hidden border border-deep-emerald/10 bg-white shadow-sm">
+                                        <Image
+                                            src={img}
+                                            alt={`${destination.title} ${idx + 1}`}
+                                            fill
+                                            className="object-cover hover:scale-105 transition-transform duration-700"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-deep-emerald/35 to-transparent" />
+                                    </div>
+                                ))}
                             </div>
-                        )}
+                        </div>
                     </div>
 
-                    {/* Sidebar / Related Packages */}
                     <div className="lg:col-span-1">
-                        <div className="sticky top-24">
-                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                                Tours Visiting {destination.title}
-                            </h3>
+                        <div className="sticky top-24 rounded-2xl border border-deep-emerald/10 bg-white p-6 md:p-8">
+                            <h3 className="text-xl font-serif text-deep-emerald mb-6">Tours Visiting {destination.title}</h3>
 
                             {relatedPackages.length > 0 ? (
                                 <div className="space-y-6">
                                     {relatedPackages.map((pkg: any) => (
                                         <PackageCard key={pkg._id} pkg={pkg} />
                                     ))}
-                                    <Link href={`/packages?q=${destination.title}`} className="block text-center mt-4">
-                                        <Button variant="outline" className="w-full">
+                                    <Link href={`/packages?q=${destination.title}`} className="block pt-2">
+                                        <Button variant="outline" className="w-full border-deep-emerald text-deep-emerald hover:bg-deep-emerald hover:text-white">
                                             View All Related Tours
                                         </Button>
                                     </Link>
                                 </div>
                             ) : (
-                                <div className="bg-gray-50 rounded-xl p-6 text-center border border-gray-100">
-                                    <p className="text-gray-500 mb-4">No specific tours listed for this destination yet.</p>
+                                <div className="rounded-xl border border-antique-gold/30 bg-antique-gold/10 p-5">
+                                    <p className="text-gray-600 mb-4 font-light">No specific tours are listed yet for this district.</p>
                                     <Link href="/build-tour">
-                                        <Button className="w-full bg-ocean-600 hover:bg-ocean-700">
+                                        <Button className="w-full bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold">
                                             Build Custom Tour
                                         </Button>
                                     </Link>
