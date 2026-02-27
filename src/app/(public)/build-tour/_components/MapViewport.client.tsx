@@ -8,6 +8,9 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
+// Stable refs for callbacks used inside Leaflet popup DOM listeners
+const getStoreState = () => useBuildTourStore.getState();
+
 export default function MapViewport() {
     const mapRef = useRef<any>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -130,11 +133,10 @@ export default function MapViewport() {
         });
 
         places.forEach((place: Place) => {
-            const inStops = isInStops(place.id);
             const color = getCategoryColor(place.category);
 
             const icon = L.divIcon({
-                html: `<div class="build-tour-pin ${inStops ? 'in-stops' : ''}" style="--pin-color: ${color}">
+                html: `<div class="build-tour-pin ${getStoreState().isInStops(place.id) ? 'in-stops' : ''}" style="--pin-color: ${color}">
                     <div class="pin-dot"></div>
                 </div>`,
                 className: 'build-tour-pin-wrapper',
@@ -144,36 +146,47 @@ export default function MapViewport() {
 
             const marker = L.marker([place.lat, place.lng], { icon });
 
-            // Popup
+            // Generate popup content dynamically on open so it reflects current state
+            marker.on('popupopen', () => {
+                const currentlyInStops = getStoreState().isInStops(place.id);
+                const popupEl = marker.getPopup()?.getElement();
+                if (popupEl) {
+                    const contentDiv = popupEl.querySelector('.leaflet-popup-content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML = `<div class="build-tour-popup">
+                            <div class="popup-category" style="color: ${color}">${place.category}</div>
+                            <div class="popup-name">${place.name}</div>
+                            <div class="popup-district">${place.district}</div>
+                            <div class="popup-teaser">${place.teaser}</div>
+                            ${!currentlyInStops ? `<button class="popup-add-btn" data-place-id="${place.id}">+ Add to Trip</button>` : '<div class="popup-added">✓ Added</div>'}
+                        </div>`;
+
+                        // Attach click handler using getStoreState() to avoid stale closures
+                        const btn = contentDiv.querySelector(`[data-place-id="${place.id}"]`);
+                        if (btn) {
+                            btn.addEventListener('click', () => {
+                                getStoreState().addStop(place);
+                                marker.closePopup();
+                            });
+                        }
+                    }
+                }
+            });
+
+            // Bind an initial placeholder popup
             marker.bindPopup(
                 `<div class="build-tour-popup">
-                    <div class="popup-category" style="color: ${color}">${place.category}</div>
                     <div class="popup-name">${place.name}</div>
-                    <div class="popup-district">${place.district}</div>
-                    <div class="popup-teaser">${place.teaser}</div>
-                    ${!inStops ? `<button class="popup-add-btn" data-place-id="${place.id}">+ Add to Trip</button>` : '<div class="popup-added">✓ Added</div>'}
                 </div>`,
                 { className: 'build-tour-popup-wrapper', maxWidth: 250 }
             );
-
-            marker.on('popupopen', () => {
-                setTimeout(() => {
-                    const btn = document.querySelector(`[data-place-id="${place.id}"]`);
-                    if (btn) {
-                        btn.addEventListener('click', () => {
-                            addStop(place);
-                            marker.closePopup();
-                        });
-                    }
-                }, 50);
-            });
 
             cluster.addLayer(marker);
         });
 
         mapRef.current.addLayer(cluster);
         markersRef.current = cluster;
-    }, [L, places, isInStops, addStop]);
+    }, [L, places, stops.length]);
 
     useEffect(() => {
         updateMarkers();

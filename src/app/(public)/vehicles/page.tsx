@@ -45,7 +45,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 3,
         luggage: 2,
         dailyRate: 32000,
-        images: ['/images/vehicles/executive-sedan.svg'],
+        images: ['/images/vehicles/executive-sedan.png'],
         transferTypes: ['Airport Pickup', 'Airport Drop', 'VIP Transfer'],
         category: 'airport',
     },
@@ -56,7 +56,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 4,
         luggage: 4,
         dailyRate: 28000,
-        images: ['/images/vehicles/luxury-suv.svg'],
+        images: ['/images/vehicles/luxury-suv.png'],
         transferTypes: ['Airport Pickup', 'Inter-City', 'Safari Transfer'],
         category: 'airport',
     },
@@ -67,7 +67,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 6,
         luggage: 6,
         dailyRate: 35000,
-        images: ['/images/vehicles/premium-van.svg'],
+        images: ['/images/vehicles/premium-van.png'],
         transferTypes: ['Airport Pickup', 'Group Transfer', 'Family Tour'],
         category: 'airport',
     },
@@ -78,7 +78,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 6,
         luggage: 5,
         dailyRate: 42000,
-        images: ['/images/vehicles/executive-van.svg'],
+        images: ['/images/vehicles/executive-van.png'],
         transferTypes: ['VIP Transfer', 'Corporate Charter'],
         category: 'intercity',
     },
@@ -89,7 +89,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 3,
         luggage: 2,
         dailyRate: 18000,
-        images: ['/images/vehicles/city-sedan.svg'],
+        images: ['/images/vehicles/city-sedan.png'],
         transferTypes: ['City Tour', 'Half-Day Tour'],
         category: 'city',
     },
@@ -100,7 +100,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 5,
         luggage: 3,
         dailyRate: 22000,
-        images: ['/images/vehicles/city-suv.svg'],
+        images: ['/images/vehicles/city-suv.png'],
         transferTypes: ['City Tour', 'Full-Day Tour'],
         category: 'city',
     },
@@ -111,7 +111,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 10,
         luggage: 10,
         dailyRate: 48000,
-        images: ['/images/vehicles/mini-coach.svg'],
+        images: ['/images/vehicles/mini-coach.png'],
         transferTypes: ['Group Transfer', 'Multi-Day Tour', 'Inter-City'],
         category: 'intercity',
     },
@@ -122,7 +122,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 2,
         luggage: 1,
         dailyRate: 12000,
-        images: ['/images/vehicles/classic-car.svg'],
+        images: ['/images/vehicles/classic-car.png'],
         transferTypes: ['City Tour', 'Photo Tour', 'Heritage Experience'],
         category: 'city',
     },
@@ -133,7 +133,7 @@ const TRANSFERS: TransferVehicle[] = [
         seats: 4,
         luggage: 3,
         dailyRate: 55000,
-        images: ['/images/vehicles/ultra-suv.svg'],
+        images: ['/images/vehicles/ultra-suv.png'],
         transferTypes: ['Airport Drop', 'Inter-City', 'VIP Service'],
         category: 'intercity',
     },
@@ -230,11 +230,10 @@ export default function VehiclesPage() {
                         <button
                             key={cat.id}
                             onClick={() => setActiveCategory(cat.id)}
-                            className={`px-8 py-3.5 text-[11px] tracking-[0.2em] uppercase font-semibold transition-all duration-500 border ${
-                                activeCategory === cat.id
+                            className={`px-8 py-3.5 text-[11px] tracking-[0.2em] uppercase font-semibold transition-all duration-500 border ${activeCategory === cat.id
                                     ? 'bg-deep-emerald text-antique-gold border-deep-emerald shadow-lg'
                                     : 'bg-white text-deep-emerald/70 border-deep-emerald/15 hover:border-antique-gold/50 hover:text-deep-emerald hover:bg-off-white/50'
-                            }`}
+                                }`}
                         >
                             {cat.label}
                         </button>

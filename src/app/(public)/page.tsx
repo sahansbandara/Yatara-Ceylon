@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import HeroSplit from '@/components/public/HeroSplit';
+import HeroSection from '@/components/public/HeroSection';
 import TourCategoriesCarousel from '@/components/public/TourCategoriesCarousel';
 import TestimonialsOverlay from '@/components/public/TestimonialsOverlay';
 import HowItWorks from '@/components/public/HowItWorks';
@@ -14,7 +14,7 @@ export default async function HomePage() {
     return (
         <div className="min-h-screen bg-off-white flex flex-col">
             {/* The Split Hero Section — Walkers-style 3-column */}
-            <HeroSplit />
+            <HeroSection />
 
             {/* Tour Categories — Swiper carousel with tinted bg */}
             <TourCategoriesCarousel />

@@ -9,7 +9,7 @@ export interface DestinationItem {
     images: string[];
 }
 
-const districtImage = (slug: string) => `/images/districts/${slug}.svg`;
+const districtImage = (slug: string) => `/images/districts/${slug}.jpg`;
 
 export const DESTINATIONS: DestinationItem[] = [
     {
