@@ -66,7 +66,7 @@ export default function HeroSection() {
     const handleMouseLeave = useCallback(() => { isPaused.current = false; }, []);
 
     return (
-        <section className="relative h-[95vh] min-h-[600px] max-h-[900px] w-full bg-deep-emerald flex items-center justify-center overflow-hidden">
+        <section className="relative h-screen min-h-[600px] w-full bg-deep-emerald flex items-center justify-center overflow-hidden">
             {/* Background Video */}
             <div className="absolute inset-0 w-full h-full z-0 bg-[#0a1f15]">
                 {/* Fallback Image */}
@@ -77,7 +77,7 @@ export default function HeroSection() {
                     priority
                     quality={90}
                     sizes="100vw"
-                    className="object-cover scale-105"
+                    className="object-cover scale-[1.15] object-[center_30%]"
                 />
                 <video
                     src="/Hero-Section.mp4"
@@ -86,7 +86,7 @@ export default function HeroSection() {
                     loop
                     muted
                     playsInline
-                    className="absolute inset-0 w-full h-full object-cover scale-105 z-10 transition-opacity duration-1000"
+                    className="absolute inset-0 w-full h-full object-cover scale-[1.15] object-[center_30%] z-10 transition-opacity duration-1000"
                     style={{ animation: 'parallaxDrift 30s ease-in-out alternate infinite' }}
                 />
 

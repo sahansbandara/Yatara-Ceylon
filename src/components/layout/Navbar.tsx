@@ -128,8 +128,22 @@ export function Navbar() {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const [scrolled, setScrolled] = useState(false);
     const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { currency, setCurrency } = useCurrency();
+    const isHome = pathname === '/';
+
+    // Scroll detection for homepage transparent-to-solid transition
+    useEffect(() => {
+        if (!isHome) {
+            setScrolled(true); // Always solid on inner pages
+            return;
+        }
+        const handleScroll = () => setScrolled(window.scrollY > 80);
+        handleScroll(); // check on mount
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isHome]);
 
     // Global CMD+K / CTRL+K listener & Escape handling
     useEffect(() => {
@@ -171,7 +185,7 @@ export function Navbar() {
                 onClick={() => setActiveDropdown(null)}
             />
 
-            <header className="fixed top-0 z-50 w-full bg-black/10 backdrop-blur-md border-b border-white/10 transition-all duration-500">
+            <header className={`fixed top-0 z-50 w-full border-b transition-all duration-500 ${scrolled || !isHome ? 'bg-[#0a1f15]/95 backdrop-blur-lg border-white/10 shadow-lg' : 'bg-black/10 backdrop-blur-md border-white/10'}`}>
                 <div className="max-w-[1400px] mx-auto flex h-[72px] items-center justify-between px-6 lg:px-10">
                     {/* Logo */}
                     <Link href="/" className="flex items-center shrink-0">
@@ -193,18 +207,10 @@ export function Navbar() {
                                 onMouseEnter={() => link.dropdown && handleDropdownEnter(link.label)}
                                 onMouseLeave={handleDropdownLeave}
                             >
-                                {/* Nav label — prevent navigation if dropdown exists, toggle dropdown instead */}
-                                <button
-                                    type="button"
-                                    onClick={(e) => {
-                                        if (link.dropdown) {
-                                            e.preventDefault();
-                                            setActiveDropdown(activeDropdown === link.label ? null : link.label);
-                                        } else {
-                                            router.push(link.href);
-                                        }
-                                    }}
-                                    className={`font-nav text-[11px] tracking-[0.18em] uppercase transition-all duration-300 whitespace-nowrap relative py-2 flex items-center gap-1 group bg-transparent border-none cursor-pointer
+                                {/* Nav label — click navigates to landing page, hover opens dropdown */}
+                                <Link
+                                    href={link.href}
+                                    className={`font-nav text-[11px] tracking-[0.18em] uppercase transition-all duration-300 whitespace-nowrap relative py-2 flex items-center gap-1 group
                                     ${isActive(link.href)
                                             ? 'text-white'
                                             : 'text-white/50 hover:text-white/90'
@@ -222,7 +228,7 @@ export function Navbar() {
                                                 : 'scale-x-0 group-hover:scale-x-100'
                                             }`}
                                     />
-                                </button>
+                                </Link>
 
                                 {/* Dropdown Panel */}
                                 {link.dropdown && activeDropdown === link.label && (
