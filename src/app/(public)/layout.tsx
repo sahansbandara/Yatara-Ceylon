@@ -5,14 +5,17 @@ import { CurrencyProvider } from '@/lib/CurrencyContext';
 
 export default function PublicLayout({
     children,
+    modal,
 }: {
     children: React.ReactNode;
+    modal: React.ReactNode;
 }) {
     return (
         <CurrencyProvider>
             <div className="flex min-h-screen flex-col">
                 <Navbar />
                 <main className="flex-1">{children}</main>
+                {modal}
                 <Footer />
 
                 {/* The Luxury Custom Concierge Trigger */}
