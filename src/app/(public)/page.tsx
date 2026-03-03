@@ -1,7 +1,7 @@
 import HeroSection from '@/components/public/HeroSection';
 import TourCategoriesCarousel from '@/components/public/TourCategoriesCarousel';
+import AuthoritySection from '@/components/public/AuthoritySection';
 import FeaturedJourneys from '@/components/public/FeaturedJourneys';
-import SocialProof from '@/components/public/SocialProof';
 import HowItWorks from '@/components/public/HowItWorks';
 import BuildTourTeaser from '@/components/public/BuildTourTeaser';
 import PremiumStory from '@/components/public/PremiumStory';
@@ -17,11 +17,11 @@ export default async function HomePage() {
             {/* 2. Browse fast */}
             <TourCategoriesCarousel />
 
-            {/* 3. Featured journeys */}
-            <FeaturedJourneys />
+            {/* 3. Authority — editorial who-we-are */}
+            <AuthoritySection />
 
-            {/* 4. Social proof */}
-            <SocialProof />
+            {/* 4. Featured journeys */}
+            <FeaturedJourneys />
 
             {/* 5. Clarity - How It Works */}
             <HowItWorks />
