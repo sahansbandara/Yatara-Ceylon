@@ -112,7 +112,13 @@ export default function TourCategoriesCarousel() {
 
         const timer = setInterval(() => {
             if (scrollRef.current) {
-                scrollTo('right');
+                const container = scrollRef.current;
+                // If we've reached the very end of the duplicated scroll area, snap back to the start invisibly
+                if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
+                    scrollTo('start');
+                } else {
+                    scrollTo('right');
+                }
             }
         }, 3500);
 
