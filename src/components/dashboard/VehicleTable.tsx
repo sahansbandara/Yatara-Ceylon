@@ -109,7 +109,7 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
                                         {vehicle.luggage && <div>{vehicle.luggage} Lugg.</div>}
                                     </div>
                                 </TableCell>
-                                <TableCell>LKR {vehicle.dailyRate.toLocaleString()}</TableCell>
+                                <TableCell>LKR {(vehicle.dailyRate ?? 0).toLocaleString()}</TableCell>
                                 <TableCell>
                                     <Badge variant="outline" className={getStatusColor(vehicle.status)}>
                                         {vehicle.status}

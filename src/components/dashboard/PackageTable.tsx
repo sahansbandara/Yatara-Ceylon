@@ -111,7 +111,7 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                                         <span className="text-xs text-muted-foreground">/{pkg.slug}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell>${pkg.price.toLocaleString()}</TableCell>
+                                <TableCell>${(pkg.price ?? 0).toLocaleString()}</TableCell>
                                 <TableCell>{pkg.duration}</TableCell>
                                 <TableCell>
                                     <div className="flex gap-2">

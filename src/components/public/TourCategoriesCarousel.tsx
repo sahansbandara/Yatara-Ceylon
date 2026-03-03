@@ -22,7 +22,7 @@ export default function TourCategoriesCarousel() {
         const scrollLeft = container.scrollLeft;
         const firstChild = container.children[0] as HTMLElement | undefined;
         const itemWidth = firstChild?.offsetWidth || 400;
-        const gap = 32;
+        const gap = 24;
         const index = Math.round(scrollLeft / (itemWidth + gap));
         setCurrentIndex(Math.min(index, totalSlides - 1));
     }, [totalSlides]);
@@ -38,9 +38,8 @@ export default function TourCategoriesCarousel() {
         if (!scrollRef.current) return;
         const container = scrollRef.current;
         const firstChild = container.children[0] as HTMLElement | undefined;
-        // On mobile we show one full card roughly, so measure that plus gap or just hardcode standard
-        const itemWidth = firstChild?.offsetWidth || (window.innerWidth < 768 ? 340 : 400);
-        const gap = 32;
+        const itemWidth = firstChild?.offsetWidth || (window.innerWidth < 768 ? 300 : 420);
+        const gap = 24;
 
         if (direction === 'start') {
             container.scrollTo({ left: 0, behavior: 'smooth' });
@@ -96,37 +95,39 @@ export default function TourCategoriesCarousel() {
                     <div className="h-px w-20 bg-gradient-to-r from-antique-gold to-transparent mt-7" />
                 </div>
 
-                {/* ── Spacer ── */}
-                <div className="mb-4"></div>
+                {/* ── Controls Row (Progress + Navigation) ── */}
+                <div className="flex items-center justify-between mb-8">
+                    {/* Progress indicator */}
+                    <span className="text-[13px] tracking-[0.1em] text-gray-400 font-medium tabular-nums">
+                        {String(currentIndex + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
+                    </span>
 
-                {/* Carousel Container */}
-                <div className="relative group/carousel -mx-6 md:-mx-12 py-8">
+                    {/* Nude Circle Navigation Buttons */}
+                    <div className="hidden md:flex items-center gap-3">
+                        <button
+                            onClick={() => scrollTo('left')}
+                            className="w-11 h-11 rounded-full border border-deep-emerald/15 flex items-center justify-center hover:border-antique-gold/50 hover:bg-antique-gold/5 transition-all duration-300"
+                            aria-label="Previous"
+                        >
+                            <ChevronLeft className="w-5 h-5 text-deep-emerald" />
+                        </button>
+                        <button
+                            onClick={() => scrollTo('right')}
+                            className="w-11 h-11 rounded-full border border-deep-emerald/15 flex items-center justify-center hover:border-antique-gold/50 hover:bg-antique-gold/5 transition-all duration-300"
+                            aria-label="Next"
+                        >
+                            <ChevronRight className="w-5 h-5 text-deep-emerald" />
+                        </button>
+                    </div>
+                </div>
 
-                    {/* Background Highlight wrapping the package row full-width */}
-                    <div className="absolute top-0 bottom-0 left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] bg-[#D1E5DB]/70 -z-10 pointer-events-none hidden md:block" />
-
-                    {/* Left Navigation - Giant Naked Chevron */}
-                    <button
-                        onClick={() => scrollTo('left')}
-                        className="absolute left-[-16px] md:-left-4 2xl:-left-12 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center text-deep-emerald/60 hover:text-deep-emerald transition-all duration-500 opacity-0 group-hover/carousel:opacity-100 hidden xl:flex"
-                        aria-label="Previous"
-                    >
-                        <ChevronLeft className="w-16 h-16 md:w-24 md:h-24 stroke-[1.5]" />
-                    </button>
-
-                    {/* Right Navigation - Giant Naked Chevron */}
-                    <button
-                        onClick={() => scrollTo('right')}
-                        className="absolute right-[-16px] md:-right-4 2xl:-right-12 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center text-deep-emerald/60 hover:text-deep-emerald transition-all duration-500 opacity-0 group-hover/carousel:opacity-100 hidden xl:flex"
-                        aria-label="Next"
-                    >
-                        <ChevronRight className="w-16 h-16 md:w-24 md:h-24 stroke-[1.5]" />
-                    </button>
+                {/* Carousel Container — full-bleed for maximum card visibility */}
+                <div className="relative -mx-6 md:-mx-12">
 
                     {/* ── Scroll-snap Horizontal Rail ── */}
                     <div
                         ref={scrollRef}
-                        className="flex gap-6 md:gap-8 overflow-x-auto pb-4 snap-x snap-mandatory px-6 md:px-12 scrollbar-none"
+                        className="flex gap-5 md:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory px-4 md:px-6 scrollbar-none"
                         style={{
                             scrollbarWidth: 'none',
                             msOverflowStyle: 'none'
@@ -140,17 +141,17 @@ export default function TourCategoriesCarousel() {
                             <Link
                                 key={cat.title}
                                 href={cat.href}
-                                className="group block flex-shrink-0 snap-center"
+                                className="group block flex-shrink-0 snap-start"
                             >
                                 <div
-                                    className={`relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center transition-all duration-[600ms] group w-[340px] md:w-[420px] lg:w-[480px] h-[540px] md:h-[640px]`}
+                                    className="relative rounded-[24px] overflow-hidden cursor-pointer flex-shrink-0 transition-all duration-[600ms] group w-[300px] md:w-[380px] lg:w-[420px] xl:w-[440px] h-[480px] md:h-[580px]"
                                 >
                                     {/* Image */}
                                     <Image
                                         src={cat.image}
                                         alt={cat.title}
                                         fill
-                                        sizes="(max-width: 768px) 340px, 420px"
+                                        sizes="(max-width: 768px) 300px, (max-width: 1024px) 380px, 440px"
                                         className="object-cover transform group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
                                     />
 
@@ -158,7 +159,7 @@ export default function TourCategoriesCarousel() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent mix-blend-multiply opacity-90 transition-opacity duration-500 group-hover:opacity-100" />
 
                                     {/* Top Left Tags */}
-                                    <div className="absolute top-6 left-6 md:top-8 md:left-8 z-20 flex flex-col items-start gap-2 pointer-events-none">
+                                    <div className="absolute top-5 left-5 md:top-6 md:left-6 z-20 flex flex-col items-start gap-2 pointer-events-none">
                                         <div className="flex gap-2">
                                             {cat.tags.slice(0, 2).map((tag) => (
                                                 <span
@@ -179,7 +180,7 @@ export default function TourCategoriesCarousel() {
                                     </div>
 
                                     {/* Content */}
-                                    <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-7 md:p-8 z-10 pointer-events-none">
+                                    <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-6 md:p-7 z-10 pointer-events-none">
                                         <h3 className="text-2xl md:text-[28px] font-display tracking-wide text-white mb-2.5 leading-tight group-hover:text-antique-gold transition-colors duration-500 drop-shadow-lg">
                                             {cat.title}
                                         </h3>
@@ -209,9 +210,9 @@ export default function TourCategoriesCarousel() {
                 </div>
 
                 {/* ── Bottom Controls (Pagination & View All combined) ── */}
-                <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 px-4 md:px-0">
-                    {/* Pagination Dots */}
-                    <div className="flex items-center gap-2 order-2 md:order-1">
+                <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                    {/* Pagination Dots — Liquid Glass */}
+                    <div className="flex items-center gap-2.5 order-2 md:order-1 bg-white/10 backdrop-blur-xl border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.2)] rounded-full px-4 py-2.5">
                         {Array.from({ length: totalSlides }).map((_, idx) => (
                             <button
                                 key={idx}
@@ -219,25 +220,25 @@ export default function TourCategoriesCarousel() {
                                     const container = scrollRef.current;
                                     const firstChild = container?.children[0] as HTMLElement | undefined;
                                     const itemWidth = firstChild?.offsetWidth || 400;
-                                    const gap = 32;
+                                    const gap = 24;
                                     container?.scrollTo({
                                         left: idx * (itemWidth + gap),
                                         behavior: 'smooth'
                                     });
                                 }}
-                                className={`h-2.5 rounded-full transition-all duration-500 shadow-[0_2px_8px_rgba(0,0,0,0.05)] backdrop-blur-md border ${idx === currentIndex
-                                    ? 'w-8 bg-white/40 border-white/40'
-                                    : 'w-2.5 bg-transparent border-white/20 hover:bg-white/20'
+                                className={`rounded-full transition-all duration-500 ${idx === currentIndex
+                                    ? 'w-8 h-3 bg-white/50 border border-white/60 shadow-[0_0_8px_rgba(255,255,255,0.3),inset_0_1px_0_rgba(255,255,255,0.4)]'
+                                    : 'w-3 h-3 bg-white/15 border border-white/25 hover:bg-white/30 hover:border-white/40'
                                     }`}
                                 aria-label={`Go to slide ${idx + 1}`}
                             />
                         ))}
                     </div>
 
-                    {/* View All Button */}
+                    {/* View All Button — Liquid Glass */}
                     <Link
                         href="/packages"
-                        className="order-1 md:order-2 inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-semibold text-deep-emerald/70 bg-white/5 backdrop-blur-[2px] border border-white/20 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-8 py-4 md:px-10 md:py-4 rounded-full hover:bg-white/10 hover:text-deep-emerald hover:shadow-md hover:scale-[1.02] transition-all duration-300 w-full md:w-auto"
+                        className="order-1 md:order-2 inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-semibold text-deep-emerald bg-white/15 backdrop-blur-xl border-2 border-white/40 shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.3),0_0_0_1px_rgba(255,255,255,0.1)] px-8 py-4 md:px-10 md:py-4 rounded-full hover:bg-white/25 hover:border-white/60 hover:text-deep-emerald hover:shadow-[0_8px_32px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.4)] hover:scale-[1.02] transition-all duration-300 w-full md:w-auto"
                     >
                         View All Signature Journeys
                         <ArrowRight className="h-4 w-4" />

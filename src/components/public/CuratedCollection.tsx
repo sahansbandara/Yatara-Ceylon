@@ -287,7 +287,7 @@ export default function CuratedCollection() {
 
                                 {/* CTA */}
                                 <Link
-                                    href={journey._id === 'bespoke' ? '/build-tour' : `/packages/${journey.slug}`}
+                                    href={journey._id === 'bespoke' ? '/build-tour' : (journey.slug === 'packages' ? '/packages' : `/packages/${journey.slug}`)}
                                     className="inline-flex items-center text-[11px] tracking-[0.2em] uppercase font-semibold transition-all duration-300 w-max group/cta"
                                 >
                                     {journey._id === 'bespoke' ? (

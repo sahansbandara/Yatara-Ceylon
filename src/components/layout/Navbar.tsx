@@ -26,9 +26,9 @@ const navLinks = [
             {
                 title: 'By Style',
                 links: [
-                    { href: '/tours/cultural', label: 'Cultural Tours' },
-                    { href: '/tours/wildlife-adventure', label: 'Wildlife & Adventure' },
-                    { href: '/tours/experiences', label: 'Experiences' },
+                    { href: '/packages?tag=culture', label: 'Cultural Tours' },
+                    { href: '/packages?tag=wildlife', label: 'Wildlife & Adventure' },
+                    { href: '/packages?tag=experiences', label: 'Experiences' },
                     { href: '/packages', label: 'View all →', special: true },
                 ]
             },

@@ -51,7 +51,7 @@ export default function InvoiceTable({ invoices }: InvoiceTableProps) {
                                         <span className="text-xs text-muted-foreground">{invoice.bookingId?.customerName}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell>${invoice.total.toLocaleString()}</TableCell>
+                                <TableCell>${(invoice.total ?? 0).toLocaleString()}</TableCell>
                                 <TableCell>{format(new Date(invoice.createdAt), 'MMM d, yyyy')}</TableCell>
                                 <TableCell>
                                     <Badge variant={invoice.status === 'FINAL' ? 'default' : 'secondary'}>

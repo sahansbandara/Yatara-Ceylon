@@ -18,7 +18,7 @@ export default function FinanceStats({ revenue, pendingInvoices, totalRefunds }:
                     <DollarSign className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">${revenue.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">${(revenue ?? 0).toLocaleString()}</div>
                     <p className="text-xs text-muted-foreground">Lifetme earnings</p>
                 </CardContent>
             </Card>
@@ -38,7 +38,7 @@ export default function FinanceStats({ revenue, pendingInvoices, totalRefunds }:
                     <RefreshCcw className="h-4 w-4 text-red-600" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">${totalRefunds.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">${(totalRefunds ?? 0).toLocaleString()}</div>
                     <p className="text-xs text-muted-foreground">Processed refunds</p>
                 </CardContent>
             </Card>

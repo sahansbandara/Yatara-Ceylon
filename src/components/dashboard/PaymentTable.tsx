@@ -71,7 +71,7 @@ export default function PaymentTable({ payments }: PaymentTableProps) {
                                     </Badge>
                                 </TableCell>
                                 <TableCell className={payment.type === 'REFUND' ? 'text-red-600' : 'text-green-600'}>
-                                    {payment.type === 'REFUND' ? '-' : '+'}LKR {payment.amount.toLocaleString()}
+                                    {payment.type === 'REFUND' ? '-' : '+'}LKR {(payment.amount ?? 0).toLocaleString()}
                                 </TableCell>
                                 <TableCell>{payment.method || 'N/A'}</TableCell>
                                 <TableCell>{payment.paidAt ? format(new Date(payment.paidAt), 'MMM d, yyyy') : 'N/A'}</TableCell>
