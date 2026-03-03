@@ -1,3 +1,20 @@
 {
-    "claudeCode.useTerminal": true
+    "claudeCode.useTerminal": true,
+    "workbench.editor.alwaysShowEditorActions": true,
+    "workbench.editor.autoLockGroups": {
+        "default": true,
+        "workbench.editor.chatSession": true,
+        "workbench.editorinputs.searchEditorInput": true,
+        "notebookOutputEditor": true,
+        "jupyter-notebook": true,
+        "repl": true,
+        "workbench.editors.gettingStartedInput": true,
+        "antigravity.globalArtifactsEditorInput": true,
+        "antigravity.artifactsEditorInput": true,
+        "mainThreadWebview-markdown.preview": true,
+        "antigravity.workflowEditor": true,
+        "antigravity.ruleEditor": true,
+        "imagePreview.previewEditor": true,
+        "vscode.audioPreview": true
+    }
 }

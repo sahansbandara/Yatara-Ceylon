@@ -49,7 +49,7 @@ export default function BuildTourShell() {
             {/* ── Desktop Layout ─────────────────────────────────── */}
             <div className="hidden lg:flex h-[85vh] min-h-[600px]">
                 {/* Left Panel */}
-                <div className="w-[480px] flex-shrink-0 flex flex-col build-tour-panel border-r border-antique-gold/10">
+                <div className="w-[480px] flex-shrink-0 flex flex-col build-tour-panel liquid-glass-dark border-[rgba(212,175,55,0.15)] border-r">
                     {/* Tab bar */}
                     <div className="flex border-b border-white/5">
                         {TABS.map((tab) => {
@@ -60,8 +60,8 @@ export default function BuildTourShell() {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-[10px] uppercase tracking-[0.2em] font-serif transition-all duration-300 relative ${isActive
-                                        ? 'text-antique-gold'
-                                        : 'text-white/30 hover:text-white/50'
+                                        ? 'text-antique-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]'
+                                        : 'text-white/30 hover:text-white/50 hover:-translate-y-0.5'
                                         }`}
                                 >
                                     <Icon className="w-3.5 h-3.5" />
@@ -72,7 +72,7 @@ export default function BuildTourShell() {
                                         </span>
                                     )}
                                     {isActive && (
-                                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-antique-gold" />
+                                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-antique-gold shadow-[0_0_8px_rgba(212,175,55,0.6)]" />
                                     )}
                                 </button>
                             );
@@ -107,7 +107,7 @@ export default function BuildTourShell() {
                     className={`absolute bottom-0 left-0 right-0 z-30 transition-all duration-500 ease-out ${drawerExpanded ? 'max-h-[70vh]' : 'max-h-[56px]'
                         }`}
                 >
-                    <div className="build-tour-panel rounded-t-2xl h-full flex flex-col overflow-hidden">
+                    <div className="build-tour-panel liquid-glass-dark rounded-t-2xl h-full flex flex-col overflow-hidden border-t border-[rgba(212,175,55,0.15)]">
                         {/* Sheet handle */}
                         <button
                             onClick={() => setDrawerExpanded(!drawerExpanded)}
@@ -139,9 +139,9 @@ export default function BuildTourShell() {
                                             <button
                                                 key={tab.id}
                                                 onClick={() => setActiveTab(tab.id)}
-                                                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[9px] uppercase tracking-wider font-serif transition-all ${isActive
-                                                    ? 'text-antique-gold border-b-2 border-antique-gold'
-                                                    : 'text-white/30'
+                                                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[9px] uppercase tracking-wider font-serif transition-all duration-300 ${isActive
+                                                    ? 'text-antique-gold border-b-2 border-antique-gold shadow-[0_-2px_8px_rgba(212,175,55,0.2)]'
+                                                    : 'text-white/30 hover:text-white/50 hover:-translate-y-0.5'
                                                     }`}
                                             >
                                                 <Icon className="w-3 h-3" />
