@@ -44,7 +44,12 @@ const PREMIUM_PACKAGES = [
             { day: 9, title: 'Coastal Day — Villa Time', description: 'Beachfront villa leisure. Optional whale watching (seasonal) or spa morning.', activity: 'Coastal Restoration' },
             { day: 10, title: 'Departure', description: 'Leisurely breakfast, private transfer to airport.', activity: 'Departure' },
         ],
-        images: ['/images/home/curated-kingdoms.png'],
+        images: [
+            '/images/packages/ceylon-grand-circuit-hero.png',
+            '/images/packages/ceylon-grand-circuit-gallery-1.png',
+            '/images/packages/ceylon-grand-circuit-gallery-2.png',
+            '/images/packages/ceylon-grand-circuit-gallery-3.png',
+        ],
         isPublished: true,
     },
     {
@@ -83,7 +88,12 @@ const PREMIUM_PACKAGES = [
             { day: 6, title: 'Highland Leisure / Light Hike', description: 'Optional nature walk or waterfall visit. Afternoon restoration.', activity: 'Highland Hike' },
             { day: 7, title: 'Return & Departure', description: 'Leisurely morning, transfer to airport.', activity: 'Departure' },
         ],
-        images: ['/images/home/curated-hillcountry.png'],
+        images: [
+            '/images/packages/hill-country-tea-rail-retreat-hero.png',
+            '/images/packages/hill-country-tea-rail-retreat-gallery-1.png',
+            '/images/packages/hill-country-tea-rail-retreat-gallery-2.png',
+            '/images/packages/hill-country-tea-rail-retreat-gallery-3.png',
+        ],
         isPublished: true,
     },
     {
@@ -120,7 +130,12 @@ const PREMIUM_PACKAGES = [
             { day: 5, title: 'Kandy Culture & Lake Walk', description: 'Temple of the Tooth, cultural dance, lakeside evening walk.', activity: 'Temple Visit' },
             { day: 6, title: 'Departure', description: 'Morning at leisure, airport transfer.', activity: 'Departure' },
         ],
-        images: ['/images/home/signature-heritage.png'],
+        images: [
+            '/images/packages/heritage-triangle-private-edition-hero.png',
+            '/images/packages/heritage-triangle-private-edition-gallery-1.webp',
+            '/images/packages/heritage-triangle-private-edition-gallery-2.webp',
+            '/images/packages/heritage-triangle-private-edition-gallery-3.webp',
+        ],
         isPublished: true,
     },
     {
@@ -160,7 +175,12 @@ const PREMIUM_PACKAGES = [
             { day: 7, title: 'Coastal Exploration', description: 'Explore nearby beaches, stilt fishermen, or optional whale watching.', activity: 'Coastal Discovery' },
             { day: 8, title: 'Departure', description: 'Leisurely morning, airport transfer.', activity: 'Departure' },
         ],
-        images: ['/images/home/signature-wildlife.png'],
+        images: [
+            '/images/packages/wildlife-coastal-luxe-hero.webp',
+            '/images/packages/wildlife-coastal-luxe-gallery-1.webp',
+            '/images/packages/wildlife-coastal-luxe-gallery-2.webp',
+            '/images/packages/wildlife-coastal-luxe-gallery-3.webp',
+        ],
         isPublished: true,
     },
     {
@@ -197,7 +217,12 @@ const PREMIUM_PACKAGES = [
             { day: 6, title: 'Final Treatments', description: 'Last treatment series, closing consultation, wellness recommendations.', activity: 'Closing Consultation' },
             { day: 7, title: 'Departure', description: 'Mindful morning, transfer to airport.', activity: 'Departure' },
         ],
-        images: ['/images/home/curated-southcoast.png'],
+        images: [
+            '/images/packages/ayurveda-wellness-sanctuary-hero.webp',
+            '/images/packages/ayurveda-wellness-sanctuary-gallery-1.webp',
+            '/images/packages/ayurveda-wellness-sanctuary-gallery-2.webp',
+            '/images/packages/ayurveda-wellness-sanctuary-gallery-3.webp',
+        ],
         isPublished: true,
     },
     {
@@ -234,7 +259,12 @@ const PREMIUM_PACKAGES = [
             { day: 6, title: 'Beach Restoration Day', description: 'Final full day at the villa. Sunrise yoga optional. Farewell sundowners.', activity: 'Beach Day' },
             { day: 7, title: 'Departure', description: 'Leisurely morning, private airport transfer.', activity: 'Departure' },
         ],
-        images: ['/images/home/curated-southcoast.png'],
+        images: [
+            '/images/packages/honeymoon-private-villa-experiences-hero.webp',
+            '/images/packages/honeymoon-private-villa-experiences-gallery-1.webp',
+            '/images/packages/honeymoon-private-villa-experiences-gallery-2.webp',
+            '/images/packages/honeymoon-private-villa-experiences-gallery-3.webp',
+        ],
         isPublished: true,
     },
     {
@@ -273,7 +303,12 @@ const PREMIUM_PACKAGES = [
             { day: 7, title: 'Final Beach Day', description: 'Last full day at the coast. Sunset farewell.', activity: 'Farewell Sunset' },
             { day: 8, title: 'Departure', description: 'Morning transfer to airport.', activity: 'Departure' },
         ],
-        images: ['/images/home/pkg_east_coast_1772119793935.png'],
+        images: [
+            '/images/packages/east-coast-summer-escape-hero.webp',
+            '/images/packages/east-coast-summer-escape-gallery-1.webp',
+            '/images/packages/east-coast-summer-escape-gallery-2.webp',
+            '/images/packages/east-coast-summer-escape-gallery-3.webp',
+        ],
         isPublished: true,
     },
     {
@@ -310,7 +345,12 @@ const PREMIUM_PACKAGES = [
             { day: 5, title: 'Nuwara Eliya & Ella', description: 'Divurumpola, Ravana Falls. Evening at boutique highland stay.', activity: 'Ravana Falls' },
             { day: 6, title: 'Departure', description: 'Final temple visit if time permits. Airport transfer.', activity: 'Departure' },
         ],
-        images: ['/images/home/pkg_ramayana_1772119639135.png'],
+        images: [
+            '/images/packages/ramayana-trail-deluxe-hero.webp',
+            '/images/packages/ramayana-trail-deluxe-gallery-1.webp',
+            '/images/packages/ramayana-trail-deluxe-gallery-2.webp',
+            '/images/packages/ramayana-trail-deluxe-gallery-3.webp',
+        ],
         isPublished: true,
     },
 ];

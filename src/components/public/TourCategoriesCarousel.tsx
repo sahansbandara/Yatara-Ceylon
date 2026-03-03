@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { tourCategories } from '@/data/tourCategories';
 
@@ -11,17 +11,9 @@ const themeChips = ['Honeymoon', 'Family', 'Wildlife', 'Ayurveda', 'Heritage', '
 export default function TourCategoriesCarousel() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [activeChip, setActiveChip] = useState<string | null>(null);
+    const [isHovered, setIsHovered] = useState(false);
 
-    const filteredCategories = activeChip
-        ? tourCategories.filter(
-              (c) =>
-                  c.isBespoke ||
-                  c.title.toLowerCase().includes(activeChip.toLowerCase()) ||
-                  c.tags.some((t) => t.toLowerCase().includes(activeChip.toLowerCase()))
-          )
-        : tourCategories;
-
+    const filteredCategories = tourCategories;
     const totalSlides = filteredCategories.length;
 
     const updateCurrentIndex = useCallback(() => {
@@ -42,28 +34,54 @@ export default function TourCategoriesCarousel() {
         return () => container.removeEventListener('scroll', updateCurrentIndex);
     }, [updateCurrentIndex]);
 
-    const scrollTo = (direction: 'left' | 'right') => {
+    const scrollTo = (direction: 'left' | 'right' | 'start') => {
         if (!scrollRef.current) return;
         const container = scrollRef.current;
         const firstChild = container.children[0] as HTMLElement | undefined;
-        const itemWidth = firstChild?.offsetWidth || 400;
+        // On mobile we show one full card roughly, so measure that plus gap or just hardcode standard
+        const itemWidth = firstChild?.offsetWidth || (window.innerWidth < 768 ? 340 : 400);
         const gap = 32;
+
+        if (direction === 'start') {
+            container.scrollTo({ left: 0, behavior: 'smooth' });
+            return;
+        }
+
         container.scrollBy({
             left: direction === 'left' ? -(itemWidth + gap) : itemWidth + gap,
             behavior: 'smooth',
         });
     };
 
+    // Auto-scroll loop
+    useEffect(() => {
+        if (isHovered) return; // Pause auto-scroll on hover
+
+        const timer = setInterval(() => {
+            if (scrollRef.current) {
+                // If we are at the end, scroll back to start
+                const container = scrollRef.current;
+                if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
+                    scrollTo('start');
+                } else {
+                    scrollTo('right');
+                }
+            }
+        }, 3500);
+
+        return () => clearInterval(timer);
+    }, [isHovered]);
+
     return (
-        <section className="py-28 md:py-36 bg-off-white text-deep-emerald relative overflow-hidden">
+        <section className="py-20 md:py-28 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
             {/* Subtle background accents */}
             <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-antique-gold/[0.03] rounded-full blur-3xl" />
             <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-deep-emerald/[0.02] rounded-full blur-3xl" />
 
             <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
                 {/* ── Header ── */}
-                <div className="mb-8 md:mb-12">
-                    <span className="inline-block mb-5 text-[11px] tracking-[0.35em] font-medium text-antique-gold uppercase">
+                <div className="mb-6 md:mb-10">
+                    <span className="inline-block mb-4 text-[11px] tracking-[0.35em] font-medium text-antique-gold uppercase">
                         Handpicked Itineraries
                     </span>
                     <h2 className="text-4xl md:text-6xl font-display text-deep-emerald leading-[1.1] mb-5">
@@ -78,169 +96,151 @@ export default function TourCategoriesCarousel() {
                     <div className="h-px w-20 bg-gradient-to-r from-antique-gold to-transparent mt-7" />
                 </div>
 
-                {/* ── Theme Chips ── */}
-                <div className="flex flex-wrap gap-2.5 mb-10">
+                {/* ── Spacer ── */}
+                <div className="mb-4"></div>
+
+                {/* Carousel Container */}
+                <div className="relative group/carousel -mx-6 md:-mx-12 py-8">
+
+                    {/* Background Highlight wrapping the package row full-width */}
+                    <div className="absolute top-0 bottom-0 left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] bg-[#D1E5DB]/70 -z-10 pointer-events-none hidden md:block" />
+
+                    {/* Left Navigation - Giant Naked Chevron */}
                     <button
-                        onClick={() => setActiveChip(null)}
-                        className={`text-[11px] tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border transition-all duration-300 ${
-                            !activeChip
-                                ? 'bg-deep-emerald text-white border-deep-emerald'
-                                : 'bg-transparent text-deep-emerald/70 border-deep-emerald/20 hover:border-deep-emerald/40'
-                        }`}
+                        onClick={() => scrollTo('left')}
+                        className="absolute left-[-16px] md:-left-4 2xl:-left-12 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center text-deep-emerald/60 hover:text-deep-emerald transition-all duration-500 opacity-0 group-hover/carousel:opacity-100 hidden xl:flex"
+                        aria-label="Previous"
                     >
-                        All Styles
+                        <ChevronLeft className="w-16 h-16 md:w-24 md:h-24 stroke-[1.5]" />
                     </button>
-                    {themeChips.map((chip) => (
-                        <button
-                            key={chip}
-                            onClick={() =>
-                                setActiveChip(activeChip === chip ? null : chip)
-                            }
-                            className={`text-[11px] tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border transition-all duration-300 ${
-                                activeChip === chip
-                                    ? 'bg-deep-emerald text-white border-deep-emerald'
-                                    : 'bg-transparent text-deep-emerald/70 border-deep-emerald/20 hover:border-deep-emerald/40'
-                            }`}
-                        >
-                            {chip}
-                        </button>
-                    ))}
-                </div>
 
-                {/* ── Controls row: counter + arrows ── */}
-                <div className="flex items-center justify-between mb-8">
-                    <span className="text-[13px] tracking-[0.1em] text-gray-400 font-medium tabular-nums">
-                        {String(currentIndex + 1).padStart(2, '0')} /{' '}
-                        {String(filteredCategories.length).padStart(2, '0')}
-                    </span>
+                    {/* Right Navigation - Giant Naked Chevron */}
+                    <button
+                        onClick={() => scrollTo('right')}
+                        className="absolute right-[-16px] md:-right-4 2xl:-right-12 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center text-deep-emerald/60 hover:text-deep-emerald transition-all duration-500 opacity-0 group-hover/carousel:opacity-100 hidden xl:flex"
+                        aria-label="Next"
+                    >
+                        <ChevronRight className="w-16 h-16 md:w-24 md:h-24 stroke-[1.5]" />
+                    </button>
 
-                    <div className="hidden md:flex items-center gap-3">
-                        <button
-                            onClick={() => scrollTo('left')}
-                            className="w-11 h-11 rounded-full border border-deep-emerald/15 flex items-center justify-center hover:border-antique-gold/50 hover:bg-antique-gold/5 transition-all duration-300"
-                            aria-label="Previous"
-                        >
-                            <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                                className="text-deep-emerald"
+                    {/* ── Scroll-snap Horizontal Rail ── */}
+                    <div
+                        ref={scrollRef}
+                        className="flex gap-6 md:gap-8 overflow-x-auto pb-4 snap-x snap-mandatory px-6 md:px-12 scrollbar-none"
+                        style={{
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none'
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                        onTouchStart={() => setIsHovered(true)}
+                        onTouchEnd={() => setIsHovered(false)}
+                    >
+                        {filteredCategories.map((cat) => (
+                            <Link
+                                key={cat.title}
+                                href={cat.href}
+                                className="group block flex-shrink-0 snap-center"
                             >
-                                <path
-                                    d="M10 12L6 8L10 4"
-                                    stroke="currentColor"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </button>
-                        <button
-                            onClick={() => scrollTo('right')}
-                            className="w-11 h-11 rounded-full border border-deep-emerald/15 flex items-center justify-center hover:border-antique-gold/50 hover:bg-antique-gold/5 transition-all duration-300"
-                            aria-label="Next"
-                        >
-                            <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                                className="text-deep-emerald"
-                            >
-                                <path
-                                    d="M6 4L10 8L6 12"
-                                    stroke="currentColor"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </button>
+                                <div
+                                    className={`relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center transition-all duration-[600ms] group w-[340px] md:w-[420px] lg:w-[480px] h-[540px] md:h-[640px]`}
+                                >
+                                    {/* Image */}
+                                    <Image
+                                        src={cat.image}
+                                        alt={cat.title}
+                                        fill
+                                        sizes="(max-width: 768px) 340px, 420px"
+                                        className="object-cover transform group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
+                                    />
+
+                                    {/* Dark gradient overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent mix-blend-multiply opacity-90 transition-opacity duration-500 group-hover:opacity-100" />
+
+                                    {/* Top Left Tags */}
+                                    <div className="absolute top-6 left-6 md:top-8 md:left-8 z-20 flex flex-col items-start gap-2 pointer-events-none">
+                                        <div className="flex gap-2">
+                                            {cat.tags.slice(0, 2).map((tag) => (
+                                                <span
+                                                    key={tag}
+                                                    className="text-[10px] md:text-[11px] tracking-[0.15em] uppercase font-medium text-white/90 bg-[#5c4a3d]/50 backdrop-blur-sm px-3.5 py-1.5 rounded-full border border-white/20 shadow-sm"
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        {cat.tags.length > 2 && (
+                                            <div className="flex">
+                                                <span className="text-[10px] md:text-[11px] tracking-[0.15em] uppercase font-medium text-white/90 bg-[#5c4a3d]/50 backdrop-blur-sm px-3.5 py-1.5 rounded-full border border-white/20 shadow-sm">
+                                                    {cat.tags[2]}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-7 md:p-8 z-10 pointer-events-none">
+                                        <h3 className="text-2xl md:text-[28px] font-display tracking-wide text-white mb-2.5 leading-tight group-hover:text-antique-gold transition-colors duration-500 drop-shadow-lg">
+                                            {cat.title}
+                                        </h3>
+
+                                        <p className="text-white/80 font-light text-[13px] md:text-sm leading-relaxed mb-5 line-clamp-2">
+                                            {cat.promise}
+                                        </p>
+
+                                        <div className="mt-auto pointer-events-auto">
+                                            {cat.isBespoke ? (
+                                                <span className="inline-flex items-center gap-2 text-antique-gold hover:text-white text-[11px] tracking-[0.2em] uppercase font-semibold transition-colors duration-300">
+                                                    <Sparkles className="w-3.5 h-3.5" />
+                                                    Design My Trip
+                                                </span>
+                                            ) : (
+                                                <span className="text-antique-gold hover:text-white flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase font-semibold transform translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                                                    Explore This Style{' '}
+                                                    <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
                     </div>
                 </div>
 
-                {/* ── Scroll-snap Horizontal Rail ── */}
-                <div
-                    ref={scrollRef}
-                    className="flex gap-8 overflow-x-auto pb-6 snap-x snap-mandatory -mx-6 px-6"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                    {filteredCategories.map((cat) => (
-                        <Link
-                            key={cat.title}
-                            href={cat.href}
-                            className="group block flex-shrink-0 snap-center"
-                        >
-                            <article
-                                className={`relative overflow-hidden rounded-2xl ${
-                                    cat.isBespoke
-                                        ? 'w-[340px] md:w-[420px] h-[540px] md:h-[580px]'
-                                        : 'w-[340px] md:w-[400px] h-[540px] md:h-[580px]'
-                                }`}
-                            >
-                                {/* Image */}
-                                <Image
-                                    src={cat.image}
-                                    alt={cat.title}
-                                    fill
-                                    sizes="(max-width: 768px) 340px, 420px"
-                                    className="object-cover transform group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
-                                />
+                {/* ── Bottom Controls (Pagination & View All combined) ── */}
+                <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 px-4 md:px-0">
+                    {/* Pagination Dots */}
+                    <div className="flex items-center gap-2 order-2 md:order-1">
+                        {Array.from({ length: totalSlides }).map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => {
+                                    const container = scrollRef.current;
+                                    const firstChild = container?.children[0] as HTMLElement | undefined;
+                                    const itemWidth = firstChild?.offsetWidth || 400;
+                                    const gap = 32;
+                                    container?.scrollTo({
+                                        left: idx * (itemWidth + gap),
+                                        behavior: 'smooth'
+                                    });
+                                }}
+                                className={`h-2.5 rounded-full transition-all duration-500 shadow-[0_2px_8px_rgba(0,0,0,0.05)] backdrop-blur-md border ${idx === currentIndex
+                                    ? 'w-8 bg-white/40 border-white/40'
+                                    : 'w-2.5 bg-transparent border-white/20 hover:bg-white/20'
+                                    }`}
+                                aria-label={`Go to slide ${idx + 1}`}
+                            />
+                        ))}
+                    </div>
 
-                                {/* Dark gradient overlay — bottom 55% for WCAG AA readability */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-
-                                {/* Content */}
-                                <div className="absolute inset-0 flex flex-col justify-end p-7 md:p-8 z-10">
-                                    {/* Tags */}
-                                    <div className="flex flex-wrap gap-2 mb-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                                        {cat.tags.slice(0, 3).map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="text-[10px] tracking-[0.2em] uppercase font-medium text-white/70 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/10"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    {/* Title — Title Case, NOT ALL CAPS */}
-                                    <h3 className="text-2xl md:text-[28px] font-display tracking-wide text-white mb-2.5 leading-tight group-hover:text-antique-gold transition-colors duration-500 drop-shadow-lg">
-                                        {cat.title}
-                                    </h3>
-
-                                    {/* One-line promise */}
-                                    <p className="text-white/75 font-light text-[13px] md:text-sm leading-relaxed mb-5 line-clamp-2">
-                                        {cat.promise}
-                                    </p>
-
-                                    {/* CTA */}
-                                    {cat.isBespoke ? (
-                                        <span className="inline-flex items-center gap-2 bg-antique-gold text-deep-emerald px-5 py-2.5 rounded-full text-[11px] tracking-[0.2em] uppercase font-semibold hover:bg-white transition-colors duration-300 w-max">
-                                            <Sparkles className="w-3.5 h-3.5" />
-                                            Design My Trip
-                                        </span>
-                                    ) : (
-                                        <span className="text-antique-gold hover:text-white flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase font-semibold transform translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                                            Explore This Style{' '}
-                                            <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-                                        </span>
-                                    )}
-                                </div>
-                            </article>
-                        </Link>
-                    ))}
-                </div>
-
-                {/* ── Bottom link ── */}
-                <div className="mt-12 flex justify-center">
+                    {/* View All Button */}
                     <Link
                         href="/packages"
-                        className="inline-flex items-center gap-3 text-[11px] tracking-[0.25em] uppercase font-semibold text-deep-emerald hover:text-antique-gold transition-colors duration-300 border-b border-deep-emerald/20 hover:border-antique-gold/40 pb-1"
+                        className="order-1 md:order-2 inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-semibold text-deep-emerald/70 bg-white/5 backdrop-blur-[2px] border border-white/20 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-8 py-4 md:px-10 md:py-4 rounded-full hover:bg-white/10 hover:text-deep-emerald hover:shadow-md hover:scale-[1.02] transition-all duration-300 w-full md:w-auto"
                     >
                         View All Signature Journeys
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        <ArrowRight className="h-4 w-4" />
                     </Link>
                 </div>
             </div>

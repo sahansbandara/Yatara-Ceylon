@@ -155,7 +155,26 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 md:px-12 -mt-8 relative z-10">
+            {/* Gallery Strip */}
+            {pkg.images && pkg.images.length > 1 && (
+                <div className="max-w-7xl mx-auto px-6 md:px-12 -mt-6 mb-8 relative z-10">
+                    <div className="grid grid-cols-3 gap-3 md:gap-4">
+                        {pkg.images.slice(1, 4).map((img: string, idx: number) => (
+                            <div key={idx} className="relative aspect-[4/3] rounded-xl overflow-hidden group/gallery">
+                                <Image
+                                    src={img}
+                                    alt={`${pkg.title} gallery ${idx + 1}`}
+                                    fill
+                                    className="object-cover transform group-hover/gallery:scale-[1.03] transition-transform duration-700 ease-out"
+                                />
+                                <div className="absolute inset-0 bg-black/5 group-hover/gallery:bg-black/0 transition-colors duration-500" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div className="max-w-7xl mx-auto px-6 md:px-12 -mt-2 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-10">
