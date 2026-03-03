@@ -152,8 +152,8 @@ export default function TourCategoriesCarousel() {
                 {/* ── Spacer ── */}
                 <div className="mb-4"></div>
 
-                {/* Carousel Container */}
-                <div className="relative group/carousel -mx-6 md:-mx-12 pt-8 pb-12">
+                {/* Carousel Container (Dark Green Background Zone) */}
+                <div className="relative group/carousel -mx-6 md:-mx-12 pt-8">
 
                     {/* Background Highlight wrapping the package row full-width */}
                     <div className="absolute top-0 bottom-0 left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] bg-[#D1E5DB]/70 -z-10 pointer-events-none hidden md:block" />
@@ -161,7 +161,7 @@ export default function TourCategoriesCarousel() {
                     {/* Left Navigation - Nude Glass Circle */}
                     <button
                         onClick={() => scrollTo('left')}
-                        className="absolute left-2 md:left-5 lg:left-7 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-deep-emerald/60 hover:bg-white/45 hover:text-deep-emerald shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-110"
+                        className="absolute left-2 md:left-5 lg:left-7 top-[40%] md:top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-deep-emerald/60 hover:bg-white/45 hover:text-deep-emerald shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-110"
                         aria-label="Previous"
                     >
                         <ChevronLeft className="w-5 h-5 stroke-[2]" />
@@ -170,7 +170,7 @@ export default function TourCategoriesCarousel() {
                     {/* Right Navigation - Nude Glass Circle */}
                     <button
                         onClick={() => scrollTo('right')}
-                        className="absolute right-2 md:right-5 lg:right-7 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-deep-emerald/60 hover:bg-white/45 hover:text-deep-emerald shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-110"
+                        className="absolute right-2 md:right-5 lg:right-7 top-[40%] md:top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-deep-emerald/60 hover:bg-white/45 hover:text-deep-emerald shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-110"
                         aria-label="Next"
                     >
                         <ChevronRight className="w-5 h-5 stroke-[2]" />
@@ -179,7 +179,7 @@ export default function TourCategoriesCarousel() {
                     {/* ── Scroll-snap Horizontal Rail ── */}
                     <div
                         ref={scrollRef}
-                        className="flex gap-6 md:gap-8 overflow-x-auto pt-10 pb-12 snap-x snap-mandatory px-[max(1.5rem,calc(50vw-170px))] md:px-[max(3rem,calc(50vw-210px))] lg:px-[max(3rem,calc(50vw-240px))] scrollbar-none"
+                        className="flex gap-6 md:gap-8 overflow-x-auto pt-10 pb-6 snap-x snap-mandatory px-[max(1.5rem,calc(50vw-170px))] md:px-[max(3rem,calc(50vw-210px))] lg:px-[max(3rem,calc(50vw-240px))] scrollbar-none relative z-10"
                         style={{
                             scrollbarWidth: 'none',
                             msOverflowStyle: 'none'
@@ -269,12 +269,9 @@ export default function TourCategoriesCarousel() {
                             );
                         })}
                     </div>
-                </div>
 
-                {/* ── Bottom Controls (View All) ── */}
-                <div className="mt-8 flex flex-col items-center gap-6 px-4 md:px-0">
-                    {/* Pagination Dots Moved Inside Darker Green Section */}
-                    <div className="flex justify-center items-center gap-3 pt-4 pb-2 relative z-20">
+                    {/* Naked Glassy Pagination Dots Inside Dark Green Overlay */}
+                    <div className="flex justify-center items-center gap-3 relative z-20 pb-8 mt-2">
                         {Array.from({ length: totalSlides }).map((_, idx) => (
                             <button
                                 key={idx}
@@ -296,15 +293,17 @@ export default function TourCategoriesCarousel() {
                                     });
                                 }}
                                 className={`rounded-full transition-all duration-500 shadow-sm ${idx === currentIndex
-                                    ? 'h-2.5 w-8 bg-[#6B7C73]/80 backdrop-blur-md border border-white/40'
-                                    : 'h-2.5 w-2.5 bg-[#A1B3AA]/40 backdrop-blur-md border border-white/30 hover:bg-[#A1B3AA]/60'
+                                    ? 'h-2.5 w-8 bg-white/40 backdrop-blur-md border border-white/60' // active glass
+                                    : 'h-2.5 w-2.5 bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/50' // inactive clear
                                     }`}
                                 aria-label={`Go to slide ${idx + 1}`}
                             />
                         ))}
                     </div>
+                </div>
 
-                    {/* Liquid Glass View All Button */}
+                {/* ── Bottom Controls (View All Button Separate) ── */}
+                <div className="mt-12 flex justify-center px-4 md:px-0 relative z-20">
                     <Link
                         href="/packages"
                         className="inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-semibold text-deep-emerald/70 px-8 py-4 md:px-10 md:py-4 rounded-full w-full md:w-auto bg-gradient-to-br from-white/25 via-white/15 to-white/10 backdrop-blur-xl border border-white/35 shadow-[0_4px_24px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.4)] hover:from-white/35 hover:via-white/25 hover:to-white/15 hover:text-deep-emerald hover:shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.5)] hover:border-antique-gold/30 hover:scale-[1.02] transition-all duration-300"
