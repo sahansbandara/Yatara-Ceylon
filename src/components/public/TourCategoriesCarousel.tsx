@@ -6,8 +6,6 @@ import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { tourCategories } from '@/data/tourCategories';
 
-const themeChips = ['Honeymoon', 'Family', 'Wildlife', 'Ayurveda', 'Heritage', 'Beaches'];
-
 export default function TourCategoriesCarousel() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -38,8 +36,7 @@ export default function TourCategoriesCarousel() {
         if (!scrollRef.current) return;
         const container = scrollRef.current;
         const firstChild = container.children[0] as HTMLElement | undefined;
-        // On mobile we show one full card roughly, so measure that plus gap or just hardcode standard
-        const itemWidth = firstChild?.offsetWidth || (window.innerWidth < 768 ? 340 : 400);
+        const itemWidth = firstChild?.offsetWidth || (window.innerWidth < 768 ? 280 : 360);
         const gap = 32;
 
         if (direction === 'start') {
@@ -55,11 +52,10 @@ export default function TourCategoriesCarousel() {
 
     // Auto-scroll loop
     useEffect(() => {
-        if (isHovered) return; // Pause auto-scroll on hover
+        if (isHovered) return;
 
         const timer = setInterval(() => {
             if (scrollRef.current) {
-                // If we are at the end, scroll back to start
                 const container = scrollRef.current;
                 if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
                     scrollTo('start');
@@ -100,33 +96,33 @@ export default function TourCategoriesCarousel() {
                 <div className="mb-4"></div>
 
                 {/* Carousel Container */}
-                <div className="relative group/carousel -mx-6 md:-mx-12 py-8">
+                <div className="relative group/carousel -mx-6 md:-mx-16 lg:-mx-20 py-8">
 
                     {/* Background Highlight wrapping the package row full-width */}
                     <div className="absolute top-0 bottom-0 left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] bg-[#D1E5DB]/70 -z-10 pointer-events-none hidden md:block" />
 
-                    {/* Left Navigation - Giant Naked Chevron */}
+                    {/* Left Navigation - Nude Glass Circle */}
                     <button
                         onClick={() => scrollTo('left')}
-                        className="absolute left-[-16px] md:-left-4 2xl:-left-12 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center text-deep-emerald/60 hover:text-deep-emerald transition-all duration-500 opacity-0 group-hover/carousel:opacity-100 hidden xl:flex"
+                        className="absolute left-2 md:left-5 lg:left-7 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-deep-emerald/60 hover:bg-white/45 hover:text-deep-emerald shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-110"
                         aria-label="Previous"
                     >
-                        <ChevronLeft className="w-16 h-16 md:w-24 md:h-24 stroke-[1.5]" />
+                        <ChevronLeft className="w-5 h-5 stroke-[2]" />
                     </button>
 
-                    {/* Right Navigation - Giant Naked Chevron */}
+                    {/* Right Navigation - Nude Glass Circle */}
                     <button
                         onClick={() => scrollTo('right')}
-                        className="absolute right-[-16px] md:-right-4 2xl:-right-12 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center text-deep-emerald/60 hover:text-deep-emerald transition-all duration-500 opacity-0 group-hover/carousel:opacity-100 hidden xl:flex"
+                        className="absolute right-2 md:right-5 lg:right-7 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-deep-emerald/60 hover:bg-white/45 hover:text-deep-emerald shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-110"
                         aria-label="Next"
                     >
-                        <ChevronRight className="w-16 h-16 md:w-24 md:h-24 stroke-[1.5]" />
+                        <ChevronRight className="w-5 h-5 stroke-[2]" />
                     </button>
 
                     {/* ── Scroll-snap Horizontal Rail ── */}
                     <div
                         ref={scrollRef}
-                        className="flex gap-6 md:gap-8 overflow-x-auto pb-4 snap-x snap-mandatory px-6 md:px-12 scrollbar-none"
+                        className="flex gap-6 md:gap-8 overflow-x-auto pb-4 snap-x snap-mandatory px-10 md:px-20 lg:px-24 scrollbar-none"
                         style={{
                             scrollbarWidth: 'none',
                             msOverflowStyle: 'none'
@@ -143,14 +139,14 @@ export default function TourCategoriesCarousel() {
                                 className="group block flex-shrink-0 snap-center"
                             >
                                 <div
-                                    className={`relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center transition-all duration-[600ms] group w-[340px] md:w-[420px] lg:w-[480px] h-[540px] md:h-[640px]`}
+                                    className="relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center transition-all duration-[600ms] group w-[280px] md:w-[360px] lg:w-[420px] h-[480px] md:h-[580px]"
                                 >
                                     {/* Image */}
                                     <Image
                                         src={cat.image}
                                         alt={cat.title}
                                         fill
-                                        sizes="(max-width: 768px) 340px, 420px"
+                                        sizes="(max-width: 768px) 280px, (max-width: 1024px) 360px, 420px"
                                         className="object-cover transform group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
                                     />
 
@@ -210,8 +206,8 @@ export default function TourCategoriesCarousel() {
 
                 {/* ── Bottom Controls (Pagination & View All combined) ── */}
                 <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 px-4 md:px-0">
-                    {/* Pagination Dots */}
-                    <div className="flex items-center gap-2 order-2 md:order-1">
+                    {/* Liquid Glass Pagination Dots */}
+                    <div className="flex items-center gap-2.5 order-2 md:order-1 px-5 py-3 rounded-full bg-white/15 backdrop-blur-lg border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.3)]">
                         {Array.from({ length: totalSlides }).map((_, idx) => (
                             <button
                                 key={idx}
@@ -225,19 +221,19 @@ export default function TourCategoriesCarousel() {
                                         behavior: 'smooth'
                                     });
                                 }}
-                                className={`h-2.5 rounded-full transition-all duration-500 shadow-[0_2px_8px_rgba(0,0,0,0.05)] backdrop-blur-md border ${idx === currentIndex
-                                    ? 'w-8 bg-white/40 border-white/40'
-                                    : 'w-2.5 bg-transparent border-white/20 hover:bg-white/20'
-                                    }`}
+                                className={`h-2.5 rounded-full transition-all duration-500 ${idx === currentIndex
+                                    ? 'w-8 bg-deep-emerald/50 shadow-[0_0_8px_rgba(4,57,39,0.15)]'
+                                    : 'w-2.5 bg-deep-emerald/15 hover:bg-deep-emerald/30'
+                                }`}
                                 aria-label={`Go to slide ${idx + 1}`}
                             />
                         ))}
                     </div>
 
-                    {/* View All Button */}
+                    {/* Liquid Glass View All Button */}
                     <Link
                         href="/packages"
-                        className="order-1 md:order-2 inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-semibold text-deep-emerald/70 bg-white/5 backdrop-blur-[2px] border border-white/20 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-8 py-4 md:px-10 md:py-4 rounded-full hover:bg-white/10 hover:text-deep-emerald hover:shadow-md hover:scale-[1.02] transition-all duration-300 w-full md:w-auto"
+                        className="order-1 md:order-2 inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-semibold text-deep-emerald/70 px-8 py-4 md:px-10 md:py-4 rounded-full w-full md:w-auto bg-gradient-to-br from-white/25 via-white/15 to-white/10 backdrop-blur-xl border border-white/35 shadow-[0_4px_24px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.4)] hover:from-white/35 hover:via-white/25 hover:to-white/15 hover:text-deep-emerald hover:shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.5)] hover:border-antique-gold/30 hover:scale-[1.02] transition-all duration-300"
                     >
                         View All Signature Journeys
                         <ArrowRight className="h-4 w-4" />
