@@ -22,6 +22,8 @@ export const createPackageSchema = z.object({
     exclusions: z.array(z.string()).optional().default([]),
     tags: z.array(z.string()).optional().default([]),
     isPublished: z.boolean().optional().default(false),
+    isFeaturedHome: z.boolean().optional().default(false),
+    homeRank: z.number().optional().default(0),
 });
 export const updatePackageSchema = createPackageSchema.partial();
 

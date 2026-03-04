@@ -10,68 +10,6 @@ import PackagePriceDisplay from '@/components/public/PackagePriceDisplay';
 
 export const dynamic = 'force-dynamic';
 
-import { tourCategories } from '@/data/tourCategories';
-
-const MOCK_PACKAGES = [
-    {
-        _id: 'p1',
-        title: 'The Ramayana Heritage Trail',
-        slug: 'ramayana-heritage-trail',
-        summary: 'A spiritual and cultural odyssey tracing the ancient Ramayana saga across sacred temples, mystical caves, and legendary landmarks.',
-        fullDescription: 'Trace the legendary footsteps of the Ramayana across Sri Lanka\'s most sacred and breathtaking sites. From the ancient temples of Nuwara Eliya to the coastal shrines of Trincomalee, this journey weaves mythology with natural wonder in an experience found nowhere else on earth.',
-        priceMin: 128000,
-        priceMax: 195000,
-        duration: '6 Days / 5 Nights',
-        images: ['/images/home/signature-heritage.png', '/images/home/pkg_ramayana_1772119639135.png'],
-        tags: ['Families', 'Pilgrims', 'Culture'],
-        highlights: ['Key temple circuit with comfortable routing', 'Private guide days', 'Upgraded stays for recovery', 'Sacred evening ceremonies'],
-        itinerary: [
-            { day: 1, title: 'Arrival & Colombo', description: 'Begin your journey with a welcome at the airport and a transfer to Colombo.', activity: 'Galle Face Green Walk' },
-            { day: 2, title: 'Sacred Temples', description: 'Visit the revered temples central to the Ramayana epic.', activity: 'Temple Visit' },
-        ],
-        inclusions: ['Luxury accommodation', 'Private chauffeur-guide', 'Daily breakfast', 'Entrance fees to Ramayana sites'],
-        exclusions: ['International flights', 'Lunch & dinner', 'Personal expenses'],
-    },
-    {
-        _id: 'p2',
-        title: 'Ceylon Highlights Express',
-        slug: 'ceylon-highlights-express',
-        summary: 'The essential Sri Lanka in seven unforgettable days — tea country, wildlife, and golden coastline.',
-        fullDescription: 'An essential 7-day immersion through Sri Lanka\'s crown jewels — from Sigiriya\'s lion fortress to Galle\'s colonial charm. Ideal for first-time visitors, couples, and families.',
-        priceMin: 155000,
-        priceMax: 280000,
-        duration: '7 Days / 6 Nights',
-        images: ['/images/home/pkg_ceylon_express_1772119662402.png'],
-        tags: ['First-Time Visitors', 'Couples', 'Families'],
-        highlights: ['Sigiriya sunrise option', 'Scenic train segment', 'Galle Fort walk with local storyteller'],
-        itinerary: [
-            { day: 1, title: 'Arrival & Negombo', description: 'Rest after your flight in the coastal town of Negombo.', activity: 'Beach Sunset' },
-            { day: 2, title: 'Cultural Triangle', description: 'Journey to the ancient kingdoms.', activity: 'Sigiriya Rock Climb' },
-        ],
-        inclusions: ['4-star boutique stays', 'Private AC vehicle', 'Breakfast & dinner', 'Safari jeep'],
-        exclusions: ['Flights', 'Visas', 'Travel insurance'],
-    },
-    {
-        _id: 'p3',
-        title: 'Heritage & Wildlife Adventure',
-        slug: 'heritage-wildlife-adventure',
-        summary: 'Ancient kingdoms by morning, leopard safaris by dusk — the ultimate Sri Lanka dual experience.',
-        fullDescription: 'The ultimate Sri Lanka experience — from UNESCO heritage sites to thrilling safari encounters at Yala National Park. Designed for wildlife lovers and history buffs alike.',
-        priceMin: 195000,
-        priceMax: 350000,
-        duration: '7 Days / 6 Nights',
-        images: ['/images/home/signature-wildlife.png', '/images/home/pkg_heritage_wildlife_1772119687299.png'],
-        tags: ['Wildlife Lovers', 'History Buffs'],
-        highlights: ['Private jeep safari drives', 'UNESCO site access', 'Boutique lodge stays', 'Wildlife photography opportunities'],
-        itinerary: [
-            { day: 1, title: 'Arrival', description: 'Welcome to Sri Lanka.', activity: 'Transfer to Hotel' },
-            { day: 5, title: 'Yala National Park', description: 'Experience the thrill of the wild.', activity: 'Leopard Safari' },
-        ],
-        inclusions: ['Luxury resort stays', 'Private naturalist guide', 'All park fees', 'Half-board meals'],
-        exclusions: ['Camera permits', 'Gratuities', 'Extra safaris'],
-    },
-];
-
 async function getPackage(slug: string) {
     try {
         await connectDB();
@@ -80,35 +18,27 @@ async function getPackage(slug: string) {
             return JSON.parse(JSON.stringify(pkg));
         }
     } catch {
-        // Fall through to mock
+        // DB error
     }
-    const mockPkg = MOCK_PACKAGES.find(p => p.slug === slug);
-    if (mockPkg) return mockPkg;
-
-    // Dynamic mock for valid categories that aren't in DB yet
-    const catalogPkg = tourCategories.find(c => c.href === `/packages/${slug}`);
-    if (catalogPkg) {
-        return {
-            _id: slug,
-            title: catalogPkg.title,
-            slug: slug,
-            summary: catalogPkg.promise,
-            fullDescription: catalogPkg.description,
-            priceMin: 200000,
-            priceMax: 400000,
-            duration: catalogPkg.tags.find(t => t.includes('Nights')) || 'Custom Duration',
-            images: [catalogPkg.image, catalogPkg.image],
-            tags: catalogPkg.tags,
-            highlights: ['Custom signature experiences', 'Premium comfort'],
-            itinerary: [
-                { day: 1, title: 'Arrival in Sri Lanka', description: 'Welcome and transfer.' }
-            ],
-            inclusions: ['Premium Accommodation', 'Private Guide', 'Transport'],
-            exclusions: ['International Flights', 'Visas']
-        };
-    }
-
     return null;
+}
+
+async function getRelatedPackages(slug: string, tags: string[]) {
+    try {
+        await connectDB();
+        const related = await Package.find({
+            slug: { $ne: slug },
+            isPublished: true,
+            isDeleted: false,
+            tags: { $in: tags || [] },
+        })
+            .sort({ homeRank: -1 })
+            .limit(3)
+            .lean();
+        return JSON.parse(JSON.stringify(related || []));
+    } catch {
+        return [];
+    }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -128,6 +58,8 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
     if (!pkg) {
         notFound();
     }
+
+    const relatedPackages = await getRelatedPackages(slug, pkg.tags);
 
     return (
         <div className="min-h-screen bg-off-white pb-24">
@@ -349,9 +281,9 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                                 </div>
 
                                 <div className="space-y-3">
-                                    <Link href={`/public/booking-request?packageId=${pkg._id}`} className="block">
+                                    <Link href={`/contact?journey=${pkg.slug}`} className="block">
                                         <Button className="w-full h-12 text-[12px] tracking-[0.15em] uppercase font-semibold bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold border border-antique-gold/20 rounded-xl shadow-lg transition-all duration-300">
-                                            Request This Journey
+                                            Inquire About This Journey
                                         </Button>
                                     </Link>
                                     <Link href="/contact" className="block">
@@ -404,6 +336,39 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                     </div>
                 </div>
             </div>
+
+            {/* Related Journeys */}
+            {relatedPackages.length > 0 && (
+                <div className="max-w-7xl mx-auto px-6 md:px-12 mt-16">
+                    <h2 className="text-2xl md:text-3xl font-display text-deep-emerald mb-8">Related Journeys</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {relatedPackages.map((rel: any) => (
+                            <Link key={rel._id} href={`/packages/${rel.slug}`} className="group block">
+                                <div className="rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100/80 h-full">
+                                    <div className="relative h-[220px] overflow-hidden">
+                                        <Image
+                                            src={rel.images?.[0] || '/images/home/curated-kingdoms.png'}
+                                            alt={rel.title}
+                                            fill
+                                            className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                                        <div className="absolute bottom-3 left-3">
+                                            <span className="text-[10px] tracking-[0.15em] uppercase font-medium text-white/80 bg-white/15 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                                                {rel.duration}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="p-5">
+                                        <h3 className="font-display text-deep-emerald text-lg mb-2 group-hover:text-antique-gold transition-colors">{rel.title}</h3>
+                                        <p className="text-sm text-gray-500 font-light line-clamp-2">{rel.summary}</p>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

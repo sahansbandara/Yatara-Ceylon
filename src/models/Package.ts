@@ -26,6 +26,8 @@ export interface IPackage extends Document {
     exclusions: string[];
     tags: string[];
     isPublished: boolean;
+    isFeaturedHome: boolean;
+    homeRank: number;
     isDeleted: boolean;
     deletedAt?: Date;
     createdAt: Date;
@@ -62,6 +64,8 @@ const PackageSchema = new Schema<IPackage>(
         exclusions: [String],
         tags: [String],
         isPublished: { type: Boolean, default: false, index: true },
+        isFeaturedHome: { type: Boolean, default: false, index: true },
+        homeRank: { type: Number, default: 0 },
         isDeleted: { type: Boolean, default: false },
         deletedAt: Date,
     },

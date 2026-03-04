@@ -179,7 +179,7 @@ export default function TourCategoriesCarousel() {
                     {/* ── Scroll-snap Horizontal Rail ── */}
                     <div
                         ref={scrollRef}
-                        className="flex gap-6 md:gap-8 overflow-x-auto pt-10 pb-6 snap-x snap-mandatory px-[max(1.5rem,calc(50vw-170px))] md:px-[max(3rem,calc(50vw-210px))] lg:px-[max(3rem,calc(50vw-240px))] scrollbar-none relative z-10"
+                        className="flex gap-6 md:gap-8 overflow-x-auto pt-10 pb-6 snap-x snap-mandatory px-[max(1.5rem,calc(50vw-140px))] md:px-[max(3rem,calc(50vw-165px))] lg:px-[max(3rem,calc(50vw-185px))] scrollbar-none relative z-10"
                         style={{
                             scrollbarWidth: 'none',
                             msOverflowStyle: 'none'
@@ -196,10 +196,10 @@ export default function TourCategoriesCarousel() {
                             return (
                                 <div
                                     key={`${idx}-${cat.title}`}
-                                    className={`relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center group w-[340px] md:w-[420px] lg:w-[480px] h-[540px] md:h-[640px]`}
+                                    className={`relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center group w-[280px] md:w-[330px] lg:w-[370px] h-[420px] md:h-[500px]`}
                                     style={{
-                                        transform: idx === centerIndex ? 'scale(1.05)' : 'scale(0.92)',
-                                        opacity: idx === centerIndex ? 1 : 0.6,
+                                        transform: idx === centerIndex ? 'scale(1.05)' : 'scale(0.85)',
+                                        opacity: idx === centerIndex ? 1 : 0.65,
                                         transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                                     }}
                                 >
@@ -208,7 +208,7 @@ export default function TourCategoriesCarousel() {
                                         src={cat.image}
                                         alt={cat.title}
                                         fill
-                                        sizes="(max-width: 768px) 280px, (max-width: 1024px) 360px, 420px"
+                                        sizes="(max-width: 768px) 280px, (max-width: 1024px) 330px, 370px"
                                         className="object-cover transform group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
                                     />
 

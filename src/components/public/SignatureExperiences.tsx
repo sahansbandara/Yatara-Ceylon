@@ -1,41 +1,57 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Clock, Users, Compass } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import SectionHeading from './SectionHeading';
+import connectDB from '@/lib/mongodb';
+import Package from '@/models/Package';
 
-const featuredJourney = {
-    id: 'ramayana-heritage-trail',
-    title: 'The Ramayana Heritage Trail',
-    description: 'Trace the legendary footsteps of the Ramayana across Sri Lanka\'s most sacred and breathtaking sites. From the ancient temples of Nuwara Eliya to the coastal shrines of Trincomalee, this journey weaves mythology with natural wonder in an experience found nowhere else on earth.',
-    image: '/images/home/signature-heritage.png',
-    href: '/packages/ramayana-heritage-trail',
-    duration: '10 Days',
-    style: 'Private Guide · Heritage Focus',
-    highlights: ['Ancient temple circuits', 'Private historian escorts', 'Boutique heritage stays'],
-};
+async function getFeaturedPackages() {
+    try {
+        await connectDB();
+        const packages = await Package.find({
+            isPublished: true,
+            isDeleted: false,
+            isFeaturedHome: true,
+        })
+            .sort({ homeRank: 1 })
+            .limit(9)
+            .lean();
+        return JSON.parse(JSON.stringify(packages));
+    } catch {
+        return [];
+    }
+}
 
-const supportingJourneys = [
-    {
-        id: 'ceylon-highlights-express',
-        title: 'Ceylon Highlights Express',
-        description: 'The essential Sri Lanka in seven unforgettable days — tea country, wildlife, and golden coastline.',
-        image: '/images/home/signature-ceylon.png',
-        href: '/packages/ceylon-highlights-express',
-        duration: '7 Days',
-        style: 'Private Chauffeur · All Highlights',
-    },
-    {
-        id: 'heritage-wildlife-adventure',
-        title: 'Heritage & Wildlife Adventure',
-        description: 'Ancient kingdoms by morning, leopard safaris by dusk — the ultimate Sri Lanka dual experience.',
-        image: '/images/home/signature-wildlife.png',
-        href: '/packages/heritage-wildlife-adventure',
-        duration: '12 Days',
-        style: 'Private Guide · Wildlife & Culture',
-    },
-];
+// Theme label mapping: first tag → display label
+function getThemeLabel(tags: string[]): string {
+    if (!tags || tags.length === 0) return 'CURATED JOURNEY';
+    const tagMap: Record<string, string> = {
+        'Wildlife': 'WILDLIFE TOURS',
+        'Luxury': 'LUXURY TOURS',
+        'Hill Country': 'HILL COUNTRY TOURS',
+        'Family': 'FAMILY TOURS',
+        'Heritage': 'HERITAGE TOURS',
+        'Honeymoon': 'HONEYMOON TOURS',
+        'Wellness': 'WELLNESS TOURS',
+        'Beach': 'COASTAL TOURS',
+        'Nature': 'NATURE TOURS',
+        'Rail': 'RAIL JOURNEYS',
+        'First-Time': 'SIGNATURE TOURS',
+        'Photography': 'PHOTOGRAPHY TOURS',
+        'Adventure': 'ADVENTURE TOURS',
+        'Couples': 'COUPLES TOURS',
+    };
+    for (const tag of tags) {
+        if (tagMap[tag]) return tagMap[tag];
+    }
+    return 'CURATED JOURNEY';
+}
 
-export default function SignatureExperiences() {
+export default async function SignatureExperiences() {
+    const packages = await getFeaturedPackages();
+
+    if (packages.length === 0) return null;
+
     return (
         <section className="py-32 bg-off-white/50 relative overflow-hidden">
             {/* Decorative background */}
@@ -49,106 +65,62 @@ export default function SignatureExperiences() {
                     align="center"
                 />
 
-                {/* Featured Journey — Large Editorial Panel with Asymmetric Layout */}
-                <div className="mt-20 group relative overflow-hidden rounded-2xl liquid-glass-card">
-                    <div className="grid grid-cols-1 lg:grid-cols-2">
-                        {/* Image side — overlapping effect */}
-                        <div className="relative h-[400px] lg:h-[600px] overflow-hidden">
+                {/* 3×3 Walkers-Style Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-20">
+                    {packages.map((pkg: any, idx: number) => (
+                        <Link
+                            key={pkg._id || pkg.slug}
+                            href={`/packages/${pkg.slug}`}
+                            className={`group relative overflow-hidden rounded-2xl flex flex-col justify-end ${idx === 0 ? 'md:col-span-2 md:row-span-2 h-[500px] lg:h-[620px]' : 'h-[380px]'
+                                }`}
+                        >
                             <Image
-                                src={featuredJourney.image}
-                                alt={featuredJourney.title}
-                                fill
-                                className="object-cover group-hover:scale-[1.03] transition-transform duration-1000 ease-out"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/5" />
-                            {/* Overlapping glass label */}
-                            <div className="absolute bottom-6 left-6 liquid-glass-button px-5 py-2.5 rounded-lg">
-                                <span className="text-[10px] tracking-[0.2em] font-semibold uppercase text-white">Featured Journey</span>
-                            </div>
-                        </div>
-
-                        <div className="p-10 lg:p-16 flex flex-col justify-center">
-                            <span className="inline-block mb-4 text-xs tracking-[0.3em] font-medium text-antique-gold uppercase">
-                                ✦ Editor&apos;s Choice
-                            </span>
-                            <h3 className="text-3xl lg:text-5xl font-display text-deep-emerald mb-6 leading-tight">
-                                {featuredJourney.title}
-                            </h3>
-                            <p className="text-gray-500 font-light leading-relaxed mb-8 max-w-lg text-[15px]">
-                                {featuredJourney.description}
-                            </p>
-
-                            {/* Highlights with glass pills */}
-                            <div className="flex flex-wrap gap-4 mb-8">
-                                <span className="flex items-center gap-2 text-sm text-deep-emerald/70 liquid-glass-gold px-4 py-2 rounded-lg">
-                                    <Clock className="w-4 h-4 text-antique-gold" strokeWidth={1.5} />
-                                    {featuredJourney.duration}
-                                </span>
-                                <span className="flex items-center gap-2 text-sm text-deep-emerald/70 liquid-glass-gold px-4 py-2 rounded-lg">
-                                    <Users className="w-4 h-4 text-antique-gold" strokeWidth={1.5} />
-                                    {featuredJourney.style}
-                                </span>
-                            </div>
-
-                            <ul className="space-y-3 mb-10">
-                                {featuredJourney.highlights.map((h, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-sm text-gray-600 font-light">
-                                        <Compass className="w-4 h-4 text-antique-gold/70 shrink-0" strokeWidth={1.5} />
-                                        {h}
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <Link
-                                href={featuredJourney.href}
-                                className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.2em] text-deep-emerald border border-deep-emerald/30 px-8 py-4 hover:bg-deep-emerald hover:text-antique-gold transition-all duration-500 w-fit rounded-none group/btn"
-                            >
-                                View Full Itinerary
-                                <ArrowRight className="w-4 h-4 ml-1 transition-transform duration-500 group-hover/btn:translate-x-1" />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Supporting Journeys — Glass Overlay Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-                    {supportingJourneys.map((exp) => (
-                        <div key={exp.id} className="group relative overflow-hidden rounded-2xl flex flex-col h-[450px] justify-end">
-                            <Image
-                                src={exp.image}
-                                alt={exp.title}
+                                src={pkg.images?.[0] || '/images/home/curated-kingdoms.png'}
+                                alt={pkg.title}
                                 fill
                                 className="object-cover object-center transform group-hover:scale-105 transition-transform duration-1000 ease-out"
+                                sizes={idx === 0 ? '(max-width: 768px) 100vw, 66vw' : '(max-width: 768px) 100vw, 33vw'}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-deep-emerald/95 via-deep-emerald/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-700" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-85 group-hover:opacity-90 transition-opacity duration-700" />
 
-                            <div className="relative z-10 p-8 md:p-10 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                <div className="flex items-center gap-4 mb-3 text-off-white/60 text-xs tracking-[0.15em] uppercase">
-                                    <span className="flex items-center gap-1.5">
-                                        <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
-                                        {exp.duration}
-                                    </span>
+                            {/* Most Popular badge for first card */}
+                            {idx === 0 && (
+                                <div className="absolute top-5 left-5 bg-antique-gold/90 backdrop-blur-sm px-4 py-2 rounded-lg z-10">
+                                    <span className="text-[10px] tracking-[0.2em] font-bold uppercase text-deep-emerald">Most Popular Tour</span>
                                 </div>
-                                <h3 className="text-2xl lg:text-3xl font-display text-antique-gold font-medium mb-3">
-                                    {exp.title}
-                                </h3>
-                                <p className="text-off-white/70 font-light text-sm mb-2 leading-relaxed">
-                                    {exp.description}
-                                </p>
-                                <p className="text-off-white/50 font-light tracking-widest text-xs mb-6 uppercase">
-                                    {exp.style}
-                                </p>
+                            )}
 
-                                <Link
-                                    href={exp.href}
-                                    className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.2em] text-antique-gold border border-antique-gold/50 px-6 py-3 hover:bg-antique-gold hover:text-deep-emerald transition-all duration-300 opacity-0 group-hover:opacity-100 rounded-none"
-                                >
-                                    View Itinerary
-                                    <ArrowRight className="w-4 h-4 ml-1" />
-                                </Link>
+                            <div className="relative z-10 p-6 md:p-8">
+                                {/* Theme label */}
+                                <span className="text-[10px] tracking-[0.25em] font-medium uppercase text-white/60 mb-2 block">
+                                    {getThemeLabel(pkg.tags)}
+                                </span>
+
+                                <h3 className={`font-display text-white font-medium mb-2 leading-tight uppercase tracking-wide ${idx === 0 ? 'text-2xl lg:text-3xl' : 'text-lg lg:text-xl'
+                                    }`}>
+                                    {pkg.title}
+                                    <span className="inline-block ml-3 w-8 h-[1.5px] bg-white/40 align-middle" />
+                                </h3>
+
+                                {/* Duration */}
+                                <div className="flex items-center gap-2 text-white/50 text-xs tracking-wide">
+                                    <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
+                                    <span>{pkg.duration}</span>
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
+                </div>
+
+                {/* View All CTA */}
+                <div className="flex justify-center mt-14">
+                    <Link
+                        href="/packages"
+                        className="inline-flex items-center gap-3 text-xs font-sans uppercase tracking-[0.25em] text-deep-emerald border border-deep-emerald/25 px-10 py-4 hover:bg-deep-emerald hover:text-antique-gold transition-all duration-500 rounded-none group/cta"
+                    >
+                        View All Journeys
+                        <ArrowRight className="w-4 h-4 transition-transform duration-500 group-hover/cta:translate-x-1" />
+                    </Link>
                 </div>
             </div>
         </section>

@@ -13,103 +13,20 @@ export const metadata: Metadata = {
     description: 'Explore our curated collection of Sri Lanka luxury itineraries. Handcrafted journeys designed around pace, privacy, and purpose.',
 };
 
-// Fallback packages when DB is empty
-const FALLBACK_PACKAGES = [
-    {
-        _id: 'p1',
-        title: 'The Ramayana Heritage Trail',
-        slug: 'ramayana-heritage-trail',
-        summary: 'A spiritual and cultural odyssey tracing the ancient Ramayana saga across sacred temples, mystical caves, and legendary landmarks.',
-        priceMin: 128000,
-        duration: '6 Days / 5 Nights',
-        images: ['/images/home/pkg_ramayana_1772119639135.png'],
-        tags: ['Families', 'Pilgrims', 'Culture'],
-        highlights: ['Key temple circuit with comfortable routing', 'Private guide days', 'Upgraded stays for recovery'],
-    },
-    {
-        _id: 'p2',
-        title: 'The Ceylon Highlights Express',
-        slug: 'ceylon-highlights-express',
-        summary: "An essential 7-day immersion through Sri Lanka's crown jewels — from Sigiriya's lion fortress to Galle's colonial charm.",
-        priceMin: 155000,
-        duration: '7 Days / 6 Nights',
-        images: ['/images/home/pkg_ceylon_express_1772119662402.png'],
-        tags: ['First-Time Visitors', 'Couples', 'Families'],
-        highlights: ['Sigiriya sunrise option', 'Scenic train segment', 'Galle Fort walk'],
-    },
-    {
-        _id: 'p3',
-        title: 'The Cultural & Scenic Escape',
-        slug: 'cultural-scenic-escape',
-        summary: 'A curated journey blending ancient kingdoms with breathtaking hill country landscapes.',
-        priceMin: 168000,
-        duration: '7 Days / 6 Nights',
-        images: ['/images/home/pkg_cultural_scenic_1772119769964.png'],
-        tags: ['Culture Enthusiasts', 'Couples'],
-        highlights: ['Cultural Triangle private tour', 'Tea estate afternoon', 'Scenic rail segment'],
-    },
-    {
-        _id: 'p4',
-        title: 'Heritage & Wildlife Adventure',
-        slug: 'heritage-wildlife-adventure',
-        summary: 'The ultimate Sri Lanka experience — from UNESCO heritage sites to thrilling safari encounters at Yala National Park.',
-        priceMin: 195000,
-        duration: '7 Days / 6 Nights',
-        images: ['/images/home/pkg_heritage_wildlife_1772119687299.png'],
-        tags: ['Wildlife Lovers', 'History Buffs'],
-        highlights: ['Private jeep safari', 'UNESCO site access', 'Boutique lodge stays'],
-    },
-    {
-        _id: 'p5',
-        title: 'The Classic Ceylon Getaway',
-        slug: 'classic-ceylon-getaway',
-        summary: "A leisurely circuit through the island's timeless gems — Kandy, Nuwara Eliya, and the southern coast.",
-        priceMin: 142000,
-        duration: '7 Days / 6 Nights',
-        images: ['/images/home/pkg_classic_ceylon_1772119707902.png'],
-        tags: ['General Travelers', 'Families'],
-        highlights: ['Kandy temple visit', 'Nuwara Eliya tea country', 'Southern coast relaxation'],
-    },
-    {
-        _id: 'p6',
-        title: 'The East Coast Explorer',
-        slug: 'east-coast-explorer',
-        summary: "Sun-drenched beaches, world-class surf breaks, and hidden lagoons along Sri Lanka's pristine eastern shoreline.",
-        priceMin: 175000,
-        duration: '8 Days / 7 Nights',
-        images: ['/images/home/pkg_east_coast_1772119793935.png'],
-        tags: ['Beach Lovers', 'Summer Travelers'],
-        highlights: ['Long beach base (4+ nights)', 'Snorkeling options', 'Lagoon sunset'],
-    },
-    {
-        _id: 'p7',
-        title: 'Tea, Temples & Safari',
-        slug: 'tea-temples-safari',
-        summary: 'A harmonious blend of misty tea estates, ancient temples, and thrilling game drives.',
-        priceMin: 189000,
-        duration: '8 Days / 7 Nights',
-        images: ['/images/home/pkg_tea_temples_1772119728527.png'],
-        tags: ['Nature Lovers', 'History Buffs'],
-        highlights: ['Tea tasting experience', 'Temple heritage tour', 'Safari game drives'],
-    },
-];
-
 async function getPackages() {
     try {
         await connectDB();
         const packages = await Package.find({ isPublished: true, isDeleted: false })
             .sort({ createdAt: -1 })
             .lean();
-        if (packages && packages.length > 0) {
-            return JSON.parse(JSON.stringify(packages));
-        }
+        return JSON.parse(JSON.stringify(packages || []));
     } catch {
-        // Fall through to fallback
+        return [];
     }
-    return FALLBACK_PACKAGES;
 }
 
-const themeChips = ['All', 'Honeymoon', 'Family', 'Wildlife', 'Wellness', 'Heritage', 'Beaches', 'Culture'];
+
+const themeChips = ['All', 'Wildlife', 'Hill Country', 'Family', 'Beach', 'Heritage', 'Wellness', 'Luxury', 'Culture', 'Marine'];
 
 export default async function PackagesPage() {
     const packages = await getPackages();
