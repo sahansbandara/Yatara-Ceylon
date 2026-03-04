@@ -10,7 +10,12 @@ const INTEREST_OPTIONS = ['Heritage', 'Wildlife', 'Tea Country', 'Beach', 'Welln
 const PACE_OPTIONS = ['Relaxed', 'Balanced', 'Active'];
 const BUDGET_OPTIONS = ['Flexible', 'Under $2,000', '$2,000–$5,000', '$5,000–$10,000', '$10,000+'];
 
-export default function InquireForm() {
+interface InquireFormProps {
+    inquiryType?: string;
+    journeySlug?: string;
+}
+
+export default function InquireForm({ inquiryType = 'proposal', journeySlug = '' }: InquireFormProps) {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -39,7 +44,8 @@ export default function InquireForm() {
 
     const composeMessage = () => {
         const parts = [
-            `--- INQUIRY FROM WEBSITE ---`,
+            `--- ${inquiryType === 'concierge' ? 'CONCIERGE CALL REQUEST' : 'PROPOSAL REQUEST'} FROM WEBSITE ---`,
+            journeySlug ? `Journey: ${journeySlug}` : '',
             `Name: ${formData.name}`,
             `Email: ${formData.email}`,
             `Phone/WhatsApp: ${formData.phone}`,
@@ -50,7 +56,7 @@ export default function InquireForm() {
         if (formData.pace) parts.push(`Pace: ${formData.pace}`);
         if (formData.budget) parts.push(`Budget: ${formData.budget}`);
         if (formData.notes) parts.push(`\nAdditional Notes:\n${formData.notes}`);
-        return parts.join('\n');
+        return parts.filter(Boolean).join('\n');
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -63,7 +69,7 @@ export default function InquireForm() {
                 body: JSON.stringify({
                     customerName: formData.name,
                     email: formData.email,
-                    subject: `Inquiry: Curated Proposal Request — ${formData.name}`,
+                    subject: `${inquiryType === 'concierge' ? 'Concierge Call' : 'Proposal Request'}${journeySlug ? ` [${journeySlug}]` : ''} — ${formData.name}`,
                     message: composeMessage(),
                     priority: 'HIGH',
                 }),
