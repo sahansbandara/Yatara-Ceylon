@@ -315,8 +315,8 @@ export default function EliteLoginPage() {
                                 </Button>
                             </form>
 
-                            {!showPartnerOptions && (
-                                <div className="mt-6 text-center">
+                            <div className="mt-6 text-center">
+                                {!showPartnerOptions ? (
                                     <button
                                         type="button"
                                         onClick={() => setShowPartnerOptions(true)}
@@ -324,8 +324,16 @@ export default function EliteLoginPage() {
                                     >
                                         Or join as a partner / staff
                                     </button>
-                                </div>
-                            )}
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={() => { setShowPartnerOptions(false); setRole('USER'); }}
+                                        className="text-[10px] uppercase font-semibold tracking-widest text-white/40 hover:text-red-400 transition-colors duration-300"
+                                    >
+                                        Cancel Partner / Staff Sign Up
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     )}
 
