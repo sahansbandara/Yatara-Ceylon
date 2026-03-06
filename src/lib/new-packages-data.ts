@@ -593,7 +593,162 @@ export const NEW_PACKAGES = [
             '/images/packages/luxe-rail-villa-journey-gallery-3.webp',
         ],
         isPublished: true,
-        isFeaturedHome: true,
-        homeRank: 9,
     },
+    {
+        title: 'Artisan in Travel, Curating Luxury',
+        slug: 'artisan-in-travel-curating-luxury',
+        duration: '14 Days / 13 Nights',
+        priceMin: 850000,
+        priceMax: 1500000,
+        summary: 'Experts in tailor-made luxury travel with off-beat experiences in refined luxury.',
+        fullDescription: 'Crafting bespoke journeys that highlight Sri Lanka’s culture, authenticity, and hospitality while offering discerning travelers immersive and off-beat experiences with refined luxury. Every property is 5-star or ultra-boutique, transport is in premium vehicles, and experiences are entirely private.',
+        tags: ['Luxury', 'Culture', 'Experiences'],
+        highlights: [
+            'Private helicopter or seaplane transfers (optional)',
+            'Ultra-luxury boutique hotel collection',
+            'Private villa stays with personal chefs',
+            'Exclusive access temple visits',
+            'Sailing and private yacht experiences'
+        ],
+        inclusions: [
+            'Premium VIP airport fast-track',
+            'Luxury SUV with private chauffeur/guide',
+            'All ultra-luxury accommodations',
+            'Daily breakfast and curated dinners',
+            'All exclusive experiences and entrance fees'
+        ],
+        exclusions: [
+            'International flights',
+            'Visa fees',
+            'Premium alcoholic beverages',
+            'Helicopter transfers (unless requested)',
+            'Tips and personal expenses'
+        ],
+        itinerary: [
+            { day: 1, title: 'Arrival & Colombo Elegance', description: 'VIP fast-track arrival. Transfer to historic luxury hotel. Evening private dining.', activity: 'Welcome' },
+            { day: 2, title: 'Helicopter to Tea Country', description: 'Scenic flight to the central highlands. Check-in to a restored tea planter residence.', activity: 'Scenic Flight' },
+            { day: 3, title: 'Private Tea Estate Immersion', description: 'Exclusive estate tour, tea tasting with the head planter, and a curated high tea.', activity: 'Tea Estate' },
+            { day: 4, title: 'Descend to Yala', description: 'Drive to the deep south. Settle into a luxury tented safari lodge bordering the park.', activity: 'Safari Lodge' },
+            { day: 5, title: 'Private Leopard Tracking', description: 'Full day private jeep safari with a dedicated naturalist. Sundowners in the bush.', activity: 'Wildlife Safari' },
+            { day: 6, title: 'Coastal Villa Arrival', description: 'Transfer to a private beachfront villa in Tangalle or Weligama.', activity: 'Beach Villa' },
+            { day: 7, title: 'Private Yacht Experience', description: 'Morning sail along the southern coast. Snorkeling, paddleboarding, and onboard chef lunch.', activity: 'Yacht Charter' },
+            { day: 8, title: 'Galle Fort Heritage', description: 'Guided architectural walk through Galle Fort followed by high-end boutique shopping.', activity: 'Galle Heritage' },
+            { day: 9, title: 'Villa Rest Day', description: 'A day of total relaxation. In-villa spa treatments and beachside leisure.', activity: 'Relaxation' },
+            { day: 10, title: 'Departure', description: 'Smooth transfer back to Colombo airport via expressway for departure.', activity: 'Departure' }
+        ],
+        images: [
+            '/images/tours/thumb-luxury.webp',
+            '/images/home/package-luxury.webp',
+            '/images/home/journey-dusk.webp',
+            '/images/home/journey-dawn.webp',
+        ],
+        isPublished: true,
+        isFeaturedHome: false,
+        homeRank: 0,
+    },
+    {
+        title: 'Curating Your Healing Journey',
+        slug: 'curating-your-healing-journey',
+        duration: '10 Days / 9 Nights',
+        priceMin: 400000,
+        priceMax: 700000,
+        summary: 'Combining wellness and and ayurvedic therapy prioritizing health and deep relaxation.',
+        fullDescription: 'A dedicated wellness path combining authentic Ayurvedic medical tourism, prioritizing health, relaxation, and personalized care. This itinerary is designed to ensure a transformative, inclusive journey focused purely on your physical and mental well-being in the heart of nature.',
+        tags: ['Wellness', 'Ayurveda', 'Slow Travel'],
+        highlights: [
+            'In-depth consultation with Ayurvedic doctors',
+            'Daily personalized treatment plans',
+            'Yoga and deep meditation sessions',
+            'Organic, dosha-specific meals',
+            'Silent nature walks and digital detox'
+        ],
+        inclusions: [
+            'Private comfortable transfers',
+            'Specialized eco-wellness resort stays',
+            'Full board (all specialized meals included)',
+            'All Ayurveda treatments and consultations',
+            'Daily guided yoga and meditation'
+        ],
+        exclusions: [
+            'International flights',
+            'Visa fees',
+            'External excursions non-related to wellness',
+            'Tips / personal expenses'
+        ],
+        itinerary: [
+            { day: 1, title: 'Arrival & Grounding', description: 'Transfer to a quiet sanctuary near Negombo. Gentle evening meditation.', activity: 'Arrival' },
+            { day: 2, title: 'Journey to the Jungle', description: 'Drive to the central highlands wellness retreat. Initial medical consultation.', activity: 'Consultation' },
+            { day: 3, title: 'Detoxification Phase', description: 'First full day of treatments. Shirodhara and herbal baths. Gentle evening yoga.', activity: 'Treatments' },
+            { day: 4, title: 'Mindful Nature Immersion', description: 'Morning treatments followed by a silent, guided walk through surrounding forests.', activity: 'Nature Walk' },
+            { day: 5, title: 'Deep Healing', description: 'Intensive therapeutic massages and acupuncture sessions. Nutrition class.', activity: 'Therapy' },
+            { day: 6, title: 'Transition to Coast', description: 'Transfer to a quiet southern beach Ayurveda resort. Afternoon sound bath.', activity: 'Relocation' },
+            { day: 7, title: 'Coastal Rejuvenation', description: 'Sunrise yoga on the beach. Special oil treatments. Sunset meditation.', activity: 'Beach Yoga' },
+            { day: 8, title: 'Closing Consultations', description: 'Final evaluations with doctors. Establishing an at-home continuation plan.', activity: 'Evaluation' },
+            { day: 9, title: 'Integration Day', description: 'A relaxed day to integrate the healing. Light massages, pool time, reading.', activity: 'Integration' },
+            { day: 10, title: 'Departure', description: 'Refreshed and renewed, private transfer to the airport.', activity: 'Departure' }
+        ],
+        images: [
+            '/images/tours/thumb-wellness.webp',
+            '/images/home/package-wellness.webp',
+            '/images/home/journey-afternoon.webp',
+            '/images/home/journey-dawn.webp',
+        ],
+        isPublished: true,
+        isFeaturedHome: false,
+        homeRank: 0,
+    },
+    {
+        title: 'Escape the Ordinary',
+        slug: 'escape-the-ordinary',
+        duration: '12 Days / 11 Nights',
+        priceMin: 320000,
+        priceMax: 650000,
+        summary: 'Experience the world, one journey at a time. Where adventure awaits at every turn.',
+        fullDescription: 'Discover paths only a few dare to take. This high-octane itinerary combines Sri Lanka\'s most thrilling landscapes—from climbing forgotten peaks and white-water rafting, to off-road safaris and surfing wild breaks. For those who seek adrenaline packaged perfectly.',
+        tags: ['Adventure', 'Nature', 'Experiences'],
+        highlights: [
+            'White water rafting in Kitulgala',
+            'Summit challenging non-tourist peaks',
+            'Remote off-road jeep safaris',
+            'Surfing and deep sea fishing',
+            'River canyoning and waterfall abseiling'
+        ],
+        inclusions: [
+            '4x4 rugged comfortable vehicle + driver',
+            'Eco-lodges and premium glamping stays',
+            'Daily breakfast and packed trail lunches',
+            'All technical equipment for sports',
+            'Expert local adventure guides'
+        ],
+        exclusions: [
+            'International flights',
+            'Visa fees',
+            'Dinners',
+            'Extreme sports insurance (required)',
+            'Tips / personal expenses'
+        ],
+        itinerary: [
+            { day: 1, title: 'Arrival & Briefing', description: 'Airport pickup. Transfer to Kitulgala eco-lodge. Evening gear check and safety briefing.', activity: 'Arrival' },
+            { day: 2, title: 'Kitulgala Rapids', description: 'Morning white-water rafting on the Kelani River. Afternoon waterfall abseiling.', activity: 'Rafting' },
+            { day: 3, title: 'Trek to Adams Peak', description: 'Drive to Hatton area. Midnight ascent of Adam\'s Peak to catch the legendary sunrise.', activity: 'Mountain Trek' },
+            { day: 4, title: 'Highland Recovery', description: 'Descend the mountain. Transfer to Ella. Afternoon rest and local cafe exploration.', activity: 'Recovery' },
+            { day: 5, title: 'Ella Rock & Zipline', description: 'Hike to the summit of Ella Rock. Afternoon adrenaline rush at the Flying Ravana mega zipline.', activity: 'Hiking' },
+            { day: 6, title: 'Off-Road Safari', description: 'Drive to the east. Afternoon rugged off-road jeep safari through Gal Oya national park boundaries.', activity: '4x4 Safari' },
+            { day: 7, title: 'Arugam Bay Surf', description: 'Head to the surf coast. Morning surf lesson or session for experienced riders.', activity: 'Surfing' },
+            { day: 8, title: 'Deep Sea Exploration', description: 'Early morning deep-sea fishing or advanced dive trip to historical wrecks.', activity: 'Marine Adventure' },
+            { day: 9, title: 'Coastal Scootering', description: 'Rent scooters to explore hidden coves and untouched beaches along the southeast coastline.', activity: 'Exploration' },
+            { day: 10, title: 'Kumana Safari', description: 'Full day expedition into Kumana National Park tracking leopards and rare birdlife.', activity: 'Wildlife' },
+            { day: 11, title: 'Return Transit', description: 'Long scenic drive back towards the west coast. Final celebratory dinner in Colombo.', activity: 'Transit' },
+            { day: 12, title: 'Departure', description: 'Transfer to airport for your onward flight.', activity: 'Departure' }
+        ],
+        images: [
+            '/images/tours/thumb-adventure.webp',
+            '/images/home/package-adventure.webp',
+            '/images/home/journey-dawn.webp',
+            '/images/home/journey-afternoon.webp',
+        ],
+        isPublished: true,
+        isFeaturedHome: false,
+        homeRank: 0,
+    }
 ];

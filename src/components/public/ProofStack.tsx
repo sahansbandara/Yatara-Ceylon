@@ -53,23 +53,32 @@ export default function ProofStack() {
     return (
         <section
             ref={sectionRef}
-            className="py-24 md:py-32 bg-[#FCFBF9] border-b border-black/[0.03]"
+            className="relative overflow-hidden py-24 md:py-32 bg-[#043927] border-b border-white/[0.04]"
         >
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+            {/* Background gradient overlay */}
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background:
+                        'radial-gradient(ellipse at 50% 40%, rgba(6, 95, 58, 0.4) 0%, rgba(4, 57, 39, 0.8) 55%, #02261a 100%)',
+                }}
+            />
+
+            <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10">
 
                 {/* Header */}
                 <motion.div
                     style={{ opacity, y }}
                     className="text-center mb-16 md:mb-20 will-change-transform"
                 >
-                    <span className="block text-[10px] tracking-[0.2em] font-nav text-deep-emerald/50 uppercase mb-4">
+                    <span className="block text-[10px] tracking-[0.2em] font-nav text-white/50 uppercase mb-4">
                         The Proof
                     </span>
-                    <h2 className="text-4xl md:text-5xl font-display text-deep-emerald leading-tight mb-4">
+                    <h2 className="text-4xl md:text-5xl font-display text-white leading-tight mb-4">
                         Why Travelers{' '}
-                        <span className="italic font-light">Trust Us</span>
+                        <span className="italic font-light text-antique-gold">Trust Us</span>
                     </h2>
-                    <p className="text-sm font-nav text-deep-emerald/50 tracking-wide max-w-xl mx-auto">
+                    <p className="text-sm font-nav text-white/70 tracking-wide max-w-xl mx-auto">
                         Not marketing promises — operational commitments backed by policy.
                     </p>
                 </motion.div>
@@ -79,28 +88,28 @@ export default function ProofStack() {
                     {PROOF_PILLARS.map((pillar, idx) => (
                         <div
                             key={idx}
-                            className="group relative flex flex-col p-8 md:p-10 bg-white rounded-lg border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(4,57,39,0.07)] hover:-translate-y-1 transition-all duration-500"
+                            className="glass-hero-card group relative flex flex-col p-8 md:p-10 rounded-[20px]"
                         >
                             {/* Badge */}
-                            <span className="absolute top-4 right-4 text-[8px] font-nav font-semibold tracking-[0.15em] uppercase text-antique-gold bg-antique-gold/[0.08] px-2.5 py-1 rounded-full">
+                            <span className="absolute top-4 right-4 text-[8px] font-nav font-semibold tracking-[0.15em] uppercase text-antique-gold bg-antique-gold/[0.08] px-2.5 py-1 rounded-full border border-antique-gold/20">
                                 {pillar.badge}
                             </span>
 
                             {/* Icon */}
                             <div className="mb-8">
-                                <div className="w-12 h-12 rounded-full border border-antique-gold/25 flex items-center justify-center text-antique-gold group-hover:border-antique-gold group-hover:bg-antique-gold/5 transition-all duration-500">
-                                    <pillar.icon className="w-5 h-5" strokeWidth={1.5} />
+                                <div className="w-12 h-12 rounded-full border border-antique-gold/25 flex items-center justify-center text-antique-gold group-hover:border-antique-gold group-hover:bg-antique-gold/10 transition-all duration-300">
+                                    <pillar.icon className="w-5 h-5 group-hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.8)]" strokeWidth={1.5} />
                                 </div>
                             </div>
 
                             {/* Content */}
-                            <h3 className="text-lg font-display text-deep-emerald mb-1 tracking-wide">
+                            <h3 className="text-lg font-display text-white mb-1 tracking-wide group-hover:text-antique-gold transition-colors duration-300">
                                 {pillar.title}
                             </h3>
-                            <p className="text-sm font-semibold text-deep-emerald/80 mb-3">
+                            <p className="text-sm font-semibold text-[#F6F3EE] mb-3">
                                 {pillar.headline}
                             </p>
-                            <p className="text-sm font-light leading-relaxed text-deep-emerald/55">
+                            <p className="text-sm font-light leading-relaxed text-white/70">
                                 {pillar.description}
                             </p>
                         </div>
@@ -108,7 +117,7 @@ export default function ProofStack() {
                 </div>
 
                 {/* Bottom assurance */}
-                <div className="mt-14 pt-8 border-t border-black/[0.04] flex flex-wrap justify-center gap-x-10 gap-y-3">
+                <div className="mt-14 pt-8 border-t border-white/[0.08] flex flex-wrap justify-center gap-x-10 gap-y-3">
                     {[
                         'Licensed Operation',
                         'Insured Vehicles',
@@ -117,7 +126,7 @@ export default function ProofStack() {
                     ].map((item) => (
                         <span
                             key={item}
-                            className="text-[10px] font-nav tracking-[0.18em] uppercase text-deep-emerald/30 font-medium"
+                            className="text-[10px] font-nav tracking-[0.18em] uppercase text-white/40 font-medium"
                         >
                             {item}
                         </span>

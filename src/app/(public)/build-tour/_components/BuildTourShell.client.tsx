@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Map, List, Route, ChevronUp, ChevronDown } from 'lucide-react';
+import { Map, List, Route, ChevronUp, ChevronDown, Compass, MapPin, Send } from 'lucide-react';
 import { useBuildTourStore } from '@/lib/trip/store/useBuildTourStore';
 import type { Place, PanelTab } from '@/lib/trip/types';
 import curatedPlaces from '@/data/places/sri-lanka.curated.json';
 import dynamic from 'next/dynamic';
-import PlacesPanel from './PlacesPanel.client';
+import ConciergePanel from './ConciergePanel.client';
 import SelectedStopsPanel from './SelectedStopsPanel.client';
 import RouteSummaryBar from './RouteSummaryBar.client';
 
@@ -20,7 +20,7 @@ const MapViewport = dynamic(() => import('./MapViewport.client'), {
 });
 
 const TABS: { id: PanelTab; label: string; icon: typeof Map }[] = [
-    { id: 'discover', label: 'Discover', icon: Map },
+    { id: 'discover', label: 'Explore', icon: Compass },
     { id: 'stops', label: 'Stops', icon: List },
     { id: 'summary', label: 'Route', icon: Route },
 ];
@@ -33,23 +33,20 @@ export default function BuildTourShell() {
     const drawerExpanded = useBuildTourStore((s) => s.drawerExpanded);
     const setDrawerExpanded = useBuildTourStore((s) => s.setDrawerExpanded);
 
+    // Active region for map-lite experience
+    const [activeRegionId, setActiveRegionId] = useState<string | null>(null);
+
     // Load curated places on mount
     useEffect(() => {
         setPlaces(curatedPlaces as Place[]);
     }, [setPlaces]);
 
-    // Unique districts for filter
-    const districts = useMemo(() => {
-        const districtSet = new Set(curatedPlaces.map((p) => p.district));
-        return Array.from(districtSet).sort();
-    }, []);
-
     return (
         <section id="trip-builder" className="relative w-full bg-[#0a0f0d]">
             {/* ── Desktop Layout ─────────────────────────────────── */}
             <div className="hidden lg:flex h-[85vh] min-h-[600px]">
-                {/* Left Panel */}
-                <div className="w-[480px] flex-shrink-0 flex flex-col build-tour-panel liquid-glass-dark border-[rgba(212,175,55,0.15)] border-r">
+                {/* Left Panel — Concierge Experience */}
+                <div className="w-[420px] xl:w-[460px] flex-shrink-0 flex flex-col build-tour-panel liquid-glass-dark border-[rgba(212,175,55,0.15)] border-r">
                     {/* Tab bar */}
                     <div className="flex border-b border-white/5">
                         {TABS.map((tab) => {
@@ -61,7 +58,7 @@ export default function BuildTourShell() {
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-[10px] uppercase tracking-[0.2em] font-serif transition-all duration-300 relative ${isActive
                                         ? 'text-antique-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]'
-                                        : 'text-white/30 hover:text-white/50 hover:-translate-y-0.5'
+                                        : 'text-white/30 hover:text-white/50'
                                         }`}
                                 >
                                     <Icon className="w-3.5 h-3.5" />
@@ -82,16 +79,19 @@ export default function BuildTourShell() {
                     {/* Tab content */}
                     <div className="flex-1 overflow-hidden">
                         {activeTab === 'discover' && (
-                            <PlacesPanel districts={districts} />
+                            <ConciergePanel
+                                activeRegionId={activeRegionId}
+                                onSelectRegion={setActiveRegionId}
+                            />
                         )}
                         {activeTab === 'stops' && <SelectedStopsPanel />}
                         {activeTab === 'summary' && <RouteSummaryBar />}
                     </div>
                 </div>
 
-                {/* Right Map */}
+                {/* Right Map — Curated Regions */}
                 <div className="flex-1 relative">
-                    <MapViewport />
+                    <MapViewport activeRegionId={activeRegionId} />
                 </div>
             </div>
 
@@ -99,7 +99,7 @@ export default function BuildTourShell() {
             <div className="lg:hidden relative h-[85vh] min-h-[550px]">
                 {/* Fullscreen map */}
                 <div className="absolute inset-0">
-                    <MapViewport />
+                    <MapViewport activeRegionId={activeRegionId} />
                 </div>
 
                 {/* Bottom sheet */}
@@ -141,7 +141,7 @@ export default function BuildTourShell() {
                                                 onClick={() => setActiveTab(tab.id)}
                                                 className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[9px] uppercase tracking-wider font-serif transition-all duration-300 ${isActive
                                                     ? 'text-antique-gold border-b-2 border-antique-gold shadow-[0_-2px_8px_rgba(212,175,55,0.2)]'
-                                                    : 'text-white/30 hover:text-white/50 hover:-translate-y-0.5'
+                                                    : 'text-white/30 hover:text-white/50'
                                                     }`}
                                             >
                                                 <Icon className="w-3 h-3" />
@@ -158,7 +158,10 @@ export default function BuildTourShell() {
 
                                 <div className="flex-1 overflow-hidden">
                                     {activeTab === 'discover' && (
-                                        <PlacesPanel districts={districts} />
+                                        <ConciergePanel
+                                            activeRegionId={activeRegionId}
+                                            onSelectRegion={setActiveRegionId}
+                                        />
                                     )}
                                     {activeTab === 'stops' && <SelectedStopsPanel />}
                                     {activeTab === 'summary' && <RouteSummaryBar />}

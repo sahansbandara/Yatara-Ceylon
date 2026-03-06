@@ -60,10 +60,11 @@ const navLinks = [
             {
                 title: 'By Region',
                 links: [
-                    { href: '/destinations/region/hill-country', label: 'Hill Country' },
-                    { href: '/destinations/region/cultural-triangle', label: 'Cultural Triangle' },
-                    { href: '/destinations/region/south-coast', label: 'South Coast' },
-                    { href: '/destinations/region', label: 'View all →', special: true },
+                    { href: '/destinations?region=hill-country', label: 'Hill Country' },
+                    { href: '/destinations?region=cultural-triangle', label: 'Cultural Triangle' },
+                    { href: '/destinations?region=south-coast', label: 'South Coast' },
+                    { href: '/destinations?region=east-coast', label: 'East Coast' },
+                    { href: '/destinations', label: 'View all →', special: true },
                 ]
             },
             {
@@ -108,7 +109,16 @@ const navLinks = [
                     { href: '/build-tour', label: 'Build Your Tour' },
                     { href: '/build-tour/how-it-works', label: 'How It Works' },
                     { href: '/build-tour/proposal', label: 'Proposal in 24 Hours' },
-                    { href: '/faq', label: 'FAQs' },
+                ]
+            },
+            {
+                title: 'Signature Regions',
+                links: [
+                    { href: '/destinations?region=cultural-triangle', label: 'Cultural Triangle' },
+                    { href: '/destinations?region=tea-highlands', label: 'Tea Highlands' },
+                    { href: '/destinations?region=south-coast', label: 'South Coast' },
+                    { href: '/destinations?region=wildlife-safari', label: 'Wildlife & Safari' },
+                    { href: '/build-tour', label: 'Explore all →', special: true },
                 ]
             }
         ]
@@ -271,7 +281,7 @@ export function Navbar() {
                                     >
                                         {/* Invisible bridge to prevent hover gap */}
                                         <div className="h-3 w-full" />
-                                        <div className="w-max min-w-[480px] max-w-[720px] bg-[rgba(6,20,14,0.82)] backdrop-blur-[20px] backdrop-saturate-[140%] border border-white/[0.08] rounded-2xl py-7 px-8 flex gap-14 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.02)]">
+                                        <div className="liquid-glass-menu w-max min-w-[480px] max-w-[720px] rounded-2xl py-7 px-8 flex gap-14">
                                             {link.dropdown.map((section, idx) => (
                                                 <div key={idx} className="flex flex-col flex-1 min-w-[130px]">
                                                     <span className="text-[10px] text-white/50 tracking-[0.25em] font-nav uppercase mb-3 px-3 font-medium">
@@ -279,20 +289,17 @@ export function Navbar() {
                                                     </span>
                                                     <div className="flex flex-col">
                                                         {section.links.map((item, linkIdx) => (
-                                                            <button
+                                                            <Link
                                                                 key={`${item.href}-${linkIdx}`}
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setActiveDropdown(null);
-                                                                    router.push(item.href);
-                                                                }}
+                                                                href={item.href}
+                                                                onClick={() => setActiveDropdown(null)}
                                                                 className={`flex items-center px-3 h-[42px] font-nav text-[13px] tracking-wide rounded-lg transition-all duration-200 text-left ${item.special
                                                                     ? 'text-[#D4AF37] hover:bg-white/[0.06] mt-1 text-[12px]'
                                                                     : 'text-white/80 hover:text-white hover:bg-white/[0.06]'
                                                                     }`}
                                                             >
                                                                 {item.label}
-                                                            </button>
+                                                            </Link>
                                                         ))}
                                                     </div>
                                                 </div>

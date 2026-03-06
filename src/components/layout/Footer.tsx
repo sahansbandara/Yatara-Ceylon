@@ -19,8 +19,23 @@ function TrustStrip() {
     ];
 
     return (
-        <section className="relative bg-[#061f14] border-b border-white/[0.06]">
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-7">
+        <section className="relative border-b border-white/[0.06] overflow-hidden">
+            {/* Elite Background Image */}
+            <div className="absolute inset-0 pointer-events-none">
+                <Image
+                    src="/images/home/stats-bg-elite.webp"
+                    alt=""
+                    fill
+                    className="object-cover opacity-80"
+                    quality={90}
+                    sizes="100vw"
+                />
+                {/* Dark overlay to ensure text readability & blend with page */}
+                <div className="absolute inset-0 bg-[#061f14]/40" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#061f14] via-transparent to-[#061f14] opacity-80" />
+            </div>
+
+            <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-7 text-shadow-sm">
                 {/* Concierge promise */}
                 <p className="text-center text-[10px] tracking-[0.35em] font-nav font-semibold text-antique-gold/80 uppercase mb-6">
                     One Specialist · End-to-End Execution
@@ -94,6 +109,9 @@ export function Footer() {
 
                 {/* Content with subtle glass blur for readability */}
                 <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 pt-12 pb-8 backdrop-blur-[1px]">
+
+                    {/* Elite Separation Line */}
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-antique-gold/60 to-transparent mx-auto mb-12 shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
 
                     {/* ── Top grid ── */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-10">

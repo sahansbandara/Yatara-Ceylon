@@ -196,9 +196,9 @@ export default function TourCategoriesCarousel() {
                             return (
                                 <div
                                     key={`${idx}-${cat.title}`}
-                                    className={`relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center group w-[280px] md:w-[330px] lg:w-[370px] h-[420px] md:h-[500px]`}
+                                    className={`relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center group w-[300px] md:w-[380px] lg:w-[430px] h-[420px] md:h-[520px] lg:h-[600px]`}
                                     style={{
-                                        transform: idx === centerIndex ? 'scale(1.05)' : 'scale(0.85)',
+                                        transform: idx === centerIndex ? 'scale(1.08)' : 'scale(0.9)',
                                         opacity: 1,
                                         transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                                     }}
@@ -208,7 +208,7 @@ export default function TourCategoriesCarousel() {
                                         src={cat.image}
                                         alt={cat.title}
                                         fill
-                                        sizes="(max-width: 768px) 280px, (max-width: 1024px) 330px, 370px"
+                                        sizes="(max-width: 768px) 300px, (max-width: 1024px) 400px, 500px"
                                         className="object-cover transform group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
                                     />
 

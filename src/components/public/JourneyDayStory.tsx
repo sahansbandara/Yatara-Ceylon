@@ -1,126 +1,130 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
-const MOMENTS = [
+const PACKAGES = [
     {
-        time: '6:30 AM',
-        label: 'Dawn',
-        caption: 'Ascend Sigiriya before the crowds — golden light breaks over the ancient fortress as mist lifts from the jungle canopy.',
-        image: '/images/home/journey-dawn.webp',
+        id: 'luxury',
+        type: 'LUXURY TRAVEL',
+        title: 'Artisan in Travel,\nCurating Luxury',
+        description: 'Experts in tailor-made luxury travel, crafting bespoke journeys that highlight Sri Lanka’s culture, authenticity, and hospitality while offering discerning travelers immersive and off-beat experiences with refined luxury.',
+        image: '/images/home/package-luxury.webp',
+        href: '/brands/luxury'
     },
     {
-        time: '2:00 PM',
-        label: 'Afternoon',
-        caption: 'Walk through emerald tea fields in Ella, guided by a third-generation planter who knows every rolling hill by name.',
-        image: '/images/home/journey-afternoon.webp',
+        id: 'wellness',
+        type: 'WELLNESS TRAVEL',
+        title: 'Curating Your\nHealing Journey',
+        description: 'Combining wellness, accessible, and medical tourism, prioritizing health, relaxation, and personalized care, ensuring transformative, inclusive journeys focused on well-being for every type of traveler.',
+        image: '/images/home/package-wellness.webp',
+        href: '/brands/wellness'
     },
     {
-        time: '6:45 PM',
-        label: 'Dusk',
-        caption: 'A private veranda dinner overlooking the Indian Ocean — candlelit, unhurried, with a menu crafted around your preferences.',
-        image: '/images/home/journey-dusk.webp',
+        id: 'adventure',
+        type: 'ADVENTURE TRAVEL',
+        title: 'Escape the\nOrdinary',
+        description: 'Experience the world, one journey at a time. Where adventure awaits at every turn. Escape the ordinary and discover paths only a few dare to take.',
+        image: '/images/home/package-adventure.webp',
+        href: '/brands/adventure'
     },
 ];
 
-export default function JourneyDayStory() {
-    const sectionRef = useRef<HTMLElement>(null);
-    const prefersReducedMotion = useReducedMotion();
-
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ['start end', 'end start'],
-    });
-
-    const opacity = useTransform(scrollYProgress, [0.05, 0.22], [0, 1]);
-    const y = useTransform(scrollYProgress, [0.05, 0.22], [40, 0]);
-
+export default function DedicatedBrands() {
     return (
         <section
-            ref={sectionRef}
-            className="relative py-24 md:py-32 overflow-hidden"
-            style={{
-                background: 'linear-gradient(to bottom, #0a1f15 0%, #07291b 100%)',
-            }}
+            className="relative w-full h-[100dvh] min-h-[750px] max-h-[900px] flex flex-col justify-center overflow-hidden py-12"
         >
-            {/* Subtle noise overlay */}
-            <div
-                className="absolute inset-0 opacity-[0.03] pointer-events-none"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-                    backgroundRepeat: 'repeat',
-                    backgroundSize: '128px 128px',
-                }}
-            />
+            {/* Section Background Image */}
+            <div className="absolute inset-0 w-full h-full z-0">
+                <Image
+                    src="/images/home/packages-bg.webp"
+                    alt="Yatara Experiences"
+                    fill
+                    sizes="100vw"
+                    className="object-cover transform scale-105"
+                    priority
+                />
+                {/* Global liquid glass overlay to ensure header text readability */}
+                <div className="absolute inset-0 bg-[#F9F9F8]/60 backdrop-blur-[6px]" />
+            </div>
 
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative z-10">
+            <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
 
                 {/* Header */}
                 <motion.div
-                    style={{ opacity: prefersReducedMotion ? 1 : opacity, y: prefersReducedMotion ? 0 : y }}
-                    className="text-center mb-16 md:mb-20 will-change-transform"
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center mb-12 lg:mb-16 will-change-transform w-full"
                 >
-                    <span className="block text-[10px] tracking-[0.3em] font-nav text-antique-gold/70 uppercase mb-4 font-semibold">
-                        Experience Preview
-                    </span>
-                    <h2 className="text-4xl md:text-5xl font-display text-white leading-tight mb-4">
-                        A Day on Your{' '}
-                        <span className="italic font-light text-antique-gold">Journey</span>
+                    <h2 className="text-4xl md:text-[52px] lg:text-[56px] font-sans font-medium text-black leading-[1.1] mb-6 tracking-tight drop-shadow-sm">
+                        A Symphony of <br className="hidden md:block" />
+                        <span className="font-bold">Exclusive Experiences</span>
                     </h2>
-                    <p className="text-sm font-nav text-white/40 tracking-wide max-w-lg mx-auto">
-                        From first light to final course — every moment designed with intention.
+                    <p className="text-[15px] md:text-[17px] font-sans text-black/80 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-sm">
+                        Yatara offers dedicated brands specializing in luxury, wellness, accessible tourism, and adventure.
+                        Whether you seek indulgence, rejuvenation, or thrilling exploration, we create exceptional, tailor-made
+                        experiences designed to exceed your expectations.
                     </p>
                 </motion.div>
 
-                {/* Timeline — 3 moments */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
-                    {MOMENTS.map((moment, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-50px' }}
-                            transition={{ duration: 0.7, delay: idx * 0.15 }}
-                            className="group"
-                        >
-                            {/* Image */}
-                            <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden mb-6 bg-deep-emerald/30">
-                                <Image
-                                    src={moment.image}
-                                    alt={moment.caption}
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 33vw"
-                                    className="object-cover transform group-hover:scale-[1.03] transition-transform duration-1000 ease-out"
-                                />
-                                {/* Subtle vignette */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
-                            </div>
+                {/* Grid — 3 moments */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full h-[450px] lg:h-[500px]">
+                    {PACKAGES.map((pkg, idx) => (
+                        <Link href={pkg.href} key={pkg.id} className="block w-full h-full group">
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.7, delay: idx * 0.15 }}
+                                className="relative w-full h-full rounded-[24px] overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-700 isolate hover:-translate-y-3"
+                            >
+                                {/* Base Liquid Glass Background */}
+                                <div className="absolute inset-0 transition-all duration-700 bg-white/40 backdrop-blur-xl border border-white/50 group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:border-transparent z-0" />
 
-                            {/* Time label */}
-                            <div className="flex items-center gap-3 mb-3">
-                                <span className="text-antique-gold font-display text-lg">
-                                    {moment.time}
-                                </span>
-                                <span className="h-px flex-1 bg-antique-gold/20" />
-                                <span className="text-[10px] tracking-[0.2em] font-nav uppercase text-white/30 font-medium">
-                                    {moment.label}
-                                </span>
-                            </div>
+                                {/* Background Image (Hidden by default, Revealed on Hover) */}
+                                <div className="absolute inset-0 w-full h-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out">
+                                    <Image
+                                        src={pkg.image}
+                                        alt={pkg.title.replace('\n', ' ')}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                        className="object-cover transform scale-100 group-hover:scale-105 transition-transform duration-[2s] ease-out brightness-75"
+                                    />
+                                    {/* Dark overlay so white text reads clearly on hover */}
+                                    <div className="absolute inset-0 bg-black/40" />
+                                </div>
 
-                            {/* Caption */}
-                            <p className="text-white/70 font-light text-sm leading-relaxed">
-                                {moment.caption}
-                            </p>
-                        </motion.div>
+                                {/* Text Content */}
+                                <div className="absolute inset-0 p-8 lg:p-10 flex flex-col items-start text-left z-20 w-full h-full justify-center">
+
+                                    {/* Title */}
+                                    <h3
+                                        className="text-2xl lg:text-[32px] font-sans font-medium text-black group-hover:text-white transition-colors duration-500 leading-[1.2] mb-6 tracking-tight drop-shadow-sm group-hover:drop-shadow-md"
+                                        dangerouslySetInnerHTML={{ __html: pkg.title.replace('\n', '<br/>') }}
+                                    />
+
+                                    {/* Description */}
+                                    <p className="text-[#222222] group-hover:text-white/95 transition-colors duration-500 font-sans text-[14px] lg:text-[15px] leading-relaxed mb-auto pr-4 drop-shadow-sm group-hover:drop-shadow-md">
+                                        {pkg.description}
+                                    </p>
+
+                                    {/* Bottom Button matching Walkers style */}
+                                    <div className="mt-8 flex items-center gap-4 text-[#063364] group-hover:text-white transition-colors duration-500 font-sans text-[12px] uppercase tracking-wider font-bold">
+                                        <div className="w-8 h-8 rounded-full bg-white/70 backdrop-blur-md group-hover:bg-white border border-black/10 group-hover:border-transparent text-black group-hover:text-[#063364] flex items-center justify-center shadow-sm transition-all duration-500">
+                                            <span className="text-xl leading-none mb-[2px] font-light">+</span>
+                                        </div>
+                                        {pkg.type}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </Link>
                     ))}
                 </div>
 
-                {/* Connecting line (desktop only) */}
-                <div className="hidden md:block mt-12">
-                    <div className="h-px w-full bg-gradient-to-r from-transparent via-antique-gold/20 to-transparent" />
-                </div>
             </div>
         </section>
     );

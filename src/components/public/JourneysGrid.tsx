@@ -31,14 +31,14 @@ interface JourneysGridProps {
 
 const STYLE_CHIPS = [
     { value: '', label: 'All' },
+    { value: 'luxury', label: 'Luxury' },
+    { value: 'wellness', label: 'Wellness' },
+    { value: 'adventure', label: 'Adventure' },
     { value: 'cultural', label: 'Cultural' },
     { value: 'wildlife', label: 'Wildlife' },
     { value: 'heritage', label: 'Heritage' },
     { value: 'experiences', label: 'Experiences' },
-    { value: 'wellness', label: 'Wellness' },
     { value: 'family', label: 'Family' },
-    { value: 'luxury', label: 'Luxury' },
-    { value: 'adventure', label: 'Adventure' },
     { value: 'beach', label: 'Beach' },
     { value: 'marine', label: 'Marine' },
 ];
