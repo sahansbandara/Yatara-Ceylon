@@ -4,8 +4,10 @@ import PartnerRequest from '@/models/PartnerRequest';
 import User from '@/models/User';
 import { getTokenFromRequest, verifyToken } from '@/lib/auth';
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
+        const resolvedParams = await context.params;
+
         const token = getTokenFromRequest(request);
         if (!token) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -24,7 +26,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
         await connectDB();
 
-        const partnerRequest = await PartnerRequest.findById(params.id);
+        const partnerRequest = await PartnerRequest.findById(resolvedParams.id);
         if (!partnerRequest) {
             return NextResponse.json({ error: 'Request not found' }, { status: 404 });
         }
