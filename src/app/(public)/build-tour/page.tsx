@@ -3,6 +3,7 @@ import BuildTourHero from './_components/BuildTourHero';
 import BuildTourShell from './_components/BuildTourShell.client';
 import PopularTours from './_components/PopularTours';
 import ThemeCarousel from './_components/ThemeCarousel';
+import BuildTourParallax from './_components/BuildTourParallax';
 import Testimonials from './_components/Testimonials';
 import FooterOverlayCTA from './_components/FooterOverlayCTA';
 
@@ -18,6 +19,7 @@ export default function BuildTourPage() {
             <PopularTours />
             <BuildTourShell />
             <ThemeCarousel />
+            <BuildTourParallax />
             <Testimonials />
             <FooterOverlayCTA />
         </main>

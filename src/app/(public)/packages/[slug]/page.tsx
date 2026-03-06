@@ -281,20 +281,20 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                                 </div>
 
                                 <div className="space-y-3">
-                                    <Link href={`/contact?journey=${pkg.slug}`} className="block">
+                                    <Link href={`/booking-request?packageId=${pkg._id}`} className="block">
                                         <Button className="w-full h-12 text-[12px] tracking-[0.15em] uppercase font-semibold bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold border border-antique-gold/20 rounded-xl shadow-lg transition-all duration-300">
-                                            Inquire About This Journey
+                                            Book Now & Pay 20% Advance
                                         </Button>
                                     </Link>
-                                    <Link href="/contact" className="block">
+                                    <Link href={`/contact?journey=${pkg.slug}`} className="block">
                                         <Button variant="outline" className="w-full h-11 text-[11px] tracking-[0.15em] uppercase text-deep-emerald border-deep-emerald/15 hover:bg-off-white rounded-xl transition-all duration-300">
-                                            Ask a Question
+                                            Inquire Without Payment
                                         </Button>
                                     </Link>
                                 </div>
 
                                 <p className="text-[11px] text-center text-gray-400 mt-4 font-light">
-                                    No upfront payment required. We respond within 24 hours.
+                                    Pay 20% advance to confirm. Remaining balance due before departure.
                                 </p>
                             </div>
 

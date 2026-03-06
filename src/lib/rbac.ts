@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getTokenFromRequest, verifyToken, type TokenPayload } from './auth';
+import { getTokenFromRequest, verifyToken, type TokenPayload, type UserRole } from './auth';
 
 type RouteHandler = (
     request: Request,
@@ -30,7 +30,7 @@ export function withAuth(handler: RouteHandler) {
 }
 
 // Require specific role(s)
-export function withRole(...roles: Array<'ADMIN' | 'STAFF'>) {
+export function withRole(...roles: UserRole[]) {
     return (handler: RouteHandler) => {
         return withAuth(async (request, context) => {
             if (!roles.includes(context.user.role)) {
@@ -52,4 +52,14 @@ export function adminOnly(handler: RouteHandler) {
 // Shorthand: Staff or Admin
 export function staffOrAdmin(handler: RouteHandler) {
     return withRole('ADMIN', 'STAFF')(handler);
+}
+
+// Shorthand: Customer only
+export function customerOnly(handler: RouteHandler) {
+    return withRole('USER')(handler);
+}
+
+// Shorthand: Any partner or Admin
+export function partnerOrAdmin(handler: RouteHandler) {
+    return withRole('ADMIN', 'VEHICLE_OWNER', 'HOTEL_OWNER')(handler);
 }

@@ -6,9 +6,11 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secre
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
 const COOKIE_NAME = 'toms_token';
 
+export type UserRole = 'ADMIN' | 'STAFF' | 'USER' | 'VEHICLE_OWNER' | 'HOTEL_OWNER';
+
 export interface TokenPayload {
     userId: string;
-    role: 'ADMIN' | 'STAFF';
+    role: UserRole;
     email: string;
     exp?: number;
 }

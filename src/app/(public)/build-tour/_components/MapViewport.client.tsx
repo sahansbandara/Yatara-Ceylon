@@ -38,15 +38,26 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
     // Load Leaflet + GeoJSON
     useEffect(() => {
         let cancelled = false;
-        Promise.all([
-            import('leaflet'),
-            import('leaflet.markercluster'),
-            fetch('/sri-lanka-districts.geojson').then((r) => r.json()),
-        ]).then(([leaflet, , geo]) => {
-            if (cancelled) return;
-            setL(leaflet.default || leaflet);
-            setGeoData(geo);
-        });
+        (async () => {
+            try {
+                // Ensure L is globally available for leaflet.markercluster
+                const leaflet = await import('leaflet');
+                if (typeof window !== 'undefined') {
+                    (window as any).L = leaflet.default || leaflet;
+                }
+                await import('leaflet.markercluster');
+
+                const response = await fetch('/sri-lanka-districts.geojson');
+                if (!response.ok) throw new Error('Failed to fetch GeoJSON');
+                const geo = await response.json();
+
+                if (cancelled) return;
+                setL(leaflet.default || leaflet);
+                setGeoData(geo);
+            } catch (err) {
+                console.error("Error loading map assets:", err);
+            }
+        })();
         return () => { cancelled = true; };
     }, []);
 
@@ -56,20 +67,18 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
 
         const map = L.map(mapContainerRef.current, {
             center: [7.8731, 80.7718],
-            zoom: 8,
-            minZoom: 7,
+            zoom: 7,
+            minZoom: 6,
             maxZoom: 15,
             zoomControl: false,
             attributionControl: false,
-            maxBounds: [[5.5, 79.0], [10.2, 82.5]],
+            maxBounds: [[3.5, 76.0], [12.2, 85.5]],
             maxBoundsViscosity: 0.8,
+            zoomSnap: 0.5,
+            zoomDelta: 0.5,
         });
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap &copy; CARTO',
-            subdomains: 'abcd',
-            maxZoom: 19,
-        }).addTo(map);
+        // No tile layer as user explicitly requested "only need to display sri lanka map only"
 
         L.control.zoom({ position: 'topright' }).addTo(map);
         mapRef.current = map;
@@ -91,42 +100,43 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
         }
 
         const dimStyle = {
-            fillColor: '#16a34a',
-            weight: 0.8,
-            opacity: 0.2,
-            color: 'rgba(212,175,55,0.15)',
-            fillOpacity: 0.03,
+            fillColor: '#a5d6a7', // light green
+            weight: 1,
+            opacity: 0.8,
+            color: '#ffffff',
+            fillOpacity: 0.2,
         };
 
         const defaultStyle = {
-            fillColor: '#16a34a',
-            weight: 1,
-            opacity: 0.4,
-            color: 'rgba(212,175,55,0.3)',
-            fillOpacity: 0.06,
+            fillColor: '#a5d6a7', // reference map light green
+            weight: 1.5,
+            opacity: 0.9,
+            color: '#ffffff', // white borders
+            fillOpacity: 0.85,
         };
 
         const hoverStyle = {
-            fillOpacity: 0.14,
-            weight: 1.5,
-            color: 'rgba(212,175,55,0.6)',
-            opacity: 0.8,
+            fillColor: '#81c784',
+            fillOpacity: 0.95,
+            weight: 2,
+            color: '#ffffff',
+            opacity: 1,
         };
 
         const selectedStyle = {
-            fillColor: '#D4AF37',
-            fillOpacity: 0.12,
+            fillColor: '#fbc02d', // appealing highlight
+            fillOpacity: 0.9,
             weight: 2,
-            color: '#D4AF37',
-            opacity: 0.9,
+            color: '#ffffff',
+            opacity: 1,
         };
 
         const regionActiveStyle = {
-            fillColor: '#16a34a',
-            weight: 1.2,
-            opacity: 0.6,
-            color: 'rgba(212,175,55,0.5)',
-            fillOpacity: 0.10,
+            fillColor: '#66bb6a',
+            weight: 1.5,
+            opacity: 1,
+            color: '#ffffff',
+            fillOpacity: 0.9,
         };
 
         geoJsonLayerRef.current = L.geoJSON(geoData, {
@@ -360,8 +370,26 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
     }, [L, activeRegionId]);
 
     return (
-        <div className="w-full h-full relative">
-            <div ref={mapContainerRef} className="w-full h-full" />
+        <div
+            className="w-full h-full relative"
+            style={{
+                background: 'radial-gradient(circle at center, #ffffff 0%, #e0f2fe 60%, #bae6fd 100%)'
+            }}
+        >
+            {/* SVG drop shadow filter for the polygons */}
+            <svg style={{ width: 0, height: 0, position: 'absolute' }}>
+                <defs>
+                    <filter id="dropshadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="2" dy="5" stdDeviation="6" floodColor="#0ea5e9" floodOpacity="0.3" />
+                    </filter>
+                </defs>
+            </svg>
+
+            <div
+                ref={mapContainerRef}
+                className="w-full h-full z-0"
+                style={{ filter: 'url(#dropshadow)' }}
+            />
 
             {/* Floating Stats Overlay */}
             <div className="absolute top-4 left-4 z-[1000]">
@@ -390,9 +418,17 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                 </div>
             </div>
 
-            {/* Selected district indicator */}
+            {/* Selected district indicator & Reset Button */}
             {selectedDistrictId && (
-                <div className="absolute top-4 right-16 z-[1000]">
+                <div className="absolute top-4 right-16 z-[1000] flex flex-col items-end gap-2">
+                    <div className="map-stats-overlay rounded-full px-4 py-2 flex items-center gap-2.5 border border-antique-gold/30 bg-deep-emerald/80 backdrop-blur-md">
+                        <span className="text-antique-gold text-[10px] font-nav uppercase tracking-wider">
+                            {getDistrictById(selectedDistrictId)?.name || selectedDistrictId}
+                        </span>
+                        <span className="text-white/40 text-[9px] font-light">
+                            {getDistrictById(selectedDistrictId)?.luxuryLabel}
+                        </span>
+                    </div>
                     <button
                         onClick={() => {
                             setSelectedDistrictId(null);
@@ -401,15 +437,9 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                                 mapRef.current.flyTo([7.8731, 80.7718], 8, { duration: 0.6 });
                             }
                         }}
-                        className="map-stats-overlay rounded-full px-4 py-2 flex items-center gap-2.5 hover:border-antique-gold/40 transition-all group"
+                        className="px-4 py-2 bg-antique-gold/10 hover:bg-antique-gold/20 border border-antique-gold/50 text-antique-gold rounded-full text-[10px] font-nav uppercase tracking-wider transition-all backdrop-blur-md shadow-lg"
                     >
-                        <span className="text-antique-gold text-[10px] font-nav uppercase tracking-wider">
-                            {getDistrictById(selectedDistrictId)?.name || selectedDistrictId}
-                        </span>
-                        <span className="text-white/20 text-[9px] font-light">
-                            {getDistrictById(selectedDistrictId)?.luxuryLabel}
-                        </span>
-                        <span className="text-white/30 text-[10px] group-hover:text-white/60 transition-colors">✕</span>
+                        Reset Map
                     </button>
                 </div>
             )}

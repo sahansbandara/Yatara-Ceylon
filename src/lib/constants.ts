@@ -19,9 +19,12 @@ export const BookingTypes = {
 
 export const BookingStatus = {
     NEW: 'NEW',
+    PAYMENT_PENDING: 'PAYMENT_PENDING',
     CONTACTED: 'CONTACTED',
-    ADVANCE_PAID: 'Advance Paid',
+    ADVANCE_PAID: 'ADVANCE_PAID',
     CONFIRMED: 'CONFIRMED',
+    ASSIGNED: 'ASSIGNED',
+    IN_PROGRESS: 'IN_PROGRESS',
     COMPLETED: 'COMPLETED',
     CANCELLED: 'CANCELLED',
 } as const;
@@ -73,6 +76,7 @@ export const PaymentMethods = {
     CASH: 'CASH',
     BANK: 'BANK',
     CARD_OTHER: 'CARD_OTHER',
+    ONLINE: 'ONLINE',
 } as const;
 
 export const PaymentTypes = {

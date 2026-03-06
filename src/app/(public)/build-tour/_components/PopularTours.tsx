@@ -20,6 +20,7 @@ interface PopularTour {
     accent: string;
     placeIds: string[];
     tags: string[];
+    image: string;
 }
 
 const POPULAR_TOURS: PopularTour[] = [
@@ -29,7 +30,7 @@ const POPULAR_TOURS: PopularTour[] = [
         tagline: 'Coast to highlands — the essential Sri Lanka in 10 stops',
         duration: '10–12 days',
         popularity: 94,
-        gradient: 'from-[#043927]/90 via-[#043927]/60 to-transparent',
+        gradient: 'from-[#043927] via-[#043927]/60 to-transparent',
         accent: '#D4AF37',
         placeIds: [
             'colombo-galle-face',
@@ -44,6 +45,7 @@ const POPULAR_TOURS: PopularTour[] = [
             'galle-fort',
         ],
         tags: ['Most Popular', 'Best of Sri Lanka'],
+        image: '/images/tours/grand-circuit.webp',
     },
     {
         id: 'cultural-immersion',
@@ -51,7 +53,7 @@ const POPULAR_TOURS: PopularTour[] = [
         tagline: 'Ancient kingdoms, sacred temples & UNESCO treasures',
         duration: '6–8 days',
         popularity: 87,
-        gradient: 'from-purple-900/80 via-purple-800/50 to-transparent',
+        gradient: 'from-purple-900 via-purple-800/60 to-transparent',
         accent: '#c084fc',
         placeIds: [
             'anuradhapura-bodhi',
@@ -64,6 +66,7 @@ const POPULAR_TOURS: PopularTour[] = [
             'kandy-botanical',
         ],
         tags: ['Cultural', 'Heritage'],
+        image: '/images/tours/heritage-temple.webp',
     },
     {
         id: 'hill-country-escape',
@@ -71,7 +74,7 @@ const POPULAR_TOURS: PopularTour[] = [
         tagline: 'Tea plantations, misty peaks & the famous train ride',
         duration: '5–7 days',
         popularity: 82,
-        gradient: 'from-emerald-900/80 via-emerald-800/50 to-transparent',
+        gradient: 'from-emerald-900 via-emerald-800/60 to-transparent',
         accent: '#34d399',
         placeIds: [
             'kandy-tooth',
@@ -83,6 +86,7 @@ const POPULAR_TOURS: PopularTour[] = [
             'badulla-little-adams',
         ],
         tags: ['Scenic', 'Train Ride'],
+        image: '/images/tours/hill-country.webp',
     },
     {
         id: 'wildlife-adventure',
@@ -90,7 +94,7 @@ const POPULAR_TOURS: PopularTour[] = [
         tagline: 'Leopards, elephants & untouched wilderness across 4 parks',
         duration: '7–9 days',
         popularity: 79,
-        gradient: 'from-amber-900/80 via-amber-800/50 to-transparent',
+        gradient: 'from-amber-900 via-amber-800/60 to-transparent',
         accent: '#fbbf24',
         placeIds: [
             'kegalle-pinnawala',
@@ -101,6 +105,7 @@ const POPULAR_TOURS: PopularTour[] = [
             'ratnapura-sinharaja',
         ],
         tags: ['Wildlife', 'Nature'],
+        image: '/images/tours/wildlife-safari.webp',
     },
     {
         id: 'coastal-bliss',
@@ -108,7 +113,7 @@ const POPULAR_TOURS: PopularTour[] = [
         tagline: 'Pristine beaches from south coast to the east',
         duration: '8–10 days',
         popularity: 76,
-        gradient: 'from-cyan-900/80 via-cyan-800/50 to-transparent',
+        gradient: 'from-cyan-900 via-cyan-800/60 to-transparent',
         accent: '#22d3ee',
         placeIds: [
             'galle-fort',
@@ -121,6 +126,7 @@ const POPULAR_TOURS: PopularTour[] = [
             'trinco-pigeon',
         ],
         tags: ['Beach', 'Surfing'],
+        image: '/images/tours/coastal-bliss.webp',
     },
     {
         id: 'quick-highlights',
@@ -128,7 +134,7 @@ const POPULAR_TOURS: PopularTour[] = [
         tagline: 'Short on time? Hit the must-sees in under a week',
         duration: '4–5 days',
         popularity: 73,
-        gradient: 'from-rose-900/80 via-rose-800/50 to-transparent',
+        gradient: 'from-rose-900 via-rose-800/60 to-transparent',
         accent: '#fb7185',
         placeIds: [
             'colombo-galle-face',
@@ -138,6 +144,7 @@ const POPULAR_TOURS: PopularTour[] = [
             'galle-fort',
         ],
         tags: ['Short Trip', 'Essentials'],
+        image: '/images/tours/quick-highlights.webp',
     },
     {
         id: 'honeymoon-luxe',
@@ -145,7 +152,7 @@ const POPULAR_TOURS: PopularTour[] = [
         tagline: 'Romance, privacy & unforgettable sunset moments',
         duration: '7–8 days',
         popularity: 71,
-        gradient: 'from-pink-900/80 via-pink-800/50 to-transparent',
+        gradient: 'from-pink-900 via-pink-800/60 to-transparent',
         accent: '#f472b6',
         placeIds: [
             'colombo-dutch-hospital',
@@ -157,6 +164,7 @@ const POPULAR_TOURS: PopularTour[] = [
             'galle-fort',
         ],
         tags: ['Romantic', 'Luxury'],
+        image: '/images/tours/honeymoon-luxe.webp',
     },
     {
         id: 'off-beaten-path',
@@ -164,7 +172,7 @@ const POPULAR_TOURS: PopularTour[] = [
         tagline: 'Hidden gems & secret spots most tourists never see',
         duration: '8–10 days',
         popularity: 68,
-        gradient: 'from-indigo-900/80 via-indigo-800/50 to-transparent',
+        gradient: 'from-indigo-900 via-indigo-800/60 to-transparent',
         accent: '#818cf8',
         placeIds: [
             'matale-riverston',
@@ -177,6 +185,7 @@ const POPULAR_TOURS: PopularTour[] = [
             'kurunegala-yapahuwa',
         ],
         tags: ['Adventure', 'Hidden Gems'],
+        image: '/images/tours/off-beaten.webp',
     },
 ];
 
@@ -242,13 +251,19 @@ export default function PopularTours() {
                             <button
                                 key={tour.id}
                                 onClick={() => setPreviewTour(tour)}
-                                className="group relative rounded-xl overflow-hidden border border-white/5 text-left transition-all duration-500 hover:border-antique-gold/20 hover:shadow-[0_0_30px_rgba(212,175,55,0.05)]"
+                                className="group relative rounded-2xl overflow-hidden border border-white/10 text-left transition-all duration-500 hover:-translate-y-2 hover:scale-[1.03] hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
                             >
-                                {/* BG Gradient */}
-                                <div className={`absolute inset-0 bg-gradient-to-t ${tour.gradient}`} />
-                                <div className="absolute inset-0 bg-[#0a0f0d]/50" />
+                                {/* Background Image */}
+                                <div
+                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
+                                    style={{ backgroundImage: `url(${tour.image})` }}
+                                />
+                                {/* BG Gradient & Liquid Glass Effect */}
+                                <div className={`absolute inset-0 bg-gradient-to-t ${tour.gradient} opacity-40 group-hover:opacity-60 transition-opacity duration-500`} />
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-transparent to-[#0a0f0d]/90" />
 
-                                <div className="relative z-10 p-5 flex flex-col h-full min-h-[220px]">
+                                {/* Content Layer with Glass Border */}
+                                <div className="relative z-10 p-6 flex flex-col h-full min-h-[300px] border border-white/5 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:border-antique-gold/30 transition-colors duration-500">
                                     {/* Tags */}
                                     <div className="flex flex-wrap gap-1 mb-3">
                                         {tour.tags.map((tag) => (

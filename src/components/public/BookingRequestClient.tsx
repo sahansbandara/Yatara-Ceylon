@@ -4,20 +4,21 @@ import { useState, useRef } from 'react';
 import Script from 'next/script';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CreditCard, DollarSign, AlertCircle } from 'lucide-react';
 
-export default function BookingRequestClient({ vehicle }: { vehicle?: any }) {
+interface BookingRequestClientProps {
+    vehicle?: any;
+    pkg?: any;
+}
+
+export default function BookingRequestClient({ vehicle, pkg }: BookingRequestClientProps) {
     const searchParams = useSearchParams();
-    const typeFromQuery = searchParams.get('type') || (vehicle ? 'VEHICLE' : 'PACKAGE');
+    const typeFromQuery = searchParams.get('type') || (vehicle ? 'VEHICLE' : pkg ? 'PACKAGE' : 'PACKAGE');
 
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<{ message: string; success: boolean } | null>(null);
-    const formRef = useRef<HTMLFormElement>(null);
-
-    const [checkoutData, setCheckoutData] = useState<{ url: string; fields: any } | null>(null);
 
     const [form, setForm] = useState({
         customerName: '',
@@ -28,6 +29,7 @@ export default function BookingRequestClient({ vehicle }: { vehicle?: any }) {
         country: 'Sri Lanka',
         type: typeFromQuery,
         vehicleId: vehicle?._id || '',
+        packageId: pkg?._id || '',
         pax: 1,
         pickupLocation: '',
         dates: {
@@ -37,39 +39,61 @@ export default function BookingRequestClient({ vehicle }: { vehicle?: any }) {
         notes: ''
     });
 
+    // Calculate amounts
+    const getAmounts = () => {
+        if (pkg) {
+            const total = pkg.price || pkg.priceMin || 0;
+            const advance = total * 0.20;
+            const remaining = total - advance;
+            return { total, advance, remaining, hasPayment: total > 0 };
+        }
+        if (vehicle && form.dates.from && form.dates.to) {
+            const date1 = new Date(form.dates.from).getTime();
+            const date2 = new Date(form.dates.to).getTime();
+            let days = Math.ceil((date2 - date1) / (1000 * 3600 * 24));
+            if (days < 1) days = 1;
+            const total = days * vehicle.dailyRate;
+            const advance = total * 0.20;
+            const remaining = total - advance;
+            return { total, advance, remaining, hasPayment: total > 0 };
+        }
+        return { total: 0, advance: 0, remaining: 0, hasPayment: false };
+    };
+
+    const amounts = getAmounts();
+
     const handleCreateBookingAndPay = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setStatus(null);
 
         try {
-            // 1. Create booking
+            // 1. Create booking via public API
+            const bookingPayload: any = {
+                ...form,
+                totalCost: amounts.total,
+            };
+
             const bookingRes = await fetch('/api/public/booking-request', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form)
+                body: JSON.stringify(bookingPayload)
             });
 
-            if (!bookingRes.ok) throw new Error('Failed to create booking request');
+            if (!bookingRes.ok) {
+                const errData = await bookingRes.json();
+                throw new Error(errData.error || 'Failed to create booking request');
+            }
             const bookingData = await bookingRes.json();
 
-            // Calculate expected amount if it's a vehicle (e.g. dailyRate * days)
-            let amountVal = 0;
-            if (vehicle) {
-                const date1 = new Date(form.dates.from).getTime();
-                const date2 = new Date(form.dates.to).getTime();
-                let days = Math.ceil((date2 - date1) / (1000 * 3600 * 24));
-                if (days < 1) days = 1;
+            // 2. If there's an amount to pay, initiate PayHere
+            if (amounts.hasPayment && amounts.advance > 0) {
+                const itemLabel = pkg
+                    ? `20% Advance - ${pkg.title}`
+                    : vehicle
+                        ? `20% Advance - ${vehicle.model} Transfer`
+                        : `20% Advance - Booking ${bookingData.bookingNo}`;
 
-                amountVal = days * vehicle.dailyRate;
-            }
-
-            // Only attempt to pay if amount > 0
-            if (amountVal > 0) {
-                // Calculate 20% Advance natively in LKR
-                const advanceAmount = amountVal * 0.20;
-
-                // 2. Init PayHere
                 const payRes = await fetch('/api/payhere/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -84,8 +108,8 @@ export default function BookingRequestClient({ vehicle }: { vehicle?: any }) {
                             city: form.city,
                             country: form.country,
                         },
-                        items: vehicle ? `20% Advance - ${vehicle.model} Transfer` : `20% Advance - Booking ${bookingData.bookingNo}`,
-                        amount: advanceAmount
+                        items: itemLabel,
+                        amount: amounts.advance
                     })
                 });
 
@@ -96,46 +120,68 @@ export default function BookingRequestClient({ vehicle }: { vehicle?: any }) {
                 // @ts-ignore
                 if (typeof window !== 'undefined' && window.payhere) {
                     // @ts-ignore
-                    window.payhere.onCompleted = function onCompleted(orderId) {
+                    window.payhere.onCompleted = function onCompleted(orderId: string) {
                         setStatus({ success: true, message: 'Payment completed successfully. Validating...' });
                         window.location.href = `/payment/return?order_id=${orderId}`;
                     };
-
                     // @ts-ignore
                     window.payhere.onDismissed = function onDismissed() {
-                        setStatus({ success: false, message: 'Payment popup was dismissed.' });
+                        setStatus({ success: false, message: 'Payment popup was dismissed. Your booking is saved — you can pay later.' });
                         setLoading(false);
                     };
-
                     // @ts-ignore
-                    window.payhere.onError = function onError(error) {
+                    window.payhere.onError = function onError(error: any) {
                         console.error('PayHere error', error);
-                        setStatus({ success: false, message: 'An error occurred triggering the gateway.' });
+                        setStatus({ success: false, message: 'An error occurred with the payment gateway.' });
                         setLoading(false);
                     };
-
                     // @ts-ignore
                     window.payhere.startPayment(payData.fields);
                 } else {
                     console.error("PayHere SDK not loaded");
-                    setStatus({ success: false, message: 'Payment gateway SDK not loaded.' });
+                    setStatus({ success: false, message: 'Payment gateway SDK not loaded. Your booking is saved.' });
                     setLoading(false);
                 }
-
             } else {
                 setStatus({ success: true, message: 'Booking request sent successfully. We will contact you soon.' });
                 setLoading(false);
             }
-
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            setStatus({ success: false, message: 'An error occurred during booking. Please try again.' });
+            setStatus({ success: false, message: error.message || 'An error occurred during booking. Please try again.' });
             setLoading(false);
         }
     };
 
     return (
         <>
+            {/* Package/Vehicle Summary Card */}
+            {(pkg || vehicle) && amounts.hasPayment && (
+                <div className="mb-6 p-5 rounded-xl bg-gradient-to-r from-deep-emerald/5 to-antique-gold/5 border border-antique-gold/20">
+                    <h3 className="text-sm font-display font-semibold text-deep-emerald mb-3">
+                        {pkg ? pkg.title : `${vehicle.model} Transfer`}
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Total</p>
+                            <p className="text-lg font-bold text-deep-emerald">${amounts.total.toLocaleString()}</p>
+                        </div>
+                        <div className="border-x border-gray-200/60">
+                            <p className="text-[10px] text-antique-gold uppercase tracking-wider mb-1 font-medium">20% Advance</p>
+                            <p className="text-lg font-bold text-antique-gold">${amounts.advance.toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Remaining</p>
+                            <p className="text-lg font-bold text-gray-600">${amounts.remaining.toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
+                        <AlertCircle className="h-3 w-3 text-antique-gold" />
+                        <span>Pay 20% advance now to confirm your booking. Remaining balance due before departure.</span>
+                    </div>
+                </div>
+            )}
+
             <form onSubmit={handleCreateBookingAndPay} className="space-y-6">
                 {status && (
                     <div className={`p-4 rounded-md ${status.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
@@ -197,9 +243,31 @@ export default function BookingRequestClient({ vehicle }: { vehicle?: any }) {
                     <Input id="pickupLocation" required value={form.pickupLocation} onChange={e => setForm({ ...form, pickupLocation: e.target.value })} placeholder="e.g. Airport, Hotel" />
                 </div>
 
-                <Button type="submit" disabled={loading} className="w-full bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold font-serif tracking-widest uppercase rounded-none h-14 text-sm font-semibold shadow-[0_0_15px_rgba(212,175,55,0.2)] border border-transparent hover:border-antique-gold inline-flex items-center justify-center transition-all duration-300">
+                <div className="space-y-2">
+                    <Label htmlFor="notes">Special Notes (Optional)</Label>
+                    <textarea
+                        id="notes"
+                        value={form.notes}
+                        onChange={e => setForm({ ...form, notes: e.target.value })}
+                        placeholder="Any special requirements or notes..."
+                        className="w-full min-h-[80px] px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-antique-gold/30 focus:border-antique-gold"
+                    />
+                </div>
+
+                <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold font-serif tracking-widest uppercase rounded-none h-14 text-sm font-semibold shadow-[0_0_15px_rgba(212,175,55,0.2)] border border-transparent hover:border-antique-gold inline-flex items-center justify-center transition-all duration-300"
+                >
                     {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin text-antique-gold" />}
-                    {vehicle ? 'Confirm & Advance Pay (20%)' : 'Submit Fleet Request'}
+                    {amounts.hasPayment ? (
+                        <>
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            Pay 20% Advance (${amounts.advance.toLocaleString()}) & Confirm
+                        </>
+                    ) : (
+                        'Submit Booking Request'
+                    )}
                 </Button>
             </form>
 

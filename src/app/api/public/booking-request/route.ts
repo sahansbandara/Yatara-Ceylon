@@ -17,10 +17,21 @@ export async function POST(request: NextRequest) {
 
     try {
         await connectDB();
+
+        const totalCost = data!.totalCost || 0;
+        const advancePercentage = 20;
+        const advanceAmount = totalCost * (advancePercentage / 100);
+        const remainingBalance = totalCost;
+
         const booking = await Booking.create({
             ...data,
             dates: { from: new Date(data!.dates.from), to: new Date(data!.dates.to) },
-            status: 'NEW',
+            totalCost,
+            advancePercentage,
+            advanceAmount,
+            paidAmount: 0,
+            remainingBalance,
+            status: totalCost > 0 ? 'PAYMENT_PENDING' : 'NEW',
         });
 
         // Also create a support ticket for the booking

@@ -377,8 +377,38 @@
 
 .liquid-glass-stat:hover::after {
   opacity: 1;
+/* Dashboard Theme Classes */
+.dashboard-bg-admin {
+  background: radial-gradient(circle at top right, #11362e, #061a15 80%);
+  color: #FAFAFA;
+}
+.dashboard-bg-light {
+  background: #f4f6f8;
+  color: #1a202c;
+}
+.dashboard-sidebar-dark {
+  background: rgba(4, 26, 20, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+/* Enhanced Glass Stat for Dark mode */
+.liquid-glass-stat-dark {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+}
+.liquid-glass-stat-dark:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.15);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
 }
 
+}
 /* ============================================
    🔮 Liquid Glass Navigation Bar
    ============================================ */

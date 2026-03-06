@@ -85,12 +85,16 @@ export const createBookingSchema = z.object({
     customerName: z.string().min(1),
     phone: z.string().min(1),
     email: z.string().email().optional().or(z.literal('')),
+    address: z.string().optional(),
+    city: z.string().optional(),
+    country: z.string().optional(),
     type: z.enum(['PACKAGE', 'VEHICLE', 'CUSTOM']),
     packageId: z.string().optional(),
     vehicleId: z.string().optional(),
     customPlanId: z.string().optional(),
     pax: z.number().min(1),
     pickupLocation: z.string().optional(),
+    totalCost: z.number().min(0).optional(),
     dates: z.object({
         from: z.string().min(1),
         to: z.string().min(1),
@@ -100,7 +104,7 @@ export const createBookingSchema = z.object({
 });
 
 export const updateBookingStatusSchema = z.object({
-    status: z.enum(['NEW', 'CONTACTED', 'CONFIRMED', 'COMPLETED', 'CANCELLED']),
+    status: z.enum(['NEW', 'PAYMENT_PENDING', 'CONTACTED', 'ADVANCE_PAID', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']),
 });
 
 export const assignBookingSchema = z.object({
@@ -164,7 +168,7 @@ export const createPaymentSchema = z.object({
     bookingId: z.string().min(1),
     invoiceId: z.string().optional(),
     amount: z.number().min(0.01),
-    method: z.enum(['CASH', 'BANK', 'CARD_OTHER']),
+    method: z.enum(['CASH', 'BANK', 'CARD_OTHER', 'ONLINE']),
     paidAt: z.string().optional(),
     reference: z.string().optional(),
     type: z.enum(['PAYMENT', 'REFUND']).default('PAYMENT'),

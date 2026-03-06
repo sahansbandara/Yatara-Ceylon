@@ -75,13 +75,22 @@ export async function POST(request: Request) {
             return new NextResponse('Signature Verification Failed', { status: 400 });
         }
 
-        // If SUCCESS, optionally update booking
+        // If SUCCESS, update booking status and financial fields
         if (paymentStatus === 'SUCCESS') {
             const booking = await Booking.findById(payment.bookingId);
-            if (booking && booking.status === BookingStatus.NEW) {
-                // You could change status to something else, or leave it and handle via admin
-                // For now, let's just add a note or modify status if required
-                booking.status = BookingStatus.ADVANCE_PAID;
+            if (booking) {
+                const paidNow = parseFloat(payhere_amount) || payment.amount || 0;
+
+                // Update financial fields
+                booking.paidAmount = (booking.paidAmount || 0) + paidNow;
+                booking.remainingBalance = Math.max(0, (booking.totalCost || 0) - booking.paidAmount);
+
+                // Transition status
+                if (booking.status === 'NEW' || booking.status === 'PAYMENT_PENDING') {
+                    booking.status = BookingStatus.ADVANCE_PAID;
+                }
+
+                booking.paymentStatus = 'advance_paid';
                 await booking.save();
             }
         }

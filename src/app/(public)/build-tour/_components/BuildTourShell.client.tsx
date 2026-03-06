@@ -46,7 +46,7 @@ export default function BuildTourShell() {
             {/* ── Desktop Layout ─────────────────────────────────── */}
             <div className="hidden lg:flex h-[85vh] min-h-[600px]">
                 {/* Left Panel — Concierge Experience */}
-                <div className="w-[420px] xl:w-[460px] flex-shrink-0 flex flex-col build-tour-panel liquid-glass-dark border-[rgba(212,175,55,0.15)] border-r">
+                <div className="w-[420px] xl:w-[460px] flex-shrink-0 flex flex-col bg-black/10 backdrop-blur-xl border-r border-white/10 shadow-[20px_0_40px_rgba(0,0,0,0.5)] z-10 relative">
                     {/* Tab bar */}
                     <div className="flex border-b border-white/5">
                         {TABS.map((tab) => {
@@ -107,7 +107,7 @@ export default function BuildTourShell() {
                     className={`absolute bottom-0 left-0 right-0 z-30 transition-all duration-500 ease-out ${drawerExpanded ? 'max-h-[70vh]' : 'max-h-[56px]'
                         }`}
                 >
-                    <div className="build-tour-panel liquid-glass-dark rounded-t-2xl h-full flex flex-col overflow-hidden border-t border-[rgba(212,175,55,0.15)]">
+                    <div className="bg-black/20 backdrop-blur-xl rounded-t-2xl h-full flex flex-col overflow-hidden border-t border-[rgba(212,175,55,0.15)]">
                         {/* Sheet handle */}
                         <button
                             onClick={() => setDrawerExpanded(!drawerExpanded)}

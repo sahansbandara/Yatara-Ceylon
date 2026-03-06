@@ -14,38 +14,44 @@ interface TourTheme {
     subtitle: string;
     gradient: string;
     placeIds: string[];
+    image: string;
 }
 
 const THEMES: TourTheme[] = [
     {
         title: 'Tea & Highlands',
         subtitle: 'Misty peaks, emerald plantations, and colonial charm',
-        gradient: 'from-emerald-900/80 via-emerald-800/60 to-transparent',
+        gradient: 'from-emerald-900 via-emerald-800/60 to-transparent',
         placeIds: ['nuwaraeliya-horton', 'nuwaraeliya-bluefield', 'nuwaraeliya-gregory', 'badulla-nine-arches', 'badulla-little-adams', 'kandy-knuckles'],
+        image: '/images/themes/tea-highlands.webp',
     },
     {
         title: 'Wildlife Safari',
         subtitle: 'Leopards, elephants, and untouched wilderness',
-        gradient: 'from-amber-900/80 via-amber-800/60 to-transparent',
+        gradient: 'from-amber-900 via-amber-800/60 to-transparent',
         placeIds: ['hambantota-yala', 'hambantota-bundala', 'polonnaruwa-minneriya', 'puttalam-wilpattu', 'moneragala-galoya', 'kegalle-pinnawala'],
+        image: '/images/themes/safari-wildlife.webp',
     },
     {
         title: 'Heritage Triangle',
         subtitle: 'Ancient kingdoms, sacred temples, and UNESCO wonders',
-        gradient: 'from-purple-900/80 via-purple-800/60 to-transparent',
+        gradient: 'from-purple-900 via-purple-800/60 to-transparent',
         placeIds: ['matale-sigiriya', 'matale-dambulla', 'anuradhapura-bodhi', 'anuradhapura-ruwanweli', 'polonnaruwa-ruins', 'anuradhapura-mihintale'],
+        image: '/images/themes/heritage-triangle.webp',
     },
     {
         title: 'Coastal Luxury',
         subtitle: 'Pristine beaches, surf breaks, and golden sunsets',
-        gradient: 'from-cyan-900/80 via-cyan-800/60 to-transparent',
+        gradient: 'from-cyan-900 via-cyan-800/60 to-transparent',
         placeIds: ['galle-unawatuna', 'matara-mirissa', 'matara-hiriketiya', 'trinco-nilaveli', 'ampara-arugam', 'galle-fort'],
+        image: '/images/themes/coastal-luxury.webp',
     },
     {
         title: '7-Day Signature',
         subtitle: 'The essential Sri Lanka — coast to highlands',
-        gradient: 'from-[#043927]/80 via-[#043927]/60 to-transparent',
+        gradient: 'from-[#043927] via-[#043927]/60 to-transparent',
         placeIds: ['colombo-galle-face', 'matale-sigiriya', 'kandy-tooth', 'nuwaraeliya-horton', 'badulla-nine-arches', 'hambantota-yala', 'galle-fort'],
+        image: '/images/themes/7-day-signature.webp',
     },
 ];
 
@@ -117,13 +123,19 @@ export default function ThemeCarousel() {
 
                             return (
                                 <SwiperSlide key={theme.title}>
-                                    <div className="relative rounded-xl overflow-hidden border border-white/5 group h-[320px] transition-all duration-500 hover:border-antique-gold/20">
-                                        {/* Gradient BG */}
-                                        <div className={`absolute inset-0 bg-gradient-to-t ${theme.gradient}`} />
-                                        <div className="absolute inset-0 bg-[#0a0f0d]/40" />
+                                    <div className="relative rounded-2xl overflow-hidden border border-white/10 group h-[380px] sm:h-[420px] transition-all duration-500 hover:-translate-y-2 hover:scale-[1.03] hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+                                        {/* Background Image */}
+                                        <div
+                                            className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
+                                            style={{ backgroundImage: `url(${theme.image})` }}
+                                        />
 
-                                        {/* Content */}
-                                        <div className="relative z-10 h-full flex flex-col justify-end p-5">
+                                        {/* Gradient BG & Liquid Glass Effect */}
+                                        <div className={`absolute inset-0 bg-gradient-to-t ${theme.gradient} opacity-40 group-hover:opacity-70 transition-opacity duration-500`} />
+                                        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-transparent to-[#0a0f0d]/90" />
+
+                                        {/* Content with Glass Border */}
+                                        <div className="relative z-10 h-full flex flex-col justify-end p-6 border border-white/5 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:border-antique-gold/30 transition-colors duration-500">
                                             <h3 className="font-serif text-xl text-white mb-1">{theme.title}</h3>
                                             <p className="text-white/40 text-xs font-light mb-4 leading-relaxed">
                                                 {theme.subtitle}

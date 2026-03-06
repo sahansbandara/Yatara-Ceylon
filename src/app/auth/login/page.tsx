@@ -30,41 +30,36 @@ export default function EliteLoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    // Role-based redirect mapping
+    const getRoleRedirect = (role: string) => {
+        switch (role) {
+            case 'ADMIN': return '/dashboard';
+            case 'STAFF': return '/dashboard';
+            case 'VEHICLE_OWNER': return '/dashboard/fleet';
+            case 'HOTEL_OWNER': return '/dashboard/hotel';
+            case 'USER': return '/dashboard/my-bookings';
+            default: return '/dashboard';
+        }
+    };
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
         try {
-            if (role === 'USER' && authMode === 'login') {
-                // Real login
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password }),
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    setError(data.error || 'Login failed');
-                    return;
-                }
-                window.location.href = '/dashboard/my-journeys';
-            } else {
-                // Mock login for roles
-                const res = await fetch('/api/auth/mock-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ role })
-                });
-
-                if (res.ok) {
-                    if (role === 'ADMIN' || role === 'STAFF') window.location.href = '/dashboard';
-                    else if (role === 'VEHICLE_OWNER') window.location.href = '/dashboard/vehicles';
-                    else if (role === 'HOTEL_OWNER') window.location.href = '/dashboard/partners';
-                    else window.location.href = '/dashboard/my-journeys';
-                } else {
-                    setError('Login failed. Please try again.');
-                }
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setError(data.error || 'Login failed');
+                return;
             }
+            // Redirect based on actual user role from DB
+            const userRole = data.user?.role || 'USER';
+            window.location.href = getRoleRedirect(userRole);
         } catch (err) {
             setError('Network error. Please try again.');
         } finally {
