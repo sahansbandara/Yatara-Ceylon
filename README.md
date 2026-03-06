@@ -184,117 +184,170 @@ sequenceDiagram
 This entity-relationship diagram maps out how the primary collections in the MongoDB database interact to form the complete tourism management system.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '15px', 'fontFamily': 'Helvetica'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px', 'fontFamily': 'Helvetica'}}}%%
 flowchart TB
-    %% Entities - padded to prevent GitHub SVG truncation
-    U["   USER   "]
-    B["   BOOKING   "]
-    PKG["   PACKAGE   "]
-    DEST["   DESTINATION   "]
-    V["   VEHICLE   "]
-    P["   PARTNER   "]
-    INV["   INVOICE   "]
-    PAY["   PAYMENT   "]
+    %% ===== ENTITIES =====
+    U["  USER  "]
+    B["  BOOKING  "]
+    PKG["  PACKAGE  "]
+    DEST["  DESTINATION  "]
+    V["  VEHICLE  "]
+    P["  PARTNER  "]
+    INV["  INVOICE  "]
+    PAY["  PAYMENT  "]
+    CP["  CUSTOM PLAN  "]
+    VB["  VEHICLE BLOCK  "]
+    NT["  NOTIFICATION  "]
+    ST["  SUPPORT TICKET  "]
+    AL["  AUDIT LOG  "]
+    BPA["  BOOKING PARTNER  "]
 
-    %% Relationships
-    R_MAKES{" makes "}
-    R_OWNS_V{" owns "}
-    R_OWNS_P{" owns "}
-    R_INCLUDES{" includes "}
-    R_ASSIGNED_V{" assigned_to "}
-    R_ASSIGNED_P{" assigned_to "}
-    R_HAS_P{" creates "}
-    R_HAS_I{" generates "}
-    R_BOOKED_IN{" booked_in "}
+    %% ===== RELATIONSHIPS =====
+    R1{" makes "}
+    R2{" owns "}
+    R3{" owns "}
+    R4{" booked_in "}
+    R5{" includes "}
+    R6{" assigned_to "}
+    R7{" assigned_to "}
+    R8{" generates "}
+    R9{" creates "}
+    R10{" used_in "}
+    R11{" has_block "}
+    R12{" partners_with "}
 
-    %% Connections
-    U -- 1 ----- R_MAKES
-    R_MAKES ----- M --> B
+    %% ===== CONNECTIONS =====
+    U -- "1" ---- R1
+    R1 ---- "M" --> B
 
-    U -- 1 ----- R_OWNS_V
-    R_OWNS_V ----- M --> V
+    U -- "1" ---- R2
+    R2 ---- "M" --> V
 
-    U -- 1 ----- R_OWNS_P
-    R_OWNS_P ----- M --> P
+    U -- "1" ---- R3
+    R3 ---- "M" --> P
 
-    PKG -- 1 ----- R_BOOKED_IN
-    R_BOOKED_IN ----- M --> B
+    PKG -- "1" ---- R4
+    R4 ---- "M" --> B
 
-    PKG -- M ----- R_INCLUDES
-    R_INCLUDES ----- N --> DEST
+    PKG -- "M" ---- R5
+    R5 ---- "N" --> DEST
 
-    V -- 1 ----- R_ASSIGNED_V
-    R_ASSIGNED_V ----- M --> B
+    V -- "1" ---- R6
+    R6 ---- "M" --> B
 
-    P -- 1 ----- R_ASSIGNED_P
-    R_ASSIGNED_P ----- M --> B
+    P -- "1" ---- R7
+    R7 ---- "M" --> BPA
 
-    B -- 1 ----- R_HAS_I
-    R_HAS_I ----- M --> INV
+    B -- "1" ---- R8
+    R8 ---- "M" --> INV
 
-    B -- 1 ----- R_HAS_P
-    R_HAS_P ----- M --> PAY
+    B -- "1" ---- R9
+    R9 ---- "M" --> PAY
 
-    %% Attributes
-    U_email([" email "])
-    U_name([" name "])
-    U_role([" role "])
-    U -.- U_email
-    U -.- U_name
-    U -.- U_role
+    CP -- "1" ---- R10
+    R10 ---- "1" --> B
 
-    B_dates([" dates "])
-    B_pax([" pax "])
-    B_totalCost([" totalCost "])
-    B_status([" status "])
-    B -.- B_dates
-    B -.- B_pax
-    B -.- B_totalCost
-    B -.- B_status
+    V -- "1" ---- R11
+    R11 ---- "M" --> VB
 
-    PKG_title([" title "])
-    PKG_type([" type "])
-    PKG_price([" price "])
-    PKG -.- PKG_title
-    PKG -.- PKG_type
-    PKG -.- PKG_price
+    B -- "1" ---- R12
+    R12 ---- "M" --> BPA
 
-    V_type([" type "])
-    V_status([" status "])
-    V_plate([" plate "])
-    V -.- V_type
-    V -.- V_status
-    V -.- V_plate
+    U -..- NT
+    U -..- ST
+    U -..- AL
+    U -..- CP
 
-    P_type([" type "])
-    P_name([" name "])
-    P -.- P_type
-    P -.- P_name
+    %% ===== USER ATTRIBUTES =====
+    U1(["  email  "])
+    U2(["  name  "])
+    U3(["  role  "])
+    U4(["  phone  "])
+    U5(["  status  "])
+    U -.- U1
+    U -.- U2
+    U -.- U3
+    U -.- U4
+    U -.- U5
 
-    INV_status([" status "])
-    INV_total([" total "])
-    INV -.- INV_status
-    INV -.- INV_total
+    %% ===== BOOKING ATTRIBUTES =====
+    B1(["  bookingNo  "])
+    B2(["  status  "])
+    B3(["  totalCost  "])
+    B4(["  paidAmount  "])
+    B5(["  dates  "])
+    B6(["  pax  "])
+    B -.- B1
+    B -.- B2
+    B -.- B3
+    B -.- B4
+    B -.- B5
+    B -.- B6
 
-    PAY_amount([" amount "])
-    PAY_method([" method "])
-    PAY_status([" status "])
-    PAY -.- PAY_amount
-    PAY -.- PAY_method
-    PAY -.- PAY_status
+    %% ===== PACKAGE ATTRIBUTES =====
+    PK1(["  title  "])
+    PK2(["  type  "])
+    PK3(["  price  "])
+    PK4(["  duration  "])
+    PKG -.- PK1
+    PKG -.- PK2
+    PKG -.- PK3
+    PKG -.- PK4
 
-    DEST_name([" name "])
-    DEST_loc([" location "])
-    DEST -.- DEST_name
-    DEST -.- DEST_loc
+    %% ===== VEHICLE ATTRIBUTES =====
+    V1(["  type  "])
+    V2(["  status  "])
+    V3(["  plate  "])
+    V4(["  capacity  "])
+    V -.- V1
+    V -.- V2
+    V -.- V3
+    V -.- V4
 
-    classDef entity fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,font-weight:bolder;
-    classDef relationship fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000000,font-weight:bolder;
-    classDef attribute fill:#f8f9fa,stroke:#333333,stroke-width:1px,color:#000000,font-weight:normal;
+    %% ===== PARTNER ATTRIBUTES =====
+    P1(["  type  "])
+    P2(["  name  "])
+    P3(["  contact  "])
+    P4(["  status  "])
+    P -.- P1
+    P -.- P2
+    P -.- P3
+    P -.- P4
 
-    class U,B,PKG,DEST,V,P,INV,PAY entity;
-    class R_MAKES,R_OWNS_V,R_OWNS_P,R_INCLUDES,R_ASSIGNED_V,R_ASSIGNED_P,R_HAS_P,R_HAS_I,R_BOOKED_IN relationship;
-    class U_email,U_name,U_role,B_dates,B_pax,B_totalCost,B_status,PKG_title,PKG_type,PKG_price,V_type,V_status,V_plate,P_type,P_name,INV_status,INV_total,PAY_amount,PAY_method,PAY_status,DEST_name,DEST_loc attribute;
+    %% ===== PAYMENT ATTRIBUTES =====
+    PA1(["  amount  "])
+    PA2(["  method  "])
+    PA3(["  status  "])
+    PA4(["  currency  "])
+    PAY -.- PA1
+    PAY -.- PA2
+    PAY -.- PA3
+    PAY -.- PA4
+
+    %% ===== INVOICE ATTRIBUTES =====
+    IN1(["  invoiceNo  "])
+    IN2(["  status  "])
+    IN3(["  total  "])
+    IN4(["  dueDate  "])
+    INV -.- IN1
+    INV -.- IN2
+    INV -.- IN3
+    INV -.- IN4
+
+    %% ===== DESTINATION ATTRIBUTES =====
+    D1(["  name  "])
+    D2(["  location  "])
+    DEST -.- D1
+    DEST -.- D2
+
+    %% ===== STYLES =====
+    classDef entity fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,font-weight:bolder
+    classDef relationship fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000000,font-weight:bolder
+    classDef attribute fill:#f8f9fa,stroke:#555555,stroke-width:1px,color:#000000
+
+    class U,B,PKG,DEST,V,P,INV,PAY,CP,VB,NT,ST,AL,BPA entity
+    class R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12 relationship
+    class U1,U2,U3,U4,U5,B1,B2,B3,B4,B5,B6,PK1,PK2,PK3,PK4,V1,V2,V3,V4,P1,P2,P3,P4,PA1,PA2,PA3,PA4,IN1,IN2,IN3,IN4,D1,D2 attribute
 ```
 
 **Key Relationships Explained:**
