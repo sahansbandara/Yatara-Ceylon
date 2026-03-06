@@ -44,27 +44,23 @@ export default function TicketReplyForm({ ticketId }: TicketReplyFormProps) {
     };
 
     return (
-        <Card>
-            <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">Reply</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <Textarea
-                        placeholder="Type your reply..."
-                        className="min-h-[120px]"
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        required
-                    />
-                    <div className="flex justify-end">
-                        <Button type="submit" disabled={loading} className="bg-ocean-600 hover:bg-ocean-700">
-                            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-                            Send Reply
-                        </Button>
-                    </div>
-                </form>
-            </CardContent>
-        </Card>
+        <div className="liquid-glass-stat rounded-2xl p-6 mt-4">
+            <h3 className="text-sm font-semibold text-off-white uppercase tracking-wider mb-4">Reply to Ticket</h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <Textarea
+                    placeholder="Type your reply here..."
+                    className="min-h-[120px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl resize-none"
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    required
+                />
+                <div className="flex justify-end">
+                    <Button type="submit" disabled={loading} className="bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_20px_rgba(212,175,55,0.2)] rounded-xl h-10 px-6 font-semibold transition-all">
+                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#020b08]/60" /> : <Send className="mr-2 h-4 w-4" />}
+                        Send Reply
+                    </Button>
+                </div>
+            </form>
+        </div>
     );
 }

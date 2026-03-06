@@ -166,17 +166,16 @@ function SidebarContent({ userRole, userName }: { userRole: string; userName: st
     return (
         <div className="flex h-full flex-col bg-transparent text-white">
             {/* Brand Lockup */}
-            <div className="flex h-[72px] items-center px-5 border-b border-white/[0.06]">
-                <Link href="/dashboard" className="flex items-center gap-3 group">
-                    <div className="w-9 h-9 rounded-xl bg-antique-gold/15 border border-antique-gold/25 flex items-center justify-center group-hover:bg-antique-gold/25 group-hover:shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
-                        <Image src="/images/yatara-brand-block.svg" alt="Yatara" width={28} height={28} className="brightness-0 invert opacity-80" />
-                    </div>
-                    <div>
-                        <span className="font-display text-base font-bold tracking-tight text-off-white">
-                            Yatara Ceylon
-                        </span>
-                        <p className="text-[9px] tracking-[0.2em] uppercase text-off-white/25">Tour Management</p>
-                    </div>
+            <div className="flex h-[80px] items-center px-5 border-b border-white/[0.06] justify-center pt-2">
+                <Link href="/dashboard" className="flex items-center group transition-transform hover:scale-[1.02]">
+                    <Image
+                        src="/images/yatara-brand-block.svg"
+                        alt="Yatara Ceylon"
+                        width={180}
+                        height={40}
+                        className="brightness-0 invert opacity-95"
+                        priority
+                    />
                 </Link>
             </div>
 

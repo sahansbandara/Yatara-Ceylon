@@ -60,52 +60,55 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm max-w-2xl">
+        <form onSubmit={handleSubmit} className="space-y-6 liquid-glass-stat-dark p-8 rounded-2xl border border-white/[0.08] shadow-2xl max-w-2xl text-white">
             <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Full Name</label>
+                    <label className="text-sm font-medium text-white/70">Full Name</label>
                     <Input
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="John Doe"
+                        className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl"
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Email Address</label>
+                    <label className="text-sm font-medium text-white/70">Email Address</label>
                     <Input
                         required
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="john@example.com"
-                        disabled={isEdit} // Prevent email change for simplicity/security mostly
+                        disabled={isEdit}
+                        className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl disabled:opacity-50"
                     />
-                    {isEdit && <p className="text-xs text-muted-foreground">Email cannot be changed.</p>}
+                    {isEdit && <p className="text-[10px] text-white/30 uppercase tracking-widest">Email cannot be changed.</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Phone (Optional)</label>
+                    <label className="text-sm font-medium text-white/70">Phone (Optional)</label>
                     <Input
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="+94 77 123 4567"
+                        className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl"
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Role</label>
+                    <label className="text-sm font-medium text-white/70">Role</label>
                     <Select
                         value={formData.role}
                         onValueChange={(val) => setFormData({ ...formData, role: val })}
                     >
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white/[0.04] border-white/[0.08] text-white focus:ring-antique-gold/20 h-11 rounded-xl">
                             <SelectValue placeholder="Select role" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-[#020b08] border-white/[0.08] text-white">
                             {Object.values(UserRoles).map((role) => (
-                                <SelectItem key={role} value={role}>
+                                <SelectItem key={role} value={role} className="focus:bg-white/[0.06] focus:text-antique-gold cursor-pointer">
                                     {role}
                                 </SelectItem>
                             ))}
@@ -115,17 +118,17 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
 
                 {isEdit && (
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Status</label>
+                        <label className="text-sm font-medium text-white/70">Status</label>
                         <Select
                             value={formData.status}
                             onValueChange={(val) => setFormData({ ...formData, status: val })}
                         >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-white/[0.04] border-white/[0.08] text-white focus:ring-antique-gold/20 h-11 rounded-xl">
                                 <SelectValue placeholder="Select status" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-[#020b08] border-white/[0.08] text-white">
                                 {Object.values(UserStatus).map((status) => (
-                                    <SelectItem key={status} value={status}>
+                                    <SelectItem key={status} value={status} className="focus:bg-white/[0.06] focus:text-antique-gold cursor-pointer">
                                         {status}
                                     </SelectItem>
                                 ))}
@@ -135,7 +138,7 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
                 )}
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">
+                    <label className="text-sm font-medium text-white/70">
                         {isEdit ? 'New Password (leave blank to keep current)' : 'Password'}
                     </label>
                     <Input
@@ -144,16 +147,17 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         placeholder={isEdit ? '••••••••' : 'Enter secure password'}
+                        className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl"
                     />
                 </div>
             </div>
 
-            <div className="flex justify-end gap-4 pt-4">
-                <Button type="button" variant="outline" onClick={() => router.back()}>
+            <div className="flex justify-end gap-3 pt-6 border-t border-white/[0.06] mt-8">
+                <Button type="button" variant="outline" onClick={() => router.back()} className="border-antique-gold/40 text-antique-gold hover:bg-antique-gold/10 rounded-xl h-10 px-6 transition-all">
                     Cancel
                 </Button>
-                <Button type="submit" disabled={loading} className="bg-ocean-600 hover:bg-ocean-700">
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                <Button type="submit" disabled={loading} className="bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_20px_rgba(212,175,55,0.2)] rounded-xl h-10 px-6 font-semibold">
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#020b08]/60" /> : null}
                     {isEdit ? 'Update User' : 'Create User'}
                 </Button>
             </div>

@@ -1,16 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -73,87 +64,91 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
     };
 
     return (
-        <div className="rounded-md border bg-white shadow-sm">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {destinations.length > 0 ? (
-                        destinations.map((dest) => (
-                            <TableRow key={dest._id}>
-                                <TableCell>
-                                    <div className="relative h-10 w-16 rounded overflow-hidden bg-gray-100">
-                                        {dest.images && dest.images[0] ? (
-                                            <Image
-                                                src={dest.images[0]}
-                                                alt={dest.title}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center justify-center h-full text-xs text-gray-400">No Img</div>
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="font-medium">
-                                    <div className="flex flex-col">
-                                        <span>{dest.title}</span>
-                                        <span className="text-xs text-muted-foreground">/{dest.slug}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{dest.location || '-'}</TableCell>
-                                <TableCell>
-                                    <Badge variant={dest.isPublished ? 'default' : 'secondary'} className={dest.isPublished ? 'bg-green-100 text-green-800 hover:bg-green-200 border-green-200' : ''}>
-                                        {dest.isPublished ? 'Published' : 'Draft'}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-gray-500"
-                                            onClick={() => togglePublish(dest)}
-                                            title={dest.isPublished ? "Unpublish" : "Publish"}
-                                        >
-                                            {dest.isPublished ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                                        </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-blue-600"
-                                            onClick={() => router.push(`/dashboard/destinations/${dest._id}`)}
-                                        >
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-red-600"
-                                            onClick={() => handleDelete(dest._id)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={5} className="h-24 text-center">
-                                No destinations found.
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+        <div className="dashboard-table-glass overflow-hidden rounded-2xl w-full">
+            <div className="overflow-x-auto w-full">
+                <table className="w-full text-sm">
+                    <thead>
+                        <tr className="bg-white/[0.03] border-b border-white/[0.06]">
+                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold w-[80px]">Image</th>
+                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Title</th>
+                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Location</th>
+                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Status</th>
+                            <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {destinations.length > 0 ? (
+                            destinations.map((dest) => (
+                                <tr key={dest._id} className="border-b border-white/[0.04] last:border-b-0 hover:bg-antique-gold/[0.03] transition-colors">
+                                    <td className="px-5 py-3.5">
+                                        <div className="relative h-10 w-14 rounded overflow-hidden bg-white/5 border border-white/10">
+                                            {dest.images && dest.images[0] ? (
+                                                <Image
+                                                    src={dest.images[0]}
+                                                    alt={dest.title}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex items-center justify-center h-full text-[9px] uppercase tracking-wider text-white/20">No Img</div>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                        <div className="flex flex-col">
+                                            <span className="font-medium text-white/85 text-xs">{dest.title}</span>
+                                            <span className="text-[10px] text-white/35 mt-0.5">/{dest.slug}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                        <span className="text-white/60 text-xs">{dest.location || '—'}</span>
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                        <span className={`status-pill ${dest.isPublished ? 'status-pill-success' : 'status-pill-neutral'}`}>
+                                            {dest.isPublished ? 'Published' : 'Draft'}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-3.5 text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8 text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+                                                onClick={() => togglePublish(dest)}
+                                                title={dest.isPublished ? "Unpublish" : "Publish"}
+                                            >
+                                                {dest.isPublished ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                                            </Button>
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8 text-white/40 hover:text-antique-gold hover:bg-white/10 transition-colors"
+                                                onClick={() => router.push(`/dashboard/destinations/${dest._id}`)}
+                                            >
+                                                <Edit className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8 text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                                                onClick={() => handleDelete(dest._id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={5} className="px-5 py-12 text-center text-white/40 text-sm">
+                                    No destinations found.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

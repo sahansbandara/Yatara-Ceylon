@@ -150,7 +150,7 @@ export default function RecordPaymentModal({ bookingId, remainingBalance }: Reco
                         </div>
 
                         <div className="flex gap-3 justify-end pt-4 border-t border-white/10 mt-6">
-                            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={saving} className="border-white/20 text-white hover:bg-white/10">
+                            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={saving} className="border-antique-gold/40 text-antique-gold hover:bg-antique-gold/10">
                                 Cancel
                             </Button>
                             <Button type="submit" disabled={saving} className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-medium">
