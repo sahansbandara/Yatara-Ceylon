@@ -185,62 +185,136 @@ This entity-relationship diagram maps out how the primary collections in the Mon
 
 ```mermaid
 erDiagram
-    USER ||--o{ BOOKING : "makes"
+    USER ||--o{ BOOKING : "makes or manages"
     USER ||--o{ VEHICLE : "owns (Fleet Partner)"
     USER ||--o{ PARTNER : "owns (Hotel Partner)"
+    USER ||--o{ SUPPORT_TICKET : "submits"
 
     PACKAGE ||--o{ BOOKING : "booked in"
     PACKAGE }|--|{ DESTINATION : "includes"
+    CUSTOM_PLAN ||--o{ BOOKING : "used in"
 
-    BOOKING ||--o{ PAYMENT : "has"
-    BOOKING ||--o{ INVOICE : "has"
+    BOOKING ||--o{ PAYMENT : "creates"
+    BOOKING ||--o{ INVOICE : "generates"
+    BOOKING ||--|{ REVIEW : "receives"
     
     VEHICLE ||--o{ BOOKING : "assigned to"
-    PARTNER ||--o{ BOOKING_PARTNER : "assigned to"
-    BOOKING ||--o{ BOOKING_PARTNER : "uses"
+    VEHICLE ||--o{ VEHICLE_BLOCK : "has"
+    PARTNER ||--o{ BOOKING_PARTNER : "assigned via"
+    BOOKING ||--o{ BOOKING_PARTNER : "utilizes"
 
     USER {
-        string role "ADMIN | STAFF | CUSTOMER | FLEET | HOTEL"
-        string email
+        ObjectId _id PK
+        string role "ADMIN | STAFF | USER | VEHICLE_OWNER | HOTEL_OWNER"
         string name
+        string email
+        string phone
+        string passwordHash
+        string status "ACTIVE | INACTIVE | SUSPENDED"
+        date lastLogin
+        date createdAt
     }
     
     PACKAGE {
+        ObjectId _id PK
         string title
-        string type "WELLNESS | ADVENTURE | HISTORICAL"
-        number price
+        string type "WELLNESS | ADVENTURE | HISTORICAL | WILDLIFE"
+        number defaultPrice
+        number durationDays
+        string description
+        string[] imageGallery
+        boolean isPublished
     }
     
-    DESTINATION {
-        string name
-        string location
+    CUSTOM_PLAN {
+        ObjectId _id PK
+        ObjectId userId FK
+        string[] destinations
+        date preferredDates
+        number pax
+        string accommodationPref
+        string budgetRange
+        string status "DRAFT | SUBMITTED | CONVERTED"
     }
 
     BOOKING {
-        string status "PENDING | CONFIRMED | COMPLETED"
-        date tripDates
+        ObjectId _id PK
+        string bookingNo UK
+        string status "NEW | PAYMENT_PENDING | ADVANCE_PAID | CONFIRMED | IN_PROGRESS | COMPLETED | CANCELLED"
+        string type "PACKAGE | CUSTOM | TRANSFER"
+        ObjectId packageId FK
+        ObjectId customPlanId FK
+        ObjectId assignedVehicleId FK
+        ObjectId assignedStaffId FK
+        date dates_from
+        date dates_to
+        number pax
         number totalCost
+        number paidAmount
+        number remainingBalance
+        string customerName
+        string email
+        string phone
     }
 
     PAYMENT {
-        string status "SUCCESS | PENDING | FAILED"
+        ObjectId _id PK
+        ObjectId bookingId FK
+        string paymentNo UK
         number amount
-        string method "PAYHERE | CASH | BANK"
+        string currency
+        string method "PAYHERE | BANK_TRANSFER | CASH"
+        string status "INITIATED | SUCCESS | FAILED | REFUNDED"
+        string payhereOrderId
+        date paymentDate
+        string reference
     }
 
     INVOICE {
-        string status "DRAFT | FINAL"
+        ObjectId _id PK
+        ObjectId bookingId FK
+        string invoiceNo UK
+        string status "DRAFT | FINAL | PAID | CANCELLED"
+        date issueDate
+        date dueDate
+        number subtotal
+        number discountAmount
         number total
+        string notes
     }
 
     VEHICLE {
-        string type "CAR | VAN | BUS"
-        string status "AVAILABLE | MAINTENANCE"
+        ObjectId _id PK
+        ObjectId ownerId FK
+        string registrationNumber UK
+        string type "CAR | VAN | MINI_BUS | LARGE_BUS"
+        string make
+        string model
+        number capacity
+        number ratePerKm
+        string status "AVAILABLE | MAINTENANCE | INACTIVE"
     }
 
     PARTNER {
-        string type "HOTEL | GUIDE | RESTAURANT"
+        ObjectId _id PK
+        ObjectId ownerId FK
+        string type "HOTEL | GUIDE | ACTIVITY"
         string name
+        string contactName
+        string contactEmail
+        string contactPhone
+        string address
+        string status "ACTIVE | PENDING | SUSPENDED"
+    }
+    
+    SUPPORT_TICKET {
+        ObjectId _id PK
+        ObjectId userId FK
+        string ticketNo UK
+        string subject
+        string category
+        string priority "LOW | NORMAL | HIGH | URGENT"
+        string status "OPEN | IN_PROGRESS | RESOLVED | CLOSED"
     }
 ```
 
