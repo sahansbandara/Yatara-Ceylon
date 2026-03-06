@@ -13,6 +13,7 @@ export default function EliteLoginPage() {
     const [role, setRole] = useState('USER');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [showPartnerOptions, setShowPartnerOptions] = useState(false);
 
     // Form fields
     const [name, setName] = useState('');
@@ -151,7 +152,7 @@ export default function EliteLoginPage() {
                         </button>
                         <button
                             type="button"
-                            onClick={() => { setAuthMode('signup'); setError(''); setSuccessMsg(''); setRole('USER'); }}
+                            onClick={() => { setAuthMode('signup'); setError(''); setSuccessMsg(''); setRole('USER'); setShowPartnerOptions(false); }}
                             className={`flex-1 py-3 text-xs tracking-[0.1em] uppercase font-semibold transition-all duration-300 rounded-xl border ${authMode === 'signup'
                                 ? 'border-antique-gold text-antique-gold bg-black/40 shadow-inner'
                                 : 'border-white/10 text-white/50 hover:text-white/80 hover:border-white/30 bg-transparent'
@@ -225,61 +226,63 @@ export default function EliteLoginPage() {
                     {authMode === 'signup' && (
                         <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                             {/* Account Type Grid */}
-                            <div className="mb-5 space-y-2">
-                                <div className="grid grid-cols-2 gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setRole('USER')}
-                                        className={`p-2.5 border rounded-xl transition-all duration-300 flex items-center gap-2 col-span-2 group
+                            {showPartnerOptions && (
+                                <div className="mb-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole('USER')}
+                                            className={`p-2.5 border rounded-xl transition-all duration-300 flex items-center gap-2 col-span-2 group
                                             ${role === 'USER' ? 'border-antique-gold/60 bg-antique-gold/10' : 'border-white/10 bg-white/5 hover:border-antique-gold/30'}`}
-                                    >
-                                        <User className={`h-4 w-4 shrink-0 ${role === 'USER' ? 'text-antique-gold' : 'text-white/50 group-hover:text-antique-gold/70'}`} />
-                                        <div className="text-left">
-                                            <p className={`text-xs font-semibold tracking-wide leading-tight ${role === 'USER' ? 'text-antique-gold' : 'text-white/80'}`}>Standard Customer</p>
-                                        </div>
-                                    </button>
+                                        >
+                                            <User className={`h-4 w-4 shrink-0 ${role === 'USER' ? 'text-antique-gold' : 'text-white/50 group-hover:text-antique-gold/70'}`} />
+                                            <div className="text-left">
+                                                <p className={`text-xs font-semibold tracking-wide leading-tight ${role === 'USER' ? 'text-antique-gold' : 'text-white/80'}`}>Standard Customer</p>
+                                            </div>
+                                        </button>
 
-                                    {/* Primary Partners */}
-                                    <button
-                                        type="button"
-                                        onClick={() => setRole('VEHICLE_OWNER')}
-                                        className={`p-3 border rounded-xl transition-all duration-300 flex flex-col items-center justify-center text-center group
+                                        {/* Primary Partners */}
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole('VEHICLE_OWNER')}
+                                            className={`p-3 border rounded-xl transition-all duration-300 flex flex-col items-center justify-center text-center group
                                             ${role === 'VEHICLE_OWNER' ? 'border-antique-gold/60 bg-antique-gold/10 shadow-[0_0_15px_rgba(212,175,55,0.1)]' : 'border-white/10 bg-white/5 hover:border-antique-gold/30'}`}
-                                    >
-                                        <Car className={`h-5 w-5 mb-1.5 ${role === 'VEHICLE_OWNER' ? 'text-antique-gold' : 'text-white/50 group-hover:text-antique-gold/70'}`} />
-                                        <p className={`text-[11px] font-semibold tracking-wide ${role === 'VEHICLE_OWNER' ? 'text-antique-gold' : 'text-white/80'}`}>Fleet Partner</p>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setRole('HOTEL_OWNER')}
-                                        className={`p-3 border rounded-xl transition-all duration-300 flex flex-col items-center justify-center text-center group
+                                        >
+                                            <Car className={`h-5 w-5 mb-1.5 ${role === 'VEHICLE_OWNER' ? 'text-antique-gold' : 'text-white/50 group-hover:text-antique-gold/70'}`} />
+                                            <p className={`text-[11px] font-semibold tracking-wide ${role === 'VEHICLE_OWNER' ? 'text-antique-gold' : 'text-white/80'}`}>Fleet Partner</p>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole('HOTEL_OWNER')}
+                                            className={`p-3 border rounded-xl transition-all duration-300 flex flex-col items-center justify-center text-center group
                                             ${role === 'HOTEL_OWNER' ? 'border-antique-gold/60 bg-antique-gold/10 shadow-[0_0_15px_rgba(212,175,55,0.1)]' : 'border-white/10 bg-white/5 hover:border-antique-gold/30'}`}
-                                    >
-                                        <Building2 className={`h-5 w-5 mb-1.5 ${role === 'HOTEL_OWNER' ? 'text-antique-gold' : 'text-white/50 group-hover:text-antique-gold/70'}`} />
-                                        <p className={`text-[11px] font-semibold tracking-wide ${role === 'HOTEL_OWNER' ? 'text-antique-gold' : 'text-white/80'}`}>Hotel Partner</p>
-                                    </button>
+                                        >
+                                            <Building2 className={`h-5 w-5 mb-1.5 ${role === 'HOTEL_OWNER' ? 'text-antique-gold' : 'text-white/50 group-hover:text-antique-gold/70'}`} />
+                                            <p className={`text-[11px] font-semibold tracking-wide ${role === 'HOTEL_OWNER' ? 'text-antique-gold' : 'text-white/80'}`}>Hotel Partner</p>
+                                        </button>
 
-                                    {/* Admin/Staff - Smaller Profile */}
-                                    <button
-                                        type="button"
-                                        onClick={() => setRole('ADMIN')}
-                                        className={`py-1.5 px-2 border rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5 group
+                                        {/* Admin/Staff - Smaller Profile */}
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole('ADMIN')}
+                                            className={`py-1.5 px-2 border rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5 group
                                             ${role === 'ADMIN' ? 'border-antique-gold/50 bg-antique-gold/10' : 'border-white/5 bg-white/[0.02] hover:border-white/20'}`}
-                                    >
-                                        <Shield className={`h-3 w-3 ${role === 'ADMIN' ? 'text-antique-gold' : 'text-white/40 group-hover:text-white/60'}`} />
-                                        <p className={`text-[9px] font-medium tracking-wide uppercase ${role === 'ADMIN' ? 'text-antique-gold' : 'text-white/50 group-hover:text-white/80'}`}>Administrator</p>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setRole('STAFF')}
-                                        className={`py-1.5 px-2 border rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5 group
+                                        >
+                                            <Shield className={`h-3 w-3 ${role === 'ADMIN' ? 'text-antique-gold' : 'text-white/40 group-hover:text-white/60'}`} />
+                                            <p className={`text-[9px] font-medium tracking-wide uppercase ${role === 'ADMIN' ? 'text-antique-gold' : 'text-white/50 group-hover:text-white/80'}`}>Administrator</p>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole('STAFF')}
+                                            className={`py-1.5 px-2 border rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5 group
                                             ${role === 'STAFF' ? 'border-antique-gold/50 bg-antique-gold/10' : 'border-white/5 bg-white/[0.02] hover:border-white/20'}`}
-                                    >
-                                        <Users className={`h-3 w-3 ${role === 'STAFF' ? 'text-antique-gold' : 'text-white/40 group-hover:text-white/60'}`} />
-                                        <p className={`text-[9px] font-medium tracking-wide uppercase ${role === 'STAFF' ? 'text-antique-gold' : 'text-white/50 group-hover:text-white/80'}`}>Concierge Staff</p>
-                                    </button>
+                                        >
+                                            <Users className={`h-3 w-3 ${role === 'STAFF' ? 'text-antique-gold' : 'text-white/40 group-hover:text-white/60'}`} />
+                                            <p className={`text-[9px] font-medium tracking-wide uppercase ${role === 'STAFF' ? 'text-antique-gold' : 'text-white/50 group-hover:text-white/80'}`}>Concierge Staff</p>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             <form onSubmit={handleSignup} className="space-y-3">
                                 {/* Reduced input heights from h-14 to h-11 to fit 13inch screens easily */}
@@ -311,6 +314,18 @@ export default function EliteLoginPage() {
                                     )}
                                 </Button>
                             </form>
+
+                            {!showPartnerOptions && (
+                                <div className="mt-6 text-center">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPartnerOptions(true)}
+                                        className="text-[10px] uppercase font-semibold tracking-widest text-white/40 hover:text-antique-gold transition-colors duration-300"
+                                    >
+                                        Or join as a partner / staff
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
 
