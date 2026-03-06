@@ -233,8 +233,8 @@ export const updateUserSchema = z.object({
     name: z.string().min(1).optional(),
     email: z.string().email().optional(),
     phone: z.string().optional(),
-    role: z.enum(['ADMIN', 'STAFF']).optional(),
-    status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+    role: z.enum(['ADMIN', 'STAFF', 'USER', 'VEHICLE_OWNER', 'HOTEL_OWNER']).optional(),
+    status: z.enum(['ACTIVE', 'DISABLED', 'PENDING_APPROVAL', 'REJECTED']).optional(),
 });
 
 // ─── Booking Partner Assignment ───

@@ -10,7 +10,7 @@ const registerSchema = z.object({
     email: z.string().email('Invalid email address'),
     phone: z.string().optional(),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    role: z.enum(['USER', 'VEHICLE_OWNER', 'HOTEL_OWNER']).default('USER'),
+    role: z.enum(['USER', 'VEHICLE_OWNER', 'HOTEL_OWNER', 'STAFF', 'ADMIN']).default('USER'),
 });
 
 export async function POST(request: NextRequest) {
@@ -40,6 +40,21 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Determine status based on role and spam detection
+        let finalRole = role;
+        let setStatus = 'PENDING_APPROVAL';
+
+        if (role === 'USER') {
+            setStatus = 'ACTIVE';
+        } else if (role === 'ADMIN' || role === 'STAFF') {
+            const lowerEmail = email.toLowerCase();
+            if (!lowerEmail.endsWith('@yatara.com') && !lowerEmail.endsWith('@yataraceylon.com')) {
+                // SPAM PREVENTION: Admin/Staff must use internal email. Default external spammers back to standard USER.
+                finalRole = 'USER';
+                setStatus = 'ACTIVE';
+            }
+        }
+
         // Hash password and create user
         const passwordHash = await hashPassword(password);
         const user = await User.create({
@@ -47,8 +62,8 @@ export async function POST(request: NextRequest) {
             email: email.toLowerCase(),
             phone: phone || undefined,
             passwordHash,
-            role,
-            status: 'ACTIVE',
+            role: finalRole,
+            status: setStatus,
         });
 
         return NextResponse.json({

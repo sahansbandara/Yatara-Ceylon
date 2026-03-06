@@ -5,6 +5,7 @@ export interface IUser extends Document {
     name: string;
     email: string;
     phone?: string;
+    avatar?: string;
     passwordHash: string;
     role: keyof typeof UserRoles;
     status: keyof typeof UserStatus;
@@ -25,6 +26,7 @@ const UserSchema = new Schema<IUser>(
             trim: true,
         },
         phone: { type: String, trim: true },
+        avatar: { type: String },
         passwordHash: { type: String, required: true, select: false },
         role: {
             type: String,

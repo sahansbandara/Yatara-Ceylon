@@ -182,8 +182,9 @@ function SidebarContent({ userRole, userName }: { userRole: string; userName: st
             {/* User Info */}
             <div className="px-5 py-3 border-b border-white/[0.04]">
                 <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
-                <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">{userName || 'User'}</p>
-                <p className="text-[10px] text-off-white/35 mt-0.5">{ROLE_LABELS[userRole] || 'Customer'}</p>
+                <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">
+                    {userName || 'User'} <span className="text-off-white/50 font-normal ml-1 text-[10px]">({ROLE_LABELS[userRole] || 'Customer'})</span>
+                </p>
             </div>
 
             {/* Navigation Groups */}
