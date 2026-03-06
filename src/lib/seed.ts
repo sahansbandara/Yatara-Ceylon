@@ -184,17 +184,38 @@ async function seed() {
     const District = (await import('@/models/District')).default;
     const distCount = await District.countDocuments();
     if (distCount === 0) {
-        const districts = [
-            'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
-            'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
-            'Vavuniya', 'Mullaitivu', 'Batticaloa', 'Ampara', 'Trincomalee',
-            'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
-            'Monaragala', 'Ratnapura', 'Kegalle',
+        const districtsWithProvinces = [
+            { name: 'Colombo', province: 'Western' },
+            { name: 'Gampaha', province: 'Western' },
+            { name: 'Kalutara', province: 'Western' },
+            { name: 'Kandy', province: 'Central' },
+            { name: 'Matale', province: 'Central' },
+            { name: 'Nuwara Eliya', province: 'Central' },
+            { name: 'Galle', province: 'Southern' },
+            { name: 'Matara', province: 'Southern' },
+            { name: 'Hambantota', province: 'Southern' },
+            { name: 'Jaffna', province: 'Northern' },
+            { name: 'Kilinochchi', province: 'Northern' },
+            { name: 'Mannar', province: 'Northern' },
+            { name: 'Vavuniya', province: 'Northern' },
+            { name: 'Mullaitivu', province: 'Northern' },
+            { name: 'Batticaloa', province: 'Eastern' },
+            { name: 'Ampara', province: 'Eastern' },
+            { name: 'Trincomalee', province: 'Eastern' },
+            { name: 'Kurunegala', province: 'North Western' },
+            { name: 'Puttalam', province: 'North Western' },
+            { name: 'Anuradhapura', province: 'North Central' },
+            { name: 'Polonnaruwa', province: 'North Central' },
+            { name: 'Badulla', province: 'Uva' },
+            { name: 'Monaragala', province: 'Uva' },
+            { name: 'Ratnapura', province: 'Sabaragamuwa' },
+            { name: 'Kegalle', province: 'Sabaragamuwa' },
         ];
         await District.insertMany(
-            districts.map((name) => ({
-                name,
-                geojsonId: name.toLowerCase().replace(/\s+/g, '_'),
+            districtsWithProvinces.map((d) => ({
+                name: d.name,
+                geojsonId: d.name.toLowerCase().replace(/\s+/g, '_'),
+                province: d.province,
                 meta: {},
             }))
         );
