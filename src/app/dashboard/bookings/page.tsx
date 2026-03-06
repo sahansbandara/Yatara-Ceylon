@@ -135,14 +135,14 @@ export default function BookingsPage() {
                                                 </p>
                                             </td>
                                             <td className="px-5 py-3.5 text-right">
-                                                <span className="text-xs font-bold text-white/85">${(b.totalCost || 0).toLocaleString()}</span>
+                                                <span className="text-xs font-bold text-white/85">LKR {(b.totalCost || 0).toLocaleString()}</span>
                                             </td>
                                             <td className="px-5 py-3.5 text-right hidden md:table-cell">
-                                                <span className="text-xs text-emerald-400/80">${(b.paidAmount || 0).toLocaleString()}</span>
+                                                <span className="text-xs text-emerald-400/80">LKR {(b.paidAmount || 0).toLocaleString()}</span>
                                             </td>
                                             <td className="px-5 py-3.5 text-right hidden lg:table-cell">
                                                 <span className={`text-xs ${(b.remainingBalance || 0) > 0 ? 'text-amber-400/80' : 'text-white/25'}`}>
-                                                    ${(b.remainingBalance || 0).toLocaleString()}
+                                                    LKR {(b.remainingBalance || 0).toLocaleString()}
                                                 </span>
                                             </td>
                                             <td className="px-5 py-3.5 text-center">

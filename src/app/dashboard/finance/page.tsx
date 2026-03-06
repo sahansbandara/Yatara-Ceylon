@@ -77,20 +77,20 @@ export default async function FinancePage() {
             <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     title="Total Collected"
-                    value={`$${data.totalRevenue.toLocaleString()}`}
+                    value={`LKR ${data.totalRevenue.toLocaleString()}`}
                     icon={DollarSign}
                     accentColor="text-emerald-400"
                 />
                 <StatCard
                     title="Advances"
-                    value={`$${data.advancePaid.toLocaleString()}`}
+                    value={`LKR ${data.advancePaid.toLocaleString()}`}
                     icon={TrendingUp}
                     accentColor="text-blue-400"
                     trend={{ value: `${data.advanceCount} bookings`, positive: true }}
                 />
                 <StatCard
                     title="Pending"
-                    value={`$${data.pendingBalances.toLocaleString()}`}
+                    value={`LKR ${data.pendingBalances.toLocaleString()}`}
                     icon={AlertTriangle}
                     accentColor="text-amber-400"
                     trend={{ value: `${data.pendingCount} due`, positive: false }}
@@ -119,7 +119,7 @@ export default async function FinancePage() {
                                         <p className="text-[10px] text-white/25 mt-0.5">{new Date(p.createdAt).toLocaleString()}</p>
                                     </div>
                                     <div className="text-right flex-shrink-0 ml-3">
-                                        <p className="text-sm font-bold text-white/85">${(p.amount || 0).toLocaleString()}</p>
+                                        <p className="text-sm font-bold text-white/85">LKR {(p.amount || 0).toLocaleString()}</p>
                                         <span className={`status-pill mt-1 ${p.status === 'SUCCESS' ? 'status-pill-success' : p.status === 'PENDING' ? 'status-pill-warning' : 'status-pill-danger'}`}>
                                             {p.status} · {p.provider}
                                         </span>
@@ -152,8 +152,8 @@ export default async function FinancePage() {
                                     </div>
                                     <div className="flex items-center gap-3 flex-shrink-0 ml-3">
                                         <div className="text-right">
-                                            <p className="text-[10px] text-white/35">Paid: ${(b.paidAmount || 0).toLocaleString()}</p>
-                                            <p className="text-sm font-bold text-amber-400">Due: ${(b.remainingBalance || 0).toLocaleString()}</p>
+                                            <p className="text-[10px] text-white/35">Paid: LKR {(b.paidAmount || 0).toLocaleString()}</p>
+                                            <p className="text-sm font-bold text-amber-400">Due: LKR {(b.remainingBalance || 0).toLocaleString()}</p>
                                         </div>
                                         <ArrowUpRight className="h-4 w-4 text-white/20 group-hover:text-antique-gold transition-colors" />
                                     </div>

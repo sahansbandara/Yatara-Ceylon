@@ -97,7 +97,7 @@ export default async function DashboardPage() {
             <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     title="Revenue"
-                    value={`$${stats.totalRevenue.toLocaleString()}`}
+                    value={`LKR ${stats.totalRevenue.toLocaleString()}`}
                     icon={DollarSign}
                     accentColor="text-emerald-400"
                 />
@@ -136,7 +136,7 @@ export default async function DashboardPage() {
                 />
                 <StatCard
                     title="Balances"
-                    value={`$${stats.pendingBalances.toLocaleString()}`}
+                    value={`LKR ${stats.pendingBalances.toLocaleString()}`}
                     icon={CreditCard}
                     accentColor="text-orange-400"
                 />
@@ -178,7 +178,7 @@ export default async function DashboardPage() {
                                                 <p className="text-xs text-white/50 truncate max-w-[140px]">{booking.packageId?.title || booking.type}</p>
                                             </td>
                                             <td className="px-5 py-3.5 text-right">
-                                                <span className="text-xs font-bold text-white/90">${(booking.totalCost || 0).toLocaleString()}</span>
+                                                <span className="text-xs font-bold text-white/90">LKR {(booking.totalCost || 0).toLocaleString()}</span>
                                             </td>
                                             <td className="px-5 py-3.5 text-center">
                                                 <span className={`status-pill ${STATUS_MAP[booking.status] || 'status-pill-neutral'}`}>
@@ -221,7 +221,7 @@ export default async function DashboardPage() {
                             href="/dashboard/finance"
                             icon={DollarSign}
                             title="Finance Overview"
-                            subtitle={`$${stats.pendingBalances.toLocaleString()} pending`}
+                            subtitle={`LKR ${stats.pendingBalances.toLocaleString()} pending`}
                             iconColor="text-emerald-400"
                             iconBg="bg-emerald-500/10 border-emerald-500/20"
                         />

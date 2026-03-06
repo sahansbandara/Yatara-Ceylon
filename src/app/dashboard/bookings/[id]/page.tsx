@@ -161,7 +161,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                                             <p className="text-[10px] text-gray-400">{p.provider} · {p.method || '—'}</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm font-semibold text-off-white">${(p.amount || 0).toLocaleString()}</p>
+                                            <p className="text-sm font-semibold text-off-white">LKR {(p.amount || 0).toLocaleString()}</p>
                                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === 'SUCCESS' ? 'bg-green-500/15 text-green-300' : p.status === 'PENDING' ? 'bg-yellow-500/15 text-yellow-300' : 'bg-red-500/15 text-red-300'}`}>
                                                 {p.status}
                                             </span>
@@ -192,7 +192,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                                             <p className="text-[10px] text-gray-400">Issued: {new Date(inv.createdAt).toLocaleDateString()}</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm font-semibold text-off-white">${(inv.total || 0).toLocaleString()}</p>
+                                            <p className="text-sm font-semibold text-off-white">LKR {(inv.total || 0).toLocaleString()}</p>
                                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${inv.status === 'FINAL' ? 'bg-purple-500/15 text-purple-300' : 'bg-gray-500/15 text-gray-300'}`}>
                                                 {inv.status}
                                             </span>
@@ -235,20 +235,20 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-white/50">Total Cost</span>
-                                <span className="text-lg font-bold text-off-white">${(booking.totalCost || 0).toLocaleString()}</span>
+                                <span className="text-lg font-bold text-off-white">LKR {(booking.totalCost || 0).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-white/50">Advance ({booking.advancePercentage || 20}%)</span>
-                                <span className="text-sm font-semibold text-antique-gold">${(booking.advanceAmount || 0).toLocaleString()}</span>
+                                <span className="text-sm font-semibold text-antique-gold">LKR {(booking.advanceAmount || 0).toLocaleString()}</span>
                             </div>
                             <hr className="border-white/[0.08]" />
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-emerald-600 font-medium">Amount Paid</span>
-                                <span className="text-sm font-bold text-emerald-600">${(booking.paidAmount || 0).toLocaleString()}</span>
+                                <span className="text-sm font-bold text-emerald-600">LKR {(booking.paidAmount || 0).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-orange-600 font-medium">Remaining Balance</span>
-                                <span className="text-sm font-bold text-orange-600">${(booking.remainingBalance || 0).toLocaleString()}</span>
+                                <span className="text-sm font-bold text-orange-600">LKR {(booking.remainingBalance || 0).toLocaleString()}</span>
                             </div>
                         </div>
                         {booking.remainingBalance > 0 && (

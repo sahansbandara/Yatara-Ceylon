@@ -106,7 +106,7 @@ export default async function FleetDashboardPage() {
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-medium text-white/85">{v.model}</p>
                                             <p className="text-[11px] text-white/40 mt-0.5">
-                                                {v.type} · {v.seats} seats · ${v.dailyRate}/day
+                                                {v.type} · {v.seats} seats · LKR {v.dailyRate}/day
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">

@@ -104,7 +104,7 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5">
-                                        <span className="text-xs font-bold text-white/85">${(pkg.price ?? 0).toLocaleString()}</span>
+                                        <span className="text-xs font-bold text-white/85">LKR {(pkg.price ?? 0).toLocaleString()}</span>
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <span className="text-white/60 text-xs">{pkg.duration}</span>
