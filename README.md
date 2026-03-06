@@ -184,113 +184,113 @@ sequenceDiagram
 This entity-relationship diagram maps out how the primary collections in the MongoDB database interact to form the complete tourism management system.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '16px', 'fontFamily': 'sans-serif'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '15px', 'fontFamily': 'Helvetica'}}}%%
 flowchart TB
-    %% Entities
-    U[USER]
-    B[BOOKING]
-    PKG[PACKAGE]
-    DEST[DESTINATION]
-    V[VEHICLE]
-    P[PARTNER]
-    INV[INVOICE]
-    PAY[PAYMENT]
+    %% Entities - padded to prevent GitHub SVG truncation
+    U["   USER   "]
+    B["   BOOKING   "]
+    PKG["   PACKAGE   "]
+    DEST["   DESTINATION   "]
+    V["   VEHICLE   "]
+    P["   PARTNER   "]
+    INV["   INVOICE   "]
+    PAY["   PAYMENT   "]
 
     %% Relationships
-    R_MAKES{makes}
-    R_OWNS_V{owns}
-    R_OWNS_P{owns}
-    R_INCLUDES{includes}
-    R_ASSIGNED_V{assigned_to}
-    R_ASSIGNED_P{assigned_to}
-    R_HAS_P{creates}
-    R_HAS_I{generates}
-    R_BOOKED_IN{booked_in}
+    R_MAKES{" makes "}
+    R_OWNS_V{" owns "}
+    R_OWNS_P{" owns "}
+    R_INCLUDES{" includes "}
+    R_ASSIGNED_V{" assigned_to "}
+    R_ASSIGNED_P{" assigned_to "}
+    R_HAS_P{" creates "}
+    R_HAS_I{" generates "}
+    R_BOOKED_IN{" booked_in "}
 
-    %% Connections - Entity to Relationship
-    U -- 1 ---- R_MAKES
-    R_MAKES ---- M --> B
+    %% Connections
+    U -- 1 ----- R_MAKES
+    R_MAKES ----- M --> B
 
-    U -- 1 ---- R_OWNS_V
-    R_OWNS_V ---- M --> V
+    U -- 1 ----- R_OWNS_V
+    R_OWNS_V ----- M --> V
 
-    U -- 1 ---- R_OWNS_P
-    R_OWNS_P ---- M --> P
+    U -- 1 ----- R_OWNS_P
+    R_OWNS_P ----- M --> P
 
-    PKG -- 1 ---- R_BOOKED_IN
-    R_BOOKED_IN ---- M --> B
+    PKG -- 1 ----- R_BOOKED_IN
+    R_BOOKED_IN ----- M --> B
 
-    PKG -- M ---- R_INCLUDES
-    R_INCLUDES ---- N --> DEST
+    PKG -- M ----- R_INCLUDES
+    R_INCLUDES ----- N --> DEST
 
-    V -- 1 ---- R_ASSIGNED_V
-    R_ASSIGNED_V ---- M --> B
+    V -- 1 ----- R_ASSIGNED_V
+    R_ASSIGNED_V ----- M --> B
 
-    P -- 1 ---- R_ASSIGNED_P
-    R_ASSIGNED_P ---- M --> B
+    P -- 1 ----- R_ASSIGNED_P
+    R_ASSIGNED_P ----- M --> B
 
-    B -- 1 ---- R_HAS_I
-    R_HAS_I ---- M --> INV
+    B -- 1 ----- R_HAS_I
+    R_HAS_I ----- M --> INV
 
-    B -- 1 ---- R_HAS_P
-    R_HAS_P ---- M --> PAY
+    B -- 1 ----- R_HAS_P
+    R_HAS_P ----- M --> PAY
 
-    %% Attributes (Ovals)
-    U_email([email])
-    U_name([name])
-    U_role([role])
+    %% Attributes
+    U_email([" email "])
+    U_name([" name "])
+    U_role([" role "])
     U -.- U_email
     U -.- U_name
     U -.- U_role
 
-    B_dates([dates])
-    B_pax([pax])
-    B_totalCost([totalCost])
-    B_status([status])
+    B_dates([" dates "])
+    B_pax([" pax "])
+    B_totalCost([" totalCost "])
+    B_status([" status "])
     B -.- B_dates
     B -.- B_pax
     B -.- B_totalCost
     B -.- B_status
 
-    PKG_title([title])
-    PKG_type([type])
-    PKG_price([price])
+    PKG_title([" title "])
+    PKG_type([" type "])
+    PKG_price([" price "])
     PKG -.- PKG_title
     PKG -.- PKG_type
     PKG -.- PKG_price
 
-    V_type([type])
-    V_status([status])
-    V_plate([plate])
+    V_type([" type "])
+    V_status([" status "])
+    V_plate([" plate "])
     V -.- V_type
     V -.- V_status
     V -.- V_plate
 
-    P_type([type])
-    P_name([name])
+    P_type([" type "])
+    P_name([" name "])
     P -.- P_type
     P -.- P_name
 
-    INV_status([status])
-    INV_total([total])
+    INV_status([" status "])
+    INV_total([" total "])
     INV -.- INV_status
     INV -.- INV_total
 
-    PAY_amount([amount])
-    PAY_method([method])
-    PAY_status([status])
+    PAY_amount([" amount "])
+    PAY_method([" method "])
+    PAY_status([" status "])
     PAY -.- PAY_amount
     PAY -.- PAY_method
     PAY -.- PAY_status
 
-    DEST_name([name])
-    DEST_loc([location])
+    DEST_name([" name "])
+    DEST_loc([" location "])
     DEST -.- DEST_name
     DEST -.- DEST_loc
 
-    classDef entity fill:#ffffff,stroke:#000000,stroke-width:3px,color:#000000,font-weight:bold;
-    classDef relationship fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000000,font-weight:bold;
-    classDef attribute fill:#f3f4f6,stroke:#666666,stroke-width:1px,color:#000000;
+    classDef entity fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,font-weight:bolder;
+    classDef relationship fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000000,font-weight:bolder;
+    classDef attribute fill:#f8f9fa,stroke:#333333,stroke-width:1px,color:#000000,font-weight:normal;
 
     class U,B,PKG,DEST,V,P,INV,PAY entity;
     class R_MAKES,R_OWNS_V,R_OWNS_P,R_INCLUDES,R_ASSIGNED_V,R_ASSIGNED_P,R_HAS_P,R_HAS_I,R_BOOKED_IN relationship;
