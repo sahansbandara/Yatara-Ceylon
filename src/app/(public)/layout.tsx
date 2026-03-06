@@ -1,7 +1,6 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import ConciergeButton from '@/components/public/ConciergeButton';
-import { CurrencyProvider } from '@/lib/CurrencyContext';
 
 export default function PublicLayout({
     children,
@@ -11,20 +10,19 @@ export default function PublicLayout({
     modal: React.ReactNode;
 }) {
     return (
-        <CurrencyProvider>
-            <div className="flex min-h-screen flex-col">
-                <Navbar />
-                <main className="flex-1">{children}</main>
-                {modal}
-                <Footer />
+        <div className="flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            {modal}
+            <Footer />
 
-                {/* The Luxury Custom Concierge Trigger */}
-                <ConciergeButton />
+            {/* The Luxury Custom Concierge Trigger */}
+            <ConciergeButton />
 
-                {/* Tawk.to Live Chat Widget */}
-                <script
-                    dangerouslySetInnerHTML={{
-                        __html: `
+            {/* Tawk.to Live Chat Widget */}
+            <script
+                dangerouslySetInnerHTML={{
+                    __html: `
                             var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
                             (function(){
                                 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
@@ -38,9 +36,8 @@ export default function PublicLayout({
                                 Tawk_API.hideWidget();
                             };
                         `,
-                    }}
-                />
-            </div>
-        </CurrencyProvider>
+                }}
+            />
+        </div>
     );
 }

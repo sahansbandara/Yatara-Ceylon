@@ -3,7 +3,7 @@ import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
 import Payment from '@/models/Payment';
 import { generatePayhereHash } from '@/lib/payhere/hash';
-import { getPayhereCheckoutUrl, PAYHERE_MERCHANT_ID, PAYHERE_CURRENCY, APP_BASE_URL } from '@/lib/payhere/config';
+import { getPayhereCheckoutUrl, PAYHERE_MERCHANT_ID, PAYHERE_MERCHANT_SECRET, PAYHERE_CURRENCY, APP_BASE_URL } from '@/lib/payhere/config';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
@@ -23,6 +23,31 @@ export async function POST(request: Request) {
 
         // Generate a unique order ID
         const orderId = `CE-${crypto.randomBytes(4).toString('hex').toUpperCase()}-${Date.now()}`;
+
+        // Check if using dummy/development credentials
+        if (!PAYHERE_MERCHANT_ID || PAYHERE_MERCHANT_ID === '12345' || !PAYHERE_MERCHANT_SECRET || PAYHERE_MERCHANT_SECRET === 'your_merchant_secret') {
+            // Dev Mode Bypass: Automatically simulate success
+            await Payment.create({
+                bookingId: booking._id,
+                amount,
+                provider: 'PAYHERE',
+                status: 'SUCCESS',
+                orderId,
+                type: 'PAYMENT',
+            });
+
+            await Booking.findByIdAndUpdate(bookingId, {
+                status: 'ADVANCE_PAID',
+                paidAmount: amount,
+                remainingBalance: Math.max(0, booking.totalCost - amount),
+            });
+
+            return NextResponse.json({
+                isDevMode: true,
+                orderId,
+                message: 'Payment simulated successfully in development mode.'
+            });
+        }
 
         // Create Payment record with status INITIATED
         await Payment.create({

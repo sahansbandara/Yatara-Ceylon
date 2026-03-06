@@ -377,38 +377,247 @@
 
 .liquid-glass-stat:hover::after {
   opacity: 1;
+}
+
+/* ============================================
+   🔮 PREMIUM DASHBOARD GLASS SYSTEM
+   ============================================ */
+
 /* Dashboard Theme Classes */
 .dashboard-bg-admin {
   background: radial-gradient(circle at top right, #11362e, #061a15 80%);
   color: #FAFAFA;
 }
+
 .dashboard-bg-light {
   background: #f4f6f8;
   color: #1a202c;
 }
+
+/* Dashboard sidebar — deep layered glass */
 .dashboard-sidebar-dark {
-  background: rgba(4, 26, 20, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg,
+      rgba(4, 30, 22, 0.92) 0%,
+      rgba(2, 20, 14, 0.96) 100%);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-right: 1px solid rgba(212, 175, 55, 0.08);
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
-/* Enhanced Glass Stat for Dark mode */
+
+.dashboard-sidebar-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      rgba(212, 175, 55, 0.3) 0%,
+      rgba(212, 175, 55, 0.1) 100%);
+}
+
+/* Premium glass stat card */
 .liquid-glass-stat-dark {
-  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
   border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+.liquid-glass-stat-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(212, 175, 55, 0.3) 50%,
+      rgba(255, 255, 255, 0.2) 80%,
+      transparent 100%);
+  z-index: 1;
+}
+
 .liquid-glass-stat-dark:hover {
-  border-color: rgba(212, 175, 55, 0.4);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.15);
-  transform: translateY(-2px);
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(212, 175, 55, 0.12),
+    inset 0 1px 0 rgba(212, 175, 55, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Premium Dashboard Hero Strip */
+.dashboard-hero-glass {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-hero-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.4) 30%,
+      rgba(212, 175, 55, 0.4) 70%,
+      transparent 100%);
+}
+
+.dashboard-hero-glass::after {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -60px;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Premium Dashboard Table */
+.dashboard-table-glass {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.015) 100%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.dashboard-table-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(212, 175, 55, 0.25) 50%,
+      rgba(255, 255, 255, 0.2) 80%,
+      transparent 100%);
+  z-index: 1;
+}
+
+.dashboard-table-glass thead tr {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-table-glass tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   transition: all 0.3s ease;
 }
 
+.dashboard-table-glass tbody tr:last-child {
+  border-bottom: none;
 }
+
+.dashboard-table-glass tbody tr:hover {
+  background: rgba(212, 175, 55, 0.04);
+}
+
+/* Premium Empty State */
+.dashboard-empty-state {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.01) 100%);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  position: relative;
+}
+
+/* Premium Status Pills */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.status-pill-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pill-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-pill-info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-pill-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-pill-neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.status-pill-gold {
+  background: rgba(212, 175, 55, 0.15);
+  color: #f5e6a3;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.status-pill-purple {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
 /* ============================================
    🔮 Liquid Glass Navigation Bar
    ============================================ */

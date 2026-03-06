@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
 import { useCurrency } from '@/lib/CurrencyContext';
+import { NotificationBell } from './NotificationBell';
 
 const navLinks = [
     {
@@ -171,9 +172,22 @@ export function Navbar() {
     const [open, setOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [scrolled, setScrolled] = useState(false);
+    const [user, setUser] = useState<{ name: string; role: string } | null>(null);
     const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { currency, setCurrency } = useCurrency();
     const isHome = pathname === '/';
+
+    // Fetch user on mount
+    useEffect(() => {
+        fetch('/api/auth/me')
+            .then(res => res.json())
+            .then(data => {
+                if (data.user) {
+                    setUser({ name: data.user.name, role: data.user.role });
+                }
+            })
+            .catch(() => { });
+    }, []);
 
     // Scroll detection for homepage transparent-to-solid transition
     useEffect(() => {
@@ -325,9 +339,43 @@ export function Navbar() {
                             </span>
                         </Link>
 
-                        <Link href="/auth/login" className="font-nav text-[11px] tracking-[0.18em] text-white/60 hover:text-white transition-colors uppercase">
-                            LOGIN
-                        </Link>
+                        <NotificationBell userRole={user?.role} />
+
+                        {user ? (
+                            <div className="relative group flex items-center py-2 -my-2">
+                                <span className="font-nav text-[11px] tracking-[0.18em] text-[#D4AF37] hover:text-white transition-colors uppercase flex items-center gap-2 cursor-pointer">
+                                    <span className="w-6 h-6 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] font-bold text-[10px]">
+                                        {user.name.charAt(0).toUpperCase()}
+                                    </span>
+                                    {user.name.split(' ')[0]}
+                                </span>
+                                {/* Dropdown Menu */}
+                                <div className="absolute top-10 right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                    <div className="w-48 bg-[#0a1f15]/95 backdrop-blur-md border border-[#D4AF37]/20 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] mt-4 overflow-hidden flex flex-col">
+                                        <div className="px-4 py-3 border-b border-[#D4AF37]/10">
+                                            <p className="text-xs font-semibold text-white truncate">{user.name}</p>
+                                            <p className="text-[9px] text-[#D4AF37] uppercase tracking-widest mt-1">{user.role}</p>
+                                        </div>
+                                        <Link href="/dashboard" className="px-4 py-3 text-[10px] text-white/70 hover:bg-white/5 hover:text-[#D4AF37] transition-colors w-full text-left font-nav tracking-widest uppercase">
+                                            Dashboard
+                                        </Link>
+                                        <button
+                                            onClick={async () => {
+                                                await fetch('/api/auth/logout', { method: 'POST' });
+                                                window.location.reload();
+                                            }}
+                                            className="px-4 py-3 text-[10px] text-red-400 hover:bg-red-500/10 transition-colors w-full text-left font-nav tracking-widest uppercase border-t border-[#D4AF37]/10"
+                                        >
+                                            Log Out
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <Link href="/auth/login" className="font-nav text-[11px] tracking-[0.18em] text-white/60 hover:text-white transition-colors uppercase">
+                                LOGIN
+                            </Link>
+                        )}
 
                         <button
                             onClick={() => setCurrency(currency === 'LKR' ? 'USD' : 'LKR')}
@@ -398,9 +446,26 @@ export function Navbar() {
                                 ))}
 
                                 <div className="border-t border-[#D4AF37]/20 pt-8 mt-4 flex flex-col gap-6">
-                                    <Link href="/auth/login" onClick={() => setOpen(false)} className="font-nav text-[13px] tracking-[0.15em] text-white/80 hover:text-[#D4AF37] transition-colors uppercase">
-                                        LOGIN
-                                    </Link>
+                                    {user ? (
+                                        <>
+                                            <Link href="/dashboard" onClick={() => setOpen(false)} className="font-nav text-[13px] tracking-[0.15em] text-[#D4AF37] hover:text-white transition-colors uppercase">
+                                                DASHBOARD
+                                            </Link>
+                                            <button
+                                                onClick={async () => {
+                                                    await fetch('/api/auth/logout', { method: 'POST' });
+                                                    window.location.reload();
+                                                }}
+                                                className="font-nav text-[13px] tracking-[0.15em] text-red-500 hover:text-red-400 transition-colors uppercase text-left w-full"
+                                            >
+                                                LOG OUT
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <Link href="/auth/login" onClick={() => setOpen(false)} className="font-nav text-[13px] tracking-[0.15em] text-white/80 hover:text-[#D4AF37] transition-colors uppercase">
+                                            LOGIN
+                                        </Link>
+                                    )}
                                     <button
                                         onClick={() => { setCurrency(currency === 'LKR' ? 'USD' : 'LKR'); setOpen(false); }}
                                         className="currency-toggle-btn self-start"

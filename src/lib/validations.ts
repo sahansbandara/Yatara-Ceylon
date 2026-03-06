@@ -73,7 +73,7 @@ export const createNotificationSchema = z.object({
     title: z.string().min(1),
     body: z.string().min(1),
     type: z.enum(['OFFER', 'UPDATE', 'ALERT']).default('UPDATE'),
-    visibleTo: z.enum(['CUSTOMERS', 'STAFF', 'ALL']).default('ALL'),
+    visibleTo: z.enum(['CUSTOMERS', 'STAFF', 'VEHICLE_OWNERS', 'HOTEL_OWNERS', 'ALL']).default('ALL'),
     isPublished: z.boolean().optional().default(false),
     publishFrom: z.string().optional(),
     publishTo: z.string().optional(),
@@ -120,7 +120,7 @@ export const createVehicleSchema = z.object({
     seats: z.number().min(1),
     luggage: z.number().min(0).optional(),
     dailyRate: z.number().min(0),
-    status: z.enum(['AVAILABLE', 'MAINTENANCE', 'UNAVAILABLE']).optional().default('AVAILABLE'),
+    status: z.enum(['AVAILABLE', 'MAINTENANCE', 'UNAVAILABLE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('AVAILABLE'),
     images: z.array(z.string()).optional().default([]),
     features: z.array(z.string()).optional().default([]),
     transferTypes: z.array(z.enum(['AIRPORT_PICKUP', 'AIRPORT_DROP', 'CITY_TOUR'])).optional().default([]),
@@ -183,7 +183,7 @@ export const createPartnerSchema = z.object({
     phone: z.string().min(1),
     email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
-    status: z.enum(['ACTIVE', 'INACTIVE']).optional().default('ACTIVE'),
+    status: z.enum(['ACTIVE', 'INACTIVE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('ACTIVE'),
     notes: z.string().optional(),
 });
 export const updatePartnerSchema = createPartnerSchema.partial();

@@ -4,7 +4,7 @@ export interface INotification extends Document {
     title: string;
     body: string;
     type: 'OFFER' | 'UPDATE' | 'ALERT';
-    visibleTo: 'CUSTOMERS' | 'STAFF' | 'ALL';
+    visibleTo: 'CUSTOMERS' | 'STAFF' | 'VEHICLE_OWNERS' | 'HOTEL_OWNERS' | 'ALL';
     isPublished: boolean;
     publishFrom?: Date;
     publishTo?: Date;
@@ -26,7 +26,7 @@ const NotificationSchema = new Schema<INotification>(
         },
         visibleTo: {
             type: String,
-            enum: ['CUSTOMERS', 'STAFF', 'ALL'],
+            enum: ['CUSTOMERS', 'STAFF', 'VEHICLE_OWNERS', 'HOTEL_OWNERS', 'ALL'],
             default: 'ALL',
         },
         isPublished: { type: Boolean, default: false },

@@ -23,8 +23,18 @@ export async function POST(request: NextRequest) {
         const advanceAmount = totalCost * (advancePercentage / 100);
         const remainingBalance = totalCost;
 
+        // Clean out empty IDs which crash Mongoose ObjectId casting
+        const payload: any = { ...data };
+        if (!payload.packageId) delete payload.packageId;
+        if (!payload.vehicleId) delete payload.vehicleId;
+        if (!payload.customPlanId) delete payload.customPlanId;
+        if (!payload.email) delete payload.email;
+
+        // Optionally associate booking to logged in user if token is present
+        const token = request.cookies.get('toms_token')?.value;
+
         const booking = await Booking.create({
-            ...data,
+            ...payload,
             dates: { from: new Date(data!.dates.from), to: new Date(data!.dates.to) },
             totalCost,
             advancePercentage,
@@ -51,8 +61,8 @@ export async function POST(request: NextRequest) {
             bookingId: booking._id,
             message: 'Your booking request has been submitted. We will contact you shortly!',
         }, { status: 201 });
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    } catch (error: any) {
+        console.error("Booking Create Error:", error);
+        return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
     }
 }

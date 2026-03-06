@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { VehicleStatus, VehicleTypes } from '@/lib/constants';
 
 export interface IVehicle extends Omit<Document, 'model'> {
+    ownerId?: mongoose.Types.ObjectId;
     type: keyof typeof VehicleTypes;
     model: string;
     plateNumber?: string;
@@ -20,6 +21,7 @@ export interface IVehicle extends Omit<Document, 'model'> {
 
 const VehicleSchema = new Schema<IVehicle>(
     {
+        ownerId: { type: Schema.Types.ObjectId, ref: 'User' },
         type: {
             type: String,
             required: true,

@@ -32,7 +32,7 @@ export default function BookingStatusUpdater({ bookingId, currentStatus }: { boo
                 value={status}
                 onChange={e => handleUpdate(e.target.value)}
                 disabled={saving}
-                className="text-xs border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-antique-gold/30 disabled:opacity-50"
+                className="text-xs border border-white/[0.12] rounded-lg px-3 py-2 bg-white/[0.06] text-white/80 focus:outline-none focus:ring-2 focus:ring-antique-gold/30 focus:border-antique-gold/30 disabled:opacity-50 appearance-none"
             >
                 {STATUSES.map(s => (
                     <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>

@@ -33,15 +33,15 @@ export default function TicketTable({ tickets }: TicketTableProps) {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'OPEN': return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'REPLIED': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-            case 'CLOSED': return 'bg-gray-100 text-gray-800 border-gray-200';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'OPEN': return 'bg-blue-500/15 text-blue-300 border-blue-500/30';
+            case 'REPLIED': return 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30';
+            case 'CLOSED': return 'bg-white/10 text-white/50 border-white/20';
+            default: return 'bg-white/10 text-white/60';
         }
     };
 
     return (
-        <div className="rounded-md border bg-white shadow-sm">
+        <div className="rounded-md border border-white/10 bg-transparent">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -55,11 +55,11 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                 <TableBody>
                     {tickets.length > 0 ? (
                         tickets.map((ticket) => (
-                            <TableRow key={ticket._id}>
-                                <TableCell className="font-medium">
+                            <TableRow key={ticket._id} className="border-white/5 hover:bg-white/[0.02] transition-colors text-white/70">
+                                <TableCell className="font-medium text-off-white">
                                     <div className="flex flex-col">
                                         <span>{ticket.customerName}</span>
-                                        <span className="text-xs text-muted-foreground">{ticket.email}</span>
+                                        <span className="text-xs text-white/40">{ticket.email}</span>
                                     </div>
                                 </TableCell>
                                 <TableCell>{ticket.subject}</TableCell>
@@ -73,7 +73,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                                     <Button
                                         size="icon"
                                         variant="ghost"
-                                        className="h-8 w-8 text-ocean-600"
+                                        className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-white/10"
                                         onClick={() => router.push(`/dashboard/support/${ticket._id}`)}
                                     >
                                         <Eye className="h-4 w-4" />

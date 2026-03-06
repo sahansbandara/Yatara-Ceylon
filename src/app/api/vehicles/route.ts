@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Vehicle from '@/models/Vehicle';
 import VehicleBlock from '@/models/VehicleBlock';
-import { staffOrAdmin } from '@/lib/rbac';
+import { staffOrAdmin, withAuth } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { createVehicleSchema } from '@/lib/validations';
 
@@ -39,12 +39,28 @@ export async function GET(request: Request) {
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
 }
 
-export const POST = staffOrAdmin(async (request) => {
+export const POST = withAuth(async (request: Request, context: any) => {
+    const userRole = context.user.role;
+    if (!['ADMIN', 'STAFF', 'VEHICLE_OWNER'].includes(userRole)) {
+        return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    }
+
     const { data, error } = await validateBody(request, createVehicleSchema);
     if (error) return error;
+
+    const vehicleData: any = { ...data };
+
+    if (userRole === 'VEHICLE_OWNER') {
+        vehicleData.status = 'PENDING_APPROVAL';
+        vehicleData.ownerId = context.user.userId;
+    }
+
     try {
         await connectDB();
-        const vehicle = await Vehicle.create(data);
+        const vehicle = await Vehicle.create(vehicleData);
         return NextResponse.json({ vehicle }, { status: 201 });
-    } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
 });

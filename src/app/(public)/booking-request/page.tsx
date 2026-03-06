@@ -5,6 +5,8 @@ import connectDB from '@/lib/mongodb';
 import Vehicle from '@/models/Vehicle';
 import Package from '@/models/Package';
 import { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth';
 
 export const metadata: Metadata = {
     title: 'Booking Request | Yatara Ceylon',
@@ -32,6 +34,10 @@ export default async function BookingRequestPage({ searchParams }: { searchParam
     const vehicleId = params.vehicleId as string | undefined;
     const packageId = params.packageId as string | undefined;
 
+    const cookieStore = await cookies();
+    const token = cookieStore.get('toms_token')?.value;
+    const user = token ? await verifyToken(token) : null;
+
     const vehicle = await getVehicle(vehicleId);
     const pkg = await getPackage(packageId);
 
@@ -53,7 +59,7 @@ export default async function BookingRequestPage({ searchParams }: { searchParam
 
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                     <Suspense fallback={<div>Loading form...</div>}>
-                        <BookingRequestClient vehicle={vehicle} pkg={pkg} />
+                        <BookingRequestClient vehicle={vehicle} pkg={pkg} user={user} />
                     </Suspense>
                 </div>
             </div>

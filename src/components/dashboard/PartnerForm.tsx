@@ -14,14 +14,17 @@ import { PartnerTypes, PartnerStatus } from '@/lib/constants';
 interface PartnerFormProps {
     initialData?: any;
     isEdit?: boolean;
+    redirectPath?: string;
+    hideStatus?: boolean;
+    fixedType?: string;
 }
 
-export default function PartnerForm({ initialData, isEdit = false }: PartnerFormProps) {
+export default function PartnerForm({ initialData, isEdit = false, redirectPath = '/dashboard/partners', hideStatus = false, fixedType }: PartnerFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
-        type: initialData?.type || PartnerTypes.GUIDE,
+        type: fixedType || initialData?.type || PartnerTypes.GUIDE,
         name: initialData?.name || '',
         contactPerson: initialData?.contactPerson || '',
         phone: initialData?.phone || '',
@@ -46,7 +49,7 @@ export default function PartnerForm({ initialData, isEdit = false }: PartnerForm
             });
 
             if (res.ok) {
-                router.push('/dashboard/partners');
+                router.push(redirectPath);
                 router.refresh();
             } else {
                 const error = await res.json();
@@ -77,32 +80,36 @@ export default function PartnerForm({ initialData, isEdit = false }: PartnerForm
                 </CardHeader>
                 <CardContent className="grid gap-6">
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="type">Partner Type</Label>
-                            <Select value={formData.type} onValueChange={(val) => setFormData({ ...formData, type: val })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {Object.values(PartnerTypes).map((type) => (
-                                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="status">Status</Label>
-                            <Select value={formData.status} onValueChange={(val) => setFormData({ ...formData, status: val })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {Object.values(PartnerStatus).map((status) => (
-                                        <SelectItem key={status} value={status}>{status}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        {!fixedType && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="type">Partner Type</Label>
+                                <Select value={formData.type} onValueChange={(val) => setFormData({ ...formData, type: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {Object.values(PartnerTypes).map((type) => (
+                                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                        {!hideStatus && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="status">Status</Label>
+                                <Select value={formData.status} onValueChange={(val) => setFormData({ ...formData, status: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {Object.values(PartnerStatus).map((status) => (
+                                            <SelectItem key={status} value={status}>{status}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
                     </div>
 
                     <div className="grid gap-2">

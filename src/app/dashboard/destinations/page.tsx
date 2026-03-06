@@ -20,20 +20,22 @@ export default async function DestinationsPage() {
     const destinations = await getDestinations();
 
     return (
-        <div className="flex flex-col gap-6 p-6">
+        <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Destinations</h1>
-                    <p className="text-muted-foreground">Manage travel destinations and their details.</p>
+                    <h1 className="text-3xl font-display font-bold text-white drop-shadow-sm tracking-tight">Destinations</h1>
+                    <p className="text-sm text-white/50 mt-1 font-light">Manage travel destinations and their details.</p>
                 </div>
                 <Link href="/dashboard/destinations/new">
-                    <Button className="bg-ocean-600 hover:bg-ocean-700">
+                    <Button className="bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0a1f15] font-semibold text-xs tracking-widest rounded-xl transition-all hover:scale-105">
                         <Plus className="mr-2 h-4 w-4" /> Add Destination
                     </Button>
                 </Link>
             </div>
 
-            <DestinationTable initialDestinations={destinations} />
+            <div className="liquid-glass-stat-dark rounded-2xl p-1 shadow-2xl">
+                <DestinationTable initialDestinations={destinations} />
+            </div>
         </div>
     );
 }

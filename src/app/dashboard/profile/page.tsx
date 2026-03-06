@@ -31,7 +31,7 @@ export default async function ProfilePage() {
     if (!user) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh]">
-                <p className="text-gray-500">Unable to load profile.</p>
+                <p className="text-white/40">Unable to load profile.</p>
             </div>
         );
     }
@@ -39,17 +39,17 @@ export default async function ProfilePage() {
     return (
         <div className="flex flex-col gap-8 max-w-2xl">
             <div>
-                <h1 className="text-3xl font-display font-bold tracking-tight text-deep-emerald">Profile</h1>
-                <p className="text-sm text-gray-500 font-light mt-1">Your account details</p>
+                <h1 className="text-3xl font-display font-bold tracking-tight text-off-white">Profile</h1>
+                <p className="text-sm text-white/40 font-light mt-1">Your account details</p>
             </div>
 
-            <div className="liquid-glass-stat rounded-2xl p-8">
+            <div className="liquid-glass-panel rounded-2xl p-8 text-white">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="w-16 h-16 rounded-2xl bg-antique-gold/10 border border-antique-gold/20 flex items-center justify-center">
                         <UserCircle className="h-8 w-8 text-antique-gold" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-display font-bold text-deep-emerald">{user.name}</h2>
+                        <h2 className="text-xl font-display font-bold text-off-white">{user.name}</h2>
                         <span className="text-xs px-2.5 py-1 rounded-full bg-antique-gold/10 text-antique-gold font-medium">
                             {ROLE_LABELS[user.role] || user.role}
                         </span>
@@ -57,25 +57,25 @@ export default async function ProfilePage() {
                 </div>
 
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 border border-gray-100">
-                        <Mail className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                        <Mail className="h-4 w-4 text-white/30" />
                         <div>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wider">Email</p>
-                            <p className="text-sm text-deep-emerald">{user.email}</p>
+                            <p className="text-[10px] text-white/40 uppercase tracking-wider">Email</p>
+                            <p className="text-sm text-off-white">{user.email}</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 border border-gray-100">
-                        <Phone className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                        <Phone className="h-4 w-4 text-white/30" />
                         <div>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wider">Phone</p>
-                            <p className="text-sm text-deep-emerald">{user.phone || 'Not provided'}</p>
+                            <p className="text-[10px] text-white/40 uppercase tracking-wider">Phone</p>
+                            <p className="text-sm text-off-white">{user.phone || 'Not provided'}</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 border border-gray-100">
-                        <Shield className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                        <Shield className="h-4 w-4 text-white/30" />
                         <div>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wider">Account Status</p>
-                            <p className="text-sm text-deep-emerald">{user.status}</p>
+                            <p className="text-[10px] text-white/40 uppercase tracking-wider">Account Status</p>
+                            <p className="text-sm text-off-white">{user.status}</p>
                         </div>
                     </div>
                 </div>

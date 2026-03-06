@@ -2,12 +2,19 @@ import connectDB from "@/lib/mongodb";
 import Vehicle from "@/models/Vehicle";
 import VehicleBlock from "@/models/VehicleBlock";
 import Booking from "@/models/Booking";
-import { Car, Calendar, AlertTriangle, CheckCircle } from "lucide-react";
+import { Car, Calendar, AlertTriangle, CheckCircle, Plus } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { DashboardHero } from "@/components/dashboard/DashboardHero";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { GlassPanel } from "@/components/dashboard/GlassPanel";
+import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
+import FleetCalendar from "@/components/dashboard/fleet/FleetCalendar";
 
-const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-    AVAILABLE: { bg: 'bg-green-50', text: 'text-green-700', label: 'Available' },
-    MAINTENANCE: { bg: 'bg-orange-50', text: 'text-orange-700', label: 'Maintenance' },
-    UNAVAILABLE: { bg: 'bg-red-50', text: 'text-red-700', label: 'Unavailable' },
+const STATUS_COLORS: Record<string, { pill: string; label: string }> = {
+    AVAILABLE: { pill: 'status-pill-success', label: 'Available' },
+    MAINTENANCE: { pill: 'status-pill-warning', label: 'Maintenance' },
+    UNAVAILABLE: { pill: 'status-pill-danger', label: 'Unavailable' },
 };
 
 async function getFleetData() {
@@ -37,103 +44,125 @@ async function getFleetData() {
 export default async function FleetDashboardPage() {
     const { vehicles, blocks, assignedBookings } = await getFleetData();
 
+    const addVehicleBtn = (
+        <Link href="/dashboard/fleet/new">
+            <Button className="bg-antique-gold hover:bg-antique-gold/90 text-[#0a1f15] font-semibold tracking-wider text-xs gap-1.5">
+                <Plus className="h-3.5 w-3.5" />
+                Add Vehicle
+            </Button>
+        </Link>
+    );
+
     return (
-        <div className="flex flex-col gap-8 text-slate-800">
-            <div>
-                <h1 className="text-3xl font-display font-bold tracking-tight text-slate-900">Fleet Partner Dashboard</h1>
-                <p className="text-sm text-slate-500 font-light mt-1">Manage your vehicles, availability, and assignments</p>
+        <div className="flex flex-col gap-6">
+            <DashboardHero
+                title="Fleet Dashboard"
+                subtitle="Manage your vehicles, availability, and assignments"
+                badge="Fleet Partner"
+                action={addVehicleBtn}
+            />
+
+            {/* KPI Cards */}
+            <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
+                <StatCard
+                    title="Total Vehicles"
+                    value={vehicles.length.toString()}
+                    icon={Car}
+                    accentColor="text-violet-400"
+                />
+                <StatCard
+                    title="Active Assignments"
+                    value={assignedBookings.length.toString()}
+                    icon={Calendar}
+                    accentColor="text-blue-400"
+                />
+                <StatCard
+                    title="Blocked Periods"
+                    value={blocks.length.toString()}
+                    icon={AlertTriangle}
+                    accentColor="text-amber-400"
+                />
             </div>
 
-            {/* Summary Cards */}
-            <div className="grid gap-4 md:grid-cols-3">
-                <div className="liquid-glass-stat rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-gray-600">Total Vehicles</p>
-                        <Car className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <p className="text-2xl font-display font-bold text-deep-emerald">{vehicles.length}</p>
-                </div>
-                <div className="liquid-glass-stat rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-gray-600">Active Assignments</p>
-                        <Calendar className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <p className="text-2xl font-display font-bold text-deep-emerald">{assignedBookings.length}</p>
-                </div>
-                <div className="liquid-glass-stat rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-gray-600">Blocked Periods</p>
-                        <AlertTriangle className="h-5 w-5 text-orange-600" />
-                    </div>
-                    <p className="text-2xl font-display font-bold text-deep-emerald">{blocks.length}</p>
-                </div>
-            </div>
+            {/* Calendar Integration */}
+            <FleetCalendar vehicles={vehicles} blocks={blocks} assignedBookings={assignedBookings} />
 
-            {/* Vehicles List */}
-            <div className="liquid-glass-stat rounded-2xl p-6">
-                <h3 className="text-lg font-display font-semibold text-deep-emerald mb-4">Vehicles</h3>
-                {vehicles.length > 0 ? (
-                    <div className="space-y-3">
-                        {vehicles.map((v: any) => {
-                            const status = STATUS_COLORS[v.status] || STATUS_COLORS.AVAILABLE;
-                            const vehicleBlocks = blocks.filter((b: any) => b.vehicleId === v._id);
-                            const vehicleBookings = assignedBookings.filter((b: any) => b.assignedVehicleId === v._id);
+            {/* Two Column Layout for Lists */}
+            <div className="grid gap-6 lg:grid-cols-2">
+                {/* Vehicles List */}
+                <GlassPanel title="Vehicles">
+                    {vehicles.length > 0 ? (
+                        <div className="space-y-2">
+                            {vehicles.map((v: any) => {
+                                const status = STATUS_COLORS[v.status] || STATUS_COLORS.AVAILABLE;
+                                const vehicleBlocks = blocks.filter((b: any) => b.vehicleId === v._id);
+                                const vehicleBookings = assignedBookings.filter((b: any) => b.assignedVehicleId === v._id);
 
-                            return (
-                                <div key={v._id} className="flex items-center gap-4 px-4 py-3 rounded-xl bg-white/50 border border-gray-100">
-                                    <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200/50 flex items-center justify-center flex-shrink-0">
-                                        <Car className="h-5 w-5 text-purple-600" />
+                                return (
+                                    <div key={v._id} className="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300">
+                                        <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                                            <Car className="h-4 w-4 text-violet-400" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium text-white/85">{v.model}</p>
+                                            <p className="text-[11px] text-white/40 mt-0.5">
+                                                {v.type} · {v.seats} seats · ${v.dailyRate}/day
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                                            {vehicleBookings.length > 0 && (
+                                                <span className="status-pill status-pill-info">
+                                                    {vehicleBookings.length} trip{vehicleBookings.length > 1 ? 's' : ''}
+                                                </span>
+                                            )}
+                                            {vehicleBlocks.length > 0 && (
+                                                <span className="status-pill status-pill-warning">
+                                                    {vehicleBlocks.length} blocked
+                                                </span>
+                                            )}
+                                            <span className={`status-pill ${status.pill}`}>
+                                                {status.label}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <EmptyStateCard
+                            icon={Car}
+                            title="No vehicles registered"
+                            description="Add your first vehicle to start receiving trip assignments and manage your fleet availability."
+                            actionLabel="Add Vehicle"
+                            actionHref="/dashboard/fleet/new"
+                        />
+                    )}
+                </GlassPanel>
+
+                {/* Active Assignments */}
+                {assignedBookings.length > 0 && (
+                    <GlassPanel title="Active Assignments">
+                        <div className="space-y-2">
+                            {assignedBookings.map((b: any) => (
+                                <div key={b._id} className="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300">
+                                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                        <CheckCircle className="h-4 w-4 text-emerald-400" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-deep-emerald">{v.model}</p>
-                                        <p className="text-xs text-gray-500">{v.type} · {v.seats} seats · ${v.dailyRate}/day</p>
+                                        <p className="text-sm font-medium text-white/85">{b.bookingNo}</p>
+                                        <p className="text-[11px] text-white/40 mt-0.5">
+                                            {b.customerName} · {new Date(b.dates?.from).toLocaleDateString()} → {new Date(b.dates?.to).toLocaleDateString()}
+                                        </p>
                                     </div>
-                                    <div className="flex items-center gap-3 flex-shrink-0">
-                                        {vehicleBookings.length > 0 && (
-                                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">
-                                                {vehicleBookings.length} trip{vehicleBookings.length > 1 ? 's' : ''}
-                                            </span>
-                                        )}
-                                        {vehicleBlocks.length > 0 && (
-                                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium">
-                                                {vehicleBlocks.length} blocked
-                                            </span>
-                                        )}
-                                        <span className={`text-[10px] px-2.5 py-1 rounded-full font-medium ${status.bg} ${status.text}`}>
-                                            {status.label}
-                                        </span>
-                                    </div>
+                                    <span className="status-pill status-pill-success flex-shrink-0">
+                                        {b.status?.replace(/_/g, ' ')}
+                                    </span>
                                 </div>
-                            );
-                        })}
-                    </div>
-                ) : (
-                    <p className="text-sm text-gray-400 italic">No vehicles registered yet.</p>
+                            ))}
+                        </div>
+                    </GlassPanel>
                 )}
             </div>
-
-            {/* Active Assignments */}
-            {assignedBookings.length > 0 && (
-                <div className="liquid-glass-stat rounded-2xl p-6">
-                    <h3 className="text-lg font-display font-semibold text-deep-emerald mb-4">Active Assignments</h3>
-                    <div className="space-y-3">
-                        {assignedBookings.map((b: any) => (
-                            <div key={b._id} className="flex items-center gap-4 px-4 py-3 rounded-xl bg-white/50 border border-gray-100">
-                                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                                <div className="flex-1">
-                                    <p className="text-sm font-semibold text-deep-emerald">{b.bookingNo}</p>
-                                    <p className="text-xs text-gray-500">
-                                        {b.customerName} · {new Date(b.dates?.from).toLocaleDateString()} → {new Date(b.dates?.to).toLocaleDateString()}
-                                    </p>
-                                </div>
-                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">
-                                    {b.status?.replace(/_/g, ' ')}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

@@ -55,52 +55,52 @@ export default function UserTable({ initialUsers }: UserTableProps) {
     };
 
     return (
-        <div className="rounded-md border bg-white shadow-sm">
+        <div className="liquid-glass-panel rounded-xl overflow-hidden border border-white/10">
             <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Last Login</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                <TableHeader className="bg-black/20">
+                    <TableRow className="border-white/10 hover:bg-transparent">
+                        <TableHead className="text-white/60 font-medium">Name</TableHead>
+                        <TableHead className="text-white/60 font-medium">Email</TableHead>
+                        <TableHead className="text-white/60 font-medium">Role</TableHead>
+                        <TableHead className="text-white/60 font-medium">Status</TableHead>
+                        <TableHead className="text-white/60 font-medium">Last Login</TableHead>
+                        <TableHead className="text-white/60 font-medium text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {users.length > 0 ? (
                         users.map((user) => (
-                            <TableRow key={user._id}>
-                                <TableCell className="font-medium">{user.name}</TableCell>
-                                <TableCell>{user.email}</TableCell>
+                            <TableRow key={user._id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
+                                <TableCell className="font-medium text-off-white">{user.name}</TableCell>
+                                <TableCell className="text-white/70">{user.email}</TableCell>
                                 <TableCell>
-                                    <Badge variant={user.role === 'ADMIN' ? 'default' : 'secondary'}>
+                                    <Badge variant={user.role === 'ADMIN' ? 'default' : 'secondary'} className={user.role === 'ADMIN' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/10 text-white/70'}>
                                         {user.role}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
                                     {user.isActive ? (
-                                        <div className="flex items-center text-green-600">
-                                            <CheckCircle className="h-4 w-4 mr-1" /> Active
+                                        <div className="flex items-center text-emerald-400 text-sm">
+                                            <CheckCircle className="h-4 w-4 mr-1.5" /> Active
                                         </div>
                                     ) : (
-                                        <div className="flex items-center text-red-600">
-                                            <XCircle className="h-4 w-4 mr-1" /> Inactive
+                                        <div className="flex items-center text-red-400 text-sm">
+                                            <XCircle className="h-4 w-4 mr-1.5" /> Inactive
                                         </div>
                                     )}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="text-white/50 text-sm">
                                     {user.lastLogin ? format(new Date(user.lastLogin), 'MMM d, h:mm a') : 'Never'}
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <div className="flex justify-end gap-2">
-                                        <Button size="icon" variant="ghost" className="h-8 w-8 text-blue-600" onClick={() => router.push(`/dashboard/users/${user._id}`)}>
+                                        <Button size="icon" variant="ghost" className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10" onClick={() => router.push(`/dashboard/users/${user._id}`)}>
                                             <Edit className="h-4 w-4" />
                                         </Button>
                                         <Button
                                             size="icon"
                                             variant="ghost"
-                                            className="h-8 w-8 text-red-600"
+                                            className="h-8 w-8 text-red-500 hover:text-red-400 hover:bg-red-500/10"
                                             onClick={() => handleDelete(user._id)}
                                             disabled={loading}
                                         >
@@ -111,8 +111,8 @@ export default function UserTable({ initialUsers }: UserTableProps) {
                             </TableRow>
                         ))
                     ) : (
-                        <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center">
+                        <TableRow className="border-none hover:bg-transparent">
+                            <TableCell colSpan={6} className="h-32 text-center text-white/40">
                                 No users found.
                             </TableCell>
                         </TableRow>

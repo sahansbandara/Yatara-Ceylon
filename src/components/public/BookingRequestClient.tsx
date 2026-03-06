@@ -7,14 +7,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, CreditCard, DollarSign, AlertCircle } from 'lucide-react';
+import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
 
 interface BookingRequestClientProps {
     vehicle?: any;
     pkg?: any;
+    user?: any;
 }
 
-export default function BookingRequestClient({ vehicle, pkg }: BookingRequestClientProps) {
+export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequestClientProps) {
     const searchParams = useSearchParams();
+    const router = import('next/navigation').then(m => m.useRouter);
+    // Note: Can also just use hooks directly
+
+    const { currency, convertRate } = useCurrency();
     const typeFromQuery = searchParams.get('type') || (vehicle ? 'VEHICLE' : pkg ? 'PACKAGE' : 'PACKAGE');
 
     const [loading, setLoading] = useState(false);
@@ -64,6 +70,20 @@ export default function BookingRequestClient({ vehicle, pkg }: BookingRequestCli
 
     const handleCreateBookingAndPay = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Ensure user is logged in before allowing payment
+        if (amounts.hasPayment && amounts.advance > 0 && !user) {
+            setStatus({ success: false, message: 'Please log in or create an account before proceeding to payment. Redirecting...' });
+
+            // Build the current URL to redirect back after login
+            const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/booking-request';
+
+            setTimeout(() => {
+                window.location.href = `/auth/login?redirect=${encodeURIComponent(currentUrl)}`;
+            }, 2000);
+            return;
+        }
+
         setLoading(true);
         setStatus(null);
 
@@ -113,8 +133,19 @@ export default function BookingRequestClient({ vehicle, pkg }: BookingRequestCli
                     })
                 });
 
-                if (!payRes.ok) throw new Error('Payment initialization failed');
+                if (!payRes.ok) {
+                    const payErr = await payRes.json();
+                    throw new Error(payErr.error || 'Payment initialization failed');
+                }
                 const payData = await payRes.json();
+
+                if (payData.isDevMode) {
+                    setStatus({ success: true, message: 'Developer Mode: Simulating successful payment...' });
+                    setTimeout(() => {
+                        window.location.href = `/payment/return?order_id=${payData.orderId}`;
+                    }, 1500);
+                    return;
+                }
 
                 // 3. Trigger PayHere SDK Popup
                 // @ts-ignore
@@ -164,15 +195,15 @@ export default function BookingRequestClient({ vehicle, pkg }: BookingRequestCli
                     <div className="grid grid-cols-3 gap-4 text-center">
                         <div>
                             <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Total</p>
-                            <p className="text-lg font-bold text-deep-emerald">${amounts.total.toLocaleString()}</p>
+                            <p className="text-lg font-bold text-deep-emerald">{formatPrice(amounts.total, currency, convertRate)}</p>
                         </div>
                         <div className="border-x border-gray-200/60">
                             <p className="text-[10px] text-antique-gold uppercase tracking-wider mb-1 font-medium">20% Advance</p>
-                            <p className="text-lg font-bold text-antique-gold">${amounts.advance.toLocaleString()}</p>
+                            <p className="text-lg font-bold text-antique-gold">{formatPrice(amounts.advance, currency, convertRate)}</p>
                         </div>
                         <div>
                             <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Remaining</p>
-                            <p className="text-lg font-bold text-gray-600">${amounts.remaining.toLocaleString()}</p>
+                            <p className="text-lg font-bold text-gray-600">{formatPrice(amounts.remaining, currency, convertRate)}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
@@ -263,7 +294,7 @@ export default function BookingRequestClient({ vehicle, pkg }: BookingRequestCli
                     {amounts.hasPayment ? (
                         <>
                             <CreditCard className="mr-2 h-4 w-4" />
-                            Pay 20% Advance (${amounts.advance.toLocaleString()}) & Confirm
+                            Pay 20% Advance ({formatPrice(amounts.advance, currency, convertRate)}) & Confirm
                         </>
                     ) : (
                         'Submit Booking Request'

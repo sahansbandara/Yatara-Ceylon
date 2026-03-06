@@ -14,7 +14,6 @@ import {
     Headphones,
     DollarSign,
     Handshake,
-    Palmtree,
     ChevronLeft,
     Menu,
     Building2,
@@ -22,6 +21,7 @@ import {
     FileText,
     LogOut,
 } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -32,40 +32,117 @@ interface NavLink {
     icon: any;
 }
 
-// Navigation items per role
-const NAV_BY_ROLE: Record<string, NavLink[]> = {
+interface NavGroup {
+    label: string;
+    links: NavLink[];
+}
+
+// Grouped navigation per role
+const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
     ADMIN: [
-        { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-        { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
-        { href: '/dashboard/packages', label: 'Packages', icon: Package },
-        { href: '/dashboard/destinations', label: 'Destinations', icon: MapPin },
-        { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
-        { href: '/dashboard/support', label: 'Support', icon: Headphones },
-        { href: '/dashboard/finance', label: 'Finance', icon: DollarSign },
-        { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
-        { href: '/dashboard/users', label: 'Users', icon: Users },
+        {
+            label: 'Overview',
+            links: [
+                { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            ],
+        },
+        {
+            label: 'Operations',
+            links: [
+                { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
+                { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
+                { href: '/dashboard/support', label: 'Support', icon: Headphones },
+            ],
+        },
+        {
+            label: 'Content',
+            links: [
+                { href: '/dashboard/packages', label: 'Packages', icon: Package },
+                { href: '/dashboard/destinations', label: 'Destinations', icon: MapPin },
+            ],
+        },
+        {
+            label: 'Management',
+            links: [
+                { href: '/dashboard/finance', label: 'Finance', icon: DollarSign },
+                { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
+                { href: '/dashboard/users', label: 'Users', icon: Users },
+                { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+            ],
+        },
     ],
     STAFF: [
-        { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-        { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
-        { href: '/dashboard/packages', label: 'Packages', icon: Package },
-        { href: '/dashboard/destinations', label: 'Destinations', icon: MapPin },
-        { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
-        { href: '/dashboard/support', label: 'Support', icon: Headphones },
-        { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
+        {
+            label: 'Overview',
+            links: [
+                { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            ],
+        },
+        {
+            label: 'Operations',
+            links: [
+                { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
+                { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
+                { href: '/dashboard/support', label: 'Support', icon: Headphones },
+            ],
+        },
+        {
+            label: 'Content',
+            links: [
+                { href: '/dashboard/packages', label: 'Packages', icon: Package },
+                { href: '/dashboard/destinations', label: 'Destinations', icon: MapPin },
+                { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
+            ],
+        },
+        {
+            label: 'System',
+            links: [
+                { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+            ],
+        },
     ],
     VEHICLE_OWNER: [
-        { href: '/dashboard/fleet', label: 'My Vehicles', icon: Car },
-        { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+        {
+            label: 'Fleet',
+            links: [
+                { href: '/dashboard/fleet', label: 'My Vehicles', icon: Car },
+            ],
+        },
+        {
+            label: 'Account',
+            links: [
+                { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+            ],
+        },
     ],
     HOTEL_OWNER: [
-        { href: '/dashboard/hotel', label: 'My Property', icon: Building2 },
-        { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+        {
+            label: 'Property',
+            links: [
+                { href: '/dashboard/hotel', label: 'My Property', icon: Building2 },
+            ],
+        },
+        {
+            label: 'Account',
+            links: [
+                { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+            ],
+        },
     ],
     USER: [
-        { href: '/dashboard/my-bookings', label: 'My Bookings', icon: CalendarCheck },
-        { href: '/dashboard/my-plans', label: 'My Plans', icon: FileText },
-        { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+        {
+            label: 'My Travel',
+            links: [
+                { href: '/dashboard/my-bookings', label: 'My Bookings', icon: CalendarCheck },
+                { href: '/dashboard/my-plans', label: 'My Plans', icon: FileText },
+            ],
+        },
+        {
+            label: 'Account',
+            links: [
+                { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+            ],
+        },
     ],
 };
 
@@ -77,9 +154,9 @@ const ROLE_LABELS: Record<string, string> = {
     USER: 'Customer',
 };
 
-function SidebarContent({ userRole, userName, isLightTheme }: { userRole: string; userName: string; isLightTheme: boolean }) {
+function SidebarContent({ userRole, userName }: { userRole: string; userName: string }) {
     const pathname = usePathname();
-    const links = NAV_BY_ROLE[userRole] || NAV_BY_ROLE.USER;
+    const groups = NAV_GROUPS_BY_ROLE[userRole] || NAV_GROUPS_BY_ROLE.USER;
 
     const handleLogout = async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
@@ -87,77 +164,88 @@ function SidebarContent({ userRole, userName, isLightTheme }: { userRole: string
     };
 
     return (
-        <div className={`flex h-full flex-col ${isLightTheme ? 'bg-[#f4f6f8] text-slate-800 border-r border-slate-200' : 'bg-transparent text-white'}`}>
-            {/* Brand */}
-            <div className={`flex h-20 items-center px-6 border-b ${isLightTheme ? 'border-slate-200' : 'border-antique-gold/10'}`}>
+        <div className="flex h-full flex-col bg-transparent text-white">
+            {/* Brand Lockup */}
+            <div className="flex h-[72px] items-center px-5 border-b border-white/[0.06]">
                 <Link href="/dashboard" className="flex items-center gap-3 group">
-                    <div className="w-9 h-9 rounded-xl bg-antique-gold/15 border border-antique-gold/25 flex items-center justify-center group-hover:bg-antique-gold/25 transition-all duration-300">
-                        <Palmtree className="h-4 w-4 text-antique-gold" />
+                    <div className="w-9 h-9 rounded-xl bg-antique-gold/15 border border-antique-gold/25 flex items-center justify-center group-hover:bg-antique-gold/25 group-hover:shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
+                        <Image src="/images/yatara-brand-block.svg" alt="Yatara" width={28} height={28} className="brightness-0 invert opacity-80" />
                     </div>
                     <div>
-                        <span className={`font-display text-lg font-bold tracking-tight ${isLightTheme ? 'text-slate-900' : 'text-off-white'}`}>
-                            TOMS
+                        <span className="font-display text-base font-bold tracking-tight text-off-white">
+                            Yatara Ceylon
                         </span>
-                        <p className={`text-[9px] tracking-[0.2em] uppercase ${isLightTheme ? 'text-slate-500' : 'text-off-white/30'}`}>Yatara Ceylon</p>
+                        <p className="text-[9px] tracking-[0.2em] uppercase text-off-white/25">Tour Management</p>
                     </div>
                 </Link>
             </div>
 
-            {/* Role Badge */}
-            <div className="px-6 py-3 border-b border-antique-gold/5">
-                <p className="text-[10px] tracking-[0.15em] text-off-white/30 uppercase">Signed in as</p>
-                <p className="text-xs text-antique-gold font-medium mt-0.5">{userName || 'User'}</p>
-                <p className="text-[10px] text-off-white/40 mt-0.5">{ROLE_LABELS[userRole] || 'Customer'}</p>
+            {/* User Info */}
+            <div className="px-5 py-3 border-b border-white/[0.04]">
+                <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
+                <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">{userName || 'User'}</p>
+                <p className="text-[10px] text-off-white/35 mt-0.5">{ROLE_LABELS[userRole] || 'Customer'}</p>
             </div>
 
-            {/* Nav Links */}
-            <nav className="flex-1 overflow-y-auto px-3 py-6 space-y-1 scrollbar-glass-dark">
-                {links.map((link) => {
-                    const Icon = link.icon;
-                    const isActive =
-                        pathname === link.href ||
-                        (link.href !== '/dashboard' && pathname.startsWith(link.href));
-                    return (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={cn(
-                                'sidebar-link text-off-white/60 hover:text-off-white hover:bg-white/5 rounded-xl',
-                                isActive && 'sidebar-link-active text-antique-gold'
-                            )}
-                        >
-                            <Icon className={cn(
-                                "h-4 w-4 flex-shrink-0 transition-colors",
-                                isActive ? "text-antique-gold" : "text-off-white/40"
-                            )} />
-                            <span className="text-[13px]">{link.label}</span>
-                        </Link>
-                    );
-                })}
+            {/* Navigation Groups */}
+            <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5 scrollbar-glass-dark">
+                {groups.map((group) => (
+                    <div key={group.label}>
+                        <p className="px-3 mb-2 text-[9px] tracking-[0.2em] uppercase text-off-white/20 font-semibold">
+                            {group.label}
+                        </p>
+                        <div className="space-y-0.5">
+                            {group.links.map((link) => {
+                                const Icon = link.icon;
+                                const isActive =
+                                    pathname === link.href ||
+                                    (link.href !== '/dashboard' && pathname.startsWith(link.href));
+                                return (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={cn(
+                                            'flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300',
+                                            isActive
+                                                ? 'bg-antique-gold/[0.12] border border-antique-gold/20 text-antique-gold shadow-[0_0_12px_rgba(212,175,55,0.06)]'
+                                                : 'text-off-white/50 hover:text-off-white/80 hover:bg-white/[0.04] border border-transparent'
+                                        )}
+                                    >
+                                        <Icon className={cn(
+                                            "h-4 w-4 flex-shrink-0 transition-all duration-300",
+                                            isActive ? "text-antique-gold" : "text-off-white/30 group-hover:text-off-white/50"
+                                        )} />
+                                        <span>{link.label}</span>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
             </nav>
 
             {/* Footer */}
-            <div className="border-t border-antique-gold/10 p-4 space-y-1">
+            <div className="border-t border-white/[0.06] p-3 space-y-0.5">
                 <Link
                     href="/"
-                    className="sidebar-link text-off-white/40 hover:text-antique-gold rounded-xl"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-off-white/35 hover:text-antique-gold hover:bg-white/[0.03] border border-transparent transition-all duration-300"
                 >
                     <ChevronLeft className="h-4 w-4" />
-                    <span className="text-[13px]">Back to Website</span>
+                    <span>Back to Website</span>
                 </Link>
                 <button
                     onClick={handleLogout}
-                    className="sidebar-link text-off-white/40 hover:text-red-400 rounded-xl w-full"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-off-white/35 hover:text-red-400 hover:bg-red-500/[0.05] border border-transparent w-full transition-all duration-300"
                 >
                     <LogOut className="h-4 w-4" />
-                    <span className="text-[13px]">Sign Out</span>
+                    <span>Sign Out</span>
                 </button>
             </div>
         </div>
     );
 }
 
-export function DashboardSidebar({ isLightTheme = false }: { isLightTheme?: boolean }) {
+export function DashboardSidebar() {
     const [open, setOpen] = useState(false);
     const [userRole, setUserRole] = useState('USER');
     const [userName, setUserName] = useState('');
@@ -176,22 +264,22 @@ export function DashboardSidebar({ isLightTheme = false }: { isLightTheme?: bool
 
     return (
         <>
-            {/* Desktop Sidebar — Dark Glass */}
-            <aside className={`hidden md:block min-h-screen ${isLightTheme ? 'bg-[#f4f6f8] border-r border-slate-200' : 'dashboard-sidebar-dark'}`}>
-                <SidebarContent userRole={userRole} userName={userName} isLightTheme={isLightTheme} />
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:block min-h-screen dashboard-sidebar-dark">
+                <SidebarContent userRole={userRole} userName={userName} />
             </aside>
 
             {/* Mobile Sidebar Toggle */}
             <div className="md:hidden fixed top-0 left-0 z-40 p-3">
                 <Sheet open={open} onOpenChange={setOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="outline" size="icon" className="liquid-glass border-antique-gold/20">
-                            <Menu className="h-5 w-5 text-deep-emerald" />
+                        <Button variant="outline" size="icon" className="liquid-glass border-antique-gold/20 bg-[#061a15]/80 backdrop-blur-xl">
+                            <Menu className="h-5 w-5 text-antique-gold" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className={`w-72 p-0 border-r ${isLightTheme ? 'border-slate-200' : 'border-antique-gold/20'}`}>
-                        <div className={`h-full ${isLightTheme ? 'bg-[#f4f6f8]' : 'dashboard-sidebar-dark'}`}>
-                            <SidebarContent userRole={userRole} userName={userName} isLightTheme={isLightTheme} />
+                    <SheetContent side="left" className="w-72 p-0 border-r border-antique-gold/10 bg-[#020b08]">
+                        <div className="h-full dashboard-sidebar-dark">
+                            <SidebarContent userRole={userRole} userName={userName} />
                         </div>
                     </SheetContent>
                 </Sheet>

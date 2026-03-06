@@ -280,7 +280,7 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                         <CardContent className="space-y-6">
                             {formData.itinerary.map((item: any, index: number) => (
                                 <div key={index} className="flex gap-4 items-start border p-4 rounded-lg bg-gray-50/50">
-                                    <div className="mt-2 text-sm font-bold bg-white w-8 h-8 flex items-center justify-center rounded-full border shadow-sm shrink-0">
+                                    <div className="mt-2 text-sm font-bold bg-emerald-950/40 text-antique-gold border-antique-gold/30 w-8 h-8 flex items-center justify-center rounded-full border shadow-sm shrink-0">
                                         {item.day}
                                     </div>
                                     <div className="flex-1 space-y-4">

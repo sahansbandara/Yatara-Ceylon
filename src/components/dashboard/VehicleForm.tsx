@@ -14,9 +14,11 @@ import { VehicleStatus, VehicleTypes } from '@/lib/constants';
 interface VehicleFormProps {
     initialData?: any;
     isEdit?: boolean;
+    redirectPath?: string;
+    hideStatus?: boolean;
 }
 
-export default function VehicleForm({ initialData, isEdit = false }: VehicleFormProps) {
+export default function VehicleForm({ initialData, isEdit = false, redirectPath = '/dashboard/vehicles', hideStatus = false }: VehicleFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
@@ -66,7 +68,7 @@ export default function VehicleForm({ initialData, isEdit = false }: VehicleForm
             });
 
             if (res.ok) {
-                router.push('/dashboard/vehicles');
+                router.push(redirectPath);
                 router.refresh();
             } else {
                 const error = await res.json();
@@ -136,19 +138,21 @@ export default function VehicleForm({ initialData, isEdit = false }: VehicleForm
                             <Label htmlFor="plateNumber">Plate Number</Label>
                             <Input id="plateNumber" value={formData.plateNumber} onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })} placeholder="e.g. WP CAA-1234" />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="status">Status</Label>
-                            <Select value={formData.status} onValueChange={(val) => setFormData({ ...formData, status: val })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {Object.values(VehicleStatus).map((status) => (
-                                        <SelectItem key={status} value={status}>{status}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        {!hideStatus && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="status">Status</Label>
+                                <Select value={formData.status} onValueChange={(val) => setFormData({ ...formData, status: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {Object.values(VehicleStatus).map((status) => (
+                                            <SelectItem key={status} value={status}>{status}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
                     </div>
 
                     <div className="grid gap-2">

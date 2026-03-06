@@ -4,6 +4,8 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import connectDB from '@/lib/mongodb';
 import Vehicle from '@/models/Vehicle';
+import { DashboardHero } from '@/components/dashboard/DashboardHero';
+import { GlassPanel } from '@/components/dashboard/GlassPanel';
 
 async function getVehicles() {
     try {
@@ -21,19 +23,21 @@ export default async function VehiclesPage() {
 
     return (
         <div className="flex flex-col gap-6 p-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Fleet Management</h1>
-                    <p className="text-muted-foreground">Manage vehicles, availability, and pricing.</p>
-                </div>
-                <Link href="/dashboard/vehicles/new">
-                    <Button className="bg-ocean-600 hover:bg-ocean-700">
-                        <Plus className="mr-2 h-4 w-4" /> Add Vehicle
-                    </Button>
-                </Link>
-            </div>
+            <DashboardHero
+                title="Fleet Management"
+                subtitle="Manage vehicles, availability, and pricing."
+                action={
+                    <Link href="/dashboard/vehicles/new">
+                        <Button className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold">
+                            <Plus className="mr-2 h-4 w-4" /> Add Vehicle
+                        </Button>
+                    </Link>
+                }
+            />
 
-            <VehicleTable initialVehicles={vehicles} />
+            <GlassPanel>
+                <VehicleTable initialVehicles={vehicles} />
+            </GlassPanel>
         </div>
     );
 }

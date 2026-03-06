@@ -1,8 +1,12 @@
 import connectDB from "@/lib/mongodb";
 import Payment from "@/models/Payment";
 import Booking from "@/models/Booking";
-import { DollarSign, TrendingUp, CreditCard, AlertTriangle, ArrowUpRight } from "lucide-react";
+import { DollarSign, TrendingUp, CreditCard, AlertTriangle, ArrowUpRight, Receipt } from "lucide-react";
 import Link from "next/link";
+import { DashboardHero } from "@/components/dashboard/DashboardHero";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { GlassPanel } from "@/components/dashboard/GlassPanel";
+import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
 
 async function getFinanceData() {
     try {
@@ -58,69 +62,65 @@ async function getFinanceData() {
 export default async function FinancePage() {
     const data = await getFinanceData();
 
+    const collectionRate = data.totalRevenue > 0 && data.pendingBalances > 0
+        ? `${Math.round((data.totalRevenue / (data.totalRevenue + data.pendingBalances)) * 100)}%`
+        : data.totalRevenue > 0 ? '100%' : '0%';
+
     return (
-        <div className="flex flex-col gap-8 text-slate-800">
-            <div>
-                <h1 className="text-3xl font-display font-bold tracking-tight text-slate-900">Finance Dashboard</h1>
-                <p className="text-sm text-slate-500 font-light mt-1">Payment tracking and financial overview</p>
+        <div className="flex flex-col gap-6">
+            <DashboardHero
+                title="Finance"
+                subtitle="Payment tracking and financial overview"
+            />
+
+            {/* KPI Cards */}
+            <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+                <StatCard
+                    title="Total Collected"
+                    value={`$${data.totalRevenue.toLocaleString()}`}
+                    icon={DollarSign}
+                    accentColor="text-emerald-400"
+                />
+                <StatCard
+                    title="Advances"
+                    value={`$${data.advancePaid.toLocaleString()}`}
+                    icon={TrendingUp}
+                    accentColor="text-blue-400"
+                    trend={{ value: `${data.advanceCount} bookings`, positive: true }}
+                />
+                <StatCard
+                    title="Pending"
+                    value={`$${data.pendingBalances.toLocaleString()}`}
+                    icon={AlertTriangle}
+                    accentColor="text-amber-400"
+                    trend={{ value: `${data.pendingCount} due`, positive: false }}
+                />
+                <StatCard
+                    title="Collection Rate"
+                    value={collectionRate}
+                    icon={CreditCard}
+                    accentColor="text-violet-400"
+                />
             </div>
 
-            {/* Summary Cards */}
-            <div className="grid gap-4 md:grid-cols-4">
-                <div className="liquid-glass-stat rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-gray-600">Total Collected</p>
-                        <DollarSign className="h-5 w-5 text-emerald-600" />
-                    </div>
-                    <p className="text-2xl font-display font-bold text-emerald-700">${data.totalRevenue.toLocaleString()}</p>
-                </div>
-                <div className="liquid-glass-stat rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-gray-600">Advances Received</p>
-                        <TrendingUp className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <p className="text-2xl font-display font-bold text-blue-700">${data.advancePaid.toLocaleString()}</p>
-                    <p className="text-[10px] text-gray-400 mt-1">{data.advanceCount} bookings with advances</p>
-                </div>
-                <div className="liquid-glass-stat rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-gray-600">Pending Balances</p>
-                        <AlertTriangle className="h-5 w-5 text-orange-600" />
-                    </div>
-                    <p className="text-2xl font-display font-bold text-orange-700">${data.pendingBalances.toLocaleString()}</p>
-                    <p className="text-[10px] text-gray-400 mt-1">{data.pendingCount} bookings with balance due</p>
-                </div>
-                <div className="liquid-glass-stat rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-gray-600">Collection Rate</p>
-                        <CreditCard className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <p className="text-2xl font-display font-bold text-purple-700">
-                        {data.totalRevenue > 0 && data.pendingBalances > 0
-                            ? `${Math.round((data.totalRevenue / (data.totalRevenue + data.pendingBalances)) * 100)}%`
-                            : data.totalRevenue > 0 ? '100%' : '0%'}
-                    </p>
-                </div>
-            </div>
-
+            {/* Two Column: Payments + Outstanding */}
             <div className="grid gap-6 lg:grid-cols-2">
                 {/* Recent Payments */}
-                <div className="liquid-glass-stat rounded-2xl p-6">
-                    <h3 className="text-lg font-display font-semibold text-deep-emerald mb-4">Recent Payments</h3>
+                <GlassPanel title="Recent Payments">
                     {data.recentPayments.length > 0 ? (
                         <div className="space-y-2">
                             {data.recentPayments.map((p: any) => (
-                                <div key={p._id} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/50 border border-gray-100">
-                                    <div>
-                                        <p className="text-xs font-mono font-semibold text-deep-emerald">{p.orderId}</p>
-                                        <p className="text-[10px] text-gray-400">
+                                <div key={p._id} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300">
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-xs font-mono font-medium text-white/80 truncate">{p.orderId}</p>
+                                        <p className="text-[10px] text-white/40 mt-0.5">
                                             {(p.bookingId as any)?.bookingNo || '—'} · {(p.bookingId as any)?.customerName || '—'}
                                         </p>
-                                        <p className="text-[10px] text-gray-300">{new Date(p.createdAt).toLocaleString()}</p>
+                                        <p className="text-[10px] text-white/25 mt-0.5">{new Date(p.createdAt).toLocaleString()}</p>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-sm font-bold text-deep-emerald">${(p.amount || 0).toLocaleString()}</p>
-                                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === 'SUCCESS' ? 'bg-green-100 text-green-700' : p.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
+                                    <div className="text-right flex-shrink-0 ml-3">
+                                        <p className="text-sm font-bold text-white/85">${(p.amount || 0).toLocaleString()}</p>
+                                        <span className={`status-pill mt-1 ${p.status === 'SUCCESS' ? 'status-pill-success' : p.status === 'PENDING' ? 'status-pill-warning' : 'status-pill-danger'}`}>
                                             {p.status} · {p.provider}
                                         </span>
                                     </div>
@@ -128,39 +128,46 @@ export default async function FinancePage() {
                             ))}
                         </div>
                     ) : (
-                        <p className="text-sm text-gray-400 italic">No payment records yet.</p>
+                        <EmptyStateCard
+                            icon={Receipt}
+                            title="No payments recorded"
+                            description="Payment transactions will appear here once customers make their first payment."
+                        />
                     )}
-                </div>
+                </GlassPanel>
 
-                {/* Bookings with Outstanding Balance */}
-                <div className="liquid-glass-stat rounded-2xl p-6">
-                    <h3 className="text-lg font-display font-semibold text-deep-emerald mb-4">Outstanding Balances</h3>
+                {/* Outstanding Balances */}
+                <GlassPanel title="Outstanding Balances">
                     {data.bookingsWithBalance.length > 0 ? (
                         <div className="space-y-2">
                             {data.bookingsWithBalance.map((b: any) => (
                                 <Link
                                     key={b._id}
                                     href={`/dashboard/bookings/${b._id}`}
-                                    className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/50 border border-gray-100 hover:bg-white/80 transition-colors group"
+                                    className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300 group"
                                 >
-                                    <div>
-                                        <p className="text-xs font-mono font-semibold text-deep-emerald">{b.bookingNo}</p>
-                                        <p className="text-[10px] text-gray-400">{b.customerName}</p>
+                                    <div className="min-w-0">
+                                        <p className="text-xs font-mono font-medium text-white/80">{b.bookingNo}</p>
+                                        <p className="text-[10px] text-white/40 mt-0.5">{b.customerName}</p>
                                     </div>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 flex-shrink-0 ml-3">
                                         <div className="text-right">
-                                            <p className="text-[10px] text-gray-400">Paid: ${(b.paidAmount || 0).toLocaleString()}</p>
-                                            <p className="text-sm font-bold text-orange-600">Due: ${(b.remainingBalance || 0).toLocaleString()}</p>
+                                            <p className="text-[10px] text-white/35">Paid: ${(b.paidAmount || 0).toLocaleString()}</p>
+                                            <p className="text-sm font-bold text-amber-400">Due: ${(b.remainingBalance || 0).toLocaleString()}</p>
                                         </div>
-                                        <ArrowUpRight className="h-4 w-4 text-gray-300 group-hover:text-antique-gold transition-colors" />
+                                        <ArrowUpRight className="h-4 w-4 text-white/20 group-hover:text-antique-gold transition-colors" />
                                     </div>
                                 </Link>
                             ))}
                         </div>
                     ) : (
-                        <p className="text-sm text-gray-400 italic">All balances are settled.</p>
+                        <EmptyStateCard
+                            icon={DollarSign}
+                            title="All settled"
+                            description="All booking balances are fully paid. Great work!"
+                        />
                     )}
-                </div>
+                </GlassPanel>
             </div>
         </div>
     );

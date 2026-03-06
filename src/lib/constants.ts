@@ -42,6 +42,8 @@ export const VehicleStatus = {
     AVAILABLE: 'AVAILABLE',
     MAINTENANCE: 'MAINTENANCE',
     UNAVAILABLE: 'UNAVAILABLE',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
 } as const;
 
 export const VehicleBlockReasons = {
@@ -62,6 +64,8 @@ export const PartnerTypes = {
 export const PartnerStatus = {
     ACTIVE: 'ACTIVE',
     INACTIVE: 'INACTIVE',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
 } as const;
 
 export const PartnerServiceUnits = {
