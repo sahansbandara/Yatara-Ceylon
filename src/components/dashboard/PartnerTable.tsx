@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2, Edit, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PartnerStatus } from '@/lib/constants';
 
@@ -37,6 +37,26 @@ export default function PartnerTable({ initialPartners }: PartnerTableProps) {
         } catch (error) {
             console.error(error);
             alert('Error deleting partner');
+        }
+    };
+
+    const handleApprove = async (id: string) => {
+        if (!confirm('Approve this partner? It will become active immediately.')) return;
+        try {
+            const res = await fetch(`/api/partners/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: PartnerStatus.ACTIVE })
+            });
+            if (res.ok) {
+                setPartners(partners.map(p => p._id === id ? { ...p, status: PartnerStatus.ACTIVE } : p));
+                router.refresh();
+            } else {
+                alert('Failed to approve partner');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error approving partner');
         }
     };
 
@@ -105,6 +125,17 @@ export default function PartnerTable({ initialPartners }: PartnerTableProps) {
                                     </td>
                                     <td className="px-5 py-3.5 text-right">
                                         <div className="flex justify-end gap-2">
+                                            {partner.status === 'PENDING_APPROVAL' && (
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                    className="h-8 w-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10 transition-colors"
+                                                    onClick={() => handleApprove(partner._id)}
+                                                    title="Approve Partner"
+                                                >
+                                                    <CheckCircle className="h-4 w-4" />
+                                                </Button>
+                                            )}
                                             <Button
                                                 size="icon"
                                                 variant="ghost"

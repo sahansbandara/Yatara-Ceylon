@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit, Car } from 'lucide-react';
+import { Trash2, Edit, Car, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { VehicleStatus } from '@/lib/constants';
@@ -53,6 +53,30 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
         } catch (error) {
             console.error(error);
             alert('Error deleting vehicle');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleApprove = async (id: string) => {
+        if (!confirm('Approve this vehicle? It will become active immediately.')) return;
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/vehicles/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: VehicleStatus.AVAILABLE })
+            });
+
+            if (res.ok) {
+                setVehicles(vehicles.map(v => v._id === id ? { ...v, status: VehicleStatus.AVAILABLE } : v));
+                router.refresh();
+            } else {
+                alert('Failed to approve vehicle');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error approving vehicle');
         } finally {
             setLoading(false);
         }
@@ -119,6 +143,17 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <div className="flex justify-end gap-2">
+                                        {vehicle.status === 'PENDING_APPROVAL' && (
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10"
+                                                onClick={() => handleApprove(vehicle._id)}
+                                                title="Approve Vehicle"
+                                            >
+                                                <CheckCircle className="h-4 w-4" />
+                                            </Button>
+                                        )}
                                         <Button
                                             size="icon"
                                             variant="ghost"

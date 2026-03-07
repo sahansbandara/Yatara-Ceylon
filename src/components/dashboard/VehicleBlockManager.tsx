@@ -18,7 +18,7 @@ interface VehicleBlock {
     reason: string;
 }
 
-export default function VehicleBlockManager({ vehicleId, initialBlocks }: { vehicleId: string, initialBlocks: VehicleBlock[] }) {
+export default function VehicleBlockManager({ vehicleId, initialBlocks, hideTitle = false }: { vehicleId: string, initialBlocks: VehicleBlock[], hideTitle?: boolean }) {
     const [blocks, setBlocks] = useState<VehicleBlock[]>(initialBlocks);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -77,11 +77,15 @@ export default function VehicleBlockManager({ vehicleId, initialBlocks }: { vehi
     };
 
     return (
-        <div className="liquid-glass-stat-dark rounded-2xl p-8 border border-white/[0.08] shadow-2xl mt-6 text-white max-w-3xl">
-            <h2 className="text-xl font-semibold mb-2">Availability Blocks</h2>
-            <p className="text-white/40 text-sm mb-6">Block this vehicle from being booked for maintenance or other reasons.</p>
+        <div className={hideTitle ? "mt-2" : "liquid-glass-stat-dark rounded-2xl p-8 border border-white/[0.08] shadow-2xl mt-6 text-white max-w-3xl"}>
+            {!hideTitle && (
+                <>
+                    <h2 className="text-xl font-semibold mb-2">Availability Blocks</h2>
+                    <p className="text-white/40 text-sm mb-6">Block this vehicle from being booked for maintenance or other reasons.</p>
+                </>
+            )}
 
-            <form onSubmit={handleAddBlock} className="flex flex-col md:flex-row gap-4 items-end mb-8 bg-white/[0.02] p-5 rounded-xl border border-white/[0.06]">
+            <form onSubmit={handleAddBlock} className="flex flex-col md:flex-row gap-4 items-end mb-4 bg-white/[0.02] p-5 rounded-xl border border-white/[0.06]">
                 <div className="grid gap-2 flex-1 w-full">
                     <Label htmlFor="from" className="text-white/70">From Date</Label>
                     <Input id="from" type="date" required value={from} onChange={e => setFrom(e.target.value)} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 [color-scheme:dark] rounded-xl h-11" />

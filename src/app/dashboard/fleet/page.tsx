@@ -10,6 +10,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
 import FleetCalendar from "@/components/dashboard/fleet/FleetCalendar";
+import VehicleBlockManager from "@/components/dashboard/VehicleBlockManager";
 
 const STATUS_COLORS: Record<string, { pill: string; label: string }> = {
     AVAILABLE: { pill: 'status-pill-success', label: 'Available' },
@@ -17,16 +18,21 @@ const STATUS_COLORS: Record<string, { pill: string; label: string }> = {
     UNAVAILABLE: { pill: 'status-pill-danger', label: 'Unavailable' },
 };
 
-async function getFleetData() {
+import { getSessionUser } from "@/lib/auth";
+
+async function getFleetData(userId: string) {
     try {
         await connectDB();
-        const [vehicles, blocks, assignedBookings] = await Promise.all([
-            Vehicle.find({}).lean(),
+        const vehicles = await Vehicle.find({ ownerId: userId, isDeleted: false }).lean();
+        const vehicleIds = vehicles.map(v => v._id);
+
+        const [blocks, assignedBookings] = await Promise.all([
             VehicleBlock.find({
+                vehicleId: { $in: vehicleIds },
                 to: { $gte: new Date() },
             }).lean(),
             Booking.find({
-                assignedVehicleId: { $ne: null },
+                assignedVehicleId: { $in: vehicleIds },
                 isDeleted: false,
                 status: { $in: ['CONFIRMED', 'ASSIGNED', 'IN_PROGRESS'] },
             }).select('bookingNo customerName dates assignedVehicleId status').lean(),
@@ -42,7 +48,10 @@ async function getFleetData() {
 }
 
 export default async function FleetDashboardPage() {
-    const { vehicles, blocks, assignedBookings } = await getFleetData();
+    const session = await getSessionUser();
+    if (!session?.userId) return null;
+
+    const { vehicles, blocks, assignedBookings } = await getFleetData(session.userId);
 
     const addVehicleBtn = (
         <Link href="/dashboard/fleet/new">
@@ -99,30 +108,41 @@ export default async function FleetDashboardPage() {
                                 const vehicleBookings = assignedBookings.filter((b: any) => b.assignedVehicleId === v._id);
 
                                 return (
-                                    <div key={v._id} className="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300">
-                                        <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
-                                            <Car className="h-4 w-4 text-violet-400" />
+                                    <div key={v._id} className="flex flex-col gap-4 px-4 py-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                                                <Car className="h-4 w-4 text-violet-400" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex justify-between">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-white/85">{v.model}</p>
+                                                        <p className="text-[11px] text-white/40 mt-0.5">
+                                                            {v.type} · {v.seats} seats · LKR {v.dailyRate} per km
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex flex-col items-end gap-2">
+                                                        <span className={`status-pill ${status.pill} text-[10px] uppercase font-bold tracking-wider py-0.5 px-2`}>
+                                                            {status.label}
+                                                        </span>
+                                                        <div className="flex items-center gap-1.5 flex-shrink-0 flex-wrap justify-end">
+                                                            {vehicleBookings.length > 0 && (
+                                                                <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] rounded px-1.5">
+                                                                    {vehicleBookings.length} trip{vehicleBookings.length > 1 ? 's' : ''}
+                                                                </span>
+                                                            )}
+                                                            {vehicleBlocks.length > 0 && (
+                                                                <span className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 text-[10px] rounded px-1.5">
+                                                                    {vehicleBlocks.length} blocked
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-white/85">{v.model}</p>
-                                            <p className="text-[11px] text-white/40 mt-0.5">
-                                                {v.type} · {v.seats} seats · LKR {v.dailyRate} per km
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
-                                            {vehicleBookings.length > 0 && (
-                                                <span className="status-pill status-pill-info">
-                                                    {vehicleBookings.length} trip{vehicleBookings.length > 1 ? 's' : ''}
-                                                </span>
-                                            )}
-                                            {vehicleBlocks.length > 0 && (
-                                                <span className="status-pill status-pill-warning">
-                                                    {vehicleBlocks.length} blocked
-                                                </span>
-                                            )}
-                                            <span className={`status-pill ${status.pill}`}>
-                                                {status.label}
-                                            </span>
+                                        <div className="pt-2 border-t border-white/[0.06]">
+                                            <VehicleBlockManager vehicleId={v._id} initialBlocks={vehicleBlocks} hideTitle={true} />
                                         </div>
                                     </div>
                                 );

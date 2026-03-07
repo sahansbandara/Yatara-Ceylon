@@ -54,6 +54,13 @@ export const VehicleBlockReasons = {
     OTHER: 'OTHER',
 } as const;
 
+export const ServiceBlockReasons = {
+    BOOKING: 'BOOKING',
+    RENOVATION: 'RENOVATION',
+    PERSONAL: 'PERSONAL',
+    OTHER: 'OTHER',
+} as const;
+
 export const PartnerTypes = {
     GUIDE: 'GUIDE',
     HOTEL: 'HOTEL',
