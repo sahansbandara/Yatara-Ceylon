@@ -21,6 +21,8 @@
 ## 📑 Table of Contents
 
 - [System Architecture](#-system-architecture)
+- [Use Case Diagram](#-use-case-diagram)
+- [Data Flow Diagram (DFD)](#-data-flow-diagram-dfd)
 - [High-Level Flow](#-high-level-flow)
 - [Tech Stack](#-tech-stack)
 - [Management Modules](#-management-modules)
@@ -99,6 +101,107 @@ graph TB
     HD --> SM
 
     BK & PM & FM & VM & SM --> DB
+```
+
+---
+
+## 👤 Use Case Diagram
+
+The Use Case Diagram illustrates the interactions between different user roles (actors) and the core functionalities of the TOMS platform.
+
+```mermaid
+flowchart LR
+    %% Actors
+    C(("👤 Customer"))
+    S(("👨‍💼 Concierge Staff"))
+    A(("🔑 Admin"))
+    F(("🚗 Fleet Partner"))
+    H(("🏨 Hotel Partner"))
+
+    %% System
+    subgraph TOMS["Yatara Ceylon TOMS"]
+        direction TB
+        UC1(["Browse & Book Packages"])
+        UC2(["Build Custom Tour"])
+        UC3(["Process Payments"])
+        UC4(["Manage Bookings & Assignments"])
+        UC5(["Manage Fleet Availability"])
+        UC6(["Manage Hotel Availability"])
+        UC7(["Finance & Reports"])
+        UC8(["User Management"])
+        UC9(["Content & Package Management"])
+    end
+
+    C --> UC1
+    C --> UC2
+    C --> UC3
+    
+    S --> UC4
+    S --> UC9
+    
+    A --> UC4
+    A --> UC7
+    A --> UC8
+    A --> UC9
+    A --> UC5
+    A --> UC6
+    
+    F --> UC5
+    H --> UC6
+    
+    UC4 -. "Vehicle/Hotel<br>Assignments" .-> F & H
+```
+
+---
+
+## 🌊 Data Flow Diagram (DFD)
+
+The Level 1 Data Flow Diagram maps the flow of information between external entities, system processes, and core data stores.
+
+```mermaid
+flowchart TD
+    %% External Entities
+    Cust["👤 Customer"]
+    Admin["👨‍💼 Admin/Staff"]
+    PH["💳 PayHere Gateway"]
+    Part["🤝 Partners (Fleet/Hotel)"]
+
+    %% Processes (Circles)
+    P1(("1.0<br>Booking<br>Management"))
+    P2(("2.0<br>Payment<br>Processing"))
+    P3(("3.0<br>Resource<br>Assignment"))
+    P4(("4.0<br>Content<br>Management"))
+
+    %% Data Stores
+    D1[(D1: Users & Roles)]
+    D2[(D2: Packages & Destinations)]
+    D3[(D3: Bookings)]
+    D4[(D4: Payments & Finances)]
+    D5[(D5: Vehicles & Partners)]
+
+    %% Data Flows
+    Cust -- "Browses Tours" --> P4
+    P4 -- "Package Info" --> Cust
+    P4 <--> "Reads/Updates" D2
+
+    Cust -- "Submits Booking" --> P1
+    P1 -- "Stores Booking" --> D3
+    P1 -- "Booking Details" --> P2
+
+    P2 -- "Payment Request" --> PH
+    PH -- "Payment Status (Webhook)" --> P2
+    P2 -- "Records Payment" --> D4
+    P2 -- "Updates Status" --> P1
+    P2 -. "Receipt" .-> Cust
+
+    Admin -- "Manages Bookings" --> P1
+    Admin -- "Assigns Resources" --> P3
+    P3 -- "Updates Assignment" --> D3
+    P3 <--> "Reads/Updates" D5
+    
+    Part -- "Updates Availability" --> P3
+    P3 -- "Notifies Assignment" --> Part
+    Admin -- "Manages Users" --> D1
 ```
 
 ---
