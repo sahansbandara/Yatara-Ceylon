@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -10,6 +10,18 @@ import { Loader2, User, Building2, Car, Shield, Users, Mail, Lock, Phone, ArrowR
 type AuthMode = 'login' | 'signup';
 
 export default function EliteLoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-deep-emerald">
+                <Loader2 className="w-8 h-8 animate-spin text-antique-gold" />
+            </div>
+        }>
+            <LoginContent />
+        </Suspense>
+    );
+}
+
+function LoginContent() {
     const [authMode, setAuthMode] = useState<AuthMode>('login');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
