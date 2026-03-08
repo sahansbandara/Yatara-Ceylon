@@ -4,10 +4,12 @@ export interface IPayment extends Document {
     bookingId: Types.ObjectId;
     invoiceId?: Types.ObjectId;
     amount: number;
-    provider: 'PAYHERE' | 'MANUAL';
+    provider: 'PAYHERE' | 'STRIPE' | 'MANUAL';
     status: 'INITIATED' | 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELED' | 'CHARGEDBACK';
     orderId?: string;
     payherePaymentId?: string;
+    stripeSessionId?: string;
+    stripePaymentIntentId?: string;
     md5sigVerified?: boolean;
     rawNotifyPayload?: any;
     method?: 'CASH' | 'BANK' | 'CARD_OTHER' | 'ONLINE';
@@ -34,7 +36,7 @@ const PaymentSchema = new Schema<IPayment>(
         amount: { type: Number, required: true, min: 0 },
         provider: {
             type: String,
-            enum: ['PAYHERE', 'MANUAL'],
+            enum: ['PAYHERE', 'STRIPE', 'MANUAL'],
             default: 'MANUAL',
         },
         status: {
@@ -44,6 +46,8 @@ const PaymentSchema = new Schema<IPayment>(
         },
         orderId: { type: String, unique: true, sparse: true },
         payherePaymentId: { type: String },
+        stripeSessionId: { type: String },
+        stripePaymentIntentId: { type: String },
         md5sigVerified: { type: Boolean },
         rawNotifyPayload: { type: Schema.Types.Mixed },
         method: {
