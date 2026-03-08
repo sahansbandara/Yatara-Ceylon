@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Script from 'next/script';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -105,7 +106,7 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
             }
             const bookingData = await bookingRes.json();
 
-            // 2. If there's an amount to pay, initiate Stripe Checkout
+            // 2. If there's an amount to pay, initiate PayHere
             if (amounts.hasPayment && amounts.advance > 0) {
                 const itemLabel = pkg
                     ? `20% Advance - ${pkg.title}`
@@ -113,7 +114,7 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                         ? `20% Advance - ${vehicle.model} Transfer`
                         : `20% Advance - Booking ${bookingData.bookingNo}`;
 
-                const payRes = await fetch('/api/stripe/checkout', {
+                const payRes = await fetch('/api/payhere/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -146,12 +147,31 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                     return;
                 }
 
-                // Redirect to Stripe Checkout
-                if (payData.sessionUrl) {
-                    setStatus({ success: true, message: 'Redirecting to secure payment page...' });
-                    window.location.href = payData.sessionUrl;
+                // 3. Trigger PayHere SDK Popup
+                // @ts-ignore
+                if (typeof window !== 'undefined' && window.payhere) {
+                    // @ts-ignore
+                    window.payhere.onCompleted = function onCompleted(orderId: string) {
+                        setStatus({ success: true, message: 'Payment completed successfully. Validating...' });
+                        window.location.href = `/payment/return?order_id=${orderId}`;
+                    };
+                    // @ts-ignore
+                    window.payhere.onDismissed = function onDismissed() {
+                        setStatus({ success: false, message: 'Payment popup was dismissed. Your booking is saved — you can pay later.' });
+                        setLoading(false);
+                    };
+                    // @ts-ignore
+                    window.payhere.onError = function onError(error: any) {
+                        console.error('PayHere error', error);
+                        setStatus({ success: false, message: 'An error occurred with the payment gateway.' });
+                        setLoading(false);
+                    };
+                    // @ts-ignore
+                    window.payhere.startPayment(payData.fields);
                 } else {
-                    throw new Error('Failed to create payment session');
+                    console.error('PayHere SDK not loaded');
+                    setStatus({ success: false, message: 'Payment gateway SDK not loaded. Your booking is saved.' });
+                    setLoading(false);
                 }
             } else {
                 setStatus({ success: true, message: 'Booking request sent successfully. We will contact you soon.' });
@@ -281,6 +301,8 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                     )}
                 </Button>
             </form>
+
+            <Script src="https://sandbox.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
         </>
     );
 }
