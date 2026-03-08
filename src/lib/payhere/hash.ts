@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { PAYHERE_MERCHANT_ID, PAYHERE_MERCHANT_SECRET } from './config';
+import { PAYHERE_MERCHANT_ID, getMerchantSecret } from './config';
 
 /**
  * Generate PayHere hash for creating a payment.
@@ -10,7 +10,7 @@ export const generatePayhereHash = (orderId: string, amount: string | number, cu
 
     const merchantSecretHash = crypto
         .createHash('md5')
-        .update(PAYHERE_MERCHANT_SECRET)
+        .update(getMerchantSecret())
         .digest('hex')
         .toUpperCase();
 
@@ -36,7 +36,7 @@ export const verifyPayhereSignature = (
 ) => {
     const merchantSecretHash = crypto
         .createHash('md5')
-        .update(PAYHERE_MERCHANT_SECRET)
+        .update(getMerchantSecret())
         .digest('hex')
         .toUpperCase();
 
@@ -50,3 +50,4 @@ export const verifyPayhereSignature = (
 
     return expectedSig === md5sig;
 };
+
