@@ -93,23 +93,42 @@ export default function TermsPage() {
                                 <button
                                     key={link.id}
                                     onClick={() => scrollToSection(link.id)}
-                                    className={`w-full flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-all duration-300 ${activeSection === link.id
-                                            ? 'bg-deep-emerald text-antique-gold shadow-md'
-                                            : 'text-gray-500 hover:bg-gray-100 hover:text-deep-emerald'
+                                    className={`w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm transition-all duration-300 ${activeSection === link.id
+                                            ? 'bg-white/40 border border-white/60 shadow-[0_4px_12px_rgba(0,0,0,0.05)] backdrop-blur-md text-deep-emerald font-medium relative overflow-hidden'
+                                            : 'text-gray-500 hover:bg-white/50 hover:text-deep-emerald border border-transparent'
                                         }`}
                                 >
-                                    <span className="font-light tracking-wide">{link.label}</span>
-                                    {activeSection === link.id && <ChevronRight className="w-3.5 h-3.5" />}
+                                    {activeSection === link.id && (
+                                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/50 to-white/0 translate-x-[-100%] animate-[shimmer_2s_infinite]" />
+                                    )}
+                                    <span className={`font-light tracking-wide relative z-10 ${activeSection === link.id ? 'font-medium' : ''}`}>{link.label}</span>
+                                    {activeSection === link.id && <ChevronRight className="w-3.5 h-3.5 text-antique-gold relative z-10" />}
                                 </button>
                             ))}
                         </nav>
 
-                        {/* Elite Trust Badge */}
-                        <div className="mt-12 p-6 border border-deep-emerald/10 rounded-2xl bg-gradient-to-br from-white to-gray-50/50">
-                            <Image src="/images/yatara-symbol-dark.svg" alt="Yatara" width={32} height={32} className="mb-4 opacity-80" />
-                            <p className="text-xs text-gray-500 leading-relaxed font-light">
-                                These terms establish the legal foundation of our commitment to you, ensuring a seamless, prestigious, and legally protected travel experience.
-                            </p>
+                        {/* Elite Trust Badge Image */}
+                        <div className="mt-12 rounded-2xl overflow-hidden border border-deep-emerald/10 bg-white/50 backdrop-blur-sm shadow-sm relative group">
+                            <div className="relative h-40 w-full">
+                                <Image
+                                    src="/images/policies/terms-badge.webp"
+                                    alt="Yatara Ceylon Legal Commitment"
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                <div className="absolute bottom-3 left-4 right-4">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Scale className="w-4 h-4 text-antique-gold" />
+                                        <span className="text-white text-xs font-semibold tracking-wider font-nav">LEGAL BASIS</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-4">
+                                <p className="text-xs text-gray-500 leading-relaxed font-light">
+                                    These terms establish the legal foundation of our commitment to you, ensuring a seamless, prestigious, and legally protected travel experience.
+                                </p>
+                            </div>
                         </div>
                     </aside>
 
