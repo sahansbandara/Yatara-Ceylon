@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Script from 'next/script';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -323,8 +322,6 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                     )}
                 </Button>
             </form>
-
-            <Script src="https://sandbox.payhere.lk/lib/payhere.js" strategy="beforeInteractive" />
         </>
     );
 }

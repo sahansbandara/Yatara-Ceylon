@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { CurrencyProvider } from '@/lib/CurrencyContext';
 import './globals.css';
 
@@ -50,6 +51,7 @@ export default function RootLayout({
                 />
             </head>
             <body className="min-h-screen bg-background font-sans antialiased">
+                <Script src="https://sandbox.payhere.lk/lib/payhere.js" strategy="beforeInteractive" />
                 <CurrencyProvider>
                     {children}
                 </CurrencyProvider>
