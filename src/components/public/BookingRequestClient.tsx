@@ -87,6 +87,28 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
         setLoading(true);
         setStatus(null);
 
+        // Date validation
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const fromDate = new Date(form.dates.from);
+        const toDate = new Date(form.dates.to);
+
+        if (!form.dates.from || !form.dates.to) {
+            setStatus({ success: false, message: 'Please select both Date From and Date To.' });
+            setLoading(false);
+            return;
+        }
+        if (fromDate < today) {
+            setStatus({ success: false, message: 'Date From cannot be in the past.' });
+            setLoading(false);
+            return;
+        }
+        if (toDate <= fromDate) {
+            setStatus({ success: false, message: 'Date To must be after Date From.' });
+            setLoading(false);
+            return;
+        }
+
         try {
             // 1. Create booking via public API
             const bookingPayload: any = {
@@ -261,11 +283,11 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
                     <div className="space-y-2">
                         <Label htmlFor="dateFrom">Date From</Label>
-                        <Input id="dateFrom" type="date" required value={form.dates.from} onChange={e => setForm({ ...form, dates: { ...form.dates, from: e.target.value } })} />
+                        <Input id="dateFrom" type="date" required min={new Date().toISOString().split('T')[0]} value={form.dates.from} onChange={e => setForm({ ...form, dates: { ...form.dates, from: e.target.value } })} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="dateTo">Date To</Label>
-                        <Input id="dateTo" type="date" required value={form.dates.to} onChange={e => setForm({ ...form, dates: { ...form.dates, to: e.target.value } })} />
+                        <Input id="dateTo" type="date" required min={form.dates.from || new Date().toISOString().split('T')[0]} value={form.dates.to} onChange={e => setForm({ ...form, dates: { ...form.dates, to: e.target.value } })} />
                     </div>
                 </div>
 
@@ -302,7 +324,7 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                 </Button>
             </form>
 
-            <Script src="https://sandbox.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
+            <Script src="https://sandbox.payhere.lk/lib/payhere.js" strategy="beforeInteractive" />
         </>
     );
 }
