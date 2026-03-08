@@ -282,13 +282,17 @@ export function Footer() {
                         <p className="text-[10px] font-nav tracking-[0.15em] text-white/45 uppercase">
                             &copy; {new Date().getFullYear()} Yatara Ceylon. All Rights Reserved.
                         </p>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-wrap">
                             <Link href="/terms" className="text-[10px] font-nav tracking-[0.12em] text-white/45 uppercase hover:text-white/70 transition-colors duration-300">
                                 Terms &amp; Conditions
                             </Link>
                             <span className="text-white/20 text-[8px]">|</span>
                             <Link href="/privacy" className="text-[10px] font-nav tracking-[0.12em] text-white/45 uppercase hover:text-white/70 transition-colors duration-300">
                                 Privacy Policy
+                            </Link>
+                            <span className="text-white/20 text-[8px]">|</span>
+                            <Link href="/return-policy" className="text-[10px] font-nav tracking-[0.12em] text-white/45 uppercase hover:text-white/70 transition-colors duration-300">
+                                Return Policy
                             </Link>
                             <span className="text-white/20 text-[8px]">|</span>
                             <Link href="/sitemap.xml" className="text-[10px] font-nav tracking-[0.12em] text-white/45 uppercase hover:text-white/70 transition-colors duration-300">

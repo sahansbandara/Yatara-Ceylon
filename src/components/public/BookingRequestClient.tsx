@@ -168,32 +168,20 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                     return;
                 }
 
-                // 3. Trigger PayHere SDK Popup
-                // @ts-ignore
-                if (typeof window !== 'undefined' && window.payhere) {
-                    // @ts-ignore
-                    window.payhere.onCompleted = function onCompleted(orderId: string) {
-                        setStatus({ success: true, message: 'Payment completed successfully. Validating...' });
-                        window.location.href = `/payment/return?order_id=${orderId}`;
-                    };
-                    // @ts-ignore
-                    window.payhere.onDismissed = function onDismissed() {
-                        setStatus({ success: false, message: 'Payment popup was dismissed. Your booking is saved — you can pay later.' });
-                        setLoading(false);
-                    };
-                    // @ts-ignore
-                    window.payhere.onError = function onError(error: any) {
-                        console.error('PayHere error', error);
-                        setStatus({ success: false, message: 'An error occurred with the payment gateway.' });
-                        setLoading(false);
-                    };
-                    // @ts-ignore
-                    window.payhere.startPayment(payData.fields);
-                } else {
-                    console.error('PayHere SDK not loaded');
-                    setStatus({ success: false, message: 'Payment gateway SDK not loaded. Your booking is saved.' });
-                    setLoading(false);
-                }
+                // 3. Redirect to PayHere Checkout via hidden form POST
+                const payForm = document.createElement('form');
+                payForm.method = 'POST';
+                payForm.action = payData.checkoutUrl;
+                // Populate hidden fields
+                Object.entries(payData.fields as Record<string, string>).forEach(([key, value]) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = String(value);
+                    payForm.appendChild(input);
+                });
+                document.body.appendChild(payForm);
+                payForm.submit();
             } else {
                 setStatus({ success: true, message: 'Booking request sent successfully. We will contact you soon.' });
                 setLoading(false);
