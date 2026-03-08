@@ -15,105 +15,92 @@ export default function AuthoritySection() {
     });
 
     /* ── Subtle parallax ── */
-    const leftY = useTransform(scrollYProgress, [0, 1], [30, -30]);
-    const rightY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
-    const leftScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.02, 1, 0.99]);
-    const rightScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.99, 1, 1.01]);
-    const textOpacity = useTransform(scrollYProgress, [0.08, 0.28], [0, 1]);
-    const textY = useTransform(scrollYProgress, [0.08, 0.28], [24, 0]);
+    const leftY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+    const rightY = useTransform(scrollYProgress, [0, 1], [-30, 30]);
+    const textOpacity = useTransform(scrollYProgress, [0.05, 0.25], [0, 1]);
+    const textY = useTransform(scrollYProgress, [0.05, 0.25], [30, 0]);
 
     return (
         <section
             ref={sectionRef}
-            className="relative py-24 md:py-32 lg:py-40 bg-[#FCFBF9] overflow-hidden"
+            className="relative py-32 md:py-40 lg:py-48 bg-white overflow-hidden"
         >
-            {/* Barely-there warmth */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-[#F8F6F2]/40 pointer-events-none" />
+            <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 xl:px-24 relative z-10">
 
-            <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-
-                {/* ═══ Full-width headline (Walkers-style, above grid) ═══ */}
+                {/* ═══ Walkers-Style Massive Headline ═══ */}
                 <motion.div
                     style={{ opacity: textOpacity, y: textY }}
-                    className="text-center mb-16 md:mb-20 lg:mb-24 will-change-transform"
+                    className="text-center mb-20 md:mb-32 will-change-transform"
                 >
-                    <h2 className="text-[2.5rem] md:text-[3.5rem] lg:text-[4.25rem] font-display text-deep-emerald leading-[1.05] tracking-tight">
+                    <h2 className="text-[3rem] md:text-[4.5rem] lg:text-[5.5rem] font-serif text-neutral-900 leading-[1.05] tracking-tight">
                         Sri Lanka&rsquo;s Premier
                         <br />
-                        <span className="text-deep-emerald/80">Private Travel Curators</span>
+                        <span className="font-semibold">Destination Management Company</span>
                     </h2>
                 </motion.div>
 
-                {/* ═══ 3-column grid (images + content) ═══ */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-start">
+                {/* ═══ 3-column structured grid (Walkers Style: Image -> Text -> Image) ═══ */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
-                    {/* ── Left Image (portrait) ── */}
+                    {/* ── Left Image (portrait, pulls up) ── */}
                     <motion.div
-                        style={{ y: leftY, scale: leftScale }}
-                        className="lg:col-span-4 order-2 lg:order-1 will-change-transform"
+                        style={{ y: leftY }}
+                        className="lg:col-span-4 order-2 lg:order-1 will-change-transform h-full flex flex-col justify-end"
                     >
-                        <div className="relative aspect-[2/3] w-full max-w-[340px] mx-auto lg:mx-0 rounded-2xl overflow-hidden">
+                        <div className="relative aspect-[3/4] w-full max-w-[380px] mx-auto lg:mr-auto lg:ml-0 rounded-2xl overflow-hidden shadow-2xl shadow-black/5">
                             <Image
                                 src="/images/home/authority-left.webp"
                                 alt="A traveler experiencing Sri Lanka's scenic beauty"
                                 fill
-                                sizes="(max-width: 1024px) 80vw, 28vw"
+                                sizes="(max-width: 1024px) 80vw, 30vw"
                                 className="object-cover"
                             />
                         </div>
                     </motion.div>
 
-                    {/* ── Center Text ── */}
-                    <motion.div
-                        style={{ opacity: textOpacity }}
-                        className="lg:col-span-4 order-1 lg:order-2 flex flex-col justify-center lg:pt-6 will-change-transform"
-                    >
-                        {/* Bold subheading */}
-                        <p className="text-base md:text-lg font-semibold text-neutral-800 mb-5 leading-snug">
-                            Experience the enchantment of Sri Lanka with Yatara Ceylon…
-                        </p>
+                    {/* ── Center Text (Static) ── */}
+                    <div className="lg:col-span-4 order-1 lg:order-2 flex flex-col justify-center">
+                        <h3 className="text-lg md:text-xl font-bold text-neutral-900 mb-6 leading-snug">
+                            Experience the enchantment of Sri Lanka with Yatara Ceylon...
+                        </h3>
 
-                        {/* Body — darker, readable */}
-                        <p className="text-neutral-600 text-[15px] md:text-base leading-[1.75] mb-8">
+                        <p className="text-neutral-600 text-base leading-[1.8] mb-8 font-light">
                             Yatara Ceylon has been crafting private journeys across Sri Lanka for discerning travelers—organizing bespoke tours for couples, families, adventurers, and cultural enthusiasts, as well as curated group experiences and corporate retreats.
                         </p>
 
-                        {/* Proof bullets — specific, credible */}
-                        <ul className="space-y-2.5 mb-10">
-                            <li className="flex items-start gap-3 text-neutral-700 text-[15px] leading-relaxed">
-                                <span className="mt-[7px] h-1.5 w-1.5 rounded-full bg-neutral-900 shrink-0" />
+                        <ul className="space-y-4 mb-12">
+                            <li className="flex items-start gap-4 text-neutral-800 text-base">
+                                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-neutral-900 shrink-0" />
                                 Curated stays across Sri Lanka&rsquo;s finest boutique portfolio
                             </li>
-                            <li className="flex items-start gap-3 text-neutral-700 text-[15px] leading-relaxed">
-                                <span className="mt-[7px] h-1.5 w-1.5 rounded-full bg-neutral-900 shrink-0" />
+                            <li className="flex items-start gap-4 text-neutral-800 text-base">
+                                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-neutral-900 shrink-0" />
                                 Trusted partner for leading global travel experiences
                             </li>
                         </ul>
 
-                        {/* ── Liquid Glass CTA (Walkers circle-icon style, elevated) ── */}
-                        <div className="flex items-center gap-4">
+                        {/* ── Walker Type Solid Button Style ── */}
+                        <div className="flex items-center">
                             <Link
                                 href="/about"
-                                className="group inline-flex items-center gap-3.5 transition-all duration-300"
+                                className="group inline-flex items-center gap-4 transition-all duration-300"
                             >
-                                {/* Glass circle icon */}
-                                <span className="relative flex items-center justify-center w-11 h-11 rounded-full bg-deep-emerald/90 backdrop-blur-md border border-white/20 shadow-lg shadow-deep-emerald/20 group-hover:bg-deep-emerald group-hover:scale-105 group-hover:shadow-xl group-hover:shadow-deep-emerald/30 transition-all duration-300">
-                                    <Plus className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
+                                <span className="relative flex items-center justify-center w-12 h-12 rounded-full bg-[#1A365D] group-hover:bg-deep-emerald transition-colors duration-300">
+                                    <Plus className="w-6 h-6 text-white" strokeWidth={2} />
                                 </span>
-                                {/* Label */}
-                                <span className="text-[12px] tracking-[0.2em] uppercase font-semibold text-deep-emerald group-hover:text-deep-emerald/80 transition-colors duration-300">
-                                    About Us
+                                <span className="text-[13px] tracking-[0.15em] font-bold text-neutral-900 group-hover:text-deep-emerald transition-colors duration-300">
+                                    ABOUT US
                                 </span>
                             </Link>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    {/* ── Right Image (landscape) ── */}
+                    {/* ── Right Image (landscape, pulls down) ── */}
                     <motion.div
-                        style={{ y: rightY, scale: rightScale }}
-                        className="lg:col-span-4 order-3 lg:mt-16 will-change-transform"
+                        style={{ y: rightY }}
+                        className="lg:col-span-4 order-3 lg:mt-24 will-change-transform h-full flex flex-col justify-start"
                     >
-                        <div className="relative aspect-[4/3] w-full max-w-[480px] mx-auto lg:ml-auto rounded-2xl overflow-hidden">
+                        <div className="relative aspect-[5/4] w-full max-w-[420px] mx-auto lg:ml-auto lg:mr-0 rounded-2xl overflow-hidden shadow-2xl shadow-black/5">
                             <Image
                                 src="/images/home/authority-right.webp"
                                 alt="Aerial view of Sri Lanka's pristine coastline"

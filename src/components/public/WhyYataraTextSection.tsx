@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 
 type Stat = { value: number; suffix?: string; label: string };
 type Benefit = { title: string; detail?: string };
@@ -96,7 +97,7 @@ export default function WhyYataraTextSection() {
       { title: "Concierge-led planning", detail: "One specialist plans, books, and manages your journey." },
       { title: "Private logistics", detail: "Seamless transfers with vetted driver-guides." },
       { title: "Curated stays", detail: "Boutique and luxury properties chosen for experience, not volume." },
-      { title: "Pace-first itineraries", detail: "Routes built around comfort\u2014no rushed checklist travel." },
+      { title: "Pace-first itineraries", detail: "Routes built around comfort—no rushed checklist travel." },
       { title: "On-trip support", detail: "Real-time adjustments when conditions or preferences change." },
     ],
     []
@@ -105,57 +106,55 @@ export default function WhyYataraTextSection() {
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.25 });
 
   return (
-    <section className="bg-white">
-      <div ref={ref} className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid grid-cols-1 gap-14 lg:grid-cols-12 lg:items-start">
-          {/* Left: text benefits */}
-          <div className="lg:col-span-6">
-            <p className="text-xs tracking-[0.28em] text-neutral-500">
-              WHY TRAVEL WITH YATARA
-            </p>
+    <section className="bg-[#FCFBF9]">
+      <div ref={ref} className="mx-auto max-w-[1440px] px-6 md:px-12 lg:px-16 xl:px-24 py-32 lg:py-48">
+        <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:items-start">
 
-            <h2 className="mt-4 text-4xl leading-tight text-neutral-900">
-              A private journey, executed quietly well.
+          {/* ── Left: Headlines & Benefits List ── */}
+          <div className="lg:col-span-5 flex flex-col">
+            <h2 className="text-[2.5rem] md:text-[3.5rem] font-semibold text-neutral-900 leading-tight mb-12">
+              Why Book with<br />Yatara Ceylon?
             </h2>
 
-            <p className="mt-4 max-w-xl text-neutral-700">
-              We tailor each itinerary to your pace—combining refined stays,
-              curated access, and seamless logistics across Sri Lanka.
-            </p>
-
-            <div className="mt-10 space-y-6">
+            <div className="flex flex-col">
               {benefits.map((b, i) => (
-                <div key={i} className="border-l border-neutral-200 pl-5">
-                  <p className="text-neutral-900">{b.title}</p>
-                  {b.detail ? (
-                    <p className="mt-1 text-sm text-neutral-600">{b.detail}</p>
-                  ) : null}
+                <div key={i} className="flex items-start gap-4 py-5 border-b border-neutral-200/80 last:border-0 group">
+                  <div className="mt-1">
+                    {/* Consistent branding icon style */}
+                    <CheckCircle2 className="w-5 h-5 text-neutral-400 group-hover:text-[#1A365D] transition-colors" strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <h4 className="text-base text-neutral-900 font-medium mb-1 group-hover:text-[#1A365D] transition-colors">{b.title}</h4>
+                    {b.detail && (
+                      <p className="text-sm text-neutral-500 font-light leading-relaxed">{b.detail}</p>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-10 flex items-center gap-6">
-              <a
-                href="/about"
-                className="rounded-full bg-neutral-900 px-6 py-3 text-sm text-white"
-              >
-                About Yatara
-              </a>
+            <div className="mt-12">
               <a
                 href="/inquire"
-                className="text-sm text-neutral-900 underline underline-offset-4"
+                className="rounded-full bg-[#1A365D] px-8 py-3.5 text-sm font-bold tracking-[0.1em] text-white hover:bg-deep-emerald transition-colors inline-block"
               >
-                Inquire →
+                START PLANNING
               </a>
             </div>
           </div>
 
-          {/* Right: text stats */}
-          <div className="lg:col-span-6">
-            <div className="grid grid-cols-2 gap-8">
+          {/* ── Right: Intro Text & Massive Stats ── */}
+          <div className="lg:col-span-6 lg:col-start-7 lg:mt-6">
+
+            <p className="text-xl md:text-2xl text-neutral-700 leading-[1.6] font-light mb-20 max-w-2xl">
+              At Yatara Ceylon, we meticulously customize each itinerary to fit your exact preferences, ensuring a flawless and unique private journey.
+            </p>
+
+            <div className="grid grid-cols-2 gap-x-8 gap-y-16">
               {stats.map((s, i) => (
-                <div key={i} className="border-t border-neutral-200 pt-6">
-                  <div className="text-5xl font-semibold leading-none text-neutral-900">
+                <div key={i} className="flex flex-col">
+                  {/* Huge Walker-Style numbers */}
+                  <div className="text-[4rem] md:text-[5rem] font-bold leading-none text-[#1A365D] tracking-tight mb-4">
                     <CountUp
                       value={s.value}
                       suffix={s.suffix ?? "+"}
@@ -163,14 +162,14 @@ export default function WhyYataraTextSection() {
                       durationMs={1100}
                     />
                   </div>
-                  <p className="mt-3 text-xs tracking-[0.22em] text-neutral-600">
-                    {s.label.toUpperCase()}
+                  {/* Small tracking caps label */}
+                  <p className="text-xs md:text-sm tracking-[0.15em] font-medium text-neutral-600 uppercase w-2/3">
+                    {s.label}
                   </p>
                 </div>
               ))}
             </div>
 
-            {/* Stats grid end */}
           </div>
         </div>
       </div>
