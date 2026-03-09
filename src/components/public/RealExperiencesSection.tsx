@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import Image from 'next/image';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, EffectFade } from 'swiper/modules';
@@ -49,10 +50,18 @@ const testimonials = [
 ];
 
 export default function RealExperiencesSection() {
+    const sectionRef = useRef<HTMLDivElement>(null);
     const swiperRef = useRef<SwiperType | null>(null);
 
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ['start end', 'end start'],
+    });
+
+    const girlParallaxY = useTransform(scrollYProgress, [0, 1], ['25%', '-15%']);
+
     return (
-        <section className="relative w-full overflow-hidden bg-white">
+        <section ref={sectionRef} className="relative w-full overflow-hidden bg-white">
             {/* ── Top: Testimonials content on white background ── */}
             <div className="relative w-full max-w-4xl mx-auto px-6 pt-20 pb-16">
                 {/* Faded "real stories" watermark behind heading */}
@@ -178,8 +187,11 @@ export default function RealExperiencesSection() {
                     }}
                 />
 
-                {/* Person image — positioned center-left of the landscape */}
-                <div className="absolute bottom-0 left-[12%] sm:left-[14%] md:left-[16%] lg:left-[18%] z-[2] w-[220px] h-[340px] sm:w-[260px] sm:h-[400px] md:w-[300px] md:h-[460px] lg:w-[340px] lg:h-[520px]">
+                {/* Person image — positioned center-left of the landscape, now with stronger parallax */}
+                <motion.div
+                    style={{ y: girlParallaxY }}
+                    className="absolute bottom-0 left-[12%] sm:left-[14%] md:left-[16%] lg:left-[18%] z-[2] w-[220px] h-[340px] sm:w-[260px] sm:h-[400px] md:w-[300px] md:h-[460px] lg:w-[340px] lg:h-[520px] will-change-transform"
+                >
                     <Image
                         src="/images/home/testimonials-person.webp"
                         alt="Traveler enjoying Sri Lanka"
@@ -189,7 +201,7 @@ export default function RealExperiencesSection() {
                         quality={90}
                         loading="lazy"
                     />
-                </div>
+                </motion.div>
             </div>
         </section>
     );

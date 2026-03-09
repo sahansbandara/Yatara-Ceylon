@@ -34,7 +34,7 @@ const PACKAGES = [
 export default function DedicatedBrands() {
     return (
         <section
-            className="relative w-full h-[100dvh] min-h-[750px] max-h-[900px] flex flex-col justify-center overflow-hidden py-12"
+            className="relative w-full h-[100dvh] min-h-[600px] max-h-[850px] flex flex-col justify-center overflow-hidden py-10"
         >
             {/* Section Background Image */}
             <div className="absolute inset-0 w-full h-full z-0">
@@ -60,7 +60,7 @@ export default function DedicatedBrands() {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-12 lg:mb-16 will-change-transform w-full"
                 >
-                    <h2 className="text-4xl md:text-[52px] lg:text-[56px] font-sans font-medium text-black leading-[1.1] mb-6 tracking-tight drop-shadow-sm">
+                    <h2 className="text-3xl md:text-[40px] lg:text-[44px] font-sans font-medium text-black leading-[1.1] mb-4 tracking-tight drop-shadow-sm">
                         A Symphony of <br className="hidden md:block" />
                         <span className="font-bold">Exclusive Experiences</span>
                     </h2>
@@ -72,7 +72,7 @@ export default function DedicatedBrands() {
                 </motion.div>
 
                 {/* Grid — 3 moments */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full h-[450px] lg:h-[500px]">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full h-[400px] lg:h-[450px]">
                     {PACKAGES.map((pkg, idx) => (
                         <Link href={pkg.href} key={pkg.id} className="block w-full h-full group">
                             <motion.div
