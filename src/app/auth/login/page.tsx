@@ -178,6 +178,7 @@ export default function EliteLoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     className="w-full bg-white/5 backdrop-blur-md border border-white/10 text-white h-12 pl-11 pr-4 rounded-md focus:outline-none focus:border-antique-gold/70 focus:bg-white/10 placeholder:text-white/30 tracking-wide hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all duration-300 shadow-inner"
+                                    className="w-full bg-white/8 border border-white/15 text-gray-900 h-12 pl-10 pr-4 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-gray-600 text-sm"
                                 />
                             </div>
                             <div className="relative group">
@@ -189,11 +190,14 @@ export default function EliteLoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     className="w-full bg-transparent backdrop-blur-sm border border-white/10 text-white h-14 pl-12 pr-12 rounded-xl focus:outline-none focus:border-antique-gold focus:bg-black/20 placeholder:text-white/50 tracking-wide hover:border-white/30 transition-all duration-300"
+                                    className="w-full bg-white/8 border border-white/15 text-gray-900 h-12 pl-10 pr-12 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-gray-600 text-sm"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-antique-gold transition-colors"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-900"
+>>>>>>> Stashed changes
                                 >
                                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
@@ -226,6 +230,7 @@ export default function EliteLoginPage() {
                                     onChange={(e) => setName(e.target.value)}
                                     required
                                     className="w-full bg-transparent backdrop-blur-sm border border-white/10 text-white h-14 pl-12 pr-4 rounded-xl focus:outline-none focus:border-antique-gold focus:bg-black/20 placeholder:text-white/50 tracking-wide hover:border-white/30 transition-all duration-300"
+                                    className="w-full bg-white/8 border border-white/15 text-gray-900 h-12 pl-10 pr-4 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-gray-600 text-sm"
                                 />
                             </div>
                             <div className="relative group">
@@ -237,6 +242,8 @@ export default function EliteLoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     className="w-full bg-transparent backdrop-blur-sm border border-white/10 text-white h-14 pl-12 pr-4 rounded-xl focus:outline-none focus:border-antique-gold focus:bg-black/20 placeholder:text-white/50 tracking-wide hover:border-white/30 transition-all duration-300"
+                                    className="w-full bg-white/8 border border-white/15 text-gray-900 h-12 pl-10 pr-4 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-gray-600 text-sm"
+
                                 />
                             </div>
                             <div className="relative group">
@@ -247,6 +254,9 @@ export default function EliteLoginPage() {
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
                                     className="w-full bg-transparent backdrop-blur-sm border border-white/10 text-white h-14 pl-12 pr-4 rounded-xl focus:outline-none focus:border-antique-gold focus:bg-black/20 placeholder:text-white/50 tracking-wide hover:border-white/30 transition-all duration-300"
+
+                                    className="w-full bg-white/8 border border-white/15 text-gray-900 h-12 pl-10 pr-4 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-gray-600 text-sm"
+
                                 />
                             </div>
                             <div className="relative group">
@@ -258,11 +268,17 @@ export default function EliteLoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     className="w-full bg-transparent backdrop-blur-sm border border-white/10 text-white h-14 pl-12 pr-12 rounded-xl focus:outline-none focus:border-antique-gold focus:bg-black/20 placeholder:text-white/50 tracking-wide hover:border-white/30 transition-all duration-300"
+
+                                    className="w-full bg-white/8 border border-white/15 text-gray-900 h-12 pl-10 pr-12 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-gray-600 text-sm"
+
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-antique-gold transition-colors"
+
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-900"
+
                                 >
                                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
