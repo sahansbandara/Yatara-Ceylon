@@ -18,6 +18,7 @@ async function getJourneys() {
         const packages = await Package.find({
             isPublished: true,
             isDeleted: false,
+            type: { $ne: 'transfer' },
             $or: [{ type: 'journey' }, { type: { $exists: false } }],
         })
             .sort({ isFeatured: -1, homeRank: -1, createdAt: -1 })

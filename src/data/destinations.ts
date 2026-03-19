@@ -13,7 +13,7 @@ export interface DestinationItem {
     travelStyleTags: string[];
 }
 
-const districtImage = (slug: string) => `/images/districts/${slug}.jpg`;
+const districtImage = (slug: string) => `/images/districts/${slug}.webp`;
 
 export const DESTINATIONS: DestinationItem[] = [
     {

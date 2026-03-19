@@ -22,7 +22,9 @@
 
 - [System Architecture](#-system-architecture)
 - [Use Case Diagram](#-use-case-diagram)
+- [Activity Diagram](#-activity-diagram)
 - [Data Flow Diagram (DFD)](#-data-flow-diagram-dfd)
+- [ER Diagram](#-core-database-schema-er-diagram)
 - [High-Level Flow](#-high-level-flow)
 - [Tech Stack](#-tech-stack)
 - [Management Modules](#-management-modules)
@@ -42,9 +44,7 @@
 
 The system follows a **layered architecture** separating the public tourism website, authentication layer, role-based portals, and backend operations.
 
-<div align="center">
-  <img src="docs/images/system-architecture.webp" alt="System Architecture" width="800" style="border-radius: 8px;">
-</div>
+> 📐 **[View Full System Architecture Diagram →](docs/diagrams/system_architecture.html)** *(Open in browser for interactive SVG)*
 
 ```mermaid
 graph TB
@@ -152,6 +152,16 @@ flowchart LR
     UC4 -. "Vehicle/Hotel<br>Assignments" .-> F & H
 ```
 
+> 📐 **[View Full Use Case Diagram →](docs/diagrams/use_case_diagram.html)** *(Open in browser for detailed SVG diagram)*
+
+---
+
+## 🔄 Activity Diagram
+
+The Activity Diagram illustrates the end-to-end **Booking & Payment Flow** using swimlanes across Customer, Website, API Server, PayHere Gateway, and Admin roles.
+
+> 📐 **[View Full Activity Diagram →](docs/diagrams/activity_diagram.html)** *(Open in browser for detailed SVG diagram with swimlanes)*
+
 ---
 
 ## 🌊 Data Flow Diagram (DFD)
@@ -211,10 +221,6 @@ flowchart TD
 ## 🔄 High-Level Flow
 
 The end-to-end user journey from package discovery to booking completion:
-
-<div align="center">
-  <img src="docs/images/booking-flow.webp" alt="Booking Flow" width="800" style="border-radius: 8px;">
-</div>
 
 ```mermaid
 sequenceDiagram
@@ -287,6 +293,8 @@ sequenceDiagram
 ## 🗄️ Core Database Schema (ER Diagram)
 
 This entity-relationship diagram maps out how the primary collections in the MongoDB database interact to form the complete tourism management system.
+
+> 📐 **[View Full ER Diagram →](docs/diagrams/er_diagram.html)** *(Open in browser for detailed SVG entity-relationship diagram)*
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px', 'fontFamily': 'Helvetica'}}}%%

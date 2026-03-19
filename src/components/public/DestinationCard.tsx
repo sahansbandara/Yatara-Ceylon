@@ -12,8 +12,10 @@ interface DestinationCardProps {
         region?: string;
         bestSeason?: string;
         idealNights?: string;
+        travelStyleTags?: string[];
     };
     variant?: 'default' | 'tall' | 'featured';
+    index?: number;
 }
 
 export default function DestinationCard({ destination, variant = 'default' }: DestinationCardProps) {
@@ -49,6 +51,20 @@ export default function DestinationCard({ destination, variant = 'default' }: De
                     </div>
                 )}
 
+                {/* Travel style tags — top right, visible on hover */}
+                {destination.travelStyleTags && destination.travelStyleTags.length > 0 && (
+                    <div className="absolute top-4 right-4 z-10 flex flex-wrap gap-1.5 justify-end max-w-[140px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                        {destination.travelStyleTags.slice(0, 2).map((tag) => (
+                            <span
+                                key={tag}
+                                className="px-2 py-0.5 text-[8px] tracking-[0.15em] uppercase text-[#D4AF37]/80 bg-[#D4AF37]/[0.08] backdrop-blur-md border border-[#D4AF37]/15 rounded-full"
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
+
                 {/* Glass info panel — bottom */}
                 <div className="absolute bottom-0 left-0 right-0 z-10">
                     <div className="liquid-glass-panel rounded-t-2xl px-5 py-4 md:px-6 md:py-5">
@@ -59,8 +75,15 @@ export default function DestinationCard({ destination, variant = 'default' }: De
 
                         {/* Luxury micro-label */}
                         {destination.luxuryLabel && (
-                            <p className="text-[11px] tracking-[0.12em] text-[#D4AF37]/70 font-light mb-2.5 uppercase">
+                            <p className="text-[11px] tracking-[0.12em] text-[#D4AF37]/70 font-light mb-2 uppercase">
                                 {destination.luxuryLabel}
+                            </p>
+                        )}
+
+                        {/* Description — reveals on hover */}
+                        {destination.description && (
+                            <p className="text-[11px] text-white/35 leading-relaxed line-clamp-2 mb-2.5 max-h-0 group-hover:max-h-[40px] overflow-hidden transition-all duration-500 ease-out opacity-0 group-hover:opacity-100">
+                                {destination.description}
                             </p>
                         )}
 
