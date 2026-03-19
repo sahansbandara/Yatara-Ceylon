@@ -13,8 +13,13 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
 const getStoreState = () => useBuildTourStore.getState();
 
+// Sri Lanka bounds — tight framing for 70% fill
+const SRI_LANKA_BOUNDS: [[number, number], [number, number]] = [
+    [5.92, 79.52],  // SW corner
+    [9.85, 81.88],  // NE corner
+];
+
 interface MapViewportProps {
-    /** Currently selected region from the step builder */
     activeRegionId?: string | null;
 }
 
@@ -40,7 +45,6 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
         let cancelled = false;
         (async () => {
             try {
-                // Ensure L is globally available for leaflet.markercluster
                 const leaflet = await import('leaflet');
                 if (typeof window !== 'undefined') {
                     (window as any).L = leaflet.default || leaflet;
@@ -61,29 +65,35 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
         return () => { cancelled = true; };
     }, []);
 
-    // Init map
+    // Init map — dark premium theme with tight Sri Lanka framing
     useEffect(() => {
         if (!L || !mapContainerRef.current || mapRef.current) return;
 
         const map = L.map(mapContainerRef.current, {
-            center: [7.8731, 80.7718],
-            zoom: 7,
-            minZoom: 6,
+            center: [7.85, 80.75],
+            zoom: 8,
+            minZoom: 7,
             maxZoom: 15,
             zoomControl: false,
             attributionControl: false,
-            maxBounds: [[3.5, 76.0], [12.2, 85.5]],
-            maxBoundsViscosity: 0.8,
-            zoomSnap: 0.5,
+            maxBounds: [[4.5, 78.0], [11.0, 83.5]],
+            maxBoundsViscosity: 0.9,
+            zoomSnap: 0.25,
             zoomDelta: 0.5,
         });
 
-        // No tile layer as user explicitly requested "only need to display sri lanka map only"
-
-        L.control.zoom({ position: 'topright' }).addTo(map);
+        // Custom zoom control — positioned right
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
         mapRef.current = map;
 
-        setTimeout(() => map.invalidateSize(), 250);
+        // Tight initial fit to Sri Lanka bounds
+        setTimeout(() => {
+            map.invalidateSize();
+            map.fitBounds(SRI_LANKA_BOUNDS, {
+                padding: [30, 40],
+                animate: false,
+            });
+        }, 300);
 
         return () => {
             map.remove();
@@ -91,7 +101,7 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
         };
     }, [L]);
 
-    // GeoJSON district boundaries — curated regions style
+    // GeoJSON district boundaries — elite dark theme
     useEffect(() => {
         if (!L || !mapRef.current || !geoData) return;
 
@@ -99,44 +109,45 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
             mapRef.current.removeLayer(geoJsonLayerRef.current);
         }
 
+        // Elite color palette for districts
         const dimStyle = {
-            fillColor: '#a5d6a7', // light green
+            fillColor: '#1a3a2e',
             weight: 1,
-            opacity: 0.8,
-            color: '#ffffff',
-            fillOpacity: 0.2,
+            opacity: 0.5,
+            color: 'rgba(212, 175, 55, 0.08)',
+            fillOpacity: 0.4,
         };
 
         const defaultStyle = {
-            fillColor: '#a5d6a7', // reference map light green
+            fillColor: '#1f4d3d',
             weight: 1.5,
-            opacity: 0.9,
-            color: '#ffffff', // white borders
-            fillOpacity: 0.85,
+            opacity: 0.7,
+            color: 'rgba(212, 175, 55, 0.12)',
+            fillOpacity: 0.7,
         };
 
         const hoverStyle = {
-            fillColor: '#81c784',
-            fillOpacity: 0.95,
+            fillColor: '#2a6b54',
+            fillOpacity: 0.85,
             weight: 2,
-            color: '#ffffff',
+            color: 'rgba(212, 175, 55, 0.35)',
             opacity: 1,
         };
 
         const selectedStyle = {
-            fillColor: '#fbc02d', // appealing highlight
+            fillColor: '#2a6b54',
             fillOpacity: 0.9,
-            weight: 2,
-            color: '#ffffff',
+            weight: 2.5,
+            color: '#D4AF37',
             opacity: 1,
         };
 
         const regionActiveStyle = {
-            fillColor: '#66bb6a',
+            fillColor: '#245a47',
             weight: 1.5,
-            opacity: 1,
-            color: '#ffffff',
-            fillOpacity: 0.9,
+            opacity: 0.9,
+            color: 'rgba(212, 175, 55, 0.2)',
+            fillOpacity: 0.8,
         };
 
         geoJsonLayerRef.current = L.geoJSON(geoData, {
@@ -144,10 +155,8 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                 const shapeName = (feature?.properties?.shapeName || '').replace(/\s*District$/i, '').trim();
                 const districtId = resolveGeoNameToId(shapeName);
 
-                // Selected district
                 if (districtId === selectedDistrictId) return selectedStyle;
 
-                // If a region is active, highlight its districts, dim others
                 if (activeRegionId) {
                     const regionOfDistrict = DISTRICT_TO_REGION[districtId];
                     if (regionOfDistrict === activeRegionId) return regionActiveStyle;
@@ -161,7 +170,6 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                 const districtId = resolveGeoNameToId(shapeName);
                 const district = districtId ? getDistrictById(districtId) : null;
 
-                // Luxury label tooltip
                 const tooltipContent = district
                     ? `<div class="district-tooltip-luxury">
                         <span class="district-tooltip-name">${district.name}</span>
@@ -175,15 +183,15 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                     className: 'build-tour-district-tooltip',
                 });
 
-                // Hover
+                // Hover — smooth style change
                 layer.on('mouseover', () => {
                     if (districtId !== selectedDistrictId) {
                         layer.setStyle(hoverStyle);
+                        layer.bringToFront();
                     }
                 });
                 layer.on('mouseout', () => {
                     if (districtId !== selectedDistrictId) {
-                        // Re-apply appropriate style
                         if (activeRegionId) {
                             const regionOfDistrict = DISTRICT_TO_REGION[districtId];
                             layer.setStyle(regionOfDistrict === activeRegionId ? regionActiveStyle : dimStyle);
@@ -193,24 +201,28 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                     }
                 });
 
-                // Click — select district & zoom
+                // Click — select district with smooth animated fitBounds
                 layer.on('click', () => {
                     const newId = selectedDistrictId === districtId ? null : districtId;
                     setSelectedDistrictId(newId);
-                    // Use master district name (not GeoJSON shapeName) for consistent filtering
                     const masterName = district ? district.name : shapeName;
                     setDistrictFilter(newId ? masterName : null);
 
                     if (newId && mapRef.current) {
                         const bounds = layer.getBounds();
                         mapRef.current.fitBounds(bounds, {
-                            padding: [40, 40],
+                            padding: [60, 60],
                             maxZoom: 11,
                             animate: true,
-                            duration: 0.6,
+                            duration: 0.9,
                         });
                     } else if (mapRef.current) {
-                        mapRef.current.flyTo([7.8731, 80.7718], 8, { duration: 0.6 });
+                        // Smooth return to island overview
+                        mapRef.current.fitBounds(SRI_LANKA_BOUNDS, {
+                            padding: [30, 40],
+                            animate: true,
+                            duration: 0.8,
+                        });
                     }
                 });
             },
@@ -226,7 +238,6 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
             markersRef.current = null;
         }
 
-        // Only show markers when a district is selected
         if (!selectedDistrictId) return;
 
         const selectedDistrict = getDistrictById(selectedDistrictId);
@@ -311,7 +322,7 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
         updateMarkers();
     }, [updateMarkers]);
 
-    // Route polyline
+    // Route polyline — gold luxury line
     useEffect(() => {
         if (!L || !mapRef.current) return;
 
@@ -326,74 +337,57 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                 weight: 3,
                 opacity: 0.8,
                 dashArray: '10, 6',
-                smoothFactor: 1,
+                smoothFactor: 1.5,
             }).addTo(mapRef.current);
         } else if (stops.length >= 2) {
             const positions = stops.map((s) => [s.place.lat, s.place.lng] as [number, number]);
             routeLayerRef.current = L.polyline(positions, {
                 color: '#D4AF37',
-                weight: 2,
-                opacity: 0.5,
+                weight: 2.5,
+                opacity: 0.6,
                 dashArray: '8, 8',
+                smoothFactor: 1.5,
             }).addTo(mapRef.current);
         }
     }, [L, route, stops]);
 
-    // Fit bounds to stops
+    // Fit bounds to stops — smooth animation
     useEffect(() => {
         if (!L || !mapRef.current || stops.length === 0) return;
         const bounds = L.latLngBounds(stops.map((s) => [s.place.lat, s.place.lng]));
         mapRef.current.fitBounds(bounds, {
-            padding: [60, 60],
+            padding: [80, 80],
             maxZoom: 11,
             animate: true,
-            duration: 0.8,
+            duration: 0.9,
         });
     }, [L, stops]);
 
-    // Fetch route when stops change
+    // Fetch route on stops change
     useEffect(() => {
         const timer = setTimeout(() => { fetchRoute(); }, 500);
         return () => clearTimeout(timer);
     }, [stops, fetchRoute]);
 
-    // Fly to region when activeRegionId changes
+    // Fly to region
     useEffect(() => {
         if (!L || !mapRef.current || !activeRegionId) return;
-        // Import regions dynamically to avoid circular deps
         import('@/lib/regions').then(({ getRegionById }) => {
             const region = getRegionById(activeRegionId);
             if (region) {
-                mapRef.current.flyTo(region.center, region.zoom, { duration: 0.8 });
+                mapRef.current.flyTo(region.center, region.zoom, { duration: 0.9 });
             }
         });
     }, [L, activeRegionId]);
 
     return (
-        <div
-            className="w-full h-full relative"
-            style={{
-                background: 'radial-gradient(circle at center, #ffffff 0%, #e0f2fe 60%, #bae6fd 100%)'
-            }}
-        >
-            {/* SVG drop shadow filter for the polygons */}
-            <svg style={{ width: 0, height: 0, position: 'absolute' }}>
-                <defs>
-                    <filter id="dropshadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="2" dy="5" stdDeviation="6" floodColor="#0ea5e9" floodOpacity="0.3" />
-                    </filter>
-                </defs>
-            </svg>
+        <div className="w-full h-full relative">
+            {/* Dark premium map background */}
+            <div ref={mapContainerRef} className="w-full h-full z-0" />
 
-            <div
-                ref={mapContainerRef}
-                className="w-full h-full z-0"
-                style={{ filter: 'url(#dropshadow)' }}
-            />
-
-            {/* Floating Stats Overlay */}
+            {/* Floating Stats Overlay — glass effect */}
             <div className="absolute top-4 left-4 z-[1000]">
-                <div className="map-stats-overlay rounded-xl px-4 py-3 flex items-center gap-5">
+                <div className="map-stats-overlay rounded-xl px-4 py-2.5 flex items-center gap-4">
                     <div className="flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5 text-antique-gold/70" />
                         <span className="text-white/80 text-[11px] font-serif">{stops.length}</span>
@@ -418,7 +412,7 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                 </div>
             </div>
 
-            {/* Selected district indicator & Reset Button */}
+            {/* Selected district badge + Reset */}
             {selectedDistrictId && (
                 <div className="absolute top-4 right-16 z-[1000] flex flex-col items-end gap-2">
                     <div className="map-stats-overlay rounded-full px-4 py-2 flex items-center gap-2.5 border border-antique-gold/30 bg-deep-emerald/80 backdrop-blur-md">
@@ -434,7 +428,11 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                             setSelectedDistrictId(null);
                             setDistrictFilter(null);
                             if (mapRef.current) {
-                                mapRef.current.flyTo([7.8731, 80.7718], 8, { duration: 0.6 });
+                                mapRef.current.fitBounds(SRI_LANKA_BOUNDS, {
+                                    padding: [30, 40],
+                                    animate: true,
+                                    duration: 0.8,
+                                });
                             }
                         }}
                         className="px-4 py-2 bg-antique-gold/10 hover:bg-antique-gold/20 border border-antique-gold/50 text-antique-gold rounded-full text-[10px] font-nav uppercase tracking-wider transition-all backdrop-blur-md shadow-lg"

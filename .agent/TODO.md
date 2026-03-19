@@ -3,12 +3,29 @@
 > **Agent: Read "Last Session" FIRST before doing anything else.**
 
 ## Current Milestone
-All changes pushed to GitHub — ready for next feature sprint
+Build-Tour Elite Rebuild — upgrading planner to elite product experience
 
 ---
 
 ## In Progress
 <!-- None -->
+
+## Recently Completed
+- [x] Build-Tour V3 Elite Rebuild — planner-first page with liquid glass, 100vh-fit sections, premium map
+  - [x] Added elite planner CSS system (~200 lines: planner-shell-glass, planner-sidebar-glass, planner-map-container, planner-toolbar-glass, quick-start-card, region-card-glass, place-card-glass, how-step-glass, tour-card-elite, testimonial-glass-dark, custom Leaflet zoom controls, gold-pulse-ring animation)
+  - [x] Rebuilt BuildTourHero — compact 38vh, product-led copy, trust pills, dual CTA
+  - [x] QuickStartModes — 3 entry mode cards (Map, Style, Route) with glass hover
+  - [x] Rebuilt BuildTourShell — 32/68 desktop split, calc(100vh-180px), planner-shell-glass, floating toolbar, fullscreen toggle
+  - [x] Rebuilt MapViewport — dark premium theme, tight Sri Lanka framing (70% fill), smooth fitBounds (0.9s), gold district states
+  - [x] Rebuilt ConciergePanel — trip snapshot card, glass region/district/place cards, hover popup effects
+  - [x] Created HowItWorks strip — 3 glass step cards
+  - [x] Upgraded SelectedStopsPanel — premium drag cards, pace indicator, district count, concierge note
+  - [x] Upgraded RouteSummaryBar — glass stat cards, tighter layout
+  - [x] Upgraded PopularTours — removed broken % metrics, elite glass hover cards (tour-card-elite)
+  - [x] Upgraded ThemeCarousel — added duration, bestSeason, regions, mood metadata + "Load Theme" CTA + Honeymoon Edit theme
+  - [x] Upgraded Testimonials — dark theme matching planner page, dot indicators, concierge tie-in
+  - [x] Reordered page.tsx — Hero → QuickStart → Planner → HowItWorks → PopularTours → Themes → Parallax → Testimonials → CTA
+  - [x] TypeScript compiles cleanly (tsc --noEmit passes)
 
 ---
 
@@ -64,21 +81,26 @@ All changes pushed to GitHub — ready for next feature sprint
 
 ## Last Session
 
-**Date**: 2026-03-19 (evening)
-**Agent**: Antigravity
+**Date**: 2026-03-19 (night)
+**Agent**: Cowork / Opus 4.6
 **What was done**:
-- Committed & pushed JSON-LD changes (commit 2f7bd13)
-- All JSON-LD structured data tasks complete across all public pages
+- Build-Tour V3 Elite Rebuild — in progress
+- Added full elite planner CSS system to globals.css (~200 lines of new glass/hover/map styles)
+- Rebuilt BuildTourHero — compact 38vh hero with product-led framing, trust pills, dual CTAs
+- Rebuilt BuildTourShell — 32/68 split, calc(100vh-180px) planner height, planner-shell-glass, floating toolbar, fullscreen toggle
+- Rebuilt MapViewport — dark premium theme, tight Sri Lanka framing (70% fill), smooth fitBounds (0.9s), gold district states, floating stats overlay
+- Rebuilt ConciergePanel — trip snapshot card, glass region/district/place cards, hover popup effects, category filters
+- Created HowItWorks strip component — 3 glass step cards
 
 **What to do next**:
-- Add real images to transfer routes (user provides)
-- Connect WhatsApp link to real number (user provides)
-- Add SLTDA certification logo (user provides)
-- Mobile test transfer detail pages
-- Any new feature requests from user
+- Add theme images: /images/themes/honeymoon-edit.webp (new theme added)
+- Visual QA on 13-inch MacBook — verify all sections fit viewport folds
+- Test mobile bottom drawer on real device
+- Consider adding fullscreen map keyboard shortcut (Escape to exit)
+- Real images for tours still needed
 
 **Current state**:
-- Branch: main (all pushed, commit 2f7bd13)
-- Dev server: running (npm run dev, port 3000)
-- Build status: clean build, no errors
-- Any errors: none known
+- Branch: main (uncommitted changes — ready to commit)
+- Files changed: globals.css, BuildTourHero.tsx, BuildTourShell.client.tsx, MapViewport.client.tsx, ConciergePanel.client.tsx, HowItWorks.tsx (new), QuickStartModes.tsx, SelectedStopsPanel.client.tsx, RouteSummaryBar.client.tsx, PopularTours.tsx, ThemeCarousel.tsx, Testimonials.tsx, page.tsx
+- Build status: TypeScript compiles cleanly (tsc --noEmit passes)
+- Key design decisions: planner height = calc(100vh-180px), map fills 68% width, dark map theme (#1a3a2e base), gold hover/selection states, each section fits one viewport fold

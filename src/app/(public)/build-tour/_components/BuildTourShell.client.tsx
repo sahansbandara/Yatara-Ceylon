@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Map, List, Route, ChevronUp, ChevronDown, Compass, MapPin, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Map, List, Route, ChevronUp, ChevronDown, Compass, Maximize2, RotateCcw } from 'lucide-react';
 import { useBuildTourStore } from '@/lib/trip/store/useBuildTourStore';
 import type { Place, PanelTab } from '@/lib/trip/types';
 import curatedPlaces from '@/data/places/sri-lanka.curated.json';
@@ -13,8 +13,11 @@ import RouteSummaryBar from './RouteSummaryBar.client';
 const MapViewport = dynamic(() => import('./MapViewport.client'), {
     ssr: false,
     loading: () => (
-        <div className="w-full h-full flex items-center justify-center bg-[#0a0f0d]">
-            <div className="w-8 h-8 border-2 border-antique-gold/30 border-t-antique-gold rounded-full animate-spin" />
+        <div className="w-full h-full flex items-center justify-center bg-[#081c16]">
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 border-2 border-antique-gold/30 border-t-antique-gold rounded-full animate-spin" />
+                <span className="text-white/20 text-[10px] uppercase tracking-wider font-serif">Loading map...</span>
+            </div>
         </div>
     ),
 });
@@ -33,72 +36,134 @@ export default function BuildTourShell() {
     const drawerExpanded = useBuildTourStore((s) => s.drawerExpanded);
     const setDrawerExpanded = useBuildTourStore((s) => s.setDrawerExpanded);
 
-    // Active region for map-lite experience
     const [activeRegionId, setActiveRegionId] = useState<string | null>(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
-    // Load curated places on mount
     useEffect(() => {
         setPlaces(curatedPlaces as Place[]);
     }, [setPlaces]);
 
+    const toggleFullscreen = () => {
+        setIsFullscreen(!isFullscreen);
+    };
+
     return (
-        <section id="trip-builder" className="relative w-full bg-[#0a0f0d]">
-            {/* ── Desktop Layout ─────────────────────────────────── */}
-            <div className="hidden lg:flex h-[85vh] min-h-[600px]">
-                {/* Left Panel — Concierge Experience */}
-                <div className="w-[420px] xl:w-[460px] flex-shrink-0 flex flex-col bg-black/10 backdrop-blur-xl border-r border-white/10 shadow-[20px_0_40px_rgba(0,0,0,0.5)] z-10 relative">
-                    {/* Tab bar */}
-                    <div className="flex border-b border-white/5">
-                        {TABS.map((tab) => {
-                            const Icon = tab.icon;
-                            const isActive = activeTab === tab.id;
-                            return (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-[10px] uppercase tracking-[0.2em] font-serif transition-all duration-300 relative ${isActive
-                                        ? 'text-antique-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]'
-                                        : 'text-white/30 hover:text-white/50'
-                                        }`}
-                                >
-                                    <Icon className="w-3.5 h-3.5" />
-                                    {tab.label}
-                                    {tab.id === 'stops' && stops.length > 0 && (
-                                        <span className="w-4 h-4 flex items-center justify-center bg-antique-gold text-deep-emerald text-[8px] font-bold rounded-full">
-                                            {stops.length}
-                                        </span>
-                                    )}
-                                    {isActive && (
-                                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-antique-gold shadow-[0_0_8px_rgba(212,175,55,0.6)]" />
-                                    )}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Tab content */}
-                    <div className="flex-1 overflow-hidden">
-                        {activeTab === 'discover' && (
-                            <ConciergePanel
-                                activeRegionId={activeRegionId}
-                                onSelectRegion={setActiveRegionId}
-                            />
-                        )}
-                        {activeTab === 'stops' && <SelectedStopsPanel />}
-                        {activeTab === 'summary' && <RouteSummaryBar />}
-                    </div>
+        <section
+            id="trip-builder"
+            className={`relative w-full bg-[#0a0f0d] transition-all duration-500 ${isFullscreen ? 'fixed inset-0 z-[9999]' : ''}`}
+        >
+            {/* ── Section Label ─────────────────────────────────── */}
+            {!isFullscreen && (
+                <div className="flex items-center justify-center gap-3 pt-6 pb-4">
+                    <div className="h-px w-10 bg-antique-gold/20" />
+                    <span className="text-antique-gold/60 text-[9px] tracking-[0.3em] uppercase font-serif">
+                        Interactive Planner
+                    </span>
+                    <div className="h-px w-10 bg-antique-gold/20" />
                 </div>
+            )}
 
-                {/* Right Map — Curated Regions */}
-                <div className="flex-1 relative">
-                    <MapViewport activeRegionId={activeRegionId} />
+            {/* ── Desktop Layout ─────────────────────────────────── */}
+            <div className={`hidden lg:block ${isFullscreen ? 'px-0' : 'px-4 sm:px-6 lg:px-8 pb-6'}`}>
+                <div className={`planner-shell-glass rounded-2xl overflow-hidden ${isFullscreen ? 'rounded-none h-screen' : ''}`}
+                    style={{ height: isFullscreen ? '100vh' : 'calc(100vh - 180px)', minHeight: '600px', maxHeight: isFullscreen ? '100vh' : '860px' }}
+                >
+                    <div className="flex h-full">
+                        {/* Left Panel — 32% width */}
+                        <div className="w-[32%] min-w-[320px] max-w-[420px] flex-shrink-0 flex flex-col planner-sidebar-glass relative z-10">
+                            {/* Tab bar */}
+                            <div className="flex border-b border-white/5">
+                                {TABS.map((tab) => {
+                                    const Icon = tab.icon;
+                                    const isActive = activeTab === tab.id;
+                                    return (
+                                        <button
+                                            key={tab.id}
+                                            onClick={() => setActiveTab(tab.id)}
+                                            className={`flex-1 flex items-center justify-center gap-2 py-3 text-[10px] uppercase tracking-[0.2em] font-serif transition-all duration-300 relative ${isActive
+                                                ? 'text-antique-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]'
+                                                : 'text-white/30 hover:text-white/50'
+                                                }`}
+                                        >
+                                            <Icon className="w-3.5 h-3.5" />
+                                            {tab.label}
+                                            {tab.id === 'stops' && stops.length > 0 && (
+                                                <span className="w-4 h-4 flex items-center justify-center bg-antique-gold text-deep-emerald text-[8px] font-bold rounded-full">
+                                                    {stops.length}
+                                                </span>
+                                            )}
+                                            {isActive && (
+                                                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-antique-gold shadow-[0_0_8px_rgba(212,175,55,0.6)]" />
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Tab content */}
+                            <div className="flex-1 overflow-hidden">
+                                {activeTab === 'discover' && (
+                                    <ConciergePanel
+                                        activeRegionId={activeRegionId}
+                                        onSelectRegion={setActiveRegionId}
+                                    />
+                                )}
+                                {activeTab === 'stops' && <SelectedStopsPanel />}
+                                {activeTab === 'summary' && <RouteSummaryBar />}
+                            </div>
+                        </div>
+
+                        {/* Right Map — 68% width with dark theme */}
+                        <div className="flex-1 relative planner-map-container">
+                            {/* Planner toolbar */}
+                            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000]">
+                                <div className="planner-toolbar-glass rounded-full px-2 py-1.5 flex items-center gap-1">
+                                    {[
+                                        { label: 'Explore', id: 'discover' as PanelTab },
+                                        { label: 'Stops', id: 'stops' as PanelTab },
+                                        { label: 'Route', id: 'summary' as PanelTab },
+                                    ].map((item) => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => setActiveTab(item.id)}
+                                            className={`px-3 py-1.5 rounded-full text-[9px] uppercase tracking-wider font-serif transition-all duration-300 ${activeTab === item.id
+                                                ? 'bg-antique-gold/20 text-antique-gold border border-antique-gold/30'
+                                                : 'text-white/30 hover:text-white/50'
+                                                }`}
+                                        >
+                                            {item.label}
+                                        </button>
+                                    ))}
+                                    <div className="w-px h-4 bg-white/10 mx-1" />
+                                    <button
+                                        onClick={() => {
+                                            setActiveRegionId(null);
+                                            useBuildTourStore.getState().setDistrictFilter(null);
+                                        }}
+                                        className="p-1.5 rounded-full text-white/25 hover:text-antique-gold/70 hover:bg-antique-gold/10 transition-all"
+                                        title="Reset view"
+                                    >
+                                        <RotateCcw className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                        onClick={toggleFullscreen}
+                                        className="p-1.5 rounded-full text-white/25 hover:text-antique-gold/70 hover:bg-antique-gold/10 transition-all"
+                                        title="Toggle fullscreen"
+                                    >
+                                        <Maximize2 className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <MapViewport activeRegionId={activeRegionId} />
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* ── Mobile Layout ──────────────────────────────────── */}
             <div className="lg:hidden relative h-[85vh] min-h-[550px]">
-                {/* Fullscreen map */}
-                <div className="absolute inset-0">
+                <div className="absolute inset-0 planner-map-container">
                     <MapViewport activeRegionId={activeRegionId} />
                 </div>
 
@@ -108,7 +173,6 @@ export default function BuildTourShell() {
                         }`}
                 >
                     <div className="bg-black/20 backdrop-blur-xl rounded-t-2xl h-full flex flex-col overflow-hidden border-t border-[rgba(212,175,55,0.15)]">
-                        {/* Sheet handle */}
                         <button
                             onClick={() => setDrawerExpanded(!drawerExpanded)}
                             className="flex items-center justify-between px-5 py-3 border-b border-white/5"
@@ -128,7 +192,6 @@ export default function BuildTourShell() {
                             </div>
                         </button>
 
-                        {/* Mobile tabs */}
                         {drawerExpanded && (
                             <>
                                 <div className="flex border-b border-white/5">

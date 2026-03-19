@@ -1,13 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { MapPin, Plus, Check, Sparkles, Car, Clock, ChevronRight, Globe } from 'lucide-react';
 import { useBuildTourStore } from '@/lib/trip/store/useBuildTourStore';
 import { ALL_CATEGORIES, CATEGORY_LABELS, getCategoryColor } from '@/lib/trip/types';
 import { getDistrictById, formatTransferPrice, ALL_DISTRICTS } from '@/lib/districts';
 import { SIGNATURE_REGIONS, DISTRICT_TO_REGION, getRegionById } from '@/lib/regions';
 import type { PlaceCategory, Place } from '@/lib/trip/types';
-import type { SignatureRegion } from '@/lib/regions';
 
 interface ConciergePanelProps {
     activeRegionId: string | null;
@@ -21,7 +20,6 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
     const toggleCategory = useBuildTourStore((s) => s.toggleCategory);
     const addStop = useBuildTourStore((s) => s.addStop);
     const isInStops = useBuildTourStore((s) => s.isInStops);
-    const getFilteredPlaces = useBuildTourStore((s) => s.getFilteredPlaces);
     const route = useBuildTourStore((s) => s.route);
 
     const selectedDistrict = filters.district
@@ -30,7 +28,6 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
 
     const activeRegion = activeRegionId ? getRegionById(activeRegionId) : null;
 
-    // Places in the selected district
     const districtPlaces = useMemo(() => {
         if (!selectedDistrict) return [];
         return places.filter(
@@ -39,46 +36,59 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
         );
     }, [places, selectedDistrict]);
 
-    // Unique districts in current stops
     const stopsDistricts = useMemo(() => {
         return new Set(stops.map((s) => s.place.district));
     }, [stops]);
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            {/* ── Journey Summary Card ─────────────────────────── */}
+            {/* ── Journey Summary Card — glass effect ────────── */}
             <div className="px-4 pt-4 pb-3">
-                <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                        <Sparkles className="w-3.5 h-3.5 text-antique-gold/60" />
-                        <span className="text-[10px] text-antique-gold/70 uppercase tracking-[0.25em] font-nav font-medium">
-                            Your Journey
-                        </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                        <div>
-                            <p className="text-white/80 font-serif text-lg leading-none">{stops.length}</p>
-                            <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">Stops</p>
+                <div className="rounded-xl border border-antique-gold/[0.08] bg-antique-gold/[0.03] p-4 relative overflow-hidden">
+                    {/* Subtle gold gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-antique-gold/[0.04] via-transparent to-transparent pointer-events-none" />
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Sparkles className="w-3.5 h-3.5 text-antique-gold/60" />
+                            <span className="text-[10px] text-antique-gold/70 uppercase tracking-[0.25em] font-nav font-medium">
+                                Trip Snapshot
+                            </span>
                         </div>
-                        <div>
-                            <p className="text-white/80 font-serif text-lg leading-none">{stopsDistricts.size}</p>
-                            <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">Districts</p>
+                        <div className="grid grid-cols-3 gap-3">
+                            <div>
+                                <p className="text-white/80 font-serif text-lg leading-none">{stops.length}</p>
+                                <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">Stops</p>
+                            </div>
+                            <div>
+                                <p className="text-white/80 font-serif text-lg leading-none">{stopsDistricts.size}</p>
+                                <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">Districts</p>
+                            </div>
+                            <div>
+                                <p className="text-white/80 font-serif text-lg leading-none">
+                                    {route ? `~${route.totalKm}` : '—'}
+                                </p>
+                                <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">km</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-white/80 font-serif text-lg leading-none">
-                                {route ? `~${route.totalKm}` : '—'}
-                            </p>
-                            <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">km</p>
-                        </div>
+                        {/* Concierge note */}
+                        {stops.length >= 2 && (
+                            <div className="mt-3 pt-3 border-t border-white/5">
+                                <p className="text-antique-gold/40 text-[9px] font-light italic">
+                                    {stops.length <= 4 ? 'Relaxed pace — ideal for luxury travel' :
+                                     stops.length <= 7 ? 'Balanced route — good coverage with comfort' :
+                                     'Dense itinerary — consider spreading across more days'}
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* ── Content Area ─────────────────────────────────── */}
+            {/* ── Content Area ────────────────────────────────── */}
             <div className="flex-1 overflow-y-auto px-4 pb-4 custom-scrollbar">
-                {/* State 1: No region selected — show region cards */}
+                {/* State 1: No region — region cards with glass hover */}
                 {!activeRegionId && !selectedDistrict && (
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         <div className="flex items-center gap-2 mb-1">
                             <Globe className="w-3 h-3 text-white/20" />
                             <span className="text-[9px] text-white/30 uppercase tracking-[0.2em] font-nav">
@@ -89,9 +99,9 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                             <button
                                 key={region.id}
                                 onClick={() => onSelectRegion(region.id)}
-                                className="w-full text-left rounded-xl border border-white/[0.06] bg-white/[0.02] p-3.5 hover:bg-white/[0.05] hover:border-antique-gold/15 transition-all duration-300 group"
+                                className="w-full text-left rounded-xl region-card-glass p-3.5 group"
                             >
-                                <div className="flex items-start justify-between">
+                                <div className="flex items-start justify-between relative z-10">
                                     <div className="flex-1">
                                         <p className="font-serif text-[13px] text-white/85 group-hover:text-white transition-colors">
                                             {region.name}
@@ -112,9 +122,9 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                     </div>
                 )}
 
-                {/* State 2: Region selected, no district — show districts in region */}
+                {/* State 2: Region selected, no district */}
                 {activeRegion && !selectedDistrict && (
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         <button
                             onClick={() => onSelectRegion(null)}
                             className="flex items-center gap-1.5 text-[9px] text-antique-gold/50 hover:text-antique-gold font-nav uppercase tracking-wider transition-colors mb-1"
@@ -137,7 +147,7 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                             return (
                                 <div
                                     key={dId}
-                                    className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3.5"
+                                    className="rounded-xl region-card-glass p-3.5"
                                 >
                                     <p className="font-serif text-[13px] text-white/80">{district.name}</p>
                                     <p className="text-antique-gold/40 text-[10px] mt-0.5 font-light italic">{district.luxuryLabel}</p>
@@ -154,31 +164,33 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                     </div>
                 )}
 
-                {/* State 3: District selected — show places in district */}
+                {/* State 3: District selected — places with glass cards */}
                 {selectedDistrict && (
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         <button
                             onClick={() => {
                                 useBuildTourStore.getState().setDistrictFilter(null);
-                                // Don't clear region
                             }}
                             className="flex items-center gap-1.5 text-[9px] text-antique-gold/50 hover:text-antique-gold font-nav uppercase tracking-wider transition-colors mb-1"
                         >
                             ← {activeRegion ? activeRegion.name : 'All Regions'}
                         </button>
 
-                        {/* District header */}
-                        <div className="rounded-xl border border-antique-gold/10 bg-antique-gold/[0.03] p-4 mb-2">
-                            <p className="font-serif text-base text-white/90">{selectedDistrict.name}</p>
-                            <p className="text-antique-gold/50 text-[11px] mt-0.5 font-light italic">{selectedDistrict.luxuryLabel}</p>
-                            <div className="flex items-center gap-4 mt-3">
-                                <div className="flex items-center gap-1.5 text-white/30">
-                                    <Car className="w-3 h-3" />
-                                    <span className="text-[9px] font-nav">from {formatTransferPrice(selectedDistrict.transferStart)}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 text-white/30">
-                                    <MapPin className="w-3 h-3" />
-                                    <span className="text-[9px] font-nav">{districtPlaces.length} places</span>
+                        {/* District header — gold accent glass */}
+                        <div className="rounded-xl border border-antique-gold/10 bg-antique-gold/[0.03] p-4 mb-2 relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-br from-antique-gold/[0.05] via-transparent to-transparent pointer-events-none" />
+                            <div className="relative z-10">
+                                <p className="font-serif text-base text-white/90">{selectedDistrict.name}</p>
+                                <p className="text-antique-gold/50 text-[11px] mt-0.5 font-light italic">{selectedDistrict.luxuryLabel}</p>
+                                <div className="flex items-center gap-4 mt-3">
+                                    <div className="flex items-center gap-1.5 text-white/30">
+                                        <Car className="w-3 h-3" />
+                                        <span className="text-[9px] font-nav">from {formatTransferPrice(selectedDistrict.transferStart)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 text-white/30">
+                                        <MapPin className="w-3 h-3" />
+                                        <span className="text-[9px] font-nav">{districtPlaces.length} places</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -195,7 +207,7 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                             </div>
                         </div>
 
-                        {/* Interest Filter Chips */}
+                        {/* Category filters */}
                         <div className="mb-2">
                             <span className="text-[9px] text-white/25 uppercase tracking-[0.2em] font-nav">Filter by Interest</span>
                             <div className="flex flex-wrap gap-1.5 mt-2">
@@ -219,21 +231,17 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                             </div>
                         </div>
 
-                        {/* Place cards */}
-                        <div className="space-y-2">
+                        {/* Place cards — with glass hover popup effect */}
+                        <div className="space-y-1.5">
                             {districtPlaces.map((place) => {
                                 const inStops = isInStops(place.id);
                                 const color = getCategoryColor(place.category);
-                                // Apply category filter if active
                                 if (filters.categories.length > 0 && !filters.categories.includes(place.category)) return null;
 
                                 return (
                                     <div
                                         key={place.id}
-                                        className={`group rounded-xl p-3 transition-all duration-300 cursor-pointer ${inStops
-                                            ? 'bg-antique-gold/[0.06] border border-antique-gold/15'
-                                            : 'hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06]'
-                                        }`}
+                                        className={`group rounded-xl p-3 cursor-pointer place-card-glass ${inStops ? 'in-trip' : ''}`}
                                         onClick={() => !inStops && addStop(place)}
                                     >
                                         <div className="flex items-start justify-between">

@@ -243,7 +243,7 @@ export default function PopularTours() {
                     </p>
                 </div>
 
-                {/* Tour Grid */}
+                {/* Tour Grid — Elite Glass Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {POPULAR_TOURS.map((tour) => {
                         const resolved = resolvedPlaces(tour.placeIds);
@@ -251,28 +251,28 @@ export default function PopularTours() {
                             <button
                                 key={tour.id}
                                 onClick={() => setPreviewTour(tour)}
-                                className="group relative rounded-2xl overflow-hidden border border-white/10 text-left transition-all duration-500 hover:-translate-y-2 hover:scale-[1.03] hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+                                className="group relative rounded-2xl overflow-hidden border border-white/10 text-left tour-card-elite"
                             >
                                 {/* Background Image */}
                                 <div
-                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
+                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
                                     style={{ backgroundImage: `url(${tour.image})` }}
                                 />
                                 {/* BG Gradient & Liquid Glass Effect */}
-                                <div className={`absolute inset-0 bg-gradient-to-t ${tour.gradient} opacity-40 group-hover:opacity-60 transition-opacity duration-500`} />
-                                <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-transparent to-[#0a0f0d]/90" />
+                                <div className={`absolute inset-0 bg-gradient-to-t ${tour.gradient} opacity-50 group-hover:opacity-70 transition-opacity duration-500`} />
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-[#0a0f0d]/95" />
 
                                 {/* Content Layer with Glass Border */}
-                                <div className="relative z-10 p-6 flex flex-col h-full min-h-[300px] border border-white/5 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:border-antique-gold/30 transition-colors duration-500">
+                                <div className="relative z-10 p-5 flex flex-col h-full min-h-[280px] border border-white/5 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:border-antique-gold/30 transition-colors duration-500">
                                     {/* Tags */}
-                                    <div className="flex flex-wrap gap-1 mb-3">
+                                    <div className="flex flex-wrap gap-1 mb-2.5">
                                         {tour.tags.map((tag) => (
                                             <span
                                                 key={tag}
-                                                className="px-2 py-0.5 rounded text-[8px] font-serif uppercase tracking-wider border"
+                                                className="px-2 py-0.5 rounded text-[7px] font-nav uppercase tracking-wider border"
                                                 style={{
                                                     color: tour.accent,
-                                                    borderColor: `${tour.accent}30`,
+                                                    borderColor: `${tour.accent}25`,
                                                     backgroundColor: `${tour.accent}08`,
                                                 }}
                                             >
@@ -282,33 +282,27 @@ export default function PopularTours() {
                                     </div>
 
                                     {/* Title & Tagline */}
-                                    <h3 className="font-serif text-lg text-white mb-1 group-hover:text-antique-gold/90 transition-colors">
+                                    <h3 className="font-serif text-base text-white mb-1 group-hover:text-antique-gold/90 transition-colors">
                                         {tour.title}
                                     </h3>
-                                    <p className="text-white/35 text-[11px] font-light leading-relaxed mb-auto">
+                                    <p className="text-white/30 text-[10px] font-light leading-relaxed mb-auto">
                                         {tour.tagline}
                                     </p>
 
-                                    {/* Meta */}
-                                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-white/5">
+                                    {/* Meta — clean, no broken metrics */}
+                                    <div className="flex items-center gap-3 mt-3 pt-2.5 border-t border-white/5">
                                         <div className="flex items-center gap-1">
-                                            <Clock className="w-3 h-3 text-white/25" />
-                                            <span className="text-white/40 text-[10px] font-serif">{tour.duration}</span>
+                                            <Clock className="w-3 h-3 text-antique-gold/40" />
+                                            <span className="text-white/45 text-[9px] font-nav">{tour.duration}</span>
                                         </div>
                                         <div className="flex items-center gap-1">
-                                            <MapPin className="w-3 h-3 text-white/25" />
-                                            <span className="text-white/40 text-[10px] font-serif">{resolved.length} stops</span>
+                                            <MapPin className="w-3 h-3 text-antique-gold/40" />
+                                            <span className="text-white/45 text-[9px] font-nav">{resolved.length} stops</span>
                                         </div>
-                                        <div className="flex items-center gap-1 ml-auto">
-                                            <Users className="w-3 h-3 text-white/25" />
-                                            <span className="text-white/40 text-[10px] font-serif">{tour.popularity}%</span>
-                                        </div>
+                                        <span className="ml-auto text-antique-gold/40 text-[8px] font-nav uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+                                            Load →
+                                        </span>
                                     </div>
-                                </div>
-
-                                {/* Hover arrow */}
-                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <ChevronRight className="w-4 h-4 text-antique-gold/60" />
                                 </div>
                             </button>
                         );
