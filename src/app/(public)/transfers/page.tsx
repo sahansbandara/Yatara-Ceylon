@@ -11,6 +11,7 @@ import {
     ChevronDown,
 } from 'lucide-react';
 
+import { JsonLd, buildTravelAgency, buildFAQPage, buildBreadcrumb } from '@/lib/jsonLd';
 import BookingStrip from '@/components/public/transfers/BookingStrip';
 import TransferCategoryTile from '@/components/public/transfers/TransferCategoryTile';
 import SignatureRouteCard from '@/components/public/transfers/SignatureRouteCard';
@@ -45,6 +46,13 @@ const serviceIcons: Record<string, React.ReactNode> = {
 export default function TransfersPage() {
     return (
         <main className="bg-off-white">
+            {/* ─── SEO Structured Data ─── */}
+            <JsonLd data={buildTravelAgency()} />
+            <JsonLd data={buildFAQPage(transferFaq)} />
+            <JsonLd data={buildBreadcrumb([
+                { name: 'Home', url: '/' },
+                { name: 'Transfers', url: '/transfers' },
+            ])} />
             {/* ═══════════════════════════════════════════════════════════
                 SECTION 1: HERO WITH BOOKING STRIP
                 ═══════════════════════════════════════════════════════════ */}

@@ -9,6 +9,7 @@ import Destination from '@/models/Destination';
 import Package from '@/models/Package';
 import { ArrowLeft, Calendar, Clock, MapPin, Sparkles, Star, Plane, Mountain, ChevronRight } from 'lucide-react';
 import { DESTINATION_BY_SLUG } from '@/data/destinations';
+import { JsonLd, buildDestinationPlace, buildBreadcrumb } from '@/lib/jsonLd';
 
 export const dynamic = 'force-dynamic';
 
@@ -106,6 +107,13 @@ export default async function DestinationDetailPage({ params }: { params: Promis
 
     return (
         <div className="min-h-screen bg-[#f8f7f4] pb-24">
+            {/* ─── SEO Structured Data ─── */}
+            <JsonLd data={buildDestinationPlace(destination)} />
+            <JsonLd data={buildBreadcrumb([
+                { name: 'Home', url: '/' },
+                { name: 'Destinations', url: '/destinations' },
+                { name: destination.title, url: `/destinations/${destination.slug || slug}` },
+            ])} />
             {/* ── Cinematic Hero ── */}
             <div className="relative h-[70vh] min-h-[500px] w-full overflow-hidden">
                 <Image

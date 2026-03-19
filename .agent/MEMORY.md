@@ -37,6 +37,7 @@
 - Transfer page uses `generateStaticParams()` for SSG of category and package pages
 - Image fallback pattern: check if image exists, show placeholder gradient if not
 - Destination images: `.webp` format in `/public/images/districts/slug.webp`, 1600×900px
+- JSON-LD structured data: centralised in `src/lib/jsonLd.tsx` with `<JsonLd data={...} />` component + builder functions per schema type. Injected at top of `<main>` in each page.
 
 ---
 

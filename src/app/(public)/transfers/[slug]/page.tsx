@@ -23,6 +23,7 @@ import {
     getVehicleTier,
     formatLkr,
 } from '@/data/transfers';
+import { JsonLd, buildTransferProduct, buildBreadcrumb } from '@/lib/jsonLd';
 
 /* ───────── Static Params ───────── */
 export function generateStaticParams() {
@@ -78,11 +79,20 @@ export default async function TransferDetailPage(props: {
         notFound();
     }
 
+    const breadcrumb = buildBreadcrumb([
+        { name: 'Home', url: '/' },
+        { name: 'Transfers', url: '/transfers' },
+        { name: transfer.title, url: `/transfers/${transfer.slug}` },
+    ]);
+
     const relatedTransfers = getRelatedTransfers(slug);
     const recommendedTier = getVehicleTier(transfer.vehicleTierRecommended);
 
     return (
         <main className="bg-off-white">
+            {/* ─── SEO Structured Data ─── */}
+            <JsonLd data={buildTransferProduct(transfer)} />
+            <JsonLd data={breadcrumb} />
             {/* ═══════════════════════════════════════════
                 SECTION 1: HERO
                 ═══════════════════════════════════════════ */}

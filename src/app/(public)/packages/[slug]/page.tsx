@@ -7,6 +7,7 @@ import { Check, X, Clock, MapPin, Star, ArrowRight, Sparkles, Users, Compass } f
 import connectDB from '@/lib/mongodb';
 import Package from '@/models/Package';
 import PackagePriceDisplay from '@/components/public/PackagePriceDisplay';
+import { JsonLd, buildTourPackage, buildBreadcrumb } from '@/lib/jsonLd';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,6 +64,13 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
 
     return (
         <div className="min-h-screen bg-off-white pb-24">
+            {/* ─── SEO Structured Data ─── */}
+            <JsonLd data={buildTourPackage(pkg)} />
+            <JsonLd data={buildBreadcrumb([
+                { name: 'Home', url: '/' },
+                { name: 'Journeys', url: '/packages' },
+                { name: pkg.title, url: `/packages/${pkg.slug}` },
+            ])} />
             {/* Hero */}
             <div className="relative h-[55vh] md:h-[65vh] w-full">
                 <Image
