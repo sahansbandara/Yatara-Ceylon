@@ -21,14 +21,12 @@ export default function BuildTourPage() {
             <BuildTourHero />
 
             {/* 2. Quick-start modes — reduce friction before planner */}
-            <QuickStartModes
-                onScrollToBuilder={() => {}}
-                onScrollToThemes={() => {}}
-                onScrollToStarters={() => {}}
-            />
+            <QuickStartModes />
 
             {/* 3. Main planner — the star of the page */}
-            <BuildTourShell />
+            <div id="planner">
+                <BuildTourShell />
+            </div>
 
             {/* 4. How it works — 3-step strip */}
             <HowItWorks />
@@ -39,7 +37,9 @@ export default function BuildTourPage() {
             </div>
 
             {/* 6. Theme shortcuts — functional planner shortcuts */}
-            <ThemeCarousel />
+            <div id="themes">
+                <ThemeCarousel />
+            </div>
 
             {/* 7. Story banner — emotional reinforcement (lower, not interrupting) */}
             <BuildTourParallax />

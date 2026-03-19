@@ -2,34 +2,34 @@
 
 import { Map, Palette, Route } from 'lucide-react';
 
-interface QuickStartModesProps {
-    onScrollToBuilder: () => void;
-    onScrollToThemes: () => void;
-    onScrollToStarters: () => void;
-}
-
-export default function QuickStartModes({ onScrollToBuilder, onScrollToThemes, onScrollToStarters }: QuickStartModesProps) {
+export default function QuickStartModes() {
+    const scrollToId = (id: string) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
     const modes = [
         {
             icon: Map,
             title: 'Start from the Map',
             description: 'Already know your regions? Explore the interactive map and build your route directly.',
             cta: 'Explore Map',
-            action: onScrollToBuilder,
+            action: () => scrollToId('planner'),
         },
         {
             icon: Palette,
             title: 'Start from a Travel Style',
             description: 'Tea trails, safari, heritage, honeymoon — pick a theme and we load the best stops.',
             cta: 'Choose a Style',
-            action: onScrollToThemes,
+            action: () => scrollToId('themes'),
         },
         {
             icon: Route,
             title: 'Start from a Ready Route',
             description: 'Load a curated itinerary loved by other travellers, then edit it freely.',
             cta: 'Load a Route',
-            action: onScrollToStarters,
+            action: () => scrollToId('starter-plans'),
         },
     ];
 
