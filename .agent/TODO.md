@@ -67,23 +67,18 @@ All changes pushed to GitHub — ready for next feature sprint
 **Date**: 2026-03-19 (evening)
 **Agent**: Antigravity
 **What was done**:
-- Created `src/lib/jsonLd.tsx` — centralized JSON-LD utility with `JsonLd` component + 7 builder functions
-- Added Organization + WebSite JSON-LD to `(public)/layout.tsx` (site-wide)
-- Added TravelAgency + FAQPage + BreadcrumbList to `transfers/page.tsx`
-- Added Product/Offer + BreadcrumbList to `transfers/[slug]/page.tsx`
-- Added TouristDestination + BreadcrumbList to `destinations/[slug]/page.tsx`
-- Added TouristTrip/Product + AggregateOffer + BreadcrumbList to `packages/[slug]/page.tsx`
-- Build verified — no errors, all SSG pages generated
+- Committed & pushed JSON-LD changes (commit 2f7bd13)
+- All JSON-LD structured data tasks complete across all public pages
 
 **What to do next**:
-- Add real images to transfer routes
-- Connect WhatsApp link to real number
-- Add SLTDA certification logo
+- Add real images to transfer routes (user provides)
+- Connect WhatsApp link to real number (user provides)
+- Add SLTDA certification logo (user provides)
 - Mobile test transfer detail pages
+- Any new feature requests from user
 
 **Current state**:
-- Branch: main (changes not yet pushed)
+- Branch: main (all pushed, commit 2f7bd13)
 - Dev server: running (npm run dev, port 3000)
 - Build status: clean build, no errors
 - Any errors: none known
-- Files changed: src/lib/jsonLd.tsx (new), layout.tsx, transfers/page.tsx, transfers/[slug]/page.tsx, destinations/[slug]/page.tsx, packages/[slug]/page.tsx
