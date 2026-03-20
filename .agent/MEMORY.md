@@ -40,6 +40,8 @@
 - Build-tour planner layout: 32% left rail / 68% map on desktop. Min-height 600px, max-height 860px, ideal = calc(100vh-180px). Mobile uses 85vh with bottom drawer sheet.
 - Build-tour map framing: Sri Lanka bounds = [[5.92, 79.52], [9.85, 81.88]], padding [30, 40], fills ~70% of map height. District fitBounds uses 0.9s smooth animation with [60, 60] padding.
 - Build-tour color palette: district default #1f4d3d, hover #2a6b54, selected #2a6b54 + gold border, dimmed #1a3a2e. Map bg radial gradient from #1a3a2e to #050e0a.
+- Packages Section (FeaturedJourneysClient) uses very subtle 5% mix-blend-multiply pattern background for luxury feel (`packages-bg-pattern.webp`).
+- Why Yatara counts animation triggers every time using `amount: 0.2` and resetting controls to `"hidden"` when out of view.
 - Transfer page uses `generateStaticParams()` for SSG of category and package pages
 - Image fallback pattern: check if image exists, show placeholder gradient if not
 - Destination images: `.webp` format in `/public/images/districts/slug.webp`, 1600×900px

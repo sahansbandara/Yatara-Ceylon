@@ -157,9 +157,9 @@ const ROLE_LABELS: Record<string, string> = {
     USER: 'Customer',
 };
 
-function SidebarContent({ userRole, userName }: { userRole: string; userName: string }) {
+function SidebarContent({ userRole, userName, isLoading }: { userRole: string; userName: string; isLoading?: boolean }) {
     const pathname = usePathname();
-    const groups = NAV_GROUPS_BY_ROLE[userRole] || NAV_GROUPS_BY_ROLE.USER;
+    const groups = isLoading ? [] : (NAV_GROUPS_BY_ROLE[userRole] || NAV_GROUPS_BY_ROLE.USER);
 
     const handleLogout = async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
@@ -185,9 +185,13 @@ function SidebarContent({ userRole, userName }: { userRole: string; userName: st
             {/* User Info */}
             <div className="px-5 py-3 border-b border-white/[0.04]">
                 <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
-                <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">
-                    {userName || 'User'} <span className="text-off-white/50 font-normal ml-1 text-[10px]">({ROLE_LABELS[userRole] || 'Customer'})</span>
-                </p>
+                {isLoading ? (
+                    <div className="h-4 w-32 bg-white/10 rounded mt-1 animate-pulse" />
+                ) : (
+                    <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">
+                        {userName || 'User'} <span className="text-off-white/50 font-normal ml-1 text-[10px]">({ROLE_LABELS[userRole] || 'Customer'})</span>
+                    </p>
+                )}
             </div>
 
             {/* Navigation Groups */}
@@ -252,6 +256,7 @@ export function DashboardSidebar() {
     const [open, setOpen] = useState(false);
     const [userRole, setUserRole] = useState('USER');
     const [userName, setUserName] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         fetch('/api/auth/me')
@@ -262,14 +267,15 @@ export function DashboardSidebar() {
                     setUserName(data.user.name || '');
                 }
             })
-            .catch(() => { });
+            .catch(() => { })
+            .finally(() => setIsLoading(false));
     }, []);
 
     return (
         <>
             {/* Desktop Sidebar */}
             <aside className="hidden md:block min-h-screen dashboard-sidebar-dark">
-                <SidebarContent userRole={userRole} userName={userName} />
+                <SidebarContent userRole={userRole} userName={userName} isLoading={isLoading} />
             </aside>
 
             {/* Mobile Sidebar Toggle */}
@@ -282,7 +288,7 @@ export function DashboardSidebar() {
                     </SheetTrigger>
                     <SheetContent side="left" className="w-72 p-0 border-r border-antique-gold/10 bg-[#020b08]">
                         <div className="h-full dashboard-sidebar-dark">
-                            <SidebarContent userRole={userRole} userName={userName} />
+                            <SidebarContent userRole={userRole} userName={userName} isLoading={isLoading} />
                         </div>
                     </SheetContent>
                 </Sheet>

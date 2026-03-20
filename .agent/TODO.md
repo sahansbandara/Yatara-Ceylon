@@ -57,6 +57,9 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 ---
 
 ## Done
+- [x] [2026-03-20] Push all changes to GitHub (UI fixes, Why Yatara animations, pattern background)
+- [x] [2026-03-20] Added elite packages pattern background to FeaturedJourneys
+- [x] [2026-03-20] Configured repeating scroll animation for WhyYatara stats counters
 - [x] [2026-03-19] Destinations page — premium rebuild (hero, filters, cards, spotlight, CTA)
 - [x] [2026-03-19] FeaturedDestinationSpotlight component — editorial split card with region badge
 - [x] [2026-03-19] DestinationCard component — premium hover effects, gradient overlays, stagger animations

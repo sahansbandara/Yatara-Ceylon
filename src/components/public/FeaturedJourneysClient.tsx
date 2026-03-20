@@ -89,7 +89,18 @@ export default function FeaturedJourneysClient({ packages }: { packages: Package
     if (packages.length === 0) return null;
 
     return (
-        <section className="py-24 md:py-32 bg-[#F9F9F9] relative px-6 lg:px-10">
+        <section className="py-16 md:py-24 bg-[#F9F9F9] relative px-6 lg:px-10 overflow-hidden">
+            {/* Background Pattern Overlay */}
+            <div 
+                className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-multiply" 
+                style={{ 
+                    backgroundImage: "url('/images/home/packages-bg-pattern.webp')", 
+                    backgroundSize: 'cover', 
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }} 
+            />
+            
             <div className="max-w-[1400px] mx-auto relative z-10">
 
                 {/* Header Row */}

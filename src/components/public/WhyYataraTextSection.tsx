@@ -87,12 +87,14 @@ export default function WhyYataraTextSection() {
 
   /* Framer Motion Integration for Viewport Triggering */
   const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useFramerInView(sectionRef, { once: true, margin: "-10%" });
+  const isInView = useFramerInView(sectionRef, { amount: 0.2 });
   const controls = useAnimation();
 
   useEffect(() => {
     if (isInView) {
       controls.start("visible");
+    } else {
+      controls.start("hidden");
     }
   }, [isInView, controls]);
 
@@ -116,7 +118,7 @@ export default function WhyYataraTextSection() {
   };
 
   return (
-    <section className="relative bg-white pb-24 md:pb-32 lg:pb-48" ref={sectionRef}>
+    <section className="relative bg-white pb-16 md:pb-20 lg:pb-24" ref={sectionRef}>
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 xl:px-20 relative z-10">
 
         <motion.div
@@ -127,12 +129,16 @@ export default function WhyYataraTextSection() {
         >
 
           {/* ── Left: Huge Headline & List ── */}
-          <div className="w-full lg:w-[45%] flex flex-col mb-16 lg:mb-0">
-            <motion.h2 variants={itemVariants} className="font-serif leading-[1.05] tracking-tight mb-14">
-              <span className="block text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] text-neutral-900 font-medium mb-1">
+          {/* Added h-full and justify-between to align bottom with the right container */}
+          <div className="w-full lg:w-[45%] flex flex-col justify-between mb-16 lg:mb-0">
+            {/* 👉 ADJUST TITLE MARGIN BELOW: mb-8 to mb-14 */}
+            <motion.h2 variants={itemVariants} className="font-serif leading-[1.05] tracking-tight mb-8">
+              {/* 👉 ADJUST TITLE TOP TEXT SIZE BELOW */}
+              <span className="block text-[2rem] md:text-[2.5rem] lg:text-[3rem] text-neutral-900 font-medium mb-1">
                 Why Journey With
               </span>
-              <span className="block text-[3.25rem] md:text-[4.5rem] lg:text-[5.5rem] font-bold text-[#CFB53B]">
+              {/* 👉 ADJUST TITLE BOTTOM TEXT SIZE BELOW */}
+              <span className="block text-[2.75rem] md:text-[3.5rem] lg:text-[4.5rem] font-bold text-[#CFB53B]">
                 Yatara Ceylon?
               </span>
             </motion.h2>
@@ -156,8 +162,10 @@ export default function WhyYataraTextSection() {
           </div>
 
           {/* ── Right: Intro Text & Massive Stats Container ── */}
-          <div className="w-full lg:w-[50%] flex flex-col pt-4">
-            <motion.p variants={itemVariants} className="text-xl md:text-[22px] text-neutral-600 leading-[1.6] font-light mb-16 md:mb-24 max-w-[90%]">
+          {/* Added justify-between to align bottom with the left container */}
+          <div className="w-full lg:w-[50%] flex flex-col justify-between pt-0 lg:pt-4">
+            {/* 👉 ADJUST INTRO TEXT MARGIN BELOW: mb-12 or mb-16 */}
+            <motion.p variants={itemVariants} className="text-[1.1rem] md:text-[1.25rem] text-neutral-600 leading-[1.6] font-light mb-12 max-w-[90%]">
               At Yatara Ceylon, we customize each itinerary to fit your precise preferences, ensuring an absolutely flawless and elite luxury experience.
             </motion.p>
 
@@ -165,7 +173,8 @@ export default function WhyYataraTextSection() {
               {stats.map((s, i) => (
                 <motion.div key={i} variants={itemVariants} className="flex flex-col">
                   {/* Huge Walker-Style numbers in deep emerald */}
-                  <div className="text-[3.5rem] md:text-[5rem] lg:text-[6rem] font-bold leading-none text-[#113d33] tracking-tighter mb-4">
+                  {/* 👉 ADJUST NUMBERS TEXT SIZE BELOW */}
+                  <div className="text-[4rem] md:text-[5.5rem] lg:text-[6.5rem] font-bold leading-none text-[#113d33] tracking-tighter mb-4">
                     <CountUp
                       value={s.value}
                       suffix={s.suffix ?? "+"}

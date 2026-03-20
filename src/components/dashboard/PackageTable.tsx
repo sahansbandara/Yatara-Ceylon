@@ -12,7 +12,7 @@ interface Package {
     slug: string;
     price: number;
     duration: string;
-    imageUrl?: string;
+    images?: string[];
     isPublished: boolean;
     isFeatured?: boolean;
 }
@@ -50,7 +50,7 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
         setLoading(true);
         try {
             const res = await fetch(`/api/packages/${pkg._id}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isPublished: !pkg.isPublished })
             });
@@ -85,9 +85,9 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                                 <tr key={pkg._id} className="border-b border-white/[0.04] last:border-b-0 hover:bg-antique-gold/[0.03] transition-colors">
                                     <td className="px-5 py-3.5">
                                         <div className="relative h-10 w-14 rounded overflow-hidden bg-white/5 border border-white/10">
-                                            {pkg.imageUrl ? (
+                                            {pkg.images && pkg.images.length > 0 ? (
                                                 <Image
-                                                    src={pkg.imageUrl}
+                                                    src={pkg.images[0]}
                                                     alt={pkg.title}
                                                     fill
                                                     className="object-cover"
