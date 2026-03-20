@@ -17,28 +17,31 @@ function usePrefersReducedMotion() {
 
 export function AnimatedStat({ value }: { value: string }) {
     const ref = useRef<HTMLSpanElement>(null);
-    const isInView = useInView(ref, { amount: 0.2, once: true });
+    const isInView = useInView(ref, { amount: 0.2, once: false });
     const reduced = usePrefersReducedMotion();
 
-    const [current, setCurrent] = useState("");
+    const rawStr = value.replace(/,/g, "");
+    const match = rawStr.match(/^([^0-9]*)(\d+(?:\.\d+)?)(.*)$/);
+    
+    const prefix = match ? (match[1] || "") : "";
+    const targetNum = match ? Number(match[2]) : 0;
+    const suffix = match ? (match[3] || "") : "";
+    const hasComma = value.includes(",");
+    
+    const emptyState = match ? `${prefix}0${suffix}` : value;
+
+    const [current, setCurrent] = useState(emptyState);
 
     useEffect(() => {
         if (!isInView) {
+            setCurrent(emptyState);
             return;
         }
 
-        const rawStr = value.replace(/,/g, "");
-        const match = rawStr.match(/^(\D*)(\d+(?:\.\d+)?)(\D*)$/);
-        
         if (!match || reduced) {
             setCurrent(value);
             return;
         }
-
-        const prefix = match[1] || "";
-        const targetNum = Number(match[2]);
-        const suffix = match[3] || "";
-        const hasComma = value.includes(",");
 
         let raf = 0;
         let startTimestamp: number | null = null;
@@ -68,10 +71,10 @@ export function AnimatedStat({ value }: { value: string }) {
         return () => cancelAnimationFrame(raf);
     }, [isInView, value, reduced]);
 
-    // Initial render or reduced motion: just show the final value
+    // Initial render or reduced motion: just show the current value
     return (
         <span ref={ref} className="tabular-nums">
-            {current || "0"} 
+            {current} 
         </span>
     );
 }

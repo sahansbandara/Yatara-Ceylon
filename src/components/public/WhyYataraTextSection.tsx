@@ -38,7 +38,10 @@ function CountUp({
   const [current, setCurrent] = useState(start);
 
   useEffect(() => {
-    if (!play) return;
+    if (!play) {
+      setCurrent(start);
+      return;
+    }
     if (reduced) {
       setCurrent(value);
       return;
@@ -69,7 +72,7 @@ export default function WhyYataraTextSection() {
     () => [
       { value: 15, suffix: "+", label: "Years of Luxury", start: 1 },
       { value: 400, suffix: "+", label: "Estates Audited", start: 100 },
-      { value: 24, suffix: "/7", label: "Private Concierge", start: 10 },
+      { value: 24, suffix: "/7", label: "Private Concierge", start: 1 },
       { value: 100, suffix: "%", label: "Bespoke Routes", start: 10 },
     ],
     []
@@ -90,6 +93,9 @@ export default function WhyYataraTextSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useFramerInView(sectionRef, { amount: 0.2 });
   const controls = useAnimation();
+  
+  const statsRef = useRef<HTMLDivElement>(null);
+  const statsInView = useFramerInView(statsRef, { amount: 0.5 });
 
   useEffect(() => {
     if (isInView) {
@@ -168,7 +174,7 @@ export default function WhyYataraTextSection() {
               At Yatara Ceylon, we customize each itinerary to fit your precise preferences, ensuring an absolutely flawless and elite luxury experience.
             </motion.p>
 
-            <div className="grid grid-cols-2 gap-x-8 gap-y-8 lg:gap-y-10">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-8 lg:gap-y-10" ref={statsRef}>
               {stats.map((s, i) => (
                 <motion.div key={i} variants={itemVariants} className="flex flex-col">
                   {/* Huge Walker-Style numbers in deep emerald */}
@@ -178,7 +184,7 @@ export default function WhyYataraTextSection() {
                       value={s.value}
                       suffix={s.suffix ?? "+"}
                       start={s.start ?? 0}
-                      play={isInView}
+                      play={statsInView}
                       durationMs={2000}
                     />
                   </div>
