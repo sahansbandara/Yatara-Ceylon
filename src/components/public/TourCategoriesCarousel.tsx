@@ -129,12 +129,12 @@ export default function TourCategoriesCarousel() {
         <section className="py-20 md:py-28 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
             {/* Background Pattern Overlay */}
             <div 
-                className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-multiply" 
+                className="absolute inset-0 z-0 opacity-[0.15] pointer-events-none" 
                 style={{ 
                     backgroundImage: "url('/images/home/packages-bg-pattern.webp')", 
-                    backgroundSize: 'cover', 
+                    backgroundSize: '500px', 
                     backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
+                    backgroundRepeat: 'repeat'
                 }} 
             />
 
