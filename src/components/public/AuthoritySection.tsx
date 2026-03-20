@@ -35,7 +35,7 @@ export default function AuthoritySection() {
             // 👉 ADJUST SCROLL SPEED HERE:
             // Greater height (e.g. h-[300vh]) = Slower scroll effect
             // Less height (e.g. h-[150vh]) = Faster scroll effect
-            className="relative h-[150vh] bg-white" 
+            className="relative h-[175vh] bg-white" 
         >
             {/* Sticky Container: Holds everything on screen while you scroll */}
             <div className="sticky top-0 h-screen w-full flex flex-col justify-start overflow-hidden">

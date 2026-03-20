@@ -89,18 +89,18 @@ export default function FeaturedJourneysClient({ packages }: { packages: Package
     if (packages.length === 0) return null;
 
     return (
-        <section className="py-16 md:py-24 bg-[#F9F9F9] relative px-6 lg:px-10 overflow-hidden">
+        <section className="py-20 md:py-28 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
             {/* Background Pattern Overlay */}
-            <div 
-                className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-multiply" 
-                style={{ 
-                    backgroundImage: "url('/images/home/packages-bg-pattern.webp')", 
-                    backgroundSize: 'cover', 
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
-                }} 
+            <div
+                className="absolute inset-0 z-0 opacity-30 pointer-events-none mix-blend-multiply"
+                style={{
+                    backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                    backgroundSize: '400px',
+                    backgroundPosition: 'top left',
+                    backgroundRepeat: 'repeat'
+                }}
             />
-            
+
             <div className="max-w-[1400px] mx-auto relative z-10">
 
                 {/* Header Row */}
@@ -133,8 +133,8 @@ export default function FeaturedJourneysClient({ packages }: { packages: Package
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
                             className={`px-5 py-2 text-[10px] font-nav font-semibold tracking-[0.15em] uppercase rounded-full border transition-all duration-300 ${activeFilter === filter
-                                    ? 'bg-deep-emerald text-white border-deep-emerald'
-                                    : 'bg-white text-deep-emerald/60 border-deep-emerald/10 hover:border-deep-emerald/30 hover:text-deep-emerald'
+                                ? 'bg-deep-emerald text-white border-deep-emerald'
+                                : 'bg-white text-deep-emerald/60 border-deep-emerald/10 hover:border-deep-emerald/30 hover:text-deep-emerald'
                                 }`}
                         >
                             {filter}

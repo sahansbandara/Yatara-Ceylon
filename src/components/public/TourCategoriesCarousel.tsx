@@ -128,14 +128,14 @@ export default function TourCategoriesCarousel() {
     return (
         <section className="py-20 md:py-28 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
             {/* Background Pattern Overlay */}
-            <div 
-                className="absolute inset-0 z-0 opacity-[0.15] pointer-events-none" 
-                style={{ 
-                    backgroundImage: "url('/images/home/packages-bg-pattern.webp')", 
-                    backgroundSize: '500px', 
-                    backgroundPosition: 'center',
+            <div
+                className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-multiply"
+                style={{
+                    backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                    backgroundSize: '400px',
+                    backgroundPosition: 'top left',
                     backgroundRepeat: 'repeat'
-                }} 
+                }}
             />
 
             {/* Subtle background accents */}
@@ -167,7 +167,18 @@ export default function TourCategoriesCarousel() {
                 <div className="relative group/carousel -mx-6 md:-mx-12 pt-8">
 
                     {/* Background Highlight wrapping the package row full-width */}
-                    <div className="absolute top-0 bottom-0 left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] bg-[#D1E5DB]/70 -z-10 pointer-events-none hidden md:block" />
+                    <div className="absolute top-0 bottom-0 left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] -z-10 pointer-events-none hidden md:block">
+                        <div className="absolute inset-0 bg-[#D1E5DB]/70" />
+                        <div
+                            className="absolute inset-0 opacity-30 mix-blend-multiply"
+                            style={{
+                                backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                                backgroundSize: '400px',
+                                backgroundPosition: 'top left',
+                                backgroundRepeat: 'repeat'
+                            }}
+                        />
+                    </div>
 
                     {/* Left Navigation - Nude Glass Circle */}
                     <button

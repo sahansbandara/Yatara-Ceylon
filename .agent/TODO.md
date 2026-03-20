@@ -57,6 +57,10 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 ---
 
 ## Done
+- [x] [2026-03-20] Reduced Signature Experiences pattern band opacity to 0.05 and applied curated pattern to Featured Journeys
+- [x] [2026-03-20] Added `curated-bg-pattern.webp` to Signature Experiences (TourCategoriesCarousel)
+- [x] [2026-03-20] User uploaded `curated-bg-pattern.webp` and applied it to `CuratedCollection.tsx`
+- [x] [2026-03-20] Tweaked pattern background opacity in CuratedCollection and FeaturedJourneysClient for better visibility
 - [x] [2026-03-20] Push all changes to GitHub (UI fixes, Why Yatara animations, pattern background)
 - [x] [2026-03-20] Added elite packages pattern background to FeaturedJourneys
 - [x] [2026-03-20] Configured repeating scroll animation for WhyYatara stats counters

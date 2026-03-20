@@ -150,16 +150,16 @@ export default function CuratedCollection() {
         : journeys;
 
     return (
-        <section className="py-28 md:py-36 bg-off-white text-deep-emerald relative overflow-hidden">
+        <section className="py-20 md:py-28 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
             {/* Background Pattern Overlay */}
-            <div 
-                className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-multiply" 
-                style={{ 
-                    backgroundImage: "url('/images/home/packages-bg-pattern.webp')", 
-                    backgroundSize: 'cover', 
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
-                }} 
+            <div
+                className="absolute inset-0 z-0 opacity-30 pointer-events-none mix-blend-multiply"
+                style={{
+                    backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                    backgroundSize: '400px',
+                    backgroundPosition: 'top left',
+                    backgroundRepeat: 'repeat'
+                }}
             />
 
             {/* Subtle background accents */}
@@ -186,11 +186,10 @@ export default function CuratedCollection() {
                 <div className="flex flex-wrap gap-2.5 mb-10">
                     <button
                         onClick={() => setActiveChip(null)}
-                        className={`text-[11px] tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border transition-all duration-300 ${
-                            !activeChip
-                                ? 'bg-deep-emerald text-white border-deep-emerald'
-                                : 'bg-transparent text-deep-emerald/70 border-deep-emerald/20 hover:border-deep-emerald/40'
-                        }`}
+                        className={`text-[11px] tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border transition-all duration-300 ${!activeChip
+                            ? 'bg-deep-emerald text-white border-deep-emerald'
+                            : 'bg-transparent text-deep-emerald/70 border-deep-emerald/20 hover:border-deep-emerald/40'
+                            }`}
                     >
                         All Styles
                     </button>
@@ -198,11 +197,10 @@ export default function CuratedCollection() {
                         <button
                             key={chip}
                             onClick={() => setActiveChip(activeChip === chip ? null : chip)}
-                            className={`text-[11px] tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border transition-all duration-300 ${
-                                activeChip === chip
-                                    ? 'bg-deep-emerald text-white border-deep-emerald'
-                                    : 'bg-transparent text-deep-emerald/70 border-deep-emerald/20 hover:border-deep-emerald/40'
-                            }`}
+                            className={`text-[11px] tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border transition-all duration-300 ${activeChip === chip
+                                ? 'bg-deep-emerald text-white border-deep-emerald'
+                                : 'bg-transparent text-deep-emerald/70 border-deep-emerald/20 hover:border-deep-emerald/40'
+                                }`}
                         >
                             {chip}
                         </button>
@@ -224,7 +222,7 @@ export default function CuratedCollection() {
                             aria-label="Previous"
                         >
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-deep-emerald">
-                                <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </button>
                         <button
@@ -233,7 +231,7 @@ export default function CuratedCollection() {
                             aria-label="Next"
                         >
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-deep-emerald">
-                                <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </button>
                     </div>
@@ -248,11 +246,10 @@ export default function CuratedCollection() {
                     {filteredJourneys.map((journey, index) => (
                         <article
                             key={journey._id}
-                            className={`group relative overflow-hidden rounded-2xl flex-shrink-0 snap-center cursor-pointer ${
-                                index === 0 && journey._id === 'bespoke'
-                                    ? 'w-[340px] md:w-[420px] h-[540px] md:h-[580px]'
-                                    : 'w-[340px] md:w-[400px] h-[540px] md:h-[580px]'
-                            }`}
+                            className={`group relative overflow-hidden rounded-2xl flex-shrink-0 snap-center cursor-pointer ${index === 0 && journey._id === 'bespoke'
+                                ? 'w-[340px] md:w-[420px] h-[540px] md:h-[580px]'
+                                : 'w-[340px] md:w-[400px] h-[540px] md:h-[580px]'
+                                }`}
                         >
                             {/* Image */}
                             <Image
