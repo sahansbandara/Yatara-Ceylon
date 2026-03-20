@@ -25,6 +25,7 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
   - [x] Upgraded ThemeCarousel — added duration, bestSeason, regions, mood metadata + "Load Theme" CTA + Honeymoon Edit theme
   - [x] Upgraded Testimonials — dark theme matching planner page, dot indicators, concierge tie-in
   - [x] Reordered page.tsx — Hero → QuickStart → Planner → HowItWorks → PopularTours → Themes → Parallax → Testimonials → CTA
+  - [x] Tightened vertical heights significantly on How It Works to be ultra-compact per user preference
   - [x] TypeScript compiles cleanly (tsc --noEmit passes)
 
 ---
@@ -88,16 +89,12 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 
 ## Last Session
 
-**Date**: 2026-03-19 (night)
-**Agent**: Cowork / Opus 4.6
+**Date**: 2026-03-21
+**Agent**: Antigravity
 **What was done**:
-- Build-Tour V3 Elite Rebuild — in progress
-- Added full elite planner CSS system to globals.css (~200 lines of new glass/hover/map styles)
-- Rebuilt BuildTourHero — compact 38vh hero with product-led framing, trust pills, dual CTAs
-- Rebuilt BuildTourShell — 32/68 split, calc(100vh-180px) planner height, planner-shell-glass, floating toolbar, fullscreen toggle
-- Rebuilt MapViewport — dark premium theme, tight Sri Lanka framing (70% fill), smooth fitBounds (0.9s), gold district states, floating stats overlay
-- Rebuilt ConciergePanel — trip snapshot card, glass region/district/place cards, hover popup effects, category filters
-- Created HowItWorks strip component — 3 glass step cards
+- Refined the "How Your Journey Is Crafted" section on the Build-Tour page.
+- Dramatically reduced the vertical height (padding, margins, gaps) by a substantial amount to make the layout ultra-compact and fit tighter on the screen.
+- Pushed updates to GitHub.
 
 **What to do next**:
 - Add theme images: /images/themes/honeymoon-edit.webp (new theme added)
@@ -107,7 +104,6 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 - Real images for tours still needed
 
 **Current state**:
-- Branch: main (uncommitted changes — ready to commit)
-- Files changed: globals.css, BuildTourHero.tsx, BuildTourShell.client.tsx, MapViewport.client.tsx, ConciergePanel.client.tsx, HowItWorks.tsx (new), QuickStartModes.tsx, SelectedStopsPanel.client.tsx, RouteSummaryBar.client.tsx, PopularTours.tsx, ThemeCarousel.tsx, Testimonials.tsx, page.tsx
-- Build status: TypeScript compiles cleanly (tsc --noEmit passes)
-- Key design decisions: planner height = calc(100vh-180px), map fills 68% width, dark map theme (#1a3a2e base), gold hover/selection states, each section fits one viewport fold
+- Branch: main (changes committed and pushed)
+- Last commit: UI: Update How Your Journey Is Crafted section height and styling
+- Key design decisions: How It Works section intentionally kept very compact vertically (minimal py, mb, mt) due to user preference for space efficiency.
