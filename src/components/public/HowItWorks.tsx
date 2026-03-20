@@ -69,10 +69,10 @@ export default function HowItWorks() {
 
             {/* ── Content layer ── */}
             <div className="relative z-10 flex flex-col items-center justify-center w-full">
-                <div className="w-full max-w-[1400px] px-6 md:px-10 lg:px-16 py-16 md:py-20 lg:py-24">
+                <div className="w-full max-w-[1400px] px-6 md:px-10 lg:px-16 py-4 md:py-6 lg:py-8">
 
                     {/* Header */}
-                    <div className="text-center mb-10 md:mb-14">
+                    <div className="text-center mb-4 md:mb-5">
                         <span className="block text-[10px] tracking-[0.2em] font-nav uppercase text-white/50 mb-3">
                             The Process
                         </span>
@@ -86,7 +86,7 @@ export default function HowItWorks() {
                     </div>
 
                     {/* Grid of Steps: 2 columns to save vertical space */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6" role="list">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4" role="list">
                         {steps.map((step, idx) => (
                             <article
                                 key={idx}
@@ -113,9 +113,9 @@ export default function HowItWorks() {
                                 </div>
 
                                 {/* Content Container */}
-                                <div className="flex-1 flex flex-col justify-center py-2 px-3 sm:px-2 sm:pr-4">
+                                <div className="flex-1 flex flex-col justify-center py-1 px-3 sm:px-2 sm:pr-4">
                                     {/* Number and Icon Header */}
-                                    <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center justify-between mb-2">
                                         <div className="w-8 h-8 rounded-full border border-antique-gold/20 flex items-center justify-center text-antique-gold group-hover:bg-antique-gold/10 transition-colors duration-300">
                                             <step.icon
                                                 className="w-3.5 h-3.5 group-hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.8)]"
@@ -127,7 +127,7 @@ export default function HowItWorks() {
                                         </span>
                                     </div>
 
-                                    <h3 className="text-lg md:text-xl font-display mb-1.5 tracking-wide text-white group-hover:text-antique-gold transition-colors duration-300">
+                                    <h3 className="text-lg md:text-xl font-display mb-1 tracking-wide text-white group-hover:text-antique-gold transition-colors duration-300">
                                         {step.title}
                                     </h3>
                                     <p className="text-[13px] font-light leading-relaxed m-0 text-white/60 group-hover:text-white/90 transition-colors duration-300">
@@ -139,7 +139,7 @@ export default function HowItWorks() {
                     </div>
 
                     {/* CTA */}
-                    <div className="flex justify-center mt-10 md:mt-12">
+                    <div className="flex justify-center mt-4 md:mt-5">
                         <Link
                             href="/build-tour"
                             className="glass-hero-cta inline-flex items-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full text-[10px] md:text-[11px] font-nav font-semibold tracking-[0.2em] uppercase no-underline group hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-shadow duration-500"
@@ -151,7 +151,7 @@ export default function HowItWorks() {
                     </div>
 
                     {/* Assurance strip */}
-                    <div className="mt-10 md:mt-14 pt-6 border-t border-white/[0.08] flex flex-wrap justify-center gap-x-8 md:gap-x-12 gap-y-4">
+                    <div className="mt-4 md:mt-5 pt-3 border-t border-white/[0.08] flex flex-wrap justify-center gap-x-8 md:gap-x-12 gap-y-4">
                         {['Private Transfers', 'Vetted Stays', 'On-Trip Support'].map((item) => (
                             <span
                                 key={item}

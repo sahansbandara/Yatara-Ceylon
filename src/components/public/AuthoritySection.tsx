@@ -9,11 +9,11 @@ import { Plus } from 'lucide-react';
 export default function AuthoritySection() {
     const sectionRef = useRef<HTMLDivElement>(null);
 
-    // Using "start start" to "end end" means the progress goes from 0 to 1
-    // as the user scrolls entirely through the section height.
+    // Using "start end" to "end start" means the progress goes from 0 to 1
+    // as the section enters the bottom of the screen and leaves the top.
     const { scrollYProgress } = useScroll({
         target: sectionRef,
-        offset: ['start start', 'end end'],
+        offset: ['start end', 'end start'],
     });
 
     /* ── Smooth Spring Parallax ── */
@@ -24,44 +24,33 @@ export default function AuthoritySection() {
     });
 
     // Parallax Effects: The numbers represent the movement in percentages.
+    const leftFrameY = useTransform(smoothProgress, [0, 1], ['25%', '-25%']);
+    const rightFrameY = useTransform(smoothProgress, [0, 1], ['-25%', '25%']);
     const leftImageY = useTransform(smoothProgress, [0, 1], ['-15%', '15%']);
     const rightImageY = useTransform(smoothProgress, [0, 1], ['15%', '-15%']);
-    const textY = useTransform(smoothProgress, [0, 1], ['8%', '-8%']);
-    const titleY = useTransform(smoothProgress, [0, 1], ['-3%', '3%']);
 
     return (
         <section
             ref={sectionRef}
-            // 👉 ADJUST SCROLL SPEED HERE:
-            // Greater height (e.g. h-[300vh]) = Slower scroll effect
-            // Less height (e.g. h-[150vh]) = Faster scroll effect
-            className="relative h-[175vh] bg-white" 
+            className="relative bg-white pt-10 md:pt-16 pb-20 md:pb-28 lg:pb-32 overflow-hidden" 
         >
-            {/* Sticky Container: Holds everything on screen while you scroll */}
-            <div className="sticky top-0 h-screen w-full flex flex-col justify-start overflow-hidden">
-                
-                {/* 👉 ADJUST VERTICAL POSITIONING HERE: 
-                    Change 'pt-32' to increase or decrease the distance from the top of the screen */}
-                <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 xl:px-20 relative z-10 flex flex-col items-center pt-28 md:pt-32">
-
-                    {/* Massive 2-Tone Headline */}
-                    <motion.div
-                        style={{ y: titleY }}
+            <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 xl:px-20 relative z-10 flex flex-col items-center">                    {/* Massive 2-Tone Headline */}
+                    <div
                         // 👉 ADJUST GAP BETWEEN TITLE AND IMAGES:
                         // Change 'mb-8' and 'lg:mb-12' to make the space smaller or larger
-                        className="text-center mb-6 lg:mb-10 z-20"
+                        className="text-center mb-8 lg:mb-12 z-20 flex flex-col items-center justify-center"
                     >
-                        <h2 className="font-serif leading-[1.05] tracking-tight">
+                        <h2 className="font-sans leading-[1.1] tracking-tight">
                             {/* 👉 ADJUST TOP TITLE SIZE HERE: (text-[size] text-[size]) */}
-                            <span className="block text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] text-neutral-900 font-medium mb-1 drop-shadow-sm">
+                            <span className="block text-[1.5rem] md:text-[2rem] lg:text-[2.25rem] text-neutral-800 font-normal mb-1">
                                 Sri Lanka&rsquo;s Premier
                             </span>
                             {/* 👉 ADJUST MAIN HIGHLIGHT TEXT SIZE HERE: */}
-                            <span className="block text-[2.25rem] md:text-[3.25rem] lg:text-[4.25rem] font-bold text-[#CFB53B] drop-shadow-sm">
+                            <span className="block text-[2.25rem] md:text-[3.25rem] lg:text-[4.25rem] font-bold text-black tracking-tight">
                                 Luxury Travel Curators
                             </span>
                         </h2>
-                    </motion.div>
+                    </div>
 
                     {/* ═══ Clean Asymmetric Grid ═══ */}
                     {/* 👉 ADJUST GAP BETWEEN COLUMNS: Use gap-8 or gap-12 here */}
@@ -69,7 +58,7 @@ export default function AuthoritySection() {
 
                         {/* ── Left Parallax Window (Portrait) ── */}
                         {/* 👉 ADJUST LEFT IMAGE SIZE: Change w-[26%] width below */}
-                        <div className="w-[80%] md:w-[60%] lg:w-[26%] overflow-visible hidden lg:block">
+                        <motion.div style={{ y: leftFrameY }} className="w-[80%] md:w-[60%] lg:w-[26%] overflow-visible hidden lg:block">
                             {/* 👉 ADJUST IMAGE ASPECT RATIO: 'aspect-[4/5]' means taller. Change to aspect-square or similar if needed */}
                             <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl flex-shrink-0 shadow-black/10 z-10">
                                 <motion.div
@@ -86,12 +75,11 @@ export default function AuthoritySection() {
                                     />
                                 </motion.div>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* ── Center Text Content ── */}
                         {/* 👉 ADJUST CENTER BOX SIZE: Change w-[40%] width below */}
-                        <motion.div
-                            style={{ y: textY }}
+                        <div
                             className="w-full lg:w-[40%] z-30 flex flex-col px-4 lg:px-0"
                         >
                             {/* 👉 ADJUST HEADER FONT SIZE HERE */}
@@ -127,7 +115,7 @@ export default function AuthoritySection() {
                                     </span>
                                 </Link>
                             </div>
-                        </motion.div>
+                        </div>
 
                         {/* ── Mobile/Tablet Images ── */}
                         <div className="w-full flex lg:hidden gap-4 mt-6 px-4">
@@ -151,7 +139,7 @@ export default function AuthoritySection() {
 
                         {/* ── Right Parallax Window (Landscape, Float Right) ── */}
                         {/* 👉 ADJUST RIGHT IMAGE SIZE: Change w-[28%] width below */}
-                        <div className="w-[80%] md:w-[60%] lg:w-[28%] hidden lg:block lg:mt-12">
+                        <motion.div style={{ y: rightFrameY }} className="w-[80%] md:w-[60%] lg:w-[28%] hidden lg:block lg:mt-12">
                             {/* 👉 ADJUST IMAGE ASPECT RATIO: 'aspect-[4/3]' means wider */}
                             <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-xl shadow-black/5 z-10 lg:ml-auto">
                                 <motion.div
@@ -167,10 +155,9 @@ export default function AuthoritySection() {
                                     />
                                 </motion.div>
                             </div>
-                        </div>
+                        </motion.div>
 
                     </div>
-                </div>
             </div>
         </section>
     );

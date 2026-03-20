@@ -89,7 +89,7 @@ export default function FeaturedJourneysClient({ packages }: { packages: Package
     if (packages.length === 0) return null;
 
     return (
-        <section className="py-20 md:py-28 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
+        <section className="pt-12 pb-20 md:pt-16 md:pb-28 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
             {/* Background Pattern Overlay */}
             <div
                 className="absolute inset-0 z-0 opacity-30 pointer-events-none mix-blend-multiply"
@@ -156,8 +156,10 @@ export default function FeaturedJourneysClient({ packages }: { packages: Package
                             <Link
                                 key={pkg._id || pkg.slug}
                                 href={`/packages/${pkg.slug}`}
-                                className="group flex flex-col h-full bg-white rounded-md overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-black/[0.03]"
+                                className="group relative flex flex-col h-full bg-white/60 backdrop-blur-xl rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(17,61,51,0.12)] transition-all duration-700 border border-white/60 hover:border-white/80"
                             >
+                                {/* Inner glossy reflection border */}
+                                <div className="absolute inset-0 rounded-2xl pointer-events-none border border-white/40 mix-blend-overlay z-20"></div>
                                 {/* Card Image */}
                                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
                                     <Image
@@ -168,52 +170,57 @@ export default function FeaturedJourneysClient({ packages }: { packages: Package
                                         className="object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                                     />
                                     {/* Style badge */}
-                                    <div className="absolute top-4 left-4">
+                                    <div className="absolute top-4 left-4 z-20">
                                         <span className="px-3 py-1 bg-black/40 backdrop-blur-md text-white text-[9px] font-nav tracking-widest uppercase rounded-sm border border-white/10">
                                             {styleLabel}
                                         </span>
                                     </div>
                                 </div>
 
-                                {/* Card Content */}
-                                <div className="p-7 md:p-8 flex flex-col flex-1">
-                                    {/* Metadata row — consistent position */}
-                                    <div className="flex items-center gap-3 mb-4 text-deep-emerald/45">
-                                        <div className="flex items-center gap-1.5 font-nav text-[10px] uppercase tracking-wider">
+                                {/* Card Content Container */}
+                                <div className="p-6 md:p-8 flex flex-col flex-1 relative z-10 bg-white">
+                                    
+                                    {/* Top Section: Meta */}
+                                    <div className="flex items-center gap-2.5 text-deep-emerald/60 mb-3">
+                                        <div className="flex items-center gap-1.5 font-nav text-[9px] uppercase tracking-[0.15em] font-medium">
                                             <Clock className="w-3.5 h-3.5" />
                                             <span>{pkg.duration || 'Custom'}</span>
                                         </div>
-                                        <span className="w-1 h-1 rounded-full bg-deep-emerald/20" />
-                                        <div className="flex items-center gap-1.5 font-nav text-[10px] uppercase tracking-wider">
+                                        <span className="w-1 h-1 rounded-full bg-deep-emerald/30" />
+                                        <div className="flex items-center gap-1.5 font-nav text-[9px] uppercase tracking-[0.15em] font-medium">
                                             <MapPin className="w-3.5 h-3.5" />
                                             <span>{region}</span>
                                         </div>
                                     </div>
 
-                                    {/* Title */}
-                                    <h3 className="text-xl md:text-2xl font-display text-deep-emerald group-hover:text-antique-gold transition-colors duration-300 mb-2">
-                                        {pkg.title}
-                                    </h3>
+                                    {/* Middle Section: Title, Subtitle & Facts */}
+                                    <div className="flex flex-col flex-1">
+                                        <h3 className="text-2xl md:text-3xl font-display text-deep-emerald group-hover:text-antique-gold transition-colors duration-500 mb-2 leading-tight">
+                                            {pkg.title}
+                                        </h3>
 
-                                    {/* "Why this is special" tagline */}
-                                    <p className="text-sm italic text-deep-emerald/50 font-light mb-5 line-clamp-2">
-                                        {pkg.subtitle || (pkg.description ? pkg.description.split('.')[0] + '.' : 'A carefully curated journey through Sri Lanka.')}
-                                    </p>
+                                        <p className="text-[14px] italic text-deep-emerald/60 font-light line-clamp-2 mb-6">
+                                            {pkg.subtitle || (pkg.description ? pkg.description.split('.')[0] + '.' : 'A carefully curated journey through Sri Lanka.')}
+                                        </p>
 
-                                    {/* Outcome bullets */}
-                                    <ul className="space-y-2 mb-6">
-                                        {outcomes.map((bullet, i) => (
-                                            <li key={i} className="flex items-start gap-2 text-[13px] text-deep-emerald/65 font-light leading-snug">
-                                                <span className="mt-[6px] w-1 h-1 rounded-full bg-antique-gold/60 shrink-0" />
-                                                {bullet}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                        <ul className="space-y-3.5 mb-8">
+                                            {outcomes.map((bullet, i) => (
+                                                <li key={i} className="flex items-start gap-4 text-[13px] text-deep-emerald/80 font-light leading-relaxed">
+                                                    <span className="mt-[7px] w-1.5 h-1.5 rounded-full bg-antique-gold/60 shrink-0" />
+                                                    {bullet}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
 
-                                    {/* CTA */}
-                                    <div className="mt-auto pt-5 border-t border-black/[0.04] flex items-center gap-2 text-[10px] font-nav font-semibold tracking-[0.2em] uppercase text-deep-emerald/70 group-hover:text-antique-gold transition-colors">
-                                        View Full Itinerary
-                                        <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+                                    {/* Bottom Section */}
+                                    <div className="mt-auto pt-6 flex flex-row items-center w-full">
+                                        <div className="w-full flex items-center justify-between px-5 py-3 border border-deep-emerald/20 group-hover:border-antique-gold rounded-md transition-all duration-500 ease-out bg-transparent group-hover:bg-antique-gold/5">
+                                            <span className="text-[10px] font-nav font-medium tracking-[0.2em] uppercase text-deep-emerald/80 group-hover:text-antique-gold transition-colors duration-500">
+                                                View Full Itinerary
+                                            </span>
+                                            <ArrowRight className="w-3.5 h-3.5 text-deep-emerald/50 group-hover:text-antique-gold transform group-hover:translate-x-1 transition-all duration-500 ease-out" strokeWidth={1.5} />
+                                        </div>
                                     </div>
                                 </div>
                             </Link>
