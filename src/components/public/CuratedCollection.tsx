@@ -151,6 +151,17 @@ export default function CuratedCollection() {
 
     return (
         <section className="py-28 md:py-36 bg-off-white text-deep-emerald relative overflow-hidden">
+            {/* Background Pattern Overlay */}
+            <div 
+                className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-multiply" 
+                style={{ 
+                    backgroundImage: "url('/images/home/packages-bg-pattern.webp')", 
+                    backgroundSize: 'cover', 
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }} 
+            />
+
             {/* Subtle background accents */}
             <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-antique-gold/[0.03] rounded-full blur-3xl" />
             <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-deep-emerald/[0.02] rounded-full blur-3xl" />
