@@ -2,7 +2,8 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import Link from 'next/link';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Minus, Plus, ArrowUpRight } from 'lucide-react';
 
 const inquiries = [
@@ -21,50 +22,65 @@ const inquiries = [
     {
         question: "What caliber of support defines the experience?",
         answer: "A dedicated 24/7 personal concierge serves as your invisible maestro. From securing highly sought-after private dining to preemptively adjusting logistics, every detail is handled with absolute discretion, ensuring your peace of mind remains undisturbed."
+    },
+    {
+        question: "Can bespoke culinary and cultural immersions be arranged?",
+        answer: "Absolutely. We orchestrate private dining in extraordinary venues—from candlelit temple ruins to secluded shores—curated by Michelin-caliber chefs, alongside private audiences with local artisans, scholars, and spiritual leaders."
+    },
+    {
+        question: "How do you handle spontaneous itinerary changes?",
+        answer: "Your dedicated concierge and chauffeur form an agile team, granting you the liberty to alter plans on a whim, ensuring your journey fluidly adapts to your desires without a moment's hesitation."
     }
 ];
 
 export default function PremiumStory() {
     const [openIndex, setOpenIndex] = useState<number | null>(0);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const sectionRef = useRef<HTMLElement>(null);
 
     // Parallax scroll effect for the image
     const { scrollYProgress } = useScroll({
-        target: containerRef,
-        // Start intersection when top of container hits bottom of viewport
-        // End intersection when bottom of container hits top of viewport
+        target: sectionRef,
         offset: ["start end", "end start"]
     });
 
-    // Y-axis movement: image moves much slower than scroll speed for a deep premium feel
-    // Expanding the range provides a much more noticeable scroll effect
-    const y = useTransform(scrollYProgress, [0, 1], ["-35%", "35%"]);
+    // Add smooth spring to the scroll progress for that silky feel
+    const smoothProgress = useSpring(scrollYProgress, {
+        stiffness: 50,
+        damping: 20,
+        restDelta: 0.001
+    });
+
+    const y = useTransform(smoothProgress, [0, 1], ["-20%", "20%"]);
 
     return (
-        <section className="relative w-full h-auto min-h-screen lg:h-[100dvh] bg-white border-b border-black/[0.05] flex items-center justify-center overflow-hidden font-sans">
-
-            {/* Elegant two-tone desktop split background */}
-            <div className="absolute inset-0 pointer-events-none hidden lg:flex w-full h-full text-[#F9F8F6]">
-                <div className="w-[45%] h-full bg-white" />
-                <div className="w-[55%] h-full bg-current" />
+        <section ref={sectionRef} className="relative w-full py-20 lg:py-32 bg-[#F9F8F6] flex items-center justify-center overflow-hidden font-sans">
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <Image
+                    src="/images/backgrounds/elite-bg.webp"
+                    alt="Premium Background"
+                    fill
+                    className="object-cover opacity-30"
+                    quality={90}
+                />
             </div>
+            
+            <div className="max-w-[1440px] w-full mx-auto px-6 lg:px-12 xl:px-20 relative z-10 flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
 
-            {/* Mobile soft stone background */}
-            <div className="absolute inset-0 pointer-events-none lg:hidden bg-[#F9F8F6]" />
-
-            <div className="max-w-[1440px] w-full mx-auto px-6 lg:px-12 xl:px-20 relative z-10 h-full lg:max-h-[880px] flex flex-col lg:flex-row gap-16 lg:gap-24 items-center py-24 lg:py-16">
-
-                {/* Left side: Parallax Image Box */}
-                <div
-                    ref={containerRef}
-                    className="w-full lg:w-[45%] h-[55dvh] lg:h-[85%] relative rounded-[2px] lg:rounded-[4px] overflow-hidden group shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] border border-black/5 flex items-center justify-center isolate bg-black"
-                >
-                    {/* Parallax Image inside overflow-hidden box - very slow scale on hover */}
-                    {/* Increased negative inset to give the parallax plenty of room to travel without showing edges */}
+                {/* Left side: Parallax Image Box with Frame Motion */}
+                <div className="w-full lg:w-[45%] lg:sticky lg:top-32 relative z-10 shrink-0 self-start">
                     <motion.div
-                        style={{ y }}
-                        className="absolute -inset-[40%] -z-10 transition-transform duration-[2.5s] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-105"
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                        className="w-full h-[50dvh] lg:h-[75vh] min-h-[500px] max-h-[700px] relative rounded-2xl overflow-hidden group shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border border-white/50 flex items-center justify-center isolate bg-black"
                     >
+                        {/* Parallax Image inside overflow-hidden box */}
+                        <motion.div
+                            style={{ y }}
+                            className="absolute -top-[35%] -bottom-[35%] -left-[10%] -right-[10%] -z-10 transition-transform duration-[2s] ease-out group-hover:scale-105"
+                        >
                         <Image
                             src="/images/home/faq-luxury-experience.webp"
                             alt="Yatara Luxury Experience"
@@ -76,99 +92,92 @@ export default function PremiumStory() {
                         />
                     </motion.div>
 
-                    {/* Subtle vignette/gradient overlay to draw eye to center */}
+                    {/* Subtle vignette overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/30 group-hover:bg-black/20 transition-colors duration-1000 -z-10" />
 
                     {/* Centered Image Typography */}
-                    <div className="text-center px-8 z-10 w-full transform transition-transform duration-1000 group-hover:-translate-y-2">
+                    <div className="text-center px-8 z-10 w-full transform transition-transform duration-1000 group-hover:-translate-y-2 pointer-events-none">
                         <motion.span
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, delay: 0.2 }}
-                            className="block text-[9px] md:text-[11px] tracking-[0.4em] font-nav text-white/70 uppercase mb-5 md:mb-8"
+                            className="block text-[9px] md:text-[11px] tracking-[0.4em] font-nav text-white/80 uppercase mb-4 drop-shadow-md"
                         >
                             The Yatara Standard
                         </motion.span>
-                        <motion.h2
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, delay: 0.4 }}
-                            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display text-white leading-[1.1] drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
-                        >
-                            Essential <br />
-                            <span className="italic font-light text-white/90">Insight</span>
-                        </motion.h2>
                     </div>
 
-                    {/* Elite Button anchored at bottom */}
-                    <div className="absolute bottom-6 md:bottom-8 right-6 md:right-8 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 translate-y-4 group-hover:translate-y-0 text-center lg:text-right w-full lg:w-auto flex justify-center lg:justify-end">
-                        <button className="flex items-center gap-4 backdrop-blur-md bg-white/10 border border-white/30 hover:bg-white text-white hover:text-black px-6 py-3 rounded-full transition-all duration-500 text-[9px] md:text-[10px] font-nav tracking-[0.2em] uppercase shadow-[0_10px_20px_rgba(0,0,0,0.3)] group/btn">
-                            Discover The Masterpiece
-                            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black transition-transform duration-500 group-hover/btn:bg-black group-hover/btn:text-white">
-                                <ArrowUpRight className="w-3.5 h-3.5 group-hover/btn:rotate-45 transition-transform duration-500" strokeWidth={2} />
-                            </span>
-                        </button>
+                    {/* Elite Button anchored at bottom - Always Visible */}
+                    <div className="absolute bottom-6 md:bottom-10 right-6 md:right-10 z-10">
+                        <Link href="/the-masterpiece" className="block">
+                            <motion.button 
+                                whileTap={{ scale: 0.95 }}
+                                className="flex items-center gap-4 backdrop-blur-md bg-black/25 hover:bg-black/40 border border-white/20 hover:border-white/40 text-white px-5 py-2.5 rounded-full transition-all duration-500 text-[9px] md:text-[10px] font-nav tracking-[0.2em] uppercase shadow-[0_10px_20px_rgba(0,0,0,0.3)] group/btn"
+                            >
+                                Discover The Masterpiece
+                                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white transition-colors duration-500 group-hover/btn:bg-white group-hover/btn:text-black">
+                                    <ArrowUpRight className="w-3.5 h-3.5 group-hover/btn:rotate-45 transition-transform duration-500" strokeWidth={1.5} />
+                                </span>
+                            </motion.button>
+                        </Link>
                     </div>
-                </div>
+                </motion.div>
+            </div>
 
                 {/* Right side: Accordion FAQ List */}
-                <div className="w-full lg:w-[55%] flex flex-col justify-center h-full pt-4 lg:pt-0">
+                <div className="w-full lg:w-[55%] flex flex-col justify-center pt-4 lg:pt-0">
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="mb-10 lg:mb-14"
+                        className="mb-8 lg:mb-12"
                     >
-                        <span className="block text-[10px] tracking-[0.3em] text-[#043927] font-nav uppercase mb-4">Curated Inquiries</span>
-                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-display text-black mt-2 font-light hidden lg:block">
+                        <span className="block text-[10px] tracking-[0.3em] text-[#043927] font-nav uppercase mb-4 font-semibold">Curated Inquiries</span>
+                        {/* Liquid Glass Title */}
+                        <motion.h3 
+                            whileHover={{ scale: 1.01 }}
+                            className="text-4xl md:text-5xl lg:text-6xl font-display text-black mt-2 font-light hidden lg:inline-block bg-white/40 backdrop-blur-sm border border-white/60 px-8 py-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+                        >
                             Clarity in <span className="italic">Excellence</span>
-                        </h3>
+                        </motion.h3>
                     </motion.div>
 
-                    <div className="w-full relative">
-                        {/* Elite left connecting line - adapted for light theme */}
-                        <div className="absolute left-[11px] top-6 bottom-6 w-[1px] bg-gradient-to-b from-black/0 via-black/10 to-black/0 hidden md:block" />
-
+                    <div className="w-full flex flex-col">
                         {inquiries.map((faq, index) => {
                             const isOpen = openIndex === index;
                             return (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
+                                    initial={{ opacity: 0, y: 15 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
-                                    transition={{ duration: 0.6, delay: 0.1 * index }}
+                                    transition={{ duration: 0.6, delay: 0.05 * index }}
                                     key={index}
-                                    className="border-b border-black/[0.08] overflow-hidden last:border-b-0 relative group"
+                                    className={`relative group border-b border-black/10 transition-colors duration-500 ${isOpen ? 'border-black/30' : 'hover:border-black/20'}`}
                                 >
-                                    <button
+                                    <motion.button
                                         onClick={() => setOpenIndex(isOpen ? null : index)}
-                                        className="w-full py-6 md:py-8 flex items-start text-left focus:outline-none"
+                                        className="w-full py-6 flex items-center text-left focus:outline-none"
                                     >
-                                        {/* Status indicator (elite bullet) - light theme */}
-                                        <div className="shrink-0 mt-1.5 mr-6 hidden md:flex items-center justify-center w-6 h-6 relative z-10 bg-[#F9F8F6]">
-                                            <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${isOpen ? 'bg-[#043927] shadow-[0_0_8px_rgba(4,57,39,0.4)]' : 'bg-black/20 group-hover:bg-black/50'}`} />
-                                        </div>
-
-                                        <div className="flex-1 pr-6 lg:pr-12">
-                                            {/* Question Color: Slate/brown-black that shifts to primary green on active */}
-                                            <h3 className={`text-base md:text-lg lg:text-xl font-display transition-colors duration-500 leading-snug tracking-wide ${isOpen ? 'text-[#043927]' : 'text-[#2a2a2a] group-hover:text-black'}`}>
+                                        <div className="flex-1 pr-6">
+                                            <h3 className={`text-[15px] md:text-[17px] font-display transition-colors duration-500 leading-snug tracking-wide ${isOpen ? 'text-[#043927]' : 'text-[#2a2a2a] group-hover:text-black'} font-light`}>
                                                 {faq.question}
                                             </h3>
                                         </div>
 
-                                        {/* Elegant plus/minus icon - light theme */}
-                                        <div className="shrink-0 mt-0.5 relative flex items-center justify-center w-8 h-8 rounded-full border border-black/10 group-hover:border-black/30 transition-colors duration-500">
+                                        {/* Elegant plus/minus text symbol instead of heavy circles */}
+                                        <motion.div 
+                                            className="shrink-0 relative flex items-center justify-center w-6 h-6 transition-transform duration-500"
+                                        >
                                             <div className={`absolute transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] ${isOpen ? 'rotate-180 opacity-0 scale-50' : 'rotate-0 opacity-100 scale-100'}`}>
-                                                <Plus className="w-4 h-4 text-black/40 group-hover:text-black" strokeWidth={1.5} />
+                                                <Plus className="w-4 h-4 text-black/40 font-light" strokeWidth={1} />
                                             </div>
                                             <div className={`absolute transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] ${isOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-180 opacity-0 scale-50'}`}>
-                                                <Minus className="w-4 h-4 text-[#043927]" strokeWidth={1.5} />
+                                                <Minus className="w-4 h-4 text-[#043927]" strokeWidth={1} />
                                             </div>
-                                        </div>
-                                    </button>
+                                        </motion.div>
+                                    </motion.button>
 
                                     <AnimatePresence initial={false}>
                                         {isOpen && (
@@ -176,11 +185,10 @@ export default function PremiumStory() {
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: 'auto', opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} // smooth ease out
+                                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} 
                                             >
-                                                <div className="pb-8 md:pb-10 pl-0 md:pl-12 pr-4 md:pr-16">
-                                                    {/* Answer Color: A distinctly softer charcoal gray for hierarchy, not too wild */}
-                                                    <p className="text-[#4a4a4a] font-sans font-normal leading-[1.8] text-[15px] md:text-[17px]">
+                                                <div className="pb-8 pr-12 pt-0">
+                                                    <p className="text-[#6a6a6a] font-sans font-light leading-[1.8] text-[13px] md:text-[14px]">
                                                         {faq.answer}
                                                     </p>
                                                 </div>
@@ -198,7 +206,7 @@ export default function PremiumStory() {
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 1, delay: 0.6 }}
-                        className="mt-10 pt-6 border-t border-black/10 lg:mt-14 lg:pt-8"
+                        className="mt-8 pt-6 lg:mt-10 lg:pt-8"
                     >
                         <p className="text-[10px] tracking-[0.15em] text-black/50 font-nav uppercase">
                             Demand an unparalleled itinerary?
@@ -214,3 +222,4 @@ export default function PremiumStory() {
         </section>
     );
 }
+

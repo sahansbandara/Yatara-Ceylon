@@ -104,7 +104,7 @@ export default function InquireForm({ inquiryType = 'proposal', journeySlug = ''
                     <div className="border-t border-gray-100 pt-6">
                         <p className="text-xs tracking-[0.15em] uppercase text-gray-400 mb-3">Need us sooner?</p>
                         <a
-                            href="https://wa.me/94771234567"
+                            href="https://wa.me/94704239802"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 text-sm text-deep-emerald hover:text-antique-gold transition-colors"

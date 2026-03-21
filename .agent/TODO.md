@@ -11,6 +11,7 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 <!-- None -->
 
 ## Recently Completed
+- [x] Analyze Walkers Tours Real Stories section and apply exact implementation to RealExperiencesSection.tsx (increased vertical height and background positioning)
 - [x] Build-Tour V3 Elite Rebuild — planner-first page with liquid glass, 100vh-fit sections, premium map
   - [x] Added elite planner CSS system (~200 lines: planner-shell-glass, planner-sidebar-glass, planner-map-container, planner-toolbar-glass, quick-start-card, region-card-glass, place-card-glass, how-step-glass, tour-card-elite, testimonial-glass-dark, custom Leaflet zoom controls, gold-pulse-ring animation)
   - [x] Rebuilt BuildTourHero — compact 38vh, product-led copy, trust pills, dual CTA
@@ -32,13 +33,14 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 
 ## Priority Tasks
 - [ ] Add real images to all transfer routes (user generating externally)
-- [ ] Connect WhatsApp link to real number
-- [ ] Add real SLTDA certification logo
+- [x] Connect WhatsApp link to real number
+- [x] Add real SLTDA certification logo
 - [ ] Test all transfer detail pages on mobile
 - [x] Add structured data (JSON-LD) for SEO on transfer pages
 - [x] Add structured data (JSON-LD) for SEO on destination pages
 - [x] Add structured data (JSON-LD) for SEO on package detail pages
 - [x] Add site-wide Organization + WebSite JSON-LD
+- [x] Provide Image Prompts for SLTDA logo, Theme Images (honeymoon-edit), and Transfer Route Images
 
 ---
 
@@ -58,32 +60,20 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 ---
 
 ## Done
+- [x] [2026-03-22] Fixed "Discover The Masterpiece" button link in PremiumStory section. Created a new dedicated `/the-masterpiece` page to explain the Yatara Standard and linked the button to it.
+- [x] [2026-03-22] Fixed full screen fit issue in BuildTourTeaser where parallax elements were cut off vertically on shorter screens. Changed `overflow-hidden` to `overflow-x-clip` and adjusted padding.
+- [x] [2026-03-22] Refined vertical spacing site-wide to make UI incredibly compact, significantly shortening the space between components (`TransfersTeaser`, `PremiumStory`, `ProofStack`, `TrustedByStrip`, `JourneyDayStory`).
+- [x] [2026-03-22] Rebuilt TrustedByStrip as a dark, elegant text-only strip showcasing premium accreditations.
+- [x] [2026-03-22] Enabled `scrollLock`/`overflow-hidden` correctly inside `BuildTourShell` on both client and body levels to prevent scrolling issues within the interactive planner map.
+- [x] [2026-03-22] Made BuildTourTeaser background lighter (`bg-deep-emerald`) and constrained its height (`min-h-[100dvh] flex items-center`) so it fits perfectly full-screen.
+- [x] [2026-03-22] Provided Image Prompts for SLTDA logo, Theme Images (honeymoon-edit), and Transfer Route Images in IMAGE_PROMPTS.md artifact.
+- [x] [2026-03-22] Connected real WhatsApp number (+94704239802) consistently across the site (Header, Footer).
+- [x] [2026-03-22] Refined FAQ section (PremiumStory) aesthetics with liquid glass components, satisfying click animations, a single elite background, and smoother image parallax per user request.
+- [x] [2026-03-22] Rebuilt BuildTourTeaser section with premium framer-motion animations, new layout, and imported bespoke-teaser-main / bespoke-galle-card webp images.
+- [x] [2026-03-22] Upgraded TransfersTeaser section on homepage with elite background images, 3 image cards, and massive visual prominence to highlight the main business model.
+- [x] [2026-03-22] Made "Global Accreditations" strip (TrustedByStrip) ultra-thin and compact per user request.
+- [x] [2026-03-22] Fixed number counting animations: added proper IntersectionObserver to stats grid to prevent premature triggering, updated AnimatedStat regex to handle non-numeric prefixes/suffixes properly, added rewind-when-hidden logic for replayability.
 - [x] [2026-03-20] Reduced Signature Experiences pattern band opacity to 0.05 and applied curated pattern to Featured Journeys
-- [x] [2026-03-20] Added `curated-bg-pattern.webp` to Signature Experiences (TourCategoriesCarousel)
-- [x] [2026-03-20] User uploaded `curated-bg-pattern.webp` and applied it to `CuratedCollection.tsx`
-- [x] [2026-03-20] Tweaked pattern background opacity in CuratedCollection and FeaturedJourneysClient for better visibility
-- [x] [2026-03-20] Push all changes to GitHub (UI fixes, Why Yatara animations, pattern background)
-- [x] [2026-03-20] Added elite packages pattern background to FeaturedJourneys
-- [x] [2026-03-20] Configured repeating scroll animation for WhyYatara stats counters
-- [x] [2026-03-19] Destinations page — premium rebuild (hero, filters, cards, spotlight, CTA)
-- [x] [2026-03-19] FeaturedDestinationSpotlight component — editorial split card with region badge
-- [x] [2026-03-19] DestinationCard component — premium hover effects, gradient overlays, stagger animations
-- [x] [2026-03-19] Destination images — switched from broken .jpg/.svg stubs to 25 user-generated .webp photos
-- [x] [2026-03-19] Update agent files (CLAUDE.md, TODO.md, MEMORY.md, BRIEF.md)
-- [x] [2026-03-19] Rebuild transfers data model — 22 products, new interfaces
-- [x] [2026-03-19] Build BookingStrip client component
-- [x] [2026-03-19] Redesign TransferCategoryTile — full-image premium cards
-- [x] [2026-03-19] Redesign SignatureRouteCard — type badge, price, tier
-- [x] [2026-03-19] Upgrade FleetTierCard — real image support
-- [x] [2026-03-19] Rebuild transfer landing page — 9 sections
-- [x] [2026-03-19] Build transfer detail page — 7 sections
-- [x] [2026-03-19] Clean up old routing structure
-- [x] [2026-03-19] Filter transfer products out of packages page
-- [x] [2026-03-19] Fix payment/return duplicate route conflict
-- [x] [2026-03-19] Verify transfer build — all 22 pages SSG'd
-- [x] [2026-03-19] Move HTML diagrams (ER, Use Case, Architecture, Activity) → docs/diagrams/
-- [x] [2026-03-19] Update README.md — link to HTML diagrams, add Activity Diagram section
-- [x] [2026-03-19] Push all changes to GitHub (107 files, commit f283b32)
 
 ---
 
@@ -92,18 +82,16 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 **Date**: 2026-03-21
 **Agent**: Antigravity
 **What was done**:
-- Refined the "How Your Journey Is Crafted" section on the Build-Tour page.
-- Dramatically reduced the vertical height (padding, margins, gaps) by a substantial amount to make the layout ultra-compact and fit tighter on the screen.
-- Pushed updates to GitHub.
+- Analyzed Walkers Tours Real Stories section reference and rebuilt the `RealExperiencesSection.tsx` component to identically match its proportions, layout, and textual hierarchy.
+- Adjusted vertical spacing and sizing dynamically (`clamp`, `h-[...vh]`, `min-h`) to perfectly recreate the reference layout with overlapping text layers and parallax scrolling elements.
+- Maintained user directives to explain where values can be tweaked manually via inline comments in the code.
 
 **What to do next**:
-- Add theme images: /images/themes/honeymoon-edit.webp (new theme added)
-- Visual QA on 13-inch MacBook — verify all sections fit viewport folds
-- Test mobile bottom drawer on real device
-- Consider adding fullscreen map keyboard shortcut (Escape to exit)
-- Real images for tours still needed
+- Visual QA on 13-inch MacBook — verify all sections fit viewport folds.
+- Test mobile bottom drawer on real device for the updated Build Tour planner.
+- Real images for tours and transfers still needed (user generating externally).
 
 **Current state**:
 - Branch: main (changes committed and pushed)
-- Last commit: UI: Update How Your Journey Is Crafted section height and styling
-- Key design decisions: How It Works section intentionally kept very compact vertically (minimal py, mb, mt) due to user preference for space efficiency.
+- Last commit: UI: Rebuild RealExperiencesSection layout to match reference proportions exactly
+- Key design decisions: Increased minimum heights (`min-h-[1000px]`) and object positions for background images to create ample breathing room for the large text overlays in the Real Experiences section.

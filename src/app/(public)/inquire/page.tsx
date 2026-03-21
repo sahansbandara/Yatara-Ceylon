@@ -86,7 +86,7 @@ export default async function InquirePage({ searchParams }: InquirePageProps) {
                         <div className="border-t border-gray-200 pt-8">
                             <p className="text-xs tracking-[0.15em] uppercase text-gray-400 mb-3">Prefer to chat?</p>
                             <a
-                                href="https://wa.me/94771234567"
+                                href="https://wa.me/94704239802"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-3 text-sm text-deep-emerald hover:text-antique-gold transition-colors border border-deep-emerald/20 px-5 py-3 hover:border-antique-gold/30"

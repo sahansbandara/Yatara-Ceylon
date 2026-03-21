@@ -316,7 +316,7 @@ function LoginContent() {
                     {/* Footer Links */}
                     <div className="mt-5 text-center">
                         <Link
-                            href="https://wa.me/94771234567?text=I%20need%20assistance%20with%20my%20Yatara%20Ceylon%20account."
+                            href="https://wa.me/94704239802?text=I%20need%20assistance%20with%20my%20Yatara%20Ceylon%20account."
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-white/40 hover:text-antique-gold font-light text-[10px] tracking-wide transition-colors duration-300 inline-flex border-b border-transparent hover:border-antique-gold pb-0.5"

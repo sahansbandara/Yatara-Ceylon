@@ -1,56 +1,40 @@
 'use client';
 
 import { useRef } from 'react';
-import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import 'swiper/css';
+import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
 
 const testimonials = [
     {
-        title: 'A Honeymoon Beyond Imagination',
-        quote:
-            "Yatara didn\u2019t just plan our honeymoon \u2014 they orchestrated a love letter to Sri Lanka. Every detail, from the private tuk-tuk through Galle Fort to sunrise at Sigiriya, was flawless.",
-        author: 'Charlotte & James',
-        origin: 'United Kingdom',
+        title: "10 day tour",
+        quote: "Our tour escort was very capable on educating us on all practices. We have to say a big thank you to Sampath, Kelum, Rasika and Hirunika for a most educational and exciting tour. Sampath and Kelum imparted so much information to us and answered any questions we put to them. Fantastic tour guides! We always felt safe and nothing was too much trouble for this team. They even decorated the bus with balloons and streamers to celebrate our granddaughter's birthday and also organised a cake and the band to sing happy birthday to her at Golden Crown in Kandy. It's a birthday she will never forget.",
+        author: "Ms.Karin De silva",
+        rating: 5,
     },
     {
-        title: 'Personal Attention Like No Other',
-        quote:
-            'As someone who has traveled extensively through Asia, I can say the level of personal attention Yatara provides is genuinely rare. Our guide felt like a friend, not a service.',
-        author: 'Marc Delafosse',
-        origin: 'France',
+        title: "BEYOND OUR EXPECTATIONS",
+        quote: "The personalized touch Yatara Ceylon offered transformed our family vacation. The boutique hotels they selected were hidden gems, and the wildlife safari was truly a once-in-a-lifetime experience for our children.",
+        author: "The Miller Family, Australia",
+        rating: 5,
     },
     {
-        title: 'Effortless Family Adventure',
-        quote:
-            'We had three children under 10 and Yatara made it effortless. The private vehicle, the curated kid-friendly stops, the concierge checking in daily \u2014 it was a dream.',
-        author: 'Sarah Mitchell',
-        origin: 'Australia',
-    },
-    {
-        title: 'Exceeded Every Expectation',
-        quote:
-            "The fixed-price guarantee gave us peace of mind, and the itinerary exceeded our expectations in every way. We\u2019re already planning our return.",
-        author: 'Thomas & Anna Weber',
-        origin: 'Germany',
-    },
-    {
-        title: 'A Culinary Journey of Discovery',
-        quote:
-            'The attention to culinary detail was extraordinary. Every meal was a discovery \u2014 from street-side hoppers to private dining at a tea estate. Unforgettable.',
-        author: 'Yuki Tanaka',
-        origin: 'Japan',
+        title: "AUTHENTIC SRI LANKA",
+        quote: "What set them apart was how immersed we felt in the culture. Cooking with a local family in Kandy and the private train ride views were magical. Truly a five-star, stress-free adventure.",
+        author: "Elena Rossi, Italy",
+        rating: 5,
     },
 ];
 
 export default function RealExperiencesSection() {
-    const sectionRef = useRef<HTMLDivElement>(null);
+    const sectionRef = useRef<HTMLElement>(null);
     const swiperRef = useRef<SwiperType | null>(null);
 
     const { scrollYProgress } = useScroll({
@@ -58,41 +42,98 @@ export default function RealExperiencesSection() {
         offset: ['start end', 'end start'],
     });
 
-    const girlParallaxY = useTransform(scrollYProgress, [0, 1], ['25%', '-15%']);
+    const girlParallaxY = useTransform(scrollYProgress, [0, 1], ['15%', '-5%']);
+    const watermarkParallaxY = useTransform(scrollYProgress, [0, 1], ['5vh', '-10vh']);
 
     return (
-        <section ref={sectionRef} className="relative w-full overflow-hidden bg-white">
-            {/* ── Top: Testimonials content on white background ── */}
-            <div className="relative w-full max-w-4xl mx-auto px-6 pt-20 pb-16">
-                {/* Faded "real stories" watermark behind heading */}
-                <div className="absolute inset-0 flex items-start justify-center pointer-events-none select-none" style={{ top: '20px' }}>
-                    <span
-                        className="font-display italic whitespace-nowrap"
-                        style={{
-                            fontSize: 'clamp(80px, 12vw, 160px)',
-                            color: 'rgba(0, 0, 0, 0.08)',
-                            fontWeight: 300,
-                            lineHeight: 1.2,
-                        }}
-                    >
-                        real stories
-                    </span>
-                </div>
+        <section ref={sectionRef} className="relative w-full min-h-[900px] xl:min-h-[1050px] 2xl:min-h-[1200px] bg-white text-black overflow-hidden flex flex-col pt-[15vh] pb-[10vh]">
+            
+            {/* ── Background Layer ── */}
+            {/* To adjust background image positioning (up/down), edit object-[center_60%] below */}
+            <div className="absolute inset-0 w-full h-full pointer-events-none">
+                <Image
+                    src="/images/home/testimonials-bg.webp"
+                    alt="Scenic Sri Lanka landscape with traveler"
+                    fill
+                    sizes="100vw"
+                    className="object-cover object-[center_60%]"
+                    quality={90}
+                    priority
+                />
+            </div>
 
-                {/* Main heading */}
-                <h2
-                    className="relative text-center font-display text-dark-green mb-12"
+            {/* Top gradient to blend image into the white page above, providing a canvas for text */}
+            <div
+                className="absolute inset-x-0 top-0 h-[40vh] z-[1] pointer-events-none"
+                style={{
+                    background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0) 100%)',
+                }}
+            />
+
+            {/* Fixed "real stories" watermark that glides up rapidly */}
+            <motion.div 
+                className="absolute w-full top-[10%] xl:top-[12%] flex justify-center z-[2] pointer-events-none"
+                style={{ y: watermarkParallaxY }}
+            >
+                {/* To adjust "real stories" size: change the 250px inside fontSize: 'clamp(...)' */}
+                <p
+                    className="font-sans font-bold text-center text-[#EAEAEA] lowercase select-none"
                     style={{
-                        fontSize: 'clamp(32px, 4vw, 46px)',
-                        fontWeight: 300,
-                        marginTop: '60px',
+                        fontSize: 'clamp(100px, 18vw, 250px)',
+                        lineHeight: 0.8,
+                        letterSpacing: '-0.02em',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    real stories
+                </p>
+            </motion.div>
+
+            {/* Person Overlay Image */}
+            {/* To adjust girl size: change the w-[Xpx] and h-[Ypx] Tailwind classes on the motion.div below */}
+            {/* You can push her down by editing bottom-[-5%] */}
+            <motion.div
+                style={{ y: girlParallaxY }}
+                className="absolute bottom-[-8%] left-[-5%] md:bottom-[-2%] md:left-[-2%] lg:left-[5%] z-[3] w-[260px] h-[480px] md:w-[380px] md:h-[650px] lg:w-[480px] lg:h-[800px] xl:w-[540px] xl:h-[900px] will-change-transform pointer-events-none"
+            >
+                <Image
+                    src="/images/home/testimonials-person.webp"
+                    alt="Traveler enjoying Sri Lanka"
+                    fill
+                    sizes="(max-width: 768px) 260px, (max-width: 1024px) 380px, (max-width: 1280px) 480px, 540px"
+                    className="object-contain object-bottom drop-shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
+                    quality={100}
+                    priority
+                />
+            </motion.div>
+
+            {/* ── SCROLLING FOREGROUND ── */}
+            {/* mt-[12vh] pushes "Real Experiences" below the top half of "real stories" */}
+            {/* Change mt-[...] to push the heading + reviews further UP or DOWN */}
+            <div className="relative z-[10] w-full max-w-7xl mx-auto px-4 flex flex-col items-center mt-[12vh] md:mt-[18vh] xl:mt-[22vh]">
+                
+                {/* Main heading */}
+                {/* To adjust "Real Experiences" text size: change the 56px inside fontSize: 'clamp(...)' */}
+                <h2 
+                    className="font-sans font-bold text-center text-black tracking-tight mb-8 md:mb-12 z-[3] relative"
+                    style={{
+                        fontSize: 'clamp(36px, 4vw, 56px)'
                     }}
                 >
                     Real Experiences
                 </h2>
 
-                {/* Swiper slider with navigation arrows */}
-                <div className="relative">
+                {/* Swiper slider area */}
+                <div className="relative w-full max-w-5xl flex items-center justify-center">
+                    {/* Navigation arrows */}
+                    <button
+                        aria-label="Previous testimonial"
+                        onClick={() => swiperRef.current?.slidePrev()}
+                        className="hidden md:flex absolute left-0 md:left-4 z-20 w-10 h-10 rounded-full border border-black/30 text-black/70 hover:text-black hover:border-black transition-colors items-center justify-center bg-transparent"
+                    >
+                        <ChevronLeft className="w-5 h-5 stroke-[1]" />
+                    </button>
+
                     <Swiper
                         modules={[Navigation, Autoplay, EffectFade]}
                         effect="fade"
@@ -103,105 +144,65 @@ export default function RealExperiencesSection() {
                         onSwiper={(swiper) => {
                             swiperRef.current = swiper;
                         }}
-                        className="w-full"
+                        className="w-full max-w-3xl"
                     >
                         {testimonials.map((t, i) => (
                             <SwiperSlide key={i}>
-                                <div className="text-center px-10 md:px-16">
+                                <div className="text-center px-4 md:px-12 py-4">
                                     {/* Testimonial title */}
-                                    <h3
-                                        className="font-sans text-dark-green mb-6"
-                                        style={{
-                                            fontSize: '15px',
-                                            fontWeight: 600,
-                                        }}
-                                    >
-                                        &ldquo;{t.title}&rdquo;
+                                    <h3 className="font-sans font-bold text-black mb-6 tracking-tight" style={{ fontSize: '16px' }}>
+                                        "{t.title}"
                                     </h3>
 
                                     {/* Testimonial body */}
-                                    <blockquote
-                                        className="font-sans text-dark-green/80 leading-relaxed mb-8"
+                                    <p
+                                        className="font-sans text-black leading-relaxed mb-6 mx-auto"
                                         style={{
-                                            fontSize: '16px',
+                                            fontSize: 'clamp(14px, 1.6vw, 16px)',
                                             fontWeight: 400,
-                                            lineHeight: '1.7',
                                         }}
                                     >
                                         {t.quote}
-                                    </blockquote>
+                                    </p>
 
                                     {/* Author */}
                                     <p
-                                        className="font-sans text-dark-green"
-                                        style={{
-                                            fontSize: '15px',
-                                            fontWeight: 600,
-                                        }}
+                                        className="font-sans font-bold text-black tracking-wide"
+                                        style={{ fontSize: '14px' }}
                                     >
-                                        &ndash; {t.author} &ndash;
+                                        - {t.author} -
                                     </p>
                                 </div>
                             </SwiperSlide>
                         ))}
                     </Swiper>
 
-                    {/* Navigation arrows — flanking the testimonial text */}
-                    <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-between">
+                    <button
+                        aria-label="Next testimonial"
+                        onClick={() => swiperRef.current?.slideNext()}
+                        className="hidden md:flex absolute right-0 md:right-4 z-20 w-10 h-10 rounded-full border border-black/30 text-black/70 hover:text-black hover:border-black transition-colors items-center justify-center bg-transparent"
+                    >
+                        <ChevronRight className="w-5 h-5 stroke-[1]" />
+                    </button>
+                    
+                    {/* Mobile arrows below text */}
+                    <div className="md:hidden flex space-x-4 justify-center mt-6 w-full absolute -bottom-16">
                         <button
                             aria-label="Previous testimonial"
                             onClick={() => swiperRef.current?.slidePrev()}
-                            className="pointer-events-auto -ml-4 md:-ml-10 w-10 h-10 rounded-full border border-dark-green/20 text-dark-green/40 hover:text-dark-green hover:border-dark-green/50 transition-all duration-300 flex items-center justify-center bg-transparent"
+                            className="w-10 h-10 rounded-full border border-black/30 text-black/70 hover:text-black hover:border-black transition-colors flex items-center justify-center bg-transparent"
                         >
-                            <ChevronLeft className="w-5 h-5" />
+                            <ChevronLeft className="w-4 h-4 stroke-[1]" />
                         </button>
                         <button
                             aria-label="Next testimonial"
                             onClick={() => swiperRef.current?.slideNext()}
-                            className="pointer-events-auto -mr-4 md:-mr-10 w-10 h-10 rounded-full border border-dark-green/20 text-dark-green/40 hover:text-dark-green hover:border-dark-green/50 transition-all duration-300 flex items-center justify-center bg-transparent"
+                            className="w-10 h-10 rounded-full border border-black/30 text-black/70 hover:text-black hover:border-black transition-colors flex items-center justify-center bg-transparent"
                         >
-                            <ChevronRight className="w-5 h-5" />
+                            <ChevronRight className="w-4 h-4 stroke-[1]" />
                         </button>
                     </div>
                 </div>
-            </div>
-
-            {/* ── Bottom: Scenic landscape image with person overlay ── */}
-            <div className="relative w-full h-[50vh] md:h-[60vh]">
-                {/* Background landscape */}
-                <Image
-                    src="/images/home/testimonials-bg.webp"
-                    alt="Scenic Sri Lanka landscape"
-                    fill
-                    sizes="100vw"
-                    className="object-cover"
-                    quality={85}
-                    loading="lazy"
-                />
-
-                {/* Top gradient — smooth blend from white into the image */}
-                <div
-                    className="absolute inset-x-0 top-0 h-40 pointer-events-none z-[1]"
-                    style={{
-                        background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0) 100%)',
-                    }}
-                />
-
-                {/* Person image — positioned center-left of the landscape, now with stronger parallax */}
-                <motion.div
-                    style={{ y: girlParallaxY }}
-                    className="absolute bottom-0 left-[12%] sm:left-[14%] md:left-[16%] lg:left-[18%] z-[2] w-[220px] h-[340px] sm:w-[260px] sm:h-[400px] md:w-[300px] md:h-[460px] lg:w-[340px] lg:h-[520px] will-change-transform"
-                >
-                    <Image
-                        src="/images/home/testimonials-person.webp"
-                        alt="Traveler enjoying Sri Lanka"
-                        fill
-                        sizes="(max-width: 640px) 200px, (max-width: 768px) 250px, (max-width: 1024px) 300px, 350px"
-                        className="object-contain object-bottom"
-                        quality={90}
-                        loading="lazy"
-                    />
-                </motion.div>
             </div>
         </section>
     );

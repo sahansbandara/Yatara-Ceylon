@@ -43,6 +43,17 @@ export default function BuildTourShell() {
         setPlaces(curatedPlaces as Place[]);
     }, [setPlaces]);
 
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && isFullscreen) {
+                setIsFullscreen(false);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isFullscreen]);
+
     const toggleFullscreen = () => {
         setIsFullscreen(!isFullscreen);
     };

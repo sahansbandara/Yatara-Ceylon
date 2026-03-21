@@ -57,12 +57,38 @@ function TrustStrip() {
                 {/* Credentials row */}
                 <div className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
                     <span className="text-[9px] tracking-[0.25em] font-nav text-white/30 uppercase">Member of</span>
-                    {credentials.map((c) => (
-                        <div key={c.label} className="flex items-center gap-2 text-white/45 hover:text-white/65 transition-colors">
-                            <c.icon className="w-4 h-4 text-antique-gold/50" strokeWidth={1.5} />
-                            <span className="text-[10px] tracking-[0.12em] font-nav uppercase">{c.label}</span>
+                    
+                    {/* SLTDA Logo */}
+                    <div className="flex items-center gap-2 group">
+                        <div className="relative w-8 h-8 opacity-70 group-hover:opacity-100 transition-opacity">
+                            <Image
+                                src="/images/partners/sltda-logo.webp"
+                                alt="SLTDA"
+                                fill
+                                className="object-contain"
+                            />
                         </div>
-                    ))}
+                        <span className="text-[10px] tracking-[0.12em] font-nav uppercase text-white/45 group-hover:text-white/65 transition-colors">
+                            SLTDA Licensed
+                        </span>
+                    </div>
+
+                    {/* SLAITO & PATA */}
+                    <div className="flex items-center gap-2 text-white/45 hover:text-white/65 transition-colors">
+                        <Award className="w-4 h-4 text-antique-gold/50" strokeWidth={1.5} />
+                        <span className="text-[10px] tracking-[0.12em] font-nav uppercase">SLAITO Member</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-white/45 hover:text-white/65 transition-colors">
+                        <div className="relative w-12 h-6 opacity-70 hover:opacity-100 transition-opacity">
+                            <Image
+                                src="/images/partners/pata-logo.webp"
+                                alt="PATA"
+                                fill
+                                className="object-contain filter grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"
+                            />
+                        </div>
+                        <span className="text-[10px] tracking-[0.12em] font-nav uppercase hidden sm:inline">PATA Affiliate</span>
+                    </div>
                 </div>
             </div>
         </section>

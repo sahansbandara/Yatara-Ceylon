@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { WHATSAPP_LINK } from '@/lib/whatsapp';
 import Image from 'next/image';
 import {
     ArrowRight,
@@ -167,7 +168,7 @@ export default async function TransferDetailPage(props: {
                                     <ArrowRight className="w-4 h-4" />
                                 </Link>
                                 <a
-                                    href="https://wa.me/94112345678"
+                                    href={WHATSAPP_LINK}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-antique-gold hover:text-white transition-colors font-nav font-semibold flex items-center gap-2 text-sm"
@@ -391,7 +392,7 @@ export default async function TransferDetailPage(props: {
                             <ArrowRight className="w-4 h-4" />
                         </Link>
                         <a
-                            href="https://wa.me/94112345678"
+                            href={WHATSAPP_LINK}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="border border-antique-gold/30 text-antique-gold px-8 py-4 font-nav font-semibold uppercase tracking-[0.12em] text-sm rounded-lg hover:bg-antique-gold/10 transition-colors inline-flex items-center justify-center gap-2"
