@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Partner from '@/models/Partner';
 import PartnerService from '@/models/PartnerService';
-import { staffOrAdmin } from '@/lib/rbac';
+import { staffOrAdmin, withAuth } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { updatePartnerSchema, createPartnerServiceSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
@@ -18,14 +18,27 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
 }
 
-export const PATCH = staffOrAdmin(async (request, context) => {
+export const PATCH = withAuth(async (request, context) => {
     const { data, error } = await validateBody(request, updatePartnerSchema);
     if (error) return error;
     try {
         await connectDB();
         const { id } = await context.params;
+
+        const partnerDoc = await Partner.findOne({ _id: id, isDeleted: false });
+        if (!partnerDoc) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+        const userRole = context.user.role;
+        if (userRole === 'HOTEL_OWNER') {
+            if (partnerDoc.ownerId?.toString() !== context.user.userId) {
+                return NextResponse.json({ error: 'Permission denied. Not your property.' }, { status: 403 });
+            }
+            data.status = 'PENDING_APPROVAL';
+        } else if (!['ADMIN', 'STAFF'].includes(userRole)) {
+            return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+        }
+
         const partner = await Partner.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: data }, { new: true });
-        if (!partner) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         await logAudit({ actorUserId: context.user.userId, action: 'UPDATE', entity: 'Partner', entityId: id });
         return NextResponse.json({ partner });
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }

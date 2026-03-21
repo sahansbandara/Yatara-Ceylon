@@ -27,7 +27,7 @@ export default async function UsersPage() {
                     <p className="text-muted-foreground">Manage system users and their roles.</p>
                 </div>
                 <Link href="/dashboard/users/new">
-                    <Button className="bg-ocean-600 hover:bg-ocean-700">
+                    <Button className="bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0a1f15] font-semibold text-xs tracking-widest rounded-xl transition-all hover:scale-105">
                         <Plus className="mr-2 h-4 w-4" /> Add User
                     </Button>
                 </Link>

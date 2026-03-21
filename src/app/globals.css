@@ -188,6 +188,84 @@
   transform: translateY(-4px);
 }
 
+/* Liquid Glass Panel — Overlay info panels inside images/cards */
+.liquid-glass-panel {
+  background: linear-gradient(135deg,
+      rgba(4, 57, 39, 0.7) 0%,
+      rgba(4, 57, 39, 0.55) 50%,
+      rgba(2, 40, 26, 0.75) 100%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow:
+    0 -8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.liquid-glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.3) 30%,
+      rgba(212, 175, 55, 0.3) 70%,
+      transparent 100%);
+}
+
+/* Liquid Glass Menu — Dropdown/mega-menu panels */
+.liquid-glass-menu {
+  background: linear-gradient(145deg,
+      rgba(6, 20, 14, 0.88) 0%,
+      rgba(4, 30, 20, 0.82) 50%,
+      rgba(6, 20, 14, 0.92) 100%);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 30px 60px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Liquid Glass Toolbar — Control bars with filters/search */
+.liquid-glass-toolbar {
+  background: linear-gradient(135deg,
+      rgba(4, 57, 39, 0.6) 0%,
+      rgba(4, 57, 39, 0.45) 50%,
+      rgba(2, 40, 26, 0.6) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Destination Card — Specular shine overlay */
+.destination-card-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.destination-card-shine:hover::before {
+  opacity: 0.6;
+}
+
 /* Liquid Glass Input */
 .liquid-glass-input {
   background: rgba(255, 255, 255, 0.5);
@@ -299,6 +377,245 @@
 
 .liquid-glass-stat:hover::after {
   opacity: 1;
+}
+
+/* ============================================
+   🔮 PREMIUM DASHBOARD GLASS SYSTEM
+   ============================================ */
+
+/* Dashboard Theme Classes */
+.dashboard-bg-admin {
+  background: radial-gradient(circle at top right, #11362e, #061a15 80%);
+  color: #FAFAFA;
+}
+
+.dashboard-bg-light {
+  background: #f4f6f8;
+  color: #1a202c;
+}
+
+/* Dashboard sidebar — deep layered glass */
+.dashboard-sidebar-dark {
+  background: linear-gradient(180deg,
+      rgba(4, 30, 22, 0.92) 0%,
+      rgba(2, 20, 14, 0.96) 100%);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-right: 1px solid rgba(212, 175, 55, 0.08);
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.dashboard-sidebar-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      rgba(212, 175, 55, 0.3) 0%,
+      rgba(212, 175, 55, 0.1) 100%);
+}
+
+/* Premium glass stat card */
+.liquid-glass-stat-dark {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.liquid-glass-stat-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(212, 175, 55, 0.3) 50%,
+      rgba(255, 255, 255, 0.2) 80%,
+      transparent 100%);
+  z-index: 1;
+}
+
+.liquid-glass-stat-dark:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(212, 175, 55, 0.12),
+    inset 0 1px 0 rgba(212, 175, 55, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Premium Dashboard Hero Strip */
+.dashboard-hero-glass {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-hero-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.4) 30%,
+      rgba(212, 175, 55, 0.4) 70%,
+      transparent 100%);
+}
+
+.dashboard-hero-glass::after {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -60px;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Premium Dashboard Table */
+.dashboard-table-glass {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.015) 100%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.dashboard-table-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(212, 175, 55, 0.25) 50%,
+      rgba(255, 255, 255, 0.2) 80%,
+      transparent 100%);
+  z-index: 1;
+}
+
+.dashboard-table-glass thead tr {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-table-glass tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+}
+
+.dashboard-table-glass tbody tr:last-child {
+  border-bottom: none;
+}
+
+.dashboard-table-glass tbody tr:hover {
+  background: rgba(212, 175, 55, 0.04);
+}
+
+/* Premium Empty State */
+.dashboard-empty-state {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.01) 100%);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  position: relative;
+}
+
+/* Premium Status Pills */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.status-pill-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pill-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-pill-info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-pill-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-pill-neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.status-pill-gold {
+  background: rgba(212, 175, 55, 0.15);
+  color: #f5e6a3;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.status-pill-purple {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 /* ============================================
@@ -1297,17 +1614,44 @@
   text-align: center;
 }
 
-/* District Tooltip */
+/* District Tooltip — Luxury label */
 .build-tour-district-tooltip {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  color: rgba(255, 255, 255, 0.6);
+  background: rgba(4, 57, 39, 0.85) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  padding: 8px 14px !important;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-cormorant), serif;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.district-tooltip-luxury {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.district-tooltip-name {
   font-family: var(--font-cormorant), serif;
   font-size: 14px;
-  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.district-tooltip-label {
+  font-family: var(--font-cormorant), serif;
+  font-size: 10px;
+  color: rgba(212, 175, 55, 0.6);
+  letter-spacing: 0.12em;
+  font-style: italic;
+  text-transform: none;
 }
 
 .leaflet-tooltip-left.build-tour-district-tooltip::before,
@@ -1332,4 +1676,371 @@
   border: 1px solid rgba(212, 175, 55, 0.15);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(212, 175, 55, 0.08);
+}
+
+/* ============================================
+   🔮 GLASS HERO — "How Your Journey Is Crafted"
+   ============================================ */
+
+/* Main frosted glass panel */
+.glass-hero-panel {
+  background: rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Sub-glass cards */
+.glass-hero-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.glass-hero-card:hover {
+  transform: scale(1.02) translateY(-4px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow:
+    0 20px 42px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(212, 175, 55, 0.35);
+}
+
+/* CTA button */
+.glass-hero-cta {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.glass-hero-cta:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22), 0 0 16px rgba(212, 175, 55, 0.12);
+}
+
+.glass-hero-cta:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 3px;
+}
+
+/* Fallback if backdrop-filter unsupported */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-hero-panel {
+    background: rgba(10, 20, 16, 0.78);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .glass-hero-card {
+    background: rgba(10, 20, 16, 0.50);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+  .glass-hero-card,
+  .glass-hero-cta {
+    transition: none;
+  }
+
+  .glass-hero-card:hover,
+  .glass-hero-cta:hover {
+    transform: none;
+  }
+}
+
+/* ============================================
+   🗺️ BUILD TOUR V3 - ELITE PLANNER GLASS SYSTEM
+   ============================================ */
+
+/* Planner shell — dark luxury glass container */
+.planner-shell-glass {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.55) 0%,
+      rgba(2, 40, 26, 0.65) 50%,
+      rgba(4, 57, 39, 0.50) 100%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.planner-shell-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.4) 20%,
+      rgba(212, 175, 55, 0.5) 50%,
+      rgba(212, 175, 55, 0.4) 80%,
+      transparent 100%);
+  z-index: 2;
+}
+
+/* Planner sidebar — premium glass rail */
+.planner-sidebar-glass {
+  background: linear-gradient(180deg,
+      rgba(2, 28, 19, 0.95) 0%,
+      rgba(4, 40, 26, 0.92) 50%,
+      rgba(2, 28, 19, 0.97) 100%);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border-right: 1px solid rgba(212, 175, 55, 0.12);
+  box-shadow:
+    12px 0 40px rgba(0, 0, 0, 0.4),
+    inset -1px 0 0 rgba(212, 175, 55, 0.06);
+}
+
+/* Map container — dark ocean theme */
+.planner-map-container {
+  background: radial-gradient(ellipse at 50% 40%,
+      #1a3a2e 0%,
+      #0d2820 30%,
+      #081c16 60%,
+      #050e0a 100%);
+  position: relative;
+}
+
+.planner-map-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+/* Planner toolbar — floating glass bar */
+.planner-toolbar-glass {
+  background: linear-gradient(135deg,
+      rgba(4, 57, 39, 0.75) 0%,
+      rgba(2, 40, 26, 0.80) 100%);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(212, 175, 55, 0.08);
+}
+
+/* Quick-start mode card — interactive glass */
+.quick-start-card {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.6) 0%,
+      rgba(2, 40, 26, 0.5) 100%);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.06);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-start-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center,
+      rgba(212, 175, 55, 0.08) 0%,
+      transparent 50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.quick-start-card:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 40px rgba(212, 175, 55, 0.12),
+    inset 0 1px 0 rgba(212, 175, 55, 0.2);
+}
+
+.quick-start-card:hover::before {
+  opacity: 1;
+}
+
+/* Region card — hover popup glass effect */
+.region-card-glass {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.region-card-glass::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+      rgba(212, 175, 55, 0.03) 0%,
+      transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.region-card-glass:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(212, 175, 55, 0.25);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(212, 175, 55, 0.08);
+}
+
+.region-card-glass:hover::after {
+  opacity: 1;
+}
+
+/* Place card — micro hover popup */
+.place-card-glass {
+  border: 1px solid transparent;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.place-card-glass:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.place-card-glass.in-trip {
+  background: rgba(212, 175, 55, 0.06);
+  border-color: rgba(212, 175, 55, 0.15);
+}
+
+/* How it works step — glass step card */
+.how-step-glass {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.5) 0%,
+      rgba(2, 40, 26, 0.4) 100%);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(212, 175, 55, 0.08);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(212, 175, 55, 0.04);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.how-step-glass:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  transform: translateY(-4px);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.25),
+    0 0 24px rgba(212, 175, 55, 0.1),
+    inset 0 1px 0 rgba(212, 175, 55, 0.1);
+}
+
+/* Tour card popup — enhanced hover */
+.tour-card-elite {
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.tour-card-elite:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(212, 175, 55, 0.1);
+}
+
+.tour-card-elite::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  transition: border-color 0.5s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tour-card-elite:hover::after {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* Testimonial card — warm glass */
+.testimonial-glass-dark {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.6) 0%,
+      rgba(2, 40, 26, 0.5) 100%);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.06);
+}
+
+/* Map district — elite glow effect on selected */
+.district-glow-selected {
+  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.4));
+}
+
+/* Custom Leaflet zoom controls for elite map */
+.leaflet-control-zoom a {
+  background: rgba(4, 57, 39, 0.85) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  color: rgba(212, 175, 55, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(4, 57, 39, 0.95) !important;
+  border-color: rgba(212, 175, 55, 0.5) !important;
+  color: #D4AF37 !important;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.15) !important;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* Gold pulse ring animation */
+@keyframes goldPulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+  70% { box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+.gold-pulse-ring {
+  animation: goldPulseRing 2s ease-in-out infinite;
 }

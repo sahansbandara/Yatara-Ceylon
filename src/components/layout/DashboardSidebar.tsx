@@ -2,95 +2,251 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
     LayoutDashboard,
     Users,
     Bell,
     Package,
     MapPin,
-    Map,
     Car,
     CalendarCheck,
     Headphones,
     DollarSign,
     Handshake,
-    Globe,
-    Palmtree,
     ChevronLeft,
     Menu,
+    Building2,
+    UserCircle,
+    FileText,
+    LogOut,
+    ClipboardList,
 } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useState } from 'react';
 
-const sidebarLinks = [
-    { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-    { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
-    { href: '/dashboard/packages', label: 'Packages', icon: Package },
-    { href: '/dashboard/destinations', label: 'Destinations', icon: MapPin },
-    { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
-    { href: '/dashboard/support', label: 'Support', icon: Headphones },
-    { href: '/dashboard/finance', label: 'Finance', icon: DollarSign },
-    { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
-    { href: '/dashboard/users', label: 'Users', icon: Users },
-];
+interface NavLink {
+    href: string;
+    label: string;
+    icon: any;
+}
 
-function SidebarContent() {
+interface NavGroup {
+    label: string;
+    links: NavLink[];
+}
+
+// Grouped navigation per role
+const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
+    ADMIN: [
+        {
+            label: 'Overview',
+            links: [
+                { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            ],
+        },
+        {
+            label: 'Operations',
+            links: [
+                { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
+                { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
+                { href: '/dashboard/support', label: 'Support', icon: Headphones },
+            ],
+        },
+        {
+            label: 'Content',
+            links: [
+                { href: '/dashboard/packages', label: 'Packages', icon: Package },
+                { href: '/dashboard/destinations', label: 'Destinations', icon: MapPin },
+            ],
+        },
+        {
+            label: 'Management',
+            links: [
+                { href: '/dashboard/admin-applications', label: 'Applications', icon: ClipboardList },
+                { href: '/dashboard/finance', label: 'Finance', icon: DollarSign },
+                { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
+                { href: '/dashboard/users', label: 'Users', icon: Users },
+                { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+            ],
+        },
+    ],
+    STAFF: [
+        {
+            label: 'Overview',
+            links: [
+                { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            ],
+        },
+        {
+            label: 'Operations',
+            links: [
+                { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
+                { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
+                { href: '/dashboard/support', label: 'Support', icon: Headphones },
+            ],
+        },
+        {
+            label: 'Content',
+            links: [
+                { href: '/dashboard/packages', label: 'Packages', icon: Package },
+                { href: '/dashboard/destinations', label: 'Destinations', icon: MapPin },
+                { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
+            ],
+        },
+        {
+            label: 'System',
+            links: [
+                { href: '/dashboard/admin-applications', label: 'Applications', icon: ClipboardList },
+                { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+            ],
+        },
+    ],
+    VEHICLE_OWNER: [
+        {
+            label: 'Fleet',
+            links: [
+                { href: '/dashboard/fleet', label: 'My Vehicles', icon: Car },
+            ],
+        },
+        {
+            label: 'Account',
+            links: [
+                { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+            ],
+        },
+    ],
+    HOTEL_OWNER: [
+        {
+            label: 'Property',
+            links: [
+                { href: '/dashboard/hotel', label: 'My Property', icon: Building2 },
+            ],
+        },
+        {
+            label: 'Account',
+            links: [
+                { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+            ],
+        },
+    ],
+    USER: [
+        {
+            label: 'My Travel',
+            links: [
+                { href: '/dashboard/my-bookings', label: 'My Bookings', icon: CalendarCheck },
+                { href: '/dashboard/my-plans', label: 'My Plans', icon: FileText },
+            ],
+        },
+        {
+            label: 'Account',
+            links: [
+                { href: '/dashboard/profile', label: 'Profile', icon: UserCircle },
+            ],
+        },
+    ],
+};
+
+const ROLE_LABELS: Record<string, string> = {
+    ADMIN: 'Administrator',
+    STAFF: 'Concierge Staff',
+    VEHICLE_OWNER: 'Fleet Partner',
+    HOTEL_OWNER: 'Hotel Partner',
+    USER: 'Customer',
+};
+
+function SidebarContent({ userRole, userName, isLoading }: { userRole: string; userName: string; isLoading?: boolean }) {
     const pathname = usePathname();
+    const groups = isLoading ? [] : (NAV_GROUPS_BY_ROLE[userRole] || NAV_GROUPS_BY_ROLE.USER);
+
+    const handleLogout = async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/auth/login';
+    };
 
     return (
-        <div className="flex h-full flex-col">
-            {/* Brand */}
-            <div className="flex h-20 items-center px-6 border-b border-antique-gold/10">
-                <Link href="/dashboard" className="flex items-center gap-3 group">
-                    <div className="w-9 h-9 rounded-xl bg-antique-gold/15 border border-antique-gold/25 flex items-center justify-center group-hover:bg-antique-gold/25 transition-all duration-300">
-                        <Palmtree className="h-4 w-4 text-antique-gold" />
-                    </div>
-                    <div>
-                        <span className="font-display text-lg font-bold text-off-white tracking-tight">
-                            TOMS
-                        </span>
-                        <p className="text-[9px] tracking-[0.2em] text-off-white/30 uppercase">Yatara Ceylon</p>
-                    </div>
+        <div className="flex h-full flex-col bg-transparent text-white">
+            {/* Brand Lockup */}
+            <div className="flex h-[80px] items-center px-5 border-b border-white/[0.06] justify-center pt-2">
+                <Link href="/dashboard" className="flex items-center group transition-transform hover:scale-[1.02]">
+                    <Image
+                        src="/images/yatara-brand-block.svg"
+                        alt="Yatara Ceylon"
+                        width={180}
+                        height={40}
+                        className="brightness-0 invert opacity-95"
+                        priority
+                    />
                 </Link>
             </div>
 
-            {/* Nav Links */}
-            <nav className="flex-1 overflow-y-auto px-3 py-6 space-y-1 scrollbar-glass-dark">
-                {sidebarLinks.map((link) => {
-                    const Icon = link.icon;
-                    const isActive =
-                        pathname === link.href ||
-                        (link.href !== '/dashboard' && pathname.startsWith(link.href));
-                    return (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={cn(
-                                'sidebar-link text-off-white/60 hover:text-off-white hover:bg-white/5 rounded-xl',
-                                isActive && 'sidebar-link-active text-antique-gold'
-                            )}
-                        >
-                            <Icon className={cn(
-                                "h-4 w-4 flex-shrink-0 transition-colors",
-                                isActive ? "text-antique-gold" : "text-off-white/40"
-                            )} />
-                            <span className="text-[13px]">{link.label}</span>
-                        </Link>
-                    );
-                })}
+            {/* User Info */}
+            <div className="px-5 py-3 border-b border-white/[0.04]">
+                <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
+                {isLoading ? (
+                    <div className="h-4 w-32 bg-white/10 rounded mt-1 animate-pulse" />
+                ) : (
+                    <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">
+                        {userName || 'User'} <span className="text-off-white/50 font-normal ml-1 text-[10px]">({ROLE_LABELS[userRole] || 'Customer'})</span>
+                    </p>
+                )}
+            </div>
+
+            {/* Navigation Groups */}
+            <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5 scrollbar-glass-dark">
+                {groups.map((group) => (
+                    <div key={group.label}>
+                        <p className="px-3 mb-2 text-[9px] tracking-[0.2em] uppercase text-off-white/20 font-semibold">
+                            {group.label}
+                        </p>
+                        <div className="space-y-0.5">
+                            {group.links.map((link) => {
+                                const Icon = link.icon;
+                                const isActive =
+                                    pathname === link.href ||
+                                    (link.href !== '/dashboard' && pathname.startsWith(link.href));
+                                return (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={cn(
+                                            'flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300',
+                                            isActive
+                                                ? 'bg-antique-gold/[0.12] border border-antique-gold/20 text-antique-gold shadow-[0_0_12px_rgba(212,175,55,0.06)]'
+                                                : 'text-off-white/50 hover:text-off-white/80 hover:bg-white/[0.04] border border-transparent'
+                                        )}
+                                    >
+                                        <Icon className={cn(
+                                            "h-4 w-4 flex-shrink-0 transition-all duration-300",
+                                            isActive ? "text-antique-gold" : "text-off-white/30 group-hover:text-off-white/50"
+                                        )} />
+                                        <span>{link.label}</span>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
             </nav>
 
             {/* Footer */}
-            <div className="border-t border-antique-gold/10 p-4">
+            <div className="border-t border-white/[0.06] p-3 space-y-0.5">
                 <Link
                     href="/"
-                    className="sidebar-link text-off-white/40 hover:text-antique-gold rounded-xl"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-off-white/35 hover:text-antique-gold hover:bg-white/[0.03] border border-transparent transition-all duration-300"
                 >
                     <ChevronLeft className="h-4 w-4" />
-                    <span className="text-[13px]">Back to Website</span>
+                    <span>Back to Website</span>
                 </Link>
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-off-white/35 hover:text-red-400 hover:bg-red-500/[0.05] border border-transparent w-full transition-all duration-300"
+                >
+                    <LogOut className="h-4 w-4" />
+                    <span>Sign Out</span>
+                </button>
             </div>
         </div>
     );
@@ -98,25 +254,41 @@ function SidebarContent() {
 
 export function DashboardSidebar() {
     const [open, setOpen] = useState(false);
+    const [userRole, setUserRole] = useState('USER');
+    const [userName, setUserName] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        fetch('/api/auth/me')
+            .then(res => res.json())
+            .then(data => {
+                if (data.user) {
+                    setUserRole(data.user.role || 'USER');
+                    setUserName(data.user.name || '');
+                }
+            })
+            .catch(() => { })
+            .finally(() => setIsLoading(false));
+    }, []);
 
     return (
         <>
-            {/* Desktop Sidebar — Dark Glass */}
-            <aside className="hidden md:block dashboard-sidebar-glass min-h-screen">
-                <SidebarContent />
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:block min-h-screen dashboard-sidebar-dark">
+                <SidebarContent userRole={userRole} userName={userName} isLoading={isLoading} />
             </aside>
 
             {/* Mobile Sidebar Toggle */}
             <div className="md:hidden fixed top-0 left-0 z-40 p-3">
                 <Sheet open={open} onOpenChange={setOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="outline" size="icon" className="liquid-glass border-antique-gold/20">
-                            <Menu className="h-5 w-5 text-deep-emerald" />
+                        <Button variant="outline" size="icon" className="liquid-glass border-antique-gold/20 bg-[#061a15]/80 backdrop-blur-xl">
+                            <Menu className="h-5 w-5 text-antique-gold" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="w-72 p-0 border-r border-antique-gold/20">
-                        <div className="h-full dashboard-sidebar-glass">
-                            <SidebarContent />
+                    <SheetContent side="left" className="w-72 p-0 border-r border-antique-gold/10 bg-[#020b08]">
+                        <div className="h-full dashboard-sidebar-dark">
+                            <SidebarContent userRole={userRole} userName={userName} isLoading={isLoading} />
                         </div>
                     </SheetContent>
                 </Sheet>

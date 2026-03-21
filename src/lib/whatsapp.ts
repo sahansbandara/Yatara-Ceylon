@@ -1,3 +1,6 @@
+export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '94704239802';
+export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
+
 export function generateWhatsAppLink(
     phone: string,
     data: {
@@ -10,8 +13,7 @@ export function generateWhatsAppLink(
         vehicleType?: string;
     }
 ): string {
-    const businessPhone =
-        phone || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '';
+    const businessPhone = phone || WHATSAPP_NUMBER;
     const lines: string[] = ['Hi Yatara Ceylon! I\'d like to inquire about:'];
 
     if (data.packageName) lines.push(`📦 Package: ${data.packageName}`);

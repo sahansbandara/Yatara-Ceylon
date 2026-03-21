@@ -29,29 +29,29 @@ interface InvoiceTableProps {
 
 export default function InvoiceTable({ invoices }: InvoiceTableProps) {
     return (
-        <div className="rounded-md border bg-white shadow-sm">
+        <div className="liquid-glass-panel rounded-xl overflow-hidden border border-white/10">
             <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Invoice No</TableHead>
-                        <TableHead>Booking Ref</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Status</TableHead>
+                <TableHeader className="bg-black/20">
+                    <TableRow className="border-white/10 hover:bg-transparent">
+                        <TableHead className="text-white/60 font-medium">Invoice No</TableHead>
+                        <TableHead className="text-white/60 font-medium">Booking Ref</TableHead>
+                        <TableHead className="text-white/60 font-medium">Amount</TableHead>
+                        <TableHead className="text-white/60 font-medium">Date</TableHead>
+                        <TableHead className="text-white/60 font-medium">Status</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {invoices.length > 0 ? (
                         invoices.map((invoice) => (
-                            <TableRow key={invoice._id}>
-                                <TableCell className="font-medium">{invoice.invoiceNo}</TableCell>
+                            <TableRow key={invoice._id} className="border-white/5 hover:bg-white/[0.02] transition-colors text-white/70">
+                                <TableCell className="font-medium text-off-white font-mono">{invoice.invoiceNo}</TableCell>
                                 <TableCell>
                                     <div className="flex flex-col">
                                         <span>{invoice.bookingId?.bookingNo || 'N/A'}</span>
                                         <span className="text-xs text-muted-foreground">{invoice.bookingId?.customerName}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell>${(invoice.total ?? 0).toLocaleString()}</TableCell>
+                                <TableCell>LKR {(invoice.total ?? 0).toLocaleString()}</TableCell>
                                 <TableCell>{format(new Date(invoice.createdAt), 'MMM d, yyyy')}</TableCell>
                                 <TableCell>
                                     <Badge variant={invoice.status === 'FINAL' ? 'default' : 'secondary'}>
@@ -61,8 +61,8 @@ export default function InvoiceTable({ invoices }: InvoiceTableProps) {
                             </TableRow>
                         ))
                     ) : (
-                        <TableRow>
-                            <TableCell colSpan={5} className="h-24 text-center">
+                        <TableRow className="border-none hover:bg-transparent">
+                            <TableCell colSpan={5} className="h-32 text-center text-white/40">
                                 No invoices found.
                             </TableCell>
                         </TableRow>

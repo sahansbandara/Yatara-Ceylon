@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import SectionHeading from '@/components/public/SectionHeading';
 import ContactForm from '@/components/public/ContactForm';
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Linkedin, Youtube, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -50,9 +50,9 @@ export default function ContactPage() {
                                         <Phone className="h-6 w-6" strokeWidth={1.5} />
                                     </div>
                                     <div>
-                                        <h4 className="font-serif text-lg text-deep-emerald mb-1">Phone & WhatsApp</h4>
-                                        <p className="text-gray-500 font-light">+94 77 123 4567</p>
-                                        <p className="text-gray-500 font-light">+94 11 234 5678</p>
+                                        <h4 className="font-serif text-lg text-deep-emerald mb-1">WhatsApp & Inquiries</h4>
+                                        <a href="https://wa.me/94704239802" target="_blank" rel="noopener noreferrer" className="text-gray-500 font-light hover:text-deep-emerald transition-colors">+94 70 423 9802</a>
+                                        <p className="text-antique-gold font-light text-sm mt-1">We respond within 2 hours</p>
                                     </div>
                                 </div>
 
@@ -62,8 +62,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h4 className="font-serif text-lg text-deep-emerald mb-1">Email</h4>
-                                        <p className="text-gray-500 font-light">concierge@yataraceylon.com</p>
-                                        <p className="text-gray-500 font-light">bespoke@yataraceylon.com</p>
+                                        <p className="text-gray-500 font-light">info@yataraceylon.me</p>
                                     </div>
                                 </div>
 
@@ -83,16 +82,27 @@ export default function ContactPage() {
 
                         <div>
                             <h3 className="text-2xl font-serif text-deep-emerald mb-6">Follow Us</h3>
-                            <div className="flex gap-4">
-                                <Link href="#" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300">
-                                    <Facebook className="h-5 w-5" strokeWidth={1.5} />
-                                </Link>
-                                <Link href="#" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300">
+                            <div className="flex gap-4 flex-wrap">
+                                <a href="https://wa.me/94704239802" target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300" aria-label="WhatsApp">
+                                    <MessageCircle className="h-5 w-5" strokeWidth={1.5} />
+                                </a>
+                                <a href="https://instagram.com/YataraCeylon" target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300" aria-label="Instagram">
                                     <Instagram className="h-5 w-5" strokeWidth={1.5} />
-                                </Link>
-                                <Link href="#" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300">
-                                    <Twitter className="h-5 w-5" strokeWidth={1.5} />
-                                </Link>
+                                </a>
+                                <a href="https://facebook.com/YataraCeylon" target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300" aria-label="Facebook">
+                                    <Facebook className="h-5 w-5" strokeWidth={1.5} />
+                                </a>
+                                <a href="https://linkedin.com/company/YataraCeylon" target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300" aria-label="LinkedIn">
+                                    <Linkedin className="h-5 w-5" strokeWidth={1.5} />
+                                </a>
+                                <a href="https://youtube.com/@YataraCeylon" target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300" aria-label="YouTube">
+                                    <Youtube className="h-5 w-5" strokeWidth={1.5} />
+                                </a>
+                                <a href="https://tiktok.com/@YataraCeylon" target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-none bg-off-white border border-off-white/20 flex items-center justify-center text-deep-emerald hover:bg-deep-emerald hover:text-antique-gold transition-all duration-300" aria-label="TikTok">
+                                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                                    </svg>
+                                </a>
                             </div>
                         </div>
 

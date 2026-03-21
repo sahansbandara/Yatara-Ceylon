@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
 import { useCurrency } from '@/lib/CurrencyContext';
+import { NotificationBell } from './NotificationBell';
 
 const navLinks = [
     {
@@ -17,19 +18,21 @@ const navLinks = [
             {
                 title: 'Curated',
                 links: [
-                    { href: '/packages?tag=featured', label: 'Featured' },
-                    { href: '/packages?tag=wildlife', label: 'Wildlife' },
-                    { href: '/packages?tag=heritage', label: 'Heritage' },
+                    { href: '/packages?featured=true', label: 'Featured Journeys' },
+                    { href: '/packages?style=wildlife', label: 'Wildlife' },
+                    { href: '/packages?style=heritage', label: 'Heritage' },
+                    { href: '/packages?style=luxury', label: 'Luxury' },
                     { href: '/packages', label: 'View all →', special: true },
                 ]
             },
             {
                 title: 'By Style',
                 links: [
-                    { href: '/tours/cultural', label: 'Cultural Tours' },
-                    { href: '/tours/wildlife-adventure', label: 'Wildlife & Adventure' },
-                    { href: '/tours/experiences', label: 'Experiences' },
-                    { href: '/packages', label: 'View all →', special: true },
+                    { href: '/packages?style=cultural', label: 'Cultural Tours' },
+                    { href: '/packages?style=adventure', label: 'Wildlife & Adventure' },
+                    { href: '/packages?style=experiences', label: 'Experiences' },
+                    { href: '/packages?style=wellness', label: 'Wellness' },
+                    { href: '/packages?style=beach', label: 'Beach & Coast' },
                 ]
             },
             {
@@ -38,7 +41,6 @@ const navLinks = [
                     { href: '/packages?duration=5-7', label: '5–7 Days' },
                     { href: '/packages?duration=8-10', label: '8–10 Days' },
                     { href: '/packages?duration=11-14', label: '11–14 Days' },
-                    { href: '/packages', label: 'View all →', special: true },
                 ]
             }
         ],
@@ -59,10 +61,11 @@ const navLinks = [
             {
                 title: 'By Region',
                 links: [
-                    { href: '/destinations/region/hill-country', label: 'Hill Country' },
-                    { href: '/destinations/region/cultural-triangle', label: 'Cultural Triangle' },
-                    { href: '/destinations/region/south-coast', label: 'South Coast' },
-                    { href: '/destinations/region', label: 'View all →', special: true },
+                    { href: '/destinations?region=hill-country', label: 'Hill Country' },
+                    { href: '/destinations?region=cultural-triangle', label: 'Cultural Triangle' },
+                    { href: '/destinations?region=south-coast', label: 'South Coast' },
+                    { href: '/destinations?region=east-coast', label: 'East Coast' },
+                    { href: '/destinations', label: 'View all →', special: true },
                 ]
             },
             {
@@ -81,8 +84,18 @@ const navLinks = [
             {
                 title: 'Transfer Services',
                 links: [
-                    { href: '/transfers', label: 'Private Transfers' },
-                    { href: '/about/fleet', label: 'Our Fleet' },
+                    { href: '/transfers', label: 'Transfers Overview' },
+                    { href: '/transfers/airport-executive', label: 'Executive Airport Passage' },
+                    { href: '/transfers/intercity-executive', label: 'Intercity Executive' },
+                    { href: '/transfers/wilderness-safari', label: 'Wilderness Expeditions' },
+                ]
+            },
+            {
+                title: 'More Services',
+                links: [
+                    { href: '/transfers/capital-by-night', label: 'Capital & Coastal Evenings' },
+                    { href: '/transfers/chauffeur-reserve', label: 'On-Demand Chauffeur' },
+                    { href: '/transfers/signature-fleet', label: 'The Signature Fleet' },
                 ]
             }
         ]
@@ -97,7 +110,16 @@ const navLinks = [
                     { href: '/build-tour', label: 'Build Your Tour' },
                     { href: '/build-tour/how-it-works', label: 'How It Works' },
                     { href: '/build-tour/proposal', label: 'Proposal in 24 Hours' },
-                    { href: '/faq', label: 'FAQs' },
+                ]
+            },
+            {
+                title: 'Signature Regions',
+                links: [
+                    { href: '/destinations?region=cultural-triangle', label: 'Cultural Triangle' },
+                    { href: '/destinations?region=tea-highlands', label: 'Tea Highlands' },
+                    { href: '/destinations?region=south-coast', label: 'South Coast' },
+                    { href: '/destinations?region=wildlife-safari', label: 'Wildlife & Safari' },
+                    { href: '/build-tour', label: 'Explore all →', special: true },
                 ]
             }
         ]
@@ -150,9 +172,22 @@ export function Navbar() {
     const [open, setOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [scrolled, setScrolled] = useState(false);
+    const [user, setUser] = useState<{ name: string; role: string } | null>(null);
     const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { currency, setCurrency } = useCurrency();
     const isHome = pathname === '/';
+
+    // Fetch user on mount
+    useEffect(() => {
+        fetch('/api/auth/me')
+            .then(res => res.json())
+            .then(data => {
+                if (data.user) {
+                    setUser({ name: data.user.name, role: data.user.role });
+                }
+            })
+            .catch(() => { });
+    }, []);
 
     // Scroll detection for homepage transparent-to-solid transition
     useEffect(() => {
@@ -260,7 +295,7 @@ export function Navbar() {
                                     >
                                         {/* Invisible bridge to prevent hover gap */}
                                         <div className="h-3 w-full" />
-                                        <div className="w-max min-w-[480px] max-w-[720px] bg-[rgba(6,20,14,0.82)] backdrop-blur-[20px] backdrop-saturate-[140%] border border-white/[0.08] rounded-2xl py-7 px-8 flex gap-14 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.02)]">
+                                        <div className="liquid-glass-menu w-max min-w-[480px] max-w-[720px] rounded-2xl py-7 px-8 flex gap-14">
                                             {link.dropdown.map((section, idx) => (
                                                 <div key={idx} className="flex flex-col flex-1 min-w-[130px]">
                                                     <span className="text-[10px] text-white/50 tracking-[0.25em] font-nav uppercase mb-3 px-3 font-medium">
@@ -268,20 +303,17 @@ export function Navbar() {
                                                     </span>
                                                     <div className="flex flex-col">
                                                         {section.links.map((item, linkIdx) => (
-                                                            <button
+                                                            <Link
                                                                 key={`${item.href}-${linkIdx}`}
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setActiveDropdown(null);
-                                                                    router.push(item.href);
-                                                                }}
+                                                                href={item.href}
+                                                                onClick={() => setActiveDropdown(null)}
                                                                 className={`flex items-center px-3 h-[42px] font-nav text-[13px] tracking-wide rounded-lg transition-all duration-200 text-left ${item.special
                                                                     ? 'text-[#D4AF37] hover:bg-white/[0.06] mt-1 text-[12px]'
                                                                     : 'text-white/80 hover:text-white hover:bg-white/[0.06]'
                                                                     }`}
                                                             >
                                                                 {item.label}
-                                                            </button>
+                                                            </Link>
                                                         ))}
                                                     </div>
                                                 </div>
@@ -307,9 +339,43 @@ export function Navbar() {
                             </span>
                         </Link>
 
-                        <Link href="/auth/login" className="font-nav text-[11px] tracking-[0.18em] text-white/60 hover:text-white transition-colors uppercase">
-                            LOGIN
-                        </Link>
+                        <NotificationBell userRole={user?.role} />
+
+                        {user ? (
+                            <div className="relative group flex items-center py-2 -my-2">
+                                <span className="font-nav text-[11px] tracking-[0.18em] text-[#D4AF37] hover:text-white transition-colors uppercase flex items-center gap-2 cursor-pointer">
+                                    <span className="w-6 h-6 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] font-bold text-[10px]">
+                                        {user.name.charAt(0).toUpperCase()}
+                                    </span>
+                                    {user.name.split(' ')[0]}
+                                </span>
+                                {/* Dropdown Menu */}
+                                <div className="absolute top-10 right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                    <div className="w-48 bg-[#0a1f15]/95 backdrop-blur-md border border-[#D4AF37]/20 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] mt-4 overflow-hidden flex flex-col">
+                                        <div className="px-4 py-3 border-b border-[#D4AF37]/10">
+                                            <p className="text-xs font-semibold text-white truncate">{user.name}</p>
+                                            <p className="text-[9px] text-[#D4AF37] uppercase tracking-widest mt-1">{user.role}</p>
+                                        </div>
+                                        <Link href="/dashboard" className="px-4 py-3 text-[10px] text-white/70 hover:bg-white/5 hover:text-[#D4AF37] transition-colors w-full text-left font-nav tracking-widest uppercase">
+                                            Dashboard
+                                        </Link>
+                                        <button
+                                            onClick={async () => {
+                                                await fetch('/api/auth/logout', { method: 'POST' });
+                                                window.location.reload();
+                                            }}
+                                            className="px-4 py-3 text-[10px] text-red-400 hover:bg-red-500/10 transition-colors w-full text-left font-nav tracking-widest uppercase border-t border-[#D4AF37]/10"
+                                        >
+                                            Log Out
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <Link href="/auth/login" className="font-nav text-[11px] tracking-[0.18em] text-white/60 hover:text-white transition-colors uppercase">
+                                LOGIN
+                            </Link>
+                        )}
 
                         <button
                             onClick={() => setCurrency(currency === 'LKR' ? 'USD' : 'LKR')}
@@ -335,12 +401,12 @@ export function Navbar() {
                                 <Menu className="h-6 w-6" />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="right" className="w-80 p-0 border-l border-[#D4AF37]/20 overflow-hidden">
-                            <div className="absolute inset-0 liquid-glass-dark" />
-                            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
+                        <SheetContent side="right" className="w-80 p-0 border-l border-[#D4AF37]/20 overflow-hidden flex flex-col">
+                            <div className="absolute inset-0 liquid-glass-dark pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none" />
 
-                            <div className="relative z-10 flex flex-col gap-6 mt-16 px-6">
-                                <div className="h-px w-16 bg-gradient-to-r from-[#D4AF37] to-transparent mb-4" />
+                            <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar mt-16 px-6 pb-6 flex flex-col gap-6">
+                                <div className="h-px w-16 bg-gradient-to-r from-[#D4AF37] to-transparent mb-4 shrink-0" />
 
                                 {navLinks.map((link, idx) => (
                                     <div key={link.href} style={{ animationDelay: `${idx * 80}ms` }} className="animate-fade-in-up opacity-0">
@@ -380,9 +446,26 @@ export function Navbar() {
                                 ))}
 
                                 <div className="border-t border-[#D4AF37]/20 pt-8 mt-4 flex flex-col gap-6">
-                                    <Link href="/auth/login" onClick={() => setOpen(false)} className="font-nav text-[13px] tracking-[0.15em] text-white/80 hover:text-[#D4AF37] transition-colors uppercase">
-                                        LOGIN
-                                    </Link>
+                                    {user ? (
+                                        <>
+                                            <Link href="/dashboard" onClick={() => setOpen(false)} className="font-nav text-[13px] tracking-[0.15em] text-[#D4AF37] hover:text-white transition-colors uppercase">
+                                                DASHBOARD
+                                            </Link>
+                                            <button
+                                                onClick={async () => {
+                                                    await fetch('/api/auth/logout', { method: 'POST' });
+                                                    window.location.reload();
+                                                }}
+                                                className="font-nav text-[13px] tracking-[0.15em] text-red-500 hover:text-red-400 transition-colors uppercase text-left w-full"
+                                            >
+                                                LOG OUT
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <Link href="/auth/login" onClick={() => setOpen(false)} className="font-nav text-[13px] tracking-[0.15em] text-white/80 hover:text-[#D4AF37] transition-colors uppercase">
+                                            LOGIN
+                                        </Link>
+                                    )}
                                     <button
                                         onClick={() => { setCurrency(currency === 'LKR' ? 'USD' : 'LKR'); setOpen(false); }}
                                         className="currency-toggle-btn self-start"
@@ -398,7 +481,7 @@ export function Navbar() {
                                     </Link>
                                 </div>
 
-                                <div className="absolute bottom-8 left-6 right-6">
+                                <div className="mt-auto pb-8 shrink-0">
                                     <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-transparent" />
                                     <p className="text-center text-[9px] tracking-[0.3em] text-white/20 mt-4 uppercase font-nav">
                                         Bespoke Sri Lanka

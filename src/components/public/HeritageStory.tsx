@@ -61,17 +61,11 @@ export default function HeritageStory() {
                             </p>
                         </div>
 
-                        {/* Glass accent card */}
-                        <div className="mt-10 liquid-glass-gold rounded-xl p-6">
-                            <div className="flex items-center gap-6">
-                                <div className="w-16 h-16 rounded-full bg-deep-emerald/5 border border-deep-emerald/10 flex items-center justify-center">
-                                    <span className="text-antique-gold font-display text-2xl">Y</span>
-                                </div>
-                                <div>
-                                    <p className="text-xs tracking-[0.2em] uppercase text-deep-emerald font-semibold">The Founders</p>
-                                    <p className="text-sm font-light text-gray-500 mt-1">Curators of Fine Travel Since 2014</p>
-                                </div>
-                            </div>
+                        {/* Founder attribution */}
+                        <div className="mt-10 pt-6 border-t border-deep-emerald/[0.06]">
+                            <p className="text-[11px] tracking-[0.2em] uppercase text-deep-emerald/40 font-nav">
+                                Curators of Fine Travel · Est. 2014
+                            </p>
                         </div>
                     </div>
 

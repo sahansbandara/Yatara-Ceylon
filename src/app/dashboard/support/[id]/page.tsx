@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation';
 import connectDB from '@/lib/mongodb';
 import SupportTicket from '@/models/SupportTicket';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Metadata } from 'next';
 import TicketReplyForm from '@/components/dashboard/TicketReplyForm';
@@ -39,10 +38,10 @@ export default async function TicketDetailsPage({ params }: { params: Params }) 
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'OPEN': return 'bg-blue-100 text-blue-800';
-            case 'REPLIED': return 'bg-yellow-100 text-yellow-800';
-            case 'CLOSED': return 'bg-gray-100 text-gray-800';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'OPEN': return 'bg-blue-500/15 text-blue-300 border-blue-500/30';
+            case 'REPLIED': return 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30';
+            case 'CLOSED': return 'bg-white/10 text-white/50 border-white/20';
+            default: return 'bg-white/10 text-white/60';
         }
     };
 
@@ -50,13 +49,13 @@ export default async function TicketDetailsPage({ params }: { params: Params }) 
         <div className="flex flex-col gap-6 p-6">
             <div className="flex items-center gap-4">
                 <Link href="/dashboard/support">
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" className="text-white/60 hover:text-white hover:bg-white/10">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
                 </Link>
                 <div className="flex-1">
-                    <h1 className="text-2xl font-bold tracking-tight">{ticket.subject}</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-2xl font-bold tracking-tight text-off-white">{ticket.subject}</h1>
+                    <p className="text-white/40 text-sm">
                         Opened {format(new Date(ticket.createdAt), 'PPP p')}
                     </p>
                 </div>
@@ -69,48 +68,40 @@ export default async function TicketDetailsPage({ params }: { params: Params }) 
                 {/* Conversation Thread */}
                 <div className="lg:col-span-2 space-y-4">
                     {/* Original Message */}
-                    <Card>
-                        <CardHeader className="pb-3">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-ocean-100 flex items-center justify-center text-ocean-600">
-                                    <UserIcon className="h-5 w-5" />
-                                </div>
-                                <div>
-                                    <p className="font-semibold">{ticket.customerName}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                        {format(new Date(ticket.createdAt), 'PPP p')}
-                                    </p>
-                                </div>
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="h-10 w-10 rounded-full bg-blue-500/15 flex items-center justify-center text-blue-400">
+                                <UserIcon className="h-5 w-5" />
                             </div>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-gray-700 whitespace-pre-wrap">{ticket.message}</p>
-                        </CardContent>
-                    </Card>
+                            <div>
+                                <p className="font-semibold text-off-white">{ticket.customerName}</p>
+                                <p className="text-xs text-white/40">
+                                    {format(new Date(ticket.createdAt), 'PPP p')}
+                                </p>
+                            </div>
+                        </div>
+                        <p className="text-white/70 whitespace-pre-wrap">{ticket.message}</p>
+                    </div>
 
                     {/* Replies */}
                     {ticket.replies?.map((reply: any, index: number) => (
-                        <Card key={reply._id || index} className={reply.byUserId ? 'border-l-4 border-l-ocean-500' : ''}>
-                            <CardHeader className="pb-3">
-                                <div className="flex items-center gap-3">
-                                    <div className={`h-10 w-10 rounded-full flex items-center justify-center ${reply.byUserId ? 'bg-ocean-100 text-ocean-600' : 'bg-gray-100 text-gray-600'}`}>
-                                        <MessageSquare className="h-5 w-5" />
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold">
-                                            {reply.byName}
-                                            {reply.byUserId && <span className="text-xs ml-2 text-ocean-600 font-normal">Staff</span>}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {format(new Date(reply.at), 'PPP p')}
-                                        </p>
-                                    </div>
+                        <div key={reply._id || index} className={`liquid-glass-stat rounded-2xl p-6 ${reply.byUserId ? 'border-l-4 border-l-antique-gold/50' : ''}`}>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${reply.byUserId ? 'bg-antique-gold/15 text-antique-gold' : 'bg-white/10 text-white/50'}`}>
+                                    <MessageSquare className="h-5 w-5" />
                                 </div>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-gray-700 whitespace-pre-wrap">{reply.body}</p>
-                            </CardContent>
-                        </Card>
+                                <div>
+                                    <p className="font-semibold text-off-white">
+                                        {reply.byName}
+                                        {reply.byUserId && <span className="text-xs ml-2 text-antique-gold font-normal">Staff</span>}
+                                    </p>
+                                    <p className="text-xs text-white/40">
+                                        {format(new Date(reply.at), 'PPP p')}
+                                    </p>
+                                </div>
+                            </div>
+                            <p className="text-white/70 whitespace-pre-wrap">{reply.body}</p>
+                        </div>
                     ))}
 
                     {/* Reply Form */}
@@ -121,47 +112,49 @@ export default async function TicketDetailsPage({ params }: { params: Params }) 
 
                 {/* Sidebar */}
                 <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-sm font-medium">Customer Details</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="flex items-center gap-2 text-sm">
-                                <UserIcon className="h-4 w-4 text-gray-400" />
-                                <span>{ticket.customerName}</span>
+                    <div className="liquid-glass-stat-dark rounded-2xl p-6 border border-white/[0.08]">
+                        <h3 className="text-sm font-semibold text-off-white uppercase tracking-wider mb-4">Customer Details</h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3 text-sm text-white/70">
+                                <div className="h-8 w-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                                    <UserIcon className="h-4 w-4 text-white/50" />
+                                </div>
+                                <span className="font-medium text-white/90 truncate">{ticket.customerName}</span>
                             </div>
                             {ticket.email && (
-                                <div className="flex items-center gap-2 text-sm">
-                                    <Mail className="h-4 w-4 text-gray-400" />
-                                    <span>{ticket.email}</span>
+                                <div className="flex items-center gap-3 text-sm text-white/70">
+                                    <div className="h-8 w-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                                        <Mail className="h-4 w-4 text-white/50" />
+                                    </div>
+                                    <span className="truncate">{ticket.email}</span>
                                 </div>
                             )}
                             {ticket.phone && (
-                                <div className="flex items-center gap-2 text-sm">
-                                    <Phone className="h-4 w-4 text-gray-400" />
+                                <div className="flex items-center gap-3 text-sm text-white/70">
+                                    <div className="h-8 w-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                                        <Phone className="h-4 w-4 text-white/50" />
+                                    </div>
                                     <span>{ticket.phone}</span>
                                 </div>
                             )}
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-sm font-medium">Actions</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
+                    <div className="liquid-glass-stat-dark rounded-2xl p-6 border border-white/[0.08]">
+                        <h3 className="text-sm font-semibold text-off-white uppercase tracking-wider mb-4">Actions</h3>
+                        <div className="space-y-3">
                             {ticket.status !== 'CLOSED' && (
-                                <Button variant="outline" className="w-full text-red-600 border-red-200 hover:bg-red-50">
+                                <Button variant="outline" className="w-full h-11 rounded-xl text-red-400 border-red-500/20 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/30 bg-transparent transition-all">
                                     Close Ticket
                                 </Button>
                             )}
                             {ticket.bookingId && (
-                                <Link href={`/dashboard/bookings/${ticket.bookingId}`}>
-                                    <Button variant="outline" className="w-full">View Booking</Button>
+                                <Link href={`/dashboard/bookings/${ticket.bookingId}`} className="block">
+                                    <Button variant="outline" className="w-full h-11 rounded-xl text-white/70 border-white/[0.1] hover:bg-white/[0.06] hover:text-white bg-transparent transition-all">View Booking</Button>
                                 </Link>
                             )}
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

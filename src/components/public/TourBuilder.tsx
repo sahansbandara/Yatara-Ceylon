@@ -81,7 +81,7 @@ export default function TourBuilder({ districts: rawDistricts, places: rawPlaces
     const buildPayload = (isDraft: boolean) => {
         return {
             customerName: formData.name || 'Draft Itinerary',
-            email: formData.email || 'draft@yataraceylon.com',
+            email: formData.email || 'draft@yataraceylon.me',
             phone: formData.phone || '',
             type: isDraft ? 'DRAFT' : 'CUSTOM',
             message: `

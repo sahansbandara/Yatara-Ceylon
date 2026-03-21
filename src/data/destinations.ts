@@ -7,9 +7,13 @@ export interface DestinationItem {
     location: string;
     longDescription: string;
     images: string[];
+    region: string;
+    bestSeason: string;
+    idealNights: string;
+    travelStyleTags: string[];
 }
 
-const districtImage = (slug: string) => `/images/districts/${slug}.jpg`;
+const districtImage = (slug: string) => `/images/districts/${slug}.webp`;
 
 export const DESTINATIONS: DestinationItem[] = [
     {
@@ -21,6 +25,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Colombo District, Western Province',
         longDescription: 'Colombo is Sri Lanka\'s refined urban gateway with oceanfront promenades, heritage architecture, private dining, and contemporary art spaces. It is ideal for sophisticated city stays, shopping, and seamless onward journeys across the island.',
         images: [districtImage('colombo')],
+        region: 'Colombo',
+        bestSeason: 'Year-round',
+        idealNights: '2–3',
+        travelStyleTags: ['Culture', 'Wellness', 'Heritage'],
     },
     {
         _id: 'd-gle',
@@ -31,6 +39,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Galle District, Southern Province',
         longDescription: 'Galle blends Dutch colonial heritage with curated coastal luxury. Guests can wander the UNESCO-listed fort, enjoy curated dining, and unwind along nearby golden beaches and upscale villa enclaves.',
         images: [districtImage('galle')],
+        region: 'South Coast',
+        bestSeason: 'Nov–Apr',
+        idealNights: '3–5',
+        travelStyleTags: ['Heritage', 'Beach', 'Couples'],
     },
     {
         _id: 'd-kdy',
@@ -41,6 +53,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Kandy District, Central Province',
         longDescription: 'Kandy offers a timeless blend of spirituality and mountain grandeur. From the Temple of the Tooth to misty viewpoints and artisan heritage, this district is a cornerstone for meaningful cultural journeys.',
         images: [districtImage('kandy')],
+        region: 'Hill Country',
+        bestSeason: 'Dec–Apr',
+        idealNights: '2–3',
+        travelStyleTags: ['Heritage', 'Culture', 'Wellness'],
     },
     {
         _id: 'd-bdl',
@@ -51,6 +67,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Badulla District, Uva Province',
         longDescription: 'Ella is a highland escape where dramatic ridges, tea estates, and railway heritage create postcard-perfect scenery. It is ideal for relaxed luxury stays with short guided scenic explorations.',
         images: [districtImage('ella')],
+        region: 'Hill Country',
+        bestSeason: 'Dec–Apr',
+        idealNights: '2–3',
+        travelStyleTags: ['Scenic', 'Adventure', 'Nature'],
     },
     {
         _id: 'd-nua',
@@ -61,6 +81,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Nuwara Eliya District, Central Province',
         longDescription: 'Known as Little England, Nuwara Eliya offers stately bungalows, tranquil lakes, and curated tea experiences. It is perfect for travelers seeking cool weather, gardens, and refined mountain leisure.',
         images: [districtImage('nuwara-eliya')],
+        region: 'Hill Country',
+        bestSeason: 'Dec–Apr',
+        idealNights: '2–3',
+        travelStyleTags: ['Heritage', 'Wellness', 'Scenic'],
     },
     {
         _id: 'd-mtl',
@@ -71,6 +95,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Matale District, Central Province',
         longDescription: 'This region delivers Sri Lanka\'s most iconic ancient landscapes, from the Lion Rock to sacred cave complexes. Private guided routes reveal art, archaeology, and timeless scenery.',
         images: [districtImage('sigiriya')],
+        region: 'Cultural Triangle',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–4',
+        travelStyleTags: ['Heritage', 'Culture', 'Adventure'],
     },
     {
         _id: 'd-hbt',
@@ -81,6 +109,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Hambantota District, Southern Province',
         longDescription: 'Yala and Hambantota combine rugged coastal drama with elite safari experiences. It is one of Sri Lanka\'s finest regions for private game drives and immersive nature-focused stays.',
         images: [districtImage('yala')],
+        region: 'South Coast',
+        bestSeason: 'Nov–Apr',
+        idealNights: '3–5',
+        travelStyleTags: ['Wildlife', 'Adventure', 'Nature'],
     },
     {
         _id: 'd-mtr',
@@ -91,6 +123,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Matara District, Southern Province',
         longDescription: 'Mirissa and Matara provide a polished southern beach experience with whale-watching excursions, palm-lined bays, and stylish villas designed for laid-back luxury.',
         images: [districtImage('mirissa')],
+        region: 'South Coast',
+        bestSeason: 'Nov–Apr',
+        idealNights: '3–5',
+        travelStyleTags: ['Beach', 'Nature', 'Couples'],
     },
     {
         _id: 'd-anu',
@@ -101,6 +137,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Anuradhapura District, North Central Province',
         longDescription: 'Anuradhapura is a living testament to Sri Lanka\'s earliest kingdom traditions. Monumental ruins, sacred sites, and serene landscapes make it essential for heritage-focused itineraries.',
         images: [districtImage('anuradhapura')],
+        region: 'Cultural Triangle',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–4',
+        travelStyleTags: ['Heritage', 'Culture', 'Wellness'],
     },
     {
         _id: 'd-pol',
@@ -111,6 +151,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Polonnaruwa District, North Central Province',
         longDescription: 'Polonnaruwa offers a compact but extraordinary concentration of archaeological brilliance. Private touring reveals elegant stonework, monastic complexes, and expansive ancient water systems.',
         images: [districtImage('polonnaruwa')],
+        region: 'Cultural Triangle',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–4',
+        travelStyleTags: ['Heritage', 'Culture', 'Adventure'],
     },
     {
         _id: 'd-tri',
@@ -121,6 +165,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Trincomalee District, Eastern Province',
         longDescription: 'Trincomalee blends calm turquoise shores with maritime history and reef-rich waters. It is a top choice for luxury coastal relaxation with curated ocean experiences.',
         images: [districtImage('trincomalee')],
+        region: 'East Coast',
+        bestSeason: 'May–Sep',
+        idealNights: '2–3',
+        travelStyleTags: ['Beach', 'Nature', 'Wellness'],
     },
     {
         _id: 'd-amp',
@@ -131,6 +179,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Ampara District, Eastern Province',
         longDescription: 'Arugam Bay is an elite surf-and-sun destination where boutique coastal stays meet adventurous day trips. It works beautifully for slow, scenic eastern circuits.',
         images: [districtImage('arugam-bay')],
+        region: 'East Coast',
+        bestSeason: 'May–Sep',
+        idealNights: '2–3',
+        travelStyleTags: ['Adventure', 'Beach', 'Nature'],
     },
     {
         _id: 'd-jaf',
@@ -141,6 +193,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Jaffna District, Northern Province',
         longDescription: 'Jaffna introduces a distinct cultural identity within Sri Lanka through Hindu heritage, island excursions, and refined local cuisine. It is ideal for deep cultural discovery.',
         images: [districtImage('jaffna')],
+        region: 'North',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–3',
+        travelStyleTags: ['Culture', 'Heritage', 'Adventure'],
     },
     {
         _id: 'd-put',
@@ -151,6 +207,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Puttalam District, North Western Province',
         longDescription: 'Kalpitiya and Puttalam offer a rare mix of marine wilderness and wide open lagoons. This is a strong pick for travelers seeking nature-forward coastal experiences.',
         images: [districtImage('kalpitiya')],
+        region: 'West Coast',
+        bestSeason: 'Nov–Apr',
+        idealNights: '1–2',
+        travelStyleTags: ['Nature', 'Adventure', 'Wildlife'],
     },
     {
         _id: 'd-rat',
@@ -161,6 +221,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Ratnapura District, Sabaragamuwa Province',
         longDescription: 'Ratnapura combines gem-trade heritage with access to lush wilderness and spiritual mountain routes. It suits travelers who enjoy layered stories and natural beauty.',
         images: [districtImage('ratnapura')],
+        region: 'Hill Country',
+        bestSeason: 'Dec–Apr',
+        idealNights: '2–3',
+        travelStyleTags: ['Heritage', 'Nature', 'Adventure'],
     },
     {
         _id: 'd-keg',
@@ -171,6 +235,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Kegalle District, Sabaragamuwa Province',
         longDescription: 'Kegalle is known for lush landscapes and elephant heritage attractions. It pairs well with central highland routes for family-focused, nature-conscious journeys.',
         images: [districtImage('kegalle')],
+        region: 'Hill Country',
+        bestSeason: 'Dec–Apr',
+        idealNights: '2–3',
+        travelStyleTags: ['Family', 'Nature', 'Wildlife'],
     },
     {
         _id: 'd-gmp',
@@ -181,6 +249,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Gampaha District, Western Province',
         longDescription: 'Negombo and Gampaha are ideal opening or closing destinations with relaxed coastal rhythm, historical waterways, and premium convenience near the international airport.',
         images: [districtImage('negombo')],
+        region: 'West Coast',
+        bestSeason: 'Nov–Apr',
+        idealNights: '1–2',
+        travelStyleTags: ['Beach', 'Heritage', 'Wellness'],
     },
     {
         _id: 'd-kal',
@@ -191,6 +263,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Kalutara District, Western Province',
         longDescription: 'Kalutara and Bentota present Sri Lanka\'s design-forward coastal luxury with gardens, architecture, and polished beachfront resorts suited for indulgent escapes.',
         images: [districtImage('kalutara')],
+        region: 'South Coast',
+        bestSeason: 'Nov–Apr',
+        idealNights: '3–5',
+        travelStyleTags: ['Beach', 'Couples', 'Wellness'],
     },
     {
         _id: 'd-kur',
@@ -201,6 +277,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Kurunegala District, North Western Province',
         longDescription: 'Kurunegala offers layered historical significance and commanding inland scenery. It fits cultural circuits connecting ancient capitals and lesser-explored interior landscapes.',
         images: [districtImage('kurunegala')],
+        region: 'Cultural Triangle',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–4',
+        travelStyleTags: ['Heritage', 'Culture', 'Adventure'],
     },
     {
         _id: 'd-bat',
@@ -211,6 +291,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Batticaloa District, Eastern Province',
         longDescription: 'Batticaloa blends serene lagoons with distinctive local heritage and gently developing coastal tourism, making it ideal for quieter premium itineraries.',
         images: [districtImage('batticaloa')],
+        region: 'East Coast',
+        bestSeason: 'May–Sep',
+        idealNights: '2–3',
+        travelStyleTags: ['Beach', 'Culture', 'Wellness'],
     },
     {
         _id: 'd-mnr',
@@ -221,6 +305,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Mannar District, Northern Province',
         longDescription: 'Mannar is one of Sri Lanka\'s most distinctive districts, featuring windswept coasts, migratory bird routes, and rare heritage landmarks for adventurous luxury routes.',
         images: [districtImage('mannar')],
+        region: 'North',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–3',
+        travelStyleTags: ['Adventure', 'Wildlife', 'Nature'],
     },
     {
         _id: 'd-kil',
@@ -231,6 +319,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Kilinochchi District, Northern Province',
         longDescription: 'Kilinochchi offers wide open landscapes and meaningful modern history, making it a valuable addition for travelers exploring Sri Lanka\'s northern narrative with depth.',
         images: [districtImage('kilinochchi')],
+        region: 'North',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–3',
+        travelStyleTags: ['Adventure', 'Culture', 'Scenic'],
     },
     {
         _id: 'd-vav',
@@ -241,6 +333,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Vavuniya District, Northern Province',
         longDescription: 'Vavuniya functions as a cultural bridge district with historical and spiritual sites that connect broader northern circuits with inland heritage journeys.',
         images: [districtImage('vavuniya')],
+        region: 'North',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–3',
+        travelStyleTags: ['Heritage', 'Culture', 'Wellness'],
     },
     {
         _id: 'd-mul',
@@ -251,6 +347,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Mullaitivu District, Northern Province',
         longDescription: 'Mullaitivu is a remote and atmospheric district with pristine coastlines and tranquil lagoons suited for travelers prioritizing seclusion and raw natural beauty.',
         images: [districtImage('mullaitivu')],
+        region: 'North',
+        bestSeason: 'Jan–Sep',
+        idealNights: '2–3',
+        travelStyleTags: ['Adventure', 'Nature', 'Scenic'],
     },
     {
         _id: 'd-mon',
@@ -261,6 +361,10 @@ export const DESTINATIONS: DestinationItem[] = [
         location: 'Moneragala District, Uva Province',
         longDescription: 'Moneragala offers vast wilderness and rich biodiversity with access to unique parks and sacred sites, ideal for immersive eastern-inland expedition routes.',
         images: [districtImage('moneragala')],
+        region: 'Wildlife',
+        bestSeason: 'Feb–Jul',
+        idealNights: '2–3',
+        travelStyleTags: ['Wildlife', 'Adventure', 'Nature'],
     },
 ];
 

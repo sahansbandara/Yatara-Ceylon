@@ -51,6 +51,8 @@ const PREMIUM_PACKAGES = [
             '/images/packages/ceylon-grand-circuit-gallery-3.png',
         ],
         isPublished: true,
+        isFeaturedHome: true,
+        homeRank: 1,
     },
     {
         title: 'Hill Country Tea & Rail Retreat',
@@ -95,6 +97,8 @@ const PREMIUM_PACKAGES = [
             '/images/packages/hill-country-tea-rail-retreat-gallery-3.png',
         ],
         isPublished: true,
+        isFeaturedHome: true,
+        homeRank: 4,
     },
     {
         title: 'Heritage Triangle Private Edition',
@@ -131,12 +135,14 @@ const PREMIUM_PACKAGES = [
             { day: 6, title: 'Departure', description: 'Morning at leisure, airport transfer.', activity: 'Departure' },
         ],
         images: [
-            '/images/packages/heritage-triangle-private-edition-hero.png',
+            '/images/packages/heritage-triangle-private-edition-hero.webp',
             '/images/packages/heritage-triangle-private-edition-gallery-1.webp',
             '/images/packages/heritage-triangle-private-edition-gallery-2.webp',
             '/images/packages/heritage-triangle-private-edition-gallery-3.webp',
         ],
         isPublished: true,
+        isFeaturedHome: true,
+        homeRank: 6,
     },
     {
         title: 'Wildlife & Coastal Luxe',
@@ -182,6 +188,8 @@ const PREMIUM_PACKAGES = [
             '/images/packages/wildlife-coastal-luxe-gallery-3.webp',
         ],
         isPublished: true,
+        isFeaturedHome: true,
+        homeRank: 3,
     },
     {
         title: 'Ayurveda Wellness Sanctuary',
@@ -224,6 +232,8 @@ const PREMIUM_PACKAGES = [
             '/images/packages/ayurveda-wellness-sanctuary-gallery-3.webp',
         ],
         isPublished: true,
+        isFeaturedHome: false,
+        homeRank: 0,
     },
     {
         title: 'Honeymoon: Private Villa & Experiences',
@@ -266,6 +276,8 @@ const PREMIUM_PACKAGES = [
             '/images/packages/honeymoon-private-villa-experiences-gallery-3.webp',
         ],
         isPublished: true,
+        isFeaturedHome: true,
+        homeRank: 5,
     },
     {
         title: 'East Coast Summer Escape',
@@ -310,6 +322,8 @@ const PREMIUM_PACKAGES = [
             '/images/packages/east-coast-summer-escape-gallery-3.webp',
         ],
         isPublished: true,
+        isFeaturedHome: false,
+        homeRank: 0,
     },
     {
         title: 'Ramayana Trail Deluxe',
@@ -352,16 +366,22 @@ const PREMIUM_PACKAGES = [
             '/images/packages/ramayana-trail-deluxe-gallery-3.webp',
         ],
         isPublished: true,
+        isFeaturedHome: false,
+        homeRank: 0,
     },
 ];
 
+import { NEW_PACKAGES } from './new-packages-data';
+
+const ALL_PACKAGES = [...PREMIUM_PACKAGES, ...NEW_PACKAGES];
+
 async function seedPackages() {
-    console.log('Seeding 8 premium packages...');
+    console.log('Seeding 20 premium packages...');
     await mongoose.connect(MONGODB_URI);
 
     const Package = (await import('@/models/Package')).default;
 
-    for (const pkg of PREMIUM_PACKAGES) {
+    for (const pkg of ALL_PACKAGES) {
         const existing = await Package.findOne({ slug: pkg.slug });
         if (existing) {
             // Update existing
@@ -373,7 +393,7 @@ async function seedPackages() {
         }
     }
 
-    console.log('Done! 8 premium packages seeded.');
+    console.log('Done! 20 premium packages seeded.');
     await mongoose.disconnect();
     process.exit(0);
 }
@@ -382,3 +402,4 @@ seedPackages().catch((err) => {
     console.error('Seed failed:', err);
     process.exit(1);
 });
+

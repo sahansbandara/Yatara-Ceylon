@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { PartnerStatus, PartnerTypes } from '@/lib/constants';
 
 export interface IPartner extends Document {
+    ownerId?: mongoose.Types.ObjectId;
     type: keyof typeof PartnerTypes;
     name: string;
     contactPerson?: string;
@@ -18,6 +19,7 @@ export interface IPartner extends Document {
 
 const PartnerSchema = new Schema<IPartner>(
     {
+        ownerId: { type: Schema.Types.ObjectId, ref: 'User' },
         type: {
             type: String,
             enum: Object.values(PartnerTypes),

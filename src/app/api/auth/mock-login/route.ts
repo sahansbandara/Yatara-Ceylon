@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
         const token = await signToken({
             userId: '000000000000000000000000',
             role: role || 'USER',
-            email: `demo-${(role || 'USER').toLowerCase()}@yataraceylon.com`,
+            email: `demo-${(role || 'USER').toLowerCase()}@yataraceylon.me`,
         });
 
         const response = NextResponse.json({ success: true, role });

@@ -15,12 +15,28 @@ export async function GET(request: Request) {
         const published = searchParams.get('published');
         const tag = searchParams.get('tag');
         const search = searchParams.get('search');
+        const type = searchParams.get('type');        // 'journey' | 'transfer'
+        const style = searchParams.get('style');      // journey style filter
+        const duration = searchParams.get('duration'); // e.g. '5-7', '8-10', '11-14'
+        const featured = searchParams.get('featured'); // 'true' for featured journeys
+        const sort = searchParams.get('sort');         // 'price' | 'duration' | 'featured'
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '20');
 
         const filter: Record<string, unknown> = { isDeleted: false };
         if (published === 'true') filter.isPublished = true;
-        if (tag) filter.tags = tag;
+        if (type) filter.type = type;
+        if (style) filter.style = style;
+        if (featured === 'true') filter.isFeatured = true;
+        if (tag) filter.tags = { $regex: new RegExp(`^${tag}$`, 'i') };
+        if (duration) {
+            const [minStr, maxStr] = duration.split('-');
+            const min = parseInt(minStr);
+            const max = parseInt(maxStr);
+            if (!isNaN(min) && !isNaN(max)) {
+                filter.durationDays = { $gte: min, $lte: max };
+            }
+        }
         if (search) {
             filter.$or = [
                 { title: { $regex: search, $options: 'i' } },
@@ -29,9 +45,15 @@ export async function GET(request: Request) {
             ];
         }
 
+        // Determine sort order
+        let sortObj: Record<string, 1 | -1> = { createdAt: -1 };
+        if (sort === 'price') sortObj = { priceMin: 1 };
+        else if (sort === 'duration') sortObj = { durationDays: 1 };
+        else if (sort === 'featured') sortObj = { isFeatured: -1, homeRank: -1, createdAt: -1 };
+
         const [packages, total] = await Promise.all([
             Package.find(filter)
-                .sort({ createdAt: -1 })
+                .sort(sortObj)
                 .skip((page - 1) * limit)
                 .limit(limit)
                 .lean(),

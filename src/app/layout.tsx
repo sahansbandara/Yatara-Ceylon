@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { CurrencyProvider } from '@/lib/CurrencyContext';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -35,7 +36,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <head>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link
@@ -49,7 +50,9 @@ export default function RootLayout({
                 />
             </head>
             <body className="min-h-screen bg-background font-sans antialiased">
-                {children}
+                <CurrencyProvider>
+                    {children}
+                </CurrencyProvider>
             </body>
         </html>
     );

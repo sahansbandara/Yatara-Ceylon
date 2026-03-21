@@ -6,6 +6,9 @@ export const createPackageSchema = z.object({
     summary: z.string().min(1, 'Summary is required'),
     fullDescription: z.string().optional(),
     duration: z.string().min(1),
+    durationDays: z.number().min(1).optional(),
+    type: z.enum(['journey', 'transfer']).optional().default('journey'),
+    style: z.enum(['cultural', 'wildlife', 'heritage', 'experiences', 'wellness', 'family', 'luxury', 'adventure', 'beach', 'marine']).optional(),
     itinerary: z.array(z.object({
         day: z.number().min(1),
         title: z.string().min(1),
@@ -22,6 +25,9 @@ export const createPackageSchema = z.object({
     exclusions: z.array(z.string()).optional().default([]),
     tags: z.array(z.string()).optional().default([]),
     isPublished: z.boolean().optional().default(false),
+    isFeatured: z.boolean().optional().default(false),
+    isFeaturedHome: z.boolean().optional().default(false),
+    homeRank: z.number().optional().default(0),
 });
 export const updatePackageSchema = createPackageSchema.partial();
 
@@ -67,7 +73,7 @@ export const createNotificationSchema = z.object({
     title: z.string().min(1),
     body: z.string().min(1),
     type: z.enum(['OFFER', 'UPDATE', 'ALERT']).default('UPDATE'),
-    visibleTo: z.enum(['CUSTOMERS', 'STAFF', 'ALL']).default('ALL'),
+    visibleTo: z.enum(['CUSTOMERS', 'STAFF', 'VEHICLE_OWNERS', 'HOTEL_OWNERS', 'ALL']).default('ALL'),
     isPublished: z.boolean().optional().default(false),
     publishFrom: z.string().optional(),
     publishTo: z.string().optional(),
@@ -79,12 +85,16 @@ export const createBookingSchema = z.object({
     customerName: z.string().min(1),
     phone: z.string().min(1),
     email: z.string().email().optional().or(z.literal('')),
+    address: z.string().optional(),
+    city: z.string().optional(),
+    country: z.string().optional(),
     type: z.enum(['PACKAGE', 'VEHICLE', 'CUSTOM']),
     packageId: z.string().optional(),
     vehicleId: z.string().optional(),
     customPlanId: z.string().optional(),
     pax: z.number().min(1),
     pickupLocation: z.string().optional(),
+    totalCost: z.number().min(0).optional(),
     dates: z.object({
         from: z.string().min(1),
         to: z.string().min(1),
@@ -94,7 +104,7 @@ export const createBookingSchema = z.object({
 });
 
 export const updateBookingStatusSchema = z.object({
-    status: z.enum(['NEW', 'CONTACTED', 'CONFIRMED', 'COMPLETED', 'CANCELLED']),
+    status: z.enum(['NEW', 'PAYMENT_PENDING', 'CONTACTED', 'ADVANCE_PAID', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']),
 });
 
 export const assignBookingSchema = z.object({
@@ -110,7 +120,7 @@ export const createVehicleSchema = z.object({
     seats: z.number().min(1),
     luggage: z.number().min(0).optional(),
     dailyRate: z.number().min(0),
-    status: z.enum(['AVAILABLE', 'MAINTENANCE', 'UNAVAILABLE']).optional().default('AVAILABLE'),
+    status: z.enum(['AVAILABLE', 'MAINTENANCE', 'UNAVAILABLE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('AVAILABLE'),
     images: z.array(z.string()).optional().default([]),
     features: z.array(z.string()).optional().default([]),
     transferTypes: z.array(z.enum(['AIRPORT_PICKUP', 'AIRPORT_DROP', 'CITY_TOUR'])).optional().default([]),
@@ -158,7 +168,7 @@ export const createPaymentSchema = z.object({
     bookingId: z.string().min(1),
     invoiceId: z.string().optional(),
     amount: z.number().min(0.01),
-    method: z.enum(['CASH', 'BANK', 'CARD_OTHER']),
+    method: z.enum(['CASH', 'BANK', 'CARD_OTHER', 'ONLINE']),
     paidAt: z.string().optional(),
     reference: z.string().optional(),
     type: z.enum(['PAYMENT', 'REFUND']).default('PAYMENT'),
@@ -173,7 +183,7 @@ export const createPartnerSchema = z.object({
     phone: z.string().min(1),
     email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
-    status: z.enum(['ACTIVE', 'INACTIVE']).optional().default('ACTIVE'),
+    status: z.enum(['ACTIVE', 'INACTIVE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('ACTIVE'),
     notes: z.string().optional(),
 });
 export const updatePartnerSchema = createPartnerSchema.partial();
@@ -223,8 +233,8 @@ export const updateUserSchema = z.object({
     name: z.string().min(1).optional(),
     email: z.string().email().optional(),
     phone: z.string().optional(),
-    role: z.enum(['ADMIN', 'STAFF']).optional(),
-    status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+    role: z.enum(['ADMIN', 'STAFF', 'USER', 'VEHICLE_OWNER', 'HOTEL_OWNER']).optional(),
+    status: z.enum(['ACTIVE', 'DISABLED', 'PENDING_APPROVAL', 'REJECTED']).optional(),
 });
 
 // ─── Booking Partner Assignment ───

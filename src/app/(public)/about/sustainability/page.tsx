@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Leaf, TreePine, Heart, Globe, Recycle, Users, Shield, Droplets } from 'lucide-react';
+import { Leaf, TreePine, Heart, Globe, Recycle, Users, Shield, Droplets, Award } from 'lucide-react';
+import { AnimatedStat } from '@/components/ui/AnimatedStat';
 
 const pillars = [
     {
@@ -127,7 +128,9 @@ export default function SustainabilityPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         {stats.map((stat, idx) => (
                             <div key={idx} className="text-center">
-                                <p className="text-4xl md:text-5xl font-display text-[#D4AF37] mb-2">{stat.value}</p>
+                                <p className="text-4xl md:text-5xl font-display text-[#D4AF37] mb-2">
+                                    <AnimatedStat value={stat.value} />
+                                </p>
                                 <p className="text-xs tracking-[0.15em] uppercase text-white/60 font-medium">{stat.label}</p>
                             </div>
                         ))}

@@ -1,257 +1,280 @@
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, FileText, User as UserIcon, Mail, Phone, DollarSign, Settings, Users } from 'lucide-react';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import connectDB from '@/lib/mongodb';
-import Booking from '@/models/Booking';
-import Partner from '@/models/Partner';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BookingStatus, PartnerStatus } from '@/lib/constants';
-import { format } from 'date-fns';
-import { Metadata } from 'next';
+import connectDB from "@/lib/mongodb";
+import Booking from "@/models/Booking";
+import Payment from "@/models/Payment";
+import Invoice from "@/models/Invoice";
+import Vehicle from "@/models/Vehicle";
+import RecordPaymentModal from "@/components/dashboard/finance/RecordPaymentModal";
+import CreateInvoiceModal from "@/components/dashboard/finance/CreateInvoiceModal";
+import FinalizeInvoiceButton from "@/components/dashboard/finance/FinalizeInvoiceButton";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, CalendarCheck, CreditCard, Car, Users, MapPin, FileText } from "lucide-react";
+import BookingStatusUpdater from "./BookingStatusUpdater";
 
-export const metadata: Metadata = {
-    title: 'Bespoke Booking Details | Yatara Ceylon',
+const STATUS_COLORS: Record<string, string> = {
+    NEW: 'bg-blue-500/15 text-blue-300',
+    PAYMENT_PENDING: 'bg-yellow-500/15 text-yellow-300',
+    ADVANCE_PAID: 'bg-emerald-500/15 text-emerald-300',
+    CONFIRMED: 'bg-green-500/15 text-green-300',
+    ASSIGNED: 'bg-purple-500/15 text-purple-300',
+    IN_PROGRESS: 'bg-indigo-500/15 text-indigo-300',
+    COMPLETED: 'bg-white/10 text-white/60',
+    CANCELLED: 'bg-red-500/15 text-red-300',
+    CONTACTED: 'bg-sky-500/15 text-sky-300',
 };
 
-async function getBookingData(id: string) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) return { booking: null, partners: [] };
+async function getBookingDetail(id: string) {
     try {
         await connectDB();
-        const [booking, partners] = await Promise.all([
-            Booking.findById(id).lean(),
-            Partner.find({ status: PartnerStatus.ACTIVE, isDeleted: false }).lean()
-        ]);
+        const booking = await Booking.findById(id)
+            .populate('packageId', 'title slug priceMin priceMax')
+            .populate('assignedStaffId', 'name email')
+            .populate('assignedVehicleId', 'model type seats dailyRate')
+            .lean();
+        if (!booking || (booking as any).isDeleted) return null;
 
-        if (!booking) return { booking: null, partners: [] };
+        const payments = await Payment.find({ bookingId: id, isDeleted: false })
+            .sort({ createdAt: -1 })
+            .lean();
+
+        const invoices = await Invoice.find({ bookingId: id, isDeleted: false })
+            .sort({ createdAt: -1 })
+            .lean();
+
+        const vehicles = await Vehicle.find({ status: 'AVAILABLE' }).select('model type seats dailyRate').lean();
 
         return {
             booking: JSON.parse(JSON.stringify(booking)),
-            partners: JSON.parse(JSON.stringify(partners))
+            payments: JSON.parse(JSON.stringify(payments)),
+            invoices: JSON.parse(JSON.stringify(invoices)),
+            vehicles: JSON.parse(JSON.stringify(vehicles)),
         };
-    } catch (error) {
-        console.error("Failed to fetch booking data:", error);
-        return { booking: null, partners: [] };
+    } catch {
+        return null;
     }
 }
 
-// Params type definition for Next.js 15+
-type Params = Promise<{ id: string }>;
-
-export default async function BookingDetailsPage({ params }: { params: Params }) {
+export default async function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const { booking, partners } = await getBookingData(id);
+    const data = await getBookingDetail(id);
+    if (!data) notFound();
 
-    if (!booking) {
-        notFound();
-    }
-
-    const startD = new Date(booking.dates?.from || booking.createdAt);
-    const endD = new Date(booking.dates?.to || booking.createdAt);
-    const durationDays = Math.max(1, Math.ceil((endD.getTime() - startD.getTime()) / (1000 * 60 * 60 * 24)));
+    const { booking, payments, invoices, vehicles } = data;
+    const pkg = booking.packageId;
 
     return (
-        <div className="flex flex-col gap-6 p-6 bg-off-white/30 min-h-screen">
-            <div className="flex items-center gap-4">
-                <Link href="/dashboard/bookings">
-                    <Button variant="ghost" size="icon" className="hover:text-antique-gold hover:bg-deep-emerald/5">
-                        <ArrowLeft className="h-4 w-4" />
-                    </Button>
-                </Link>
+        <div className="flex flex-col gap-6 max-w-5xl">
+            {/* Back */}
+            <Link href="/dashboard/bookings" className="flex items-center gap-2 text-sm text-white/50 hover:text-antique-gold transition-colors">
+                <ArrowLeft className="h-4 w-4" /> Back to Bookings
+            </Link>
+
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-serif text-deep-emerald tracking-tight">Booking #{booking.bookingNo}</h1>
-                    <p className="text-muted-foreground font-light tracking-wide">{format(new Date(booking.createdAt), 'PPP p')}</p>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl font-display font-bold text-off-white">{booking.bookingNo}</h1>
+                        <span className={`text-[10px] px-2.5 py-1 rounded-full font-medium ${STATUS_COLORS[booking.status] || 'bg-white/10 text-white/50'}`}>
+                            {booking.status?.replace(/_/g, ' ')}
+                        </span>
+                    </div>
+                    <p className="text-sm text-white/40 mt-1">
+                        Created {new Date(booking.createdAt).toLocaleString()} · {booking.type}
+                    </p>
                 </div>
-                <div className="ml-auto flex items-center gap-2">
-                    <Badge variant="outline" className="text-lg px-4 py-1.5 border-antique-gold/50 text-deep-emerald font-serif uppercase tracking-widest bg-antique-gold/10">
-                        {booking.status}
-                    </Badge>
-                </div>
+                <BookingStatusUpdater bookingId={booking._id} currentStatus={booking.status} />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-8">
-                    <Card className="rounded-none border-deep-emerald/10 shadow-sm">
-                        <CardHeader className="bg-deep-emerald/5 border-b border-deep-emerald/10 pb-4">
-                            <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-wide text-deep-emerald">
-                                <UserIcon className="h-5 w-5 text-antique-gold" />
-                                Elite Guest Information
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="grid md:grid-cols-2 gap-6 pt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Info */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Customer Info */}
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Users className="h-4 w-4 text-antique-gold" />
+                            <h3 className="text-sm font-display font-semibold text-off-white uppercase tracking-wider">Customer</h3>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Name</h3>
-                                <p className="text-lg font-medium text-deep-emerald">{booking.customerName}</p>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Name</p>
+                                <p className="text-sm font-medium text-off-white">{booking.customerName}</p>
                             </div>
                             <div>
-                                <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Email</h3>
-                                <div className="flex items-center gap-2">
-                                    <Mail className="h-4 w-4 text-antique-gold" />
-                                    <p className="font-light">{booking.email || 'N/A'}</p>
-                                </div>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Phone</p>
+                                <p className="text-sm text-white/70">{booking.phone}</p>
                             </div>
                             <div>
-                                <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Phone</h3>
-                                <div className="flex items-center gap-2">
-                                    <Phone className="h-4 w-4 text-antique-gold" />
-                                    <p className="font-light">{booking.phone || 'N/A'}</p>
-                                </div>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Email</p>
+                                <p className="text-sm text-white/70">{booking.email || '—'}</p>
                             </div>
                             <div>
-                                <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Pax</h3>
-                                <p className="font-light">{booking.pax || 'N/A'} Guests</p>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Passengers</p>
+                                <p className="text-sm text-white/70">{booking.pax} pax</p>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
 
-                    <Card className="rounded-none border-deep-emerald/10 shadow-sm">
-                        <CardHeader className="bg-deep-emerald/5 border-b border-deep-emerald/10 pb-4">
-                            <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-wide text-deep-emerald">
-                                <FileText className="h-5 w-5 text-antique-gold" />
-                                Bespoke Journey Details
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6">
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Booking Type</h3>
-                                    <p className="font-medium text-deep-emerald tracking-wide">{booking.type}</p>
-                                </div>
-                                {booking.packageId && (
-                                    <div>
-                                        <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Curated Package</h3>
-                                        <Link href={`/dashboard/packages/${booking.packageId}`} className="text-antique-gold hover:text-deep-emerald transition-colors hover:underline font-medium">
-                                            View Package details &rarr;
-                                        </Link>
+                    {/* Package/Trip Info */}
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <CalendarCheck className="h-4 w-4 text-antique-gold" />
+                            <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider">Trip Details</h3>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Package</p>
+                                <p className="text-sm font-medium text-deep-emerald">{pkg?.title || booking.type}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Pickup</p>
+                                <p className="text-sm text-deep-emerald">{booking.pickupLocation || '—'}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">From</p>
+                                <p className="text-sm text-deep-emerald">{booking.dates?.from ? new Date(booking.dates.from).toLocaleDateString() : '—'}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">To</p>
+                                <p className="text-sm text-deep-emerald">{booking.dates?.to ? new Date(booking.dates.to).toLocaleDateString() : '—'}</p>
+                            </div>
+                        </div>
+                        {booking.notes && (
+                            <div className="mt-4 pt-4 border-t border-white/[0.08]">
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Notes</p>
+                                <p className="text-sm text-white/60">{booking.notes}</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Payment History */}
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <CreditCard className="h-4 w-4 text-antique-gold" />
+                            <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider">Payment History</h3>
+                        </div>
+                        {payments.length > 0 ? (
+                            <div className="space-y-2">
+                                {payments.map((p: any) => (
+                                    <div key={p._id} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                                        <div>
+                                            <p className="text-xs font-mono font-semibold text-off-white">{p.orderId}</p>
+                                            <p className="text-[10px] text-gray-400">{p.provider} · {p.method || '—'}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-sm font-semibold text-off-white">LKR {(p.amount || 0).toLocaleString()}</p>
+                                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === 'SUCCESS' ? 'bg-green-500/15 text-green-300' : p.status === 'PENDING' ? 'bg-yellow-500/15 text-yellow-300' : 'bg-red-500/15 text-red-300'}`}>
+                                                {p.status}
+                                            </span>
+                                        </div>
                                     </div>
-                                )}
+                                ))}
                             </div>
+                        ) : (
+                            <p className="text-sm text-gray-400 italic">No payment records yet.</p>
+                        )}
+                    </div>
 
-                            <div className="border-t border-deep-emerald/10 pt-6 mt-4">
-                                <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-3">Itinerary / Notes</h3>
-                                <div className="bg-white border border-deep-emerald/5 p-5 rounded-none text-sm whitespace-pre-wrap font-light text-deep-emerald/80 leading-relaxed shadow-inner">
-                                    {booking.specialRequests || booking.notes || 'No special requests or bespoke itinerary notes listed.'}
+                    {/* Invoices */}
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                                <FileText className="h-4 w-4 text-antique-gold" />
+                                <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider">Invoices</h3>
+                            </div>
+                            <CreateInvoiceModal bookingId={booking._id} />
+                        </div>
+                        {invoices.length > 0 ? (
+                            <div className="space-y-2">
+                                {invoices.map((inv: any) => (
+                                    <div key={inv._id} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                                        <div>
+                                            <p className="text-xs font-mono font-semibold text-off-white">{inv.invoiceNo}</p>
+                                            <p className="text-[10px] text-gray-400">Issued: {new Date(inv.createdAt).toLocaleDateString()}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-sm font-semibold text-off-white">LKR {(inv.total || 0).toLocaleString()}</p>
+                                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${inv.status === 'FINAL' ? 'bg-purple-500/15 text-purple-300' : 'bg-gray-500/15 text-gray-300'}`}>
+                                                {inv.status}
+                                            </span>
+                                            {inv.status === 'DRAFT' && (
+                                                <FinalizeInvoiceButton invoiceId={inv._id.toString()} />
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-400 italic">No invoices generated yet.</p>
+                        )}
+                    </div>
+
+                    {/* Vehicle Assignment */}
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Car className="h-4 w-4 text-antique-gold" />
+                            <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider">Vehicle Assignment</h3>
+                        </div>
+                        {booking.assignedVehicleId ? (
+                            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                                <Car className="h-5 w-5 text-emerald-400" />
+                                <div>
+                                    <p className="text-sm font-semibold text-off-white">{booking.assignedVehicleId.model}</p>
+                                    <p className="text-xs text-white/50">{booking.assignedVehicleId.type} · {booking.assignedVehicleId.seats} seats</p>
                                 </div>
                             </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="rounded-none border-antique-gold/30 shadow-sm bg-white">
-                        <CardHeader className="bg-antique-gold/10 border-b border-antique-gold/20 pb-4">
-                            <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-wide text-deep-emerald">
-                                <Users className="h-5 w-5 text-deep-emerald" />
-                                Supplier Rate Card (Partner Assignment)
-                            </CardTitle>
-                            <CardDescription className="text-deep-emerald/60 font-light">
-                                Instantly assign a vetted partner, guide, or premium chauffeur to this journey.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="pt-6">
-                            <div className="space-y-4">
-                                <label className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60">Select Vetted Partner</label>
-                                <Select defaultValue={booking.assignedStaffId || undefined}>
-                                    <SelectTrigger className="w-full rounded-none border-deep-emerald/20 h-12 focus:ring-antique-gold text-deep-emerald">
-                                        <SelectValue placeholder="Unassigned - Select a Guide/Driver" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {partners.map((p: any) => (
-                                            <SelectItem key={p._id} value={p._id}>
-                                                {p.name} ({p.type})
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <Button className="mt-2 w-full sm:w-auto rounded-none bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold tracking-wider">
-                                    Confirm Partner Assignment
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
+                        ) : (
+                            <p className="text-sm text-gray-400 italic">No vehicle assigned yet.</p>
+                        )}
+                    </div>
                 </div>
 
-                <div className="space-y-8">
-                    <Card className="rounded-none border-deep-emerald/10 shadow-sm">
-                        <CardHeader className="bg-deep-emerald/5 border-b border-deep-emerald/10 pb-4">
-                            <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-wide text-deep-emerald">
-                                <Calendar className="h-5 w-5 text-antique-gold" />
-                                Schedule
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 flex flex-col items-center text-center">
-                            <div className="w-full pb-4 border-b border-deep-emerald/10">
-                                <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Arrival Date</h3>
-                                <p className="text-lg font-medium text-deep-emerald">{format(startD, 'PPP')}</p>
+                {/* Sidebar — Financial Summary */}
+                <div className="space-y-6">
+                    <div className="liquid-glass-stat rounded-2xl p-6 sticky top-24">
+                        <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider mb-4">Financial Summary</h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-white/50">Total Cost</span>
+                                <span className="text-lg font-bold text-off-white">LKR {(booking.totalCost || 0).toLocaleString()}</span>
                             </div>
-                            <div className="w-full pb-4 border-b border-deep-emerald/10">
-                                <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Departure Date</h3>
-                                <p className="text-lg font-medium text-deep-emerald">{format(endD, 'PPP')}</p>
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-white/50">Advance ({booking.advancePercentage || 20}%)</span>
+                                <span className="text-sm font-semibold text-antique-gold">LKR {(booking.advanceAmount || 0).toLocaleString()}</span>
                             </div>
-                            <div className="w-full">
-                                <h3 className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60 mb-1">Duration</h3>
-                                <p className="text-xl font-serif text-antique-gold">{durationDays} Days</p>
+                            <hr className="border-white/[0.08]" />
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-emerald-600 font-medium">Amount Paid</span>
+                                <span className="text-sm font-bold text-emerald-600">LKR {(booking.paidAmount || 0).toLocaleString()}</span>
                             </div>
-                        </CardContent>
-                    </Card>
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-orange-600 font-medium">Remaining Balance</span>
+                                <span className="text-sm font-bold text-orange-600">LKR {(booking.remainingBalance || 0).toLocaleString()}</span>
+                            </div>
+                        </div>
+                        {booking.remainingBalance > 0 && (
+                            <div className="mt-6 pt-4 border-t border-white/[0.08] flex justify-center">
+                                <RecordPaymentModal bookingId={booking._id} remainingBalance={booking.remainingBalance} />
+                            </div>
+                        )}
+                    </div>
 
-                    <Card className="rounded-none border-deep-emerald/10 shadow-sm">
-                        <CardHeader className="bg-deep-emerald text-off-white pb-4">
-                            <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-wide text-antique-gold">
-                                <DollarSign className="h-5 w-5" />
-                                Financial Engine
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4 pt-6">
-                            <div className="flex justify-between items-center text-sm font-medium text-deep-emerald/80">
-                                <span>Paid Amount</span>
-                                <span>LKR {booking.paidAmount?.toLocaleString() || '0'}</span>
+                    {/* Staff Assignment */}
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider mb-3">Assigned Staff</h3>
+                        {booking.assignedStaffId ? (
+                            <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+                                <div className="w-8 h-8 rounded-full bg-blue-500/15 flex items-center justify-center text-xs font-bold text-blue-300">
+                                    {booking.assignedStaffId.name?.[0]}
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-deep-emerald">{booking.assignedStaffId.name}</p>
+                                    <p className="text-[10px] text-gray-400">{booking.assignedStaffId.email}</p>
+                                </div>
                             </div>
-                            <div className="flex justify-between items-center text-sm font-medium text-deep-emerald/80">
-                                <span>Remaining Balance</span>
-                                <span className="text-red-600">LKR {booking.remainingBalance?.toLocaleString() || '0'}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-xl font-serif font-bold text-deep-emerald pt-2 border-t border-deep-emerald/10">
-                                <span>Total Cost</span>
-                                <span>LKR {booking.totalCost?.toLocaleString() || '0'}</span>
-                            </div>
-                            <div className="border-t border-deep-emerald/10 pt-6 mt-4 flex flex-col gap-3">
-                                <Link href={`/api/finance/receipt?bookingNo=${booking.bookingNo}`} target="_blank" className="w-full">
-                                    <Button className="w-full rounded-none border border-antique-gold text-antique-gold hover:bg-antique-gold hover:text-deep-emerald transition-colors" variant="outline">
-                                        Download Luxury Receipt (PDF)
-                                    </Button>
-                                </Link>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="rounded-none border-deep-emerald/10 shadow-sm">
-                        <CardHeader className="bg-deep-emerald/5 border-b border-deep-emerald/10 pb-4">
-                            <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-wide text-deep-emerald">
-                                <Settings className="h-5 w-5 text-antique-gold" />
-                                State Actions
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4 pt-6">
-                            <label className="text-xs font-serif uppercase tracking-widest text-deep-emerald/60">Change Status</label>
-                            <Select defaultValue={booking.status}>
-                                <SelectTrigger className="w-full rounded-none border-deep-emerald/20 h-10 focus:ring-antique-gold">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {Object.values(BookingStatus).map(status => (
-                                        <SelectItem key={status} value={status}>{status}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Button className="w-full bg-deep-emerald hover:bg-deep-emerald/90 text-off-white rounded-none tracking-widest uppercase text-xs h-10">
-                                Update Status
-                            </Button>
-                            <p className="text-xs text-deep-emerald/50 font-light mt-2 text-center">
-                                * Setting status to CONFIRMED will auto-block assigned vehicles.
-                            </p>
-                        </CardContent>
-                    </Card>
+                        ) : (
+                            <p className="text-sm text-gray-400 italic">Not assigned</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

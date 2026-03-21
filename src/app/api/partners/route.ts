@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Partner from '@/models/Partner';
 import PartnerService from '@/models/PartnerService';
-import { staffOrAdmin } from '@/lib/rbac';
+import { withAuth } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { createPartnerSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
@@ -21,12 +21,26 @@ export async function GET(request: Request) {
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
 }
 
-export const POST = staffOrAdmin(async (request, { user }) => {
+export const POST = withAuth(async (request: Request, context: any) => {
+    const user = context.user;
+    if (!['ADMIN', 'STAFF', 'HOTEL_OWNER'].includes(user.role)) {
+        return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    }
+
     const { data, error } = await validateBody(request, createPartnerSchema);
     if (error) return error;
+
+    const partnerData: any = { ...data };
+
+    if (user.role === 'HOTEL_OWNER') {
+        partnerData.status = 'PENDING_APPROVAL';
+        partnerData.ownerId = user.userId;
+        partnerData.type = 'HOTEL';
+    }
+
     try {
         await connectDB();
-        const partner = await Partner.create(data);
+        const partner = await Partner.create(partnerData);
         await logAudit({ actorUserId: user.userId, action: 'CREATE', entity: 'Partner', entityId: partner._id.toString() });
         return NextResponse.json({ partner }, { status: 201 });
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }

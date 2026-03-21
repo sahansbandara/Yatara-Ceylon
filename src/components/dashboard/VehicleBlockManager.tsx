@@ -18,7 +18,7 @@ interface VehicleBlock {
     reason: string;
 }
 
-export default function VehicleBlockManager({ vehicleId, initialBlocks }: { vehicleId: string, initialBlocks: VehicleBlock[] }) {
+export default function VehicleBlockManager({ vehicleId, initialBlocks, hideTitle = false }: { vehicleId: string, initialBlocks: VehicleBlock[], hideTitle?: boolean }) {
     const [blocks, setBlocks] = useState<VehicleBlock[]>(initialBlocks);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -77,68 +77,71 @@ export default function VehicleBlockManager({ vehicleId, initialBlocks }: { vehi
     };
 
     return (
-        <Card className="mt-6">
-            <CardHeader>
-                <CardTitle>Availability Blocks</CardTitle>
-                <CardDescription>Block this vehicle from being booked for maintenance or other reasons.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleAddBlock} className="flex gap-4 items-end mb-6">
-                    <div className="grid gap-2 flex-1">
-                        <Label htmlFor="from">From Date</Label>
-                        <Input id="from" type="date" required value={from} onChange={e => setFrom(e.target.value)} />
-                    </div>
-                    <div className="grid gap-2 flex-1">
-                        <Label htmlFor="to">To Date</Label>
-                        <Input id="to" type="date" required value={to} onChange={e => setTo(e.target.value)} />
-                    </div>
-                    <div className="grid gap-2 flex-1">
-                        <Label htmlFor="reason">Reason</Label>
-                        <Select value={reason} onValueChange={setReason}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Reason" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.values(VehicleBlockReasons).map(r => (
-                                    <SelectItem key={r} value={r}>{r}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <Button type="submit" disabled={loading} className="w-[120px]">
-                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Add Block
-                    </Button>
-                </form>
+        <div className={hideTitle ? "mt-2" : "liquid-glass-stat-dark rounded-2xl p-8 border border-white/[0.08] shadow-2xl mt-6 text-white max-w-3xl"}>
+            {!hideTitle && (
+                <>
+                    <h2 className="text-xl font-semibold mb-2">Availability Blocks</h2>
+                    <p className="text-white/40 text-sm mb-6">Block this vehicle from being booked for maintenance or other reasons.</p>
+                </>
+            )}
 
-                <div className="space-y-4">
-                    {blocks.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">No active blocks.</p>
-                    ) : (
-                        blocks.map((block) => (
-                            <div key={block._id} className="flex items-center justify-between border p-3 rounded-md">
-                                <div className="flex gap-6 items-center">
-                                    <div className="text-sm">
-                                        <span className="font-semibold">{format(new Date(block.from), 'MMM d, yyyy')}</span>
-                                        <span className="mx-2">to</span>
-                                        <span className="font-semibold">{format(new Date(block.to), 'MMM d, yyyy')}</span>
-                                    </div>
-                                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">{block.reason}</span>
-                                </div>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-red-600 h-8 w-8 p-0"
-                                    onClick={() => handleDeleteBlock(block._id)}
-                                    disabled={loading}
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        ))
-                    )}
+            <form onSubmit={handleAddBlock} className="flex flex-col md:flex-row gap-4 items-end mb-4 bg-white/[0.02] p-5 rounded-xl border border-white/[0.06]">
+                <div className="grid gap-2 flex-1 w-full">
+                    <Label htmlFor="from" className="text-white/70">From Date</Label>
+                    <Input id="from" type="date" required value={from} onChange={e => setFrom(e.target.value)} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 [color-scheme:dark] rounded-xl h-11" />
                 </div>
-            </CardContent>
-        </Card>
+                <div className="grid gap-2 flex-1 w-full">
+                    <Label htmlFor="to" className="text-white/70">To Date</Label>
+                    <Input id="to" type="date" required value={to} onChange={e => setTo(e.target.value)} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 [color-scheme:dark] rounded-xl h-11" />
+                </div>
+                <div className="grid gap-2 flex-1 w-full">
+                    <Label htmlFor="reason" className="text-white/70">Reason</Label>
+                    <Select value={reason} onValueChange={setReason}>
+                        <SelectTrigger className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 h-11 rounded-xl">
+                            <SelectValue placeholder="Reason" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#020b08] border-white/[0.08] text-white">
+                            {Object.values(VehicleBlockReasons).map(r => (
+                                <SelectItem key={r} value={r} className="focus:bg-white/[0.06] focus:text-antique-gold cursor-pointer">{r}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <Button type="submit" disabled={loading} className="w-full md:w-[120px] h-11 rounded-xl bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_15px_rgba(212,175,55,0.15)] font-medium">
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#020b08]/60" />}
+                    Add Block
+                </Button>
+            </form>
+
+            <div className="space-y-3">
+                {blocks.length === 0 ? (
+                    <p className="text-sm text-white/30 italic text-center py-6">No active availability blocks.</p>
+                ) : (
+                    blocks.map((block) => (
+                        <div key={block._id} className="flex items-center justify-between border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] p-4 rounded-xl transition-all">
+                            <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-start md:items-center">
+                                <div className="text-sm text-off-white font-medium flex items-center gap-2">
+                                    <span className="bg-white/5 py-1 px-2.5 rounded-lg border border-white/10">{format(new Date(block.from), 'MMM d, yyyy')}</span>
+                                    <span className="text-white/30 text-xs">to</span>
+                                    <span className="bg-white/5 py-1 px-2.5 rounded-lg border border-white/10">{format(new Date(block.to), 'MMM d, yyyy')}</span>
+                                </div>
+                                <span className={`text-[10px] tracking-wider uppercase px-2.5 py-1 rounded border font-semibold ${block.reason === 'OFF_SEASON' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : block.reason === 'UNAVAILABLE' ? 'bg-neutral-500/10 text-neutral-400 border-neutral-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                                    {block.reason.replace('_', ' ')}
+                                </span>
+                            </div>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-400 hover:text-red-300 hover:bg-red-400/10 h-8 w-8 rounded-lg"
+                                onClick={() => handleDeleteBlock(block._id)}
+                                disabled={loading}
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
     );
 }

@@ -9,6 +9,7 @@ export const UserRoles = {
 export const UserStatus = {
     ACTIVE: 'ACTIVE',
     DISABLED: 'DISABLED',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
 } as const;
 
 export const BookingTypes = {
@@ -19,9 +20,12 @@ export const BookingTypes = {
 
 export const BookingStatus = {
     NEW: 'NEW',
+    PAYMENT_PENDING: 'PAYMENT_PENDING',
     CONTACTED: 'CONTACTED',
-    ADVANCE_PAID: 'Advance Paid',
+    ADVANCE_PAID: 'ADVANCE_PAID',
     CONFIRMED: 'CONFIRMED',
+    ASSIGNED: 'ASSIGNED',
+    IN_PROGRESS: 'IN_PROGRESS',
     COMPLETED: 'COMPLETED',
     CANCELLED: 'CANCELLED',
 } as const;
@@ -39,11 +43,20 @@ export const VehicleStatus = {
     AVAILABLE: 'AVAILABLE',
     MAINTENANCE: 'MAINTENANCE',
     UNAVAILABLE: 'UNAVAILABLE',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
 } as const;
 
 export const VehicleBlockReasons = {
     BOOKING: 'BOOKING',
     MAINTENANCE: 'MAINTENANCE',
+    PERSONAL: 'PERSONAL',
+    OTHER: 'OTHER',
+} as const;
+
+export const ServiceBlockReasons = {
+    BOOKING: 'BOOKING',
+    RENOVATION: 'RENOVATION',
     PERSONAL: 'PERSONAL',
     OTHER: 'OTHER',
 } as const;
@@ -59,6 +72,8 @@ export const PartnerTypes = {
 export const PartnerStatus = {
     ACTIVE: 'ACTIVE',
     INACTIVE: 'INACTIVE',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
 } as const;
 
 export const PartnerServiceUnits = {
@@ -73,6 +88,7 @@ export const PaymentMethods = {
     CASH: 'CASH',
     BANK: 'BANK',
     CARD_OTHER: 'CARD_OTHER',
+    ONLINE: 'ONLINE',
 } as const;
 
 export const PaymentTypes = {

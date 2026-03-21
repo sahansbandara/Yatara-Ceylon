@@ -7,12 +7,18 @@ export interface IItineraryDay {
     activity?: string;
 }
 
+export type PackageType = 'journey' | 'transfer';
+export type JourneyStyle = 'cultural' | 'wildlife' | 'heritage' | 'experiences' | 'wellness' | 'family' | 'luxury' | 'adventure' | 'beach' | 'marine';
+
 export interface IPackage extends Document {
     title: string;
     slug: string;
     summary: string;
     fullDescription?: string;
     duration: string;
+    durationDays?: number;
+    type: PackageType;
+    style?: JourneyStyle;
     itinerary: IItineraryDay[];
     priceMin: number;
     priceMax: number;
@@ -26,6 +32,9 @@ export interface IPackage extends Document {
     exclusions: string[];
     tags: string[];
     isPublished: boolean;
+    isFeatured: boolean;
+    isFeaturedHome: boolean;
+    homeRank: number;
     isDeleted: boolean;
     deletedAt?: Date;
     createdAt: Date;
@@ -49,6 +58,9 @@ const PackageSchema = new Schema<IPackage>(
         summary: { type: String, required: true },
         fullDescription: String,
         duration: { type: String, required: true },
+        durationDays: { type: Number, min: 1 },
+        type: { type: String, enum: ['journey', 'transfer'], default: 'journey', index: true },
+        style: { type: String, enum: ['cultural', 'wildlife', 'heritage', 'experiences', 'wellness', 'family', 'luxury', 'adventure', 'beach', 'marine'] },
         itinerary: [ItineraryDaySchema],
         priceMin: { type: Number, required: true, min: 0 },
         priceMax: { type: Number, required: true, min: 0 },
@@ -62,6 +74,9 @@ const PackageSchema = new Schema<IPackage>(
         exclusions: [String],
         tags: [String],
         isPublished: { type: Boolean, default: false, index: true },
+        isFeatured: { type: Boolean, default: false, index: true },
+        isFeaturedHome: { type: Boolean, default: false, index: true },
+        homeRank: { type: Number, default: 0 },
         isDeleted: { type: Boolean, default: false },
         deletedAt: Date,
     },
@@ -71,6 +86,8 @@ const PackageSchema = new Schema<IPackage>(
 PackageSchema.index({ slug: 1 }, { unique: true });
 PackageSchema.index({ tags: 1 });
 PackageSchema.index({ priceMin: 1, priceMax: 1 });
+PackageSchema.index({ type: 1, style: 1 });
+PackageSchema.index({ type: 1, durationDays: 1 });
 
 export default mongoose.models.Package ||
     mongoose.model<IPackage>('Package', PackageSchema);

@@ -1,27 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Loader2, User, Building2, Car, Shield, Users, Mail, Lock, Phone, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 type AuthMode = 'login' | 'signup';
 
-const PARTNER_ROLES = [
-    { id: 'ADMIN', label: 'Administrator', icon: Shield, description: 'Full system access & finance' },
-    { id: 'VEHICLE_OWNER', label: 'Fleet Partner', icon: Car, description: 'Manage your vehicles' },
-    { id: 'HOTEL_OWNER', label: 'Hotel Partner', icon: Building2, description: 'Manage your properties' },
-    { id: 'STAFF', label: 'Concierge Staff', icon: Users, description: 'Operations & bookings' },
-];
-
 export default function EliteLoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-deep-emerald">
+                <Loader2 className="w-8 h-8 animate-spin text-antique-gold" />
+            </div>
+        }>
+            <LoginContent />
+        </Suspense>
+    );
+}
+
+function LoginContent() {
     const [authMode, setAuthMode] = useState<AuthMode>('login');
-    const [role, setRole] = useState('USER');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [showPartnerOptions, setShowPartnerOptions] = useState(false);
+    const [role, setRole] = useState('USER');
+    const [showPartnerAccess, setShowPartnerAccess] = useState(false);
 
     // Form fields
     const [name, setName] = useState('');
@@ -29,41 +34,46 @@ export default function EliteLoginPage() {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect');
+
+    // Role-based redirect mapping
+    const getRoleRedirect = (role: string) => {
+        switch (role) {
+            case 'ADMIN': return '/dashboard';
+            case 'STAFF': return '/dashboard';
+            case 'VEHICLE_OWNER': return '/dashboard/fleet';
+            case 'HOTEL_OWNER': return '/dashboard/hotel';
+            case 'USER': return '/dashboard/my-bookings';
+            default: return '/dashboard';
+        }
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setSuccessMsg('');
         try {
-            if (role === 'USER' && authMode === 'login') {
-                // Real login
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password }),
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    setError(data.error || 'Login failed');
-                    return;
-                }
-                window.location.href = '/dashboard/my-journeys';
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                // If it's a 403 due to pending approval, show specific message
+                setError(data.error || 'Login failed');
+                return;
+            }
+            // If there's a redirect URL (e.g., from booking page), use that
+            if (redirectTo) {
+                window.location.href = redirectTo;
             } else {
-                // Mock login for roles
-                const res = await fetch('/api/auth/mock-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ role })
-                });
-
-                if (res.ok) {
-                    if (role === 'ADMIN' || role === 'STAFF') window.location.href = '/dashboard';
-                    else if (role === 'VEHICLE_OWNER') window.location.href = '/dashboard/vehicles';
-                    else if (role === 'HOTEL_OWNER') window.location.href = '/dashboard/partners';
-                    else window.location.href = '/dashboard/my-journeys';
-                } else {
-                    setError('Login failed. Please try again.');
-                }
+                // Otherwise, redirect based on role
+                const userRole = data.user?.role || 'USER';
+                window.location.href = getRoleRedirect(userRole);
             }
         } catch (err) {
             setError('Network error. Please try again.');
@@ -76,6 +86,7 @@ export default function EliteLoginPage() {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setSuccessMsg('');
         try {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -87,10 +98,13 @@ export default function EliteLoginPage() {
                 setError(data.error || 'Registration failed');
                 return;
             }
-            // Auto-login after signup
+
+            if (role === 'USER') {
+                setSuccessMsg('Account created successfully! Please sign in.');
+            } else {
+                setSuccessMsg('Application submitted! Pending admin approval before sign in.');
+            }
             setAuthMode('login');
-            setError('');
-            alert('Account created successfully! Please sign in.');
         } catch {
             setError('Network error. Please try again.');
         } finally {
@@ -99,7 +113,7 @@ export default function EliteLoginPage() {
     };
 
     return (
-        <div className="min-h-screen relative flex items-center justify-center overflow-hidden py-12 px-4">
+        <div className="min-h-screen relative flex items-center justify-center overflow-hidden py-8 px-4">
             {/* Background Video */}
             <video
                 autoPlay
@@ -116,26 +130,26 @@ export default function EliteLoginPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-deep-emerald/90 via-transparent to-black/40" />
 
             {/* Login Card */}
-            <div className="relative z-10 w-full max-w-lg">
-                {/* Glassmorphic Card */}
-                <div className="p-8 md:p-10 rounded-lg backdrop-blur-xl bg-black/25 border border-white/15 shadow-2xl">
+            <div className="relative z-10 w-full max-w-[500px]">
+                {/* Liquid Glass Card */}
+                <div className="p-8 md:p-10 rounded-3xl backdrop-blur-md bg-black/30 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
 
                     {/* Logo */}
                     <div className="flex justify-center mb-6">
                         <Image
                             src="/images/yatara-brand-block.svg"
                             alt="Yatara Ceylon Logo"
-                            width={200}
-                            height={50}
+                            width={160}
+                            height={40}
                             className="object-contain drop-shadow-lg brightness-0 invert opacity-90"
                         />
                     </div>
 
                     <div className="text-center mb-6">
-                        <h1 className="text-2xl font-serif text-antique-gold tracking-wide mb-2">
+                        <h1 className="text-2xl font-serif text-antique-gold tracking-wide mb-1.5">
                             {authMode === 'login' ? 'Welcome Back' : 'Join Yatara Ceylon'}
                         </h1>
-                        <p className="text-off-white/70 font-light text-xs tracking-[0.15em] uppercase">
+                        <p className="text-off-white/70 font-light text-[10px] md:text-xs tracking-[0.15em] uppercase">
                             {authMode === 'login'
                                 ? 'Sign in to access your journeys'
                                 : 'Create your exclusive account'}
@@ -143,62 +157,69 @@ export default function EliteLoginPage() {
                     </div>
 
                     {/* Auth Mode Toggle */}
-                    <div className="flex mb-6 bg-white/5 border border-white/10 rounded-sm overflow-hidden">
+                    <div className="flex mb-6 gap-3">
                         <button
-                            onClick={() => { setAuthMode('login'); setRole('USER'); setShowPartnerOptions(false); }}
-                            className={`flex-1 py-2.5 text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 ${authMode === 'login'
-                                ? 'bg-antique-gold/20 text-antique-gold border-b-2 border-antique-gold'
-                                : 'text-white/60 hover:text-white/80'
+                            type="button"
+                            onClick={() => { setAuthMode('login'); setError(''); setSuccessMsg(''); }}
+                            className={`flex-1 py-3 text-xs tracking-[0.1em] uppercase font-semibold transition-all duration-300 rounded-xl border ${authMode === 'login'
+                                ? 'border-antique-gold text-antique-gold bg-black/40 shadow-inner'
+                                : 'border-white/10 text-white/50 hover:text-white/80 hover:border-white/30 bg-transparent'
                                 }`}
                         >
                             Sign In
                         </button>
                         <button
-                            onClick={() => { setAuthMode('signup'); setRole('USER'); setShowPartnerOptions(false); }}
-                            className={`flex-1 py-2.5 text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 ${authMode === 'signup'
-                                ? 'bg-antique-gold/20 text-antique-gold border-b-2 border-antique-gold'
-                                : 'text-white/60 hover:text-white/80'
+                            type="button"
+                            onClick={() => { setAuthMode('signup'); setError(''); setSuccessMsg(''); }}
+                            className={`flex-1 py-3 text-xs tracking-[0.1em] uppercase font-semibold transition-all duration-300 rounded-xl border ${authMode === 'signup'
+                                ? 'border-antique-gold text-antique-gold bg-black/40 shadow-inner'
+                                : 'border-white/10 text-white/50 hover:text-white/80 hover:border-white/30 bg-transparent'
                                 }`}
                         >
                             Sign Up
                         </button>
                     </div>
 
-                    {/* Error Message */}
+                    {/* Notification Messages */}
                     {error && (
-                        <div className="bg-red-500/15 border border-red-400/30 text-red-300 text-xs rounded-sm p-3 mb-4 text-center">
+                        <div className="bg-red-500/15 border border-red-400/30 text-red-300 text-xs rounded-md p-3 mb-5 text-center">
                             {error}
+                        </div>
+                    )}
+                    {successMsg && (
+                        <div className="bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs rounded-md p-3 mb-5 text-center">
+                            {successMsg}
                         </div>
                     )}
 
                     {/* Login Form */}
                     {authMode === 'login' && (
                         <form onSubmit={handleLogin} className="space-y-4">
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-antique-gold/50" />
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
                                 <input
                                     type="email"
                                     placeholder="Email Address"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full bg-white/8 border border-white/15 text-white h-12 pl-10 pr-4 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-white/40 text-sm"
+                                    className="w-full bg-white/5 backdrop-blur-md border border-white/10 text-white h-12 pl-11 pr-4 rounded-xl focus:outline-none focus:border-antique-gold/70 focus:bg-white/10 placeholder:text-white/40 hover:bg-white/10 transition-all duration-300"
                                 />
                             </div>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-antique-gold/50" />
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    className="w-full bg-white/8 border border-white/15 text-white h-12 pl-10 pr-12 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-white/40 text-sm"
+                                    className="w-full bg-white/5 backdrop-blur-md border border-white/10 text-white h-12 pl-11 pr-12 rounded-xl focus:outline-none focus:border-antique-gold/70 focus:bg-white/10 placeholder:text-white/40 hover:bg-white/10 transition-all duration-300"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-antique-gold transition-colors"
                                 >
                                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
@@ -207,136 +228,98 @@ export default function EliteLoginPage() {
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-deep-emerald font-serif text-base tracking-[0.15em] h-12 rounded-sm shadow-[0_0_20px_rgba(212,175,55,0.25)] border border-transparent hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all duration-300"
+                                className="w-full mt-4 bg-transparent border border-white/20 hover:border-white/40 text-white hover:text-white font-medium text-xs tracking-[0.15em] h-12 rounded-xl shadow-lg hover:bg-white/5 transition-all duration-300 group flex items-center justify-center gap-2 uppercase"
                             >
-                                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                                Enter Your Journey
+                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                                    <>
+                                        ENTER YOUR JOURNEY
+                                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    </>
+                                )}
                             </Button>
                         </form>
                     )}
 
                     {/* Signup Form */}
                     {authMode === 'signup' && (
-                        <form onSubmit={handleSignup} className="space-y-4">
-                            <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-antique-gold/50" />
-                                <input
-                                    type="text"
-                                    placeholder="Full Name"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                    className="w-full bg-white/8 border border-white/15 text-white h-12 pl-10 pr-4 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-white/40 text-sm"
-                                />
-                            </div>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-antique-gold/50" />
-                                <input
-                                    type="email"
-                                    placeholder="Email Address"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="w-full bg-white/8 border border-white/15 text-white h-12 pl-10 pr-4 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-white/40 text-sm"
-                                />
-                            </div>
-                            <div className="relative">
-                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-antique-gold/50" />
-                                <input
-                                    type="tel"
-                                    placeholder="Phone Number"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    className="w-full bg-white/8 border border-white/15 text-white h-12 pl-10 pr-4 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-white/40 text-sm"
-                                />
-                            </div>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-antique-gold/50" />
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    placeholder="Create Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    className="w-full bg-white/8 border border-white/15 text-white h-12 pl-10 pr-12 rounded-sm focus:outline-none focus:border-antique-gold font-light tracking-wide backdrop-blur-sm placeholder:text-white/40 text-sm"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
-                                >
-                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                </button>
-                            </div>
+                        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
 
-                            <Button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-deep-emerald font-serif text-base tracking-[0.15em] h-12 rounded-sm shadow-[0_0_20px_rgba(212,175,55,0.25)] border border-transparent hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all duration-300"
-                            >
-                                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                                Create Your Account
-                            </Button>
-                        </form>
-                    )}
-
-                    {/* Divider */}
-                    <div className="relative my-6">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-white/10" />
-                        </div>
-                        <div className="relative flex justify-center text-[10px] uppercase">
-                            <span className="bg-transparent px-3 text-white/40 tracking-[0.2em]">
-                                Or join as a partner
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Partner Roles Toggle */}
-                    <button
-                        onClick={() => setShowPartnerOptions(!showPartnerOptions)}
-                        className="w-full text-center text-xs text-antique-gold/70 hover:text-antique-gold tracking-[0.15em] uppercase transition-colors duration-300 flex items-center justify-center gap-2 py-2"
-                    >
-                        <span>{showPartnerOptions ? 'Hide' : 'Show'} Partner Access</span>
-                        <ArrowRight className={`h-3 w-3 transition-transform duration-300 ${showPartnerOptions ? 'rotate-90' : ''}`} />
-                    </button>
-
-                    {/* Partner Role Cards */}
-                    {showPartnerOptions && (
-                        <div className="mt-4 grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            {PARTNER_ROLES.map((partnerRole) => {
-                                const Icon = partnerRole.icon;
-                                return (
-                                    <button
-                                        key={partnerRole.id}
-                                        onClick={() => {
-                                            setRole(partnerRole.id);
-                                            setAuthMode('login');
-                                        }}
-                                        className={`p-3 border rounded-sm transition-all duration-300 text-left group
-                                            ${role === partnerRole.id
-                                                ? 'border-antique-gold/60 bg-antique-gold/10'
-                                                : 'border-white/10 bg-white/3 hover:border-antique-gold/30 hover:bg-white/5'
-                                            }`}
-                                    >
-                                        <Icon className={`h-5 w-5 mb-2 ${role === partnerRole.id ? 'text-antique-gold' : 'text-white/50 group-hover:text-antique-gold/70'}`} />
-                                        <p className={`text-xs font-medium tracking-wider ${role === partnerRole.id ? 'text-antique-gold' : 'text-white/80'}`}>
-                                            {partnerRole.label}
-                                        </p>
-                                        <p className="text-[10px] text-white/40 mt-0.5">{partnerRole.description}</p>
+                            <form onSubmit={handleSignup} className="space-y-3">
+                                {/* Reduced input heights from h-14 to h-11 to fit 13inch screens easily */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="relative group">
+                                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                        <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                    </div>
+                                    <div className="relative group">
+                                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                        <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                    </div>
+                                </div>
+                                <div className="relative group">
+                                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                    <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                </div>
+                                <div className="relative group">
+                                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                    <input type={showPassword ? 'text' : 'password'} placeholder="Create Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-10 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-antique-gold">
+                                        {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                                     </button>
-                                );
-                            })}
+                                </div>
+
+
+
+                                <Button type="submit" disabled={loading} className="w-full bg-antique-gold hover:bg-antique-gold/90 text-[#0a1f15] font-bold text-xs tracking-[0.15em] h-11 mt-2 rounded-xl shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 flex items-center justify-center gap-2 uppercase">
+                                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                                        <>CREATE ACCOUNT <ArrowRight className="h-3.5 w-3.5" /></>
+                                    )}
+                                </Button>
+
+                                {/* Partner Access Foldout */}
+                                <div className="pt-4">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="h-[1px] flex-1 bg-white/10"></div>
+                                        <span className="text-[9px] uppercase tracking-[0.2em] text-white/40">OR JOIN AS A PARTNER</span>
+                                        <div className="h-[1px] flex-1 bg-white/10"></div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole(role === 'VEHICLE_OWNER' ? 'USER' : 'VEHICLE_OWNER')}
+                                            className={`flex flex-col items-start gap-2 p-3 text-left transition-all duration-300 rounded-xl border ${role === 'VEHICLE_OWNER' ? 'border-antique-gold text-antique-gold bg-antique-gold/10 shadow-[0_0_15px_rgba(212,175,55,0.15)]' : 'border-white/10 text-white/50 hover:border-white/30 hover:text-white/80 bg-white/5'}`}
+                                        >
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Car className="h-4 w-4" />
+                                                <span className="text-[12px] tracking-wider font-semibold">Fleet Partner</span>
+                                            </div>
+                                            <span className="text-[10px] tracking-wide opacity-70 font-light">Manage your vehicles</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole(role === 'HOTEL_OWNER' ? 'USER' : 'HOTEL_OWNER')}
+                                            className={`flex flex-col items-start gap-2 p-3 text-left transition-all duration-300 rounded-xl border ${role === 'HOTEL_OWNER' ? 'border-antique-gold text-antique-gold bg-antique-gold/10 shadow-[0_0_15px_rgba(212,175,55,0.15)]' : 'border-white/10 text-white/50 hover:border-white/30 hover:text-white/80 bg-white/5'}`}
+                                        >
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Building2 className="h-4 w-4" />
+                                                <span className="text-[12px] tracking-wider font-semibold">Hotel Partner</span>
+                                            </div>
+                                            <span className="text-[10px] tracking-wide opacity-70 font-light">Manage your properties</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     )}
 
                     {/* Footer Links */}
-                    <div className="mt-6 text-center">
+                    <div className="mt-5 text-center">
                         <Link
-                            href="https://wa.me/94771234567?text=I%20need%20assistance%20with%20my%20Yatara%20Ceylon%20account."
+                            href="https://wa.me/94704239802?text=I%20need%20assistance%20with%20my%20Yatara%20Ceylon%20account."
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-white/50 hover:text-antique-gold font-light text-xs tracking-wide transition-colors duration-300 inline-flex border-b border-transparent hover:border-antique-gold pb-1"
+                            className="text-white/40 hover:text-antique-gold font-light text-[10px] tracking-wide transition-colors duration-300 inline-flex border-b border-transparent hover:border-antique-gold pb-0.5"
                         >
                             Need Help? Contact Concierge
                         </Link>

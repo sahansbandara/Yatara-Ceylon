@@ -25,20 +25,32 @@ const promises = [
     },
 ];
 
-export default function InquirePage() {
+interface InquirePageProps {
+    searchParams: Promise<{ type?: string; journey?: string }>;
+}
+
+export default async function InquirePage({ searchParams }: InquirePageProps) {
+    const params = await searchParams;
+    const inquiryType = params.type || 'proposal';
+    const journeySlug = params.journey || '';
+
+    const isConcierge = inquiryType === 'concierge';
+
     return (
         <div className="min-h-screen bg-gray-50/50 pt-24 pb-20">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
                 {/* Header */}
                 <div className="mb-16 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
                     <span className="inline-block py-1 px-4 text-xs tracking-[0.2em] uppercase font-medium text-antique-gold border border-antique-gold/30 mb-6 bg-deep-emerald/5">
-                        Concierge Services
+                        {isConcierge ? 'Personal Concierge' : 'Concierge Services'}
                     </span>
                     <h1 className="text-4xl md:text-5xl font-serif text-deep-emerald mb-4">
-                        Request a Curated Proposal
+                        {isConcierge ? 'Speak to a Designer' : 'Request a Curated Proposal'}
                     </h1>
                     <p className="text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
-                        Tailored journeys. Private transfers. 24/7 concierge.
+                        {isConcierge
+                            ? 'Connect directly with a travel designer who will guide your journey from the first conversation.'
+                            : 'Tailored journeys. Private transfers. 24/7 concierge.'}
                     </p>
                     <p className="text-antique-gold text-xs tracking-[0.15em] uppercase mt-4 font-medium">
                         Reply within 2 hours · No obligation · Fully bespoke
@@ -74,7 +86,7 @@ export default function InquirePage() {
                         <div className="border-t border-gray-200 pt-8">
                             <p className="text-xs tracking-[0.15em] uppercase text-gray-400 mb-3">Prefer to chat?</p>
                             <a
-                                href="https://wa.me/94771234567"
+                                href="https://wa.me/94704239802"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-3 text-sm text-deep-emerald hover:text-antique-gold transition-colors border border-deep-emerald/20 px-5 py-3 hover:border-antique-gold/30"
@@ -87,7 +99,7 @@ export default function InquirePage() {
 
                     {/* Right: Form */}
                     <div className="lg:col-span-3">
-                        <InquireForm />
+                        <InquireForm inquiryType={inquiryType} journeySlug={journeySlug} />
                     </div>
                 </div>
             </div>

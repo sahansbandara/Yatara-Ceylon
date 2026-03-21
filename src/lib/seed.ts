@@ -7,22 +7,35 @@ async function seed() {
     console.log('🌱 Seeding database...');
     await mongoose.connect(MONGODB_URI);
 
-    // --- User (Admin) ---
+    // --- Users (Demo Accounts) ---
     const User = (await import('@/models/User')).default;
-    const existingAdmin = await User.findOne({ email: 'admin@ceylonescapes.lk' });
-    if (!existingAdmin) {
-        const passwordHash = await bcrypt.hash('Admin@123', 12);
-        await User.create({
-            name: 'Admin',
-            email: 'admin@ceylonescapes.lk',
-            phone: '+94771234567',
-            passwordHash,
-            role: 'ADMIN',
-            status: 'ACTIVE',
-        });
-        console.log('✅ Admin user created (admin@ceylonescapes.lk / Admin@123)');
-    } else {
-        console.log('ℹ️  Admin user already exists');
+
+    const demoAccounts = [
+        { name: 'Admin', email: 'admin@yataraceylon.me', phone: '+94771234567', role: 'ADMIN', password: 'Admin@123' },
+        { name: 'Concierge Staff', email: 'concierge@yataraceylon.me', phone: '+94771234568', role: 'STAFF', password: 'Concierge@123' },
+        { name: 'Hotel Partner', email: 'hotel.partner@yataraceylon.me', phone: '+94771234569', role: 'HOTEL_OWNER', password: 'Hotel@123' },
+        { name: 'Fleet Partner', email: 'fleet.partner@yataraceylon.me', phone: '+94771234570', role: 'VEHICLE_OWNER', password: 'Fleet@123' },
+        { name: 'Customer Demo', email: 'customer1@yataraceylon.me', phone: '+94771234571', role: 'USER', password: 'Customer@123' },
+        // Keep legacy admin for backward compatibility
+        { name: 'Admin (Legacy)', email: 'admin@ceylonescapes.lk', phone: '+94771234567', role: 'ADMIN', password: 'Admin@123' },
+    ];
+
+    for (const account of demoAccounts) {
+        const existing = await User.findOne({ email: account.email });
+        if (!existing) {
+            const passwordHash = await bcrypt.hash(account.password, 12);
+            await User.create({
+                name: account.name,
+                email: account.email,
+                phone: account.phone,
+                passwordHash,
+                role: account.role,
+                status: 'ACTIVE',
+            });
+            console.log(`✅ ${account.role} user created (${account.email} / ${account.password})`);
+        } else {
+            console.log(`ℹ️  ${account.role} user already exists (${account.email})`);
+        }
     }
 
     // --- Packages ---
@@ -171,17 +184,38 @@ async function seed() {
     const District = (await import('@/models/District')).default;
     const distCount = await District.countDocuments();
     if (distCount === 0) {
-        const districts = [
-            'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
-            'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
-            'Vavuniya', 'Mullaitivu', 'Batticaloa', 'Ampara', 'Trincomalee',
-            'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
-            'Monaragala', 'Ratnapura', 'Kegalle',
+        const districtsWithProvinces = [
+            { name: 'Colombo', province: 'Western' },
+            { name: 'Gampaha', province: 'Western' },
+            { name: 'Kalutara', province: 'Western' },
+            { name: 'Kandy', province: 'Central' },
+            { name: 'Matale', province: 'Central' },
+            { name: 'Nuwara Eliya', province: 'Central' },
+            { name: 'Galle', province: 'Southern' },
+            { name: 'Matara', province: 'Southern' },
+            { name: 'Hambantota', province: 'Southern' },
+            { name: 'Jaffna', province: 'Northern' },
+            { name: 'Kilinochchi', province: 'Northern' },
+            { name: 'Mannar', province: 'Northern' },
+            { name: 'Vavuniya', province: 'Northern' },
+            { name: 'Mullaitivu', province: 'Northern' },
+            { name: 'Batticaloa', province: 'Eastern' },
+            { name: 'Ampara', province: 'Eastern' },
+            { name: 'Trincomalee', province: 'Eastern' },
+            { name: 'Kurunegala', province: 'North Western' },
+            { name: 'Puttalam', province: 'North Western' },
+            { name: 'Anuradhapura', province: 'North Central' },
+            { name: 'Polonnaruwa', province: 'North Central' },
+            { name: 'Badulla', province: 'Uva' },
+            { name: 'Monaragala', province: 'Uva' },
+            { name: 'Ratnapura', province: 'Sabaragamuwa' },
+            { name: 'Kegalle', province: 'Sabaragamuwa' },
         ];
         await District.insertMany(
-            districts.map((name) => ({
-                name,
-                geojsonId: name.toLowerCase().replace(/\s+/g, '_'),
+            districtsWithProvinces.map((d) => ({
+                name: d.name,
+                geojsonId: d.name.toLowerCase().replace(/\s+/g, '_'),
+                province: d.province,
                 meta: {},
             }))
         );

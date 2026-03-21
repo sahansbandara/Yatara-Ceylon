@@ -1,6 +1,8 @@
 import TicketTable from '@/components/dashboard/TicketTable';
 import connectDB from '@/lib/mongodb';
 import SupportTicket from '@/models/SupportTicket';
+import { DashboardHero } from '@/components/dashboard/DashboardHero';
+import { GlassPanel } from '@/components/dashboard/GlassPanel';
 
 async function getTickets() {
     try {
@@ -20,14 +22,14 @@ export default async function SupportPage() {
 
     return (
         <div className="flex flex-col gap-6 p-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Support Inbox</h1>
-                    <p className="text-muted-foreground">Manage customer support tickets and inquiries.</p>
-                </div>
-            </div>
+            <DashboardHero
+                title="Support Inbox"
+                subtitle="Manage customer support tickets and inquiries."
+            />
 
-            <TicketTable tickets={tickets} />
+            <GlassPanel>
+                <TicketTable tickets={tickets} />
+            </GlassPanel>
         </div>
     );
 }
