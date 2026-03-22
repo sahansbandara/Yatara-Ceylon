@@ -60,6 +60,7 @@ Build-Tour Elite Rebuild — upgrading planner to elite product experience
 ---
 
 ## Done
+- [x] [2026-03-22] Tuned RealExperiencesSection UI per Sahan's request. Reduced girl image size and translated heading/reviews another 50px up. Shifted "real stories" 40px up and applied opposite parallax motion. Added slow scrolling (`useSpring`) and finely rebalanced parallax speeds (made girl much slower, "real stories" text faster).
 - [x] [2026-03-22] Fixed "Discover The Masterpiece" button link in PremiumStory section. Created a new dedicated `/the-masterpiece` page to explain the Yatara Standard and linked the button to it.
 - [x] [2026-03-22] Fixed full screen fit issue in BuildTourTeaser where parallax elements were cut off vertically on shorter screens. Changed `overflow-hidden` to `overflow-x-clip` and adjusted padding.
 - [x] [2026-03-22] Refined vertical spacing site-wide to make UI incredibly compact, significantly shortening the space between components (`TransfersTeaser`, `PremiumStory`, `ProofStack`, `TrustedByStrip`, `JourneyDayStory`).

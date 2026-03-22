@@ -47,7 +47,7 @@
 - Image fallback pattern: check if image exists, show placeholder gradient if not
 - Destination images: `.webp` format in `/public/images/districts/slug.webp`, 1600×900px
 - JSON-LD structured data: centralised in `src/lib/jsonLd.tsx` with `<JsonLd data={...} />` component + builder functions per schema type. Injected at top of `<main>` in each page.
-- Real Experiences layout recreation: Extended minimum section height dramatically (`min-h-[900px]` to `1200px`) and used `object-[center_60%]` to properly drag the background mountain lower, giving text layers enough "sky" to breathe and preventing cramped UI overlap.
+- Real Experiences layout tuning: Used `useSpring` on Framer scroll progress to add a slow, fluid scroll effect. Fine-tuned parallax speeds so the background text moves very fast downward (`[-60%, 80%]`), while keeping the girl's upward parallax gentle (`[10%, -5%]`).
 
 ---
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, EffectFade } from 'swiper/modules';
@@ -42,8 +42,17 @@ export default function RealExperiencesSection() {
         offset: ['start end', 'end start'],
     });
 
-    const girlParallaxY = useTransform(scrollYProgress, [0, 1], ['15%', '-5%']);
-    const watermarkParallaxY = useTransform(scrollYProgress, [0, 1], ['5vh', '-10vh']);
+    // Added smooth / slow scroll physics to the parallax layers
+    const smoothY = useSpring(scrollYProgress, {
+        stiffness: 40,
+        damping: 15,
+        mass: 1.2,
+    });
+
+    const bgMotionY = useTransform(smoothY, [0, 1], ['-10%', '10%']);
+    const girlParallaxY = useTransform(smoothY, [0, 1], ['10%', '-5%']);
+    const bgMountainsY = useTransform(smoothY, [0, 1], ['0%', '15%']);
+    const watermarkParallaxY = useTransform(smoothY, [0, 1], ['-60%', '80%']);
 
     return (
         <section ref={sectionRef} className="relative w-full min-h-[900px] xl:min-h-[1050px] 2xl:min-h-[1200px] bg-white text-black overflow-hidden flex flex-col pt-[15vh] pb-[10vh]">
@@ -70,16 +79,20 @@ export default function RealExperiencesSection() {
                 }}
             />
 
-            {/* Fixed "real stories" watermark that glides up rapidly */}
+            {/* Watermark "real stories" - Behind Mountains */}
             <motion.div 
-                className="absolute w-full top-[10%] xl:top-[12%] flex justify-center z-[2] pointer-events-none"
+                className="absolute top-[8%] md:top-[12%] left-0 w-full z-[1] flex justify-center pointer-events-none -translate-y-[40px]"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
                 style={{ y: watermarkParallaxY }}
             >
                 {/* To adjust "real stories" size: change the 250px inside fontSize: 'clamp(...)' */}
                 <p
                     className="font-sans font-bold text-center text-[#EAEAEA] lowercase select-none"
                     style={{
-                        fontSize: 'clamp(100px, 18vw, 250px)',
+                        fontSize: 'clamp(60px, 10vw, 120px)',
                         lineHeight: 0.8,
                         letterSpacing: '-0.02em',
                         whiteSpace: 'nowrap'
@@ -94,7 +107,7 @@ export default function RealExperiencesSection() {
             {/* You can push her down by editing bottom-[-5%] */}
             <motion.div
                 style={{ y: girlParallaxY }}
-                className="absolute bottom-[-8%] left-[-5%] md:bottom-[-2%] md:left-[-2%] lg:left-[5%] z-[3] w-[260px] h-[480px] md:w-[380px] md:h-[650px] lg:w-[480px] lg:h-[800px] xl:w-[540px] xl:h-[900px] will-change-transform pointer-events-none"
+                className="absolute bottom-[calc(-8%-110px)] left-[-5%] md:bottom-[calc(-2%-110px)] md:left-[-2%] lg:left-[5%] z-[3] w-[240px] h-[440px] md:w-[340px] md:h-[580px] lg:w-[420px] lg:h-[720px] xl:w-[480px] xl:h-[800px] will-change-transform pointer-events-none"
             >
                 <Image
                     src="/images/home/testimonials-person.webp"
@@ -110,14 +123,14 @@ export default function RealExperiencesSection() {
             {/* ── SCROLLING FOREGROUND ── */}
             {/* mt-[12vh] pushes "Real Experiences" below the top half of "real stories" */}
             {/* Change mt-[...] to push the heading + reviews further UP or DOWN */}
-            <div className="relative z-[10] w-full max-w-7xl mx-auto px-4 flex flex-col items-center mt-[12vh] md:mt-[18vh] xl:mt-[22vh]">
+            <div className="relative z-[10] w-full max-w-7xl mx-auto px-4 flex flex-col items-center mt-[12vh] md:mt-[18vh] xl:mt-[22vh] -translate-y-[100px]">
                 
                 {/* Main heading */}
                 {/* To adjust "Real Experiences" text size: change the 56px inside fontSize: 'clamp(...)' */}
                 <h2 
                     className="font-sans font-bold text-center text-black tracking-tight mb-8 md:mb-12 z-[3] relative"
                     style={{
-                        fontSize: 'clamp(36px, 4vw, 56px)'
+                        fontSize: 'clamp(28px, 3.5vw, 42px)'
                     }}
                 >
                     Real Experiences
