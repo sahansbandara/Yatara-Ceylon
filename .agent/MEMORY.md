@@ -71,8 +71,7 @@
 - Archive/Restore Center: API pattern uses `Promise.all()` to query all collections with `{ isDeleted: true }`, merges results with `collectionName` tag, sorts by `deletedAt` descending. Action route uses a `modelMap` object to resolve collection name to Mongoose model.
 - Soft delete pattern: Set `isDeleted: true` + `deletedAt: new Date()` on DELETE. Restore = `$set: { isDeleted: false }, $unset: { deletedAt: "" }`. Permanent delete = `findByIdAndDelete(id)`.
 - All active-record queries must filter `{ isDeleted: false }` or `{ isDeleted: { $ne: true } }` to exclude soft-deleted items.
-- Homepage elite cleanup: shared `home-section-*` and `home-*` utility classes in `globals.css` make the public funnel more consistent without adding more one-off styling per section.
-- Hero media on homepage should use the local `/Hero-Section.mp4` asset instead of a remote GitHub raw URL to avoid lag and keep the first viewport feeling premium.
+- When rolling back a contained UI pass, prefer `git revert` on the specific commits over manual file edits or destructive resets. It preserves history and keeps unrelated work intact.
 
 ---
 
@@ -116,7 +115,6 @@
 - Build-Tour V3 elite rebuild → Page restructured as planner-first: Hero (compact) → QuickStart → MainPlanner → HowItWorks → PopularPlans → Themes → StoryBanner → Testimonials → CTA. Planner dominates the page, editorial sections support it rather than compete.
 - Build-Tour map: no tile layer by design → Uses CSS radial-gradient dark bg + GeoJSON district polygons. Lighter than Mapbox tiles, fully branded, no third-party tile server dependency.
 - Build-Tour 100vh section design → Each section fits within one viewport fold on 13-inch MacBook (effective ~900px height). Planner uses calc(100vh-180px) with fullscreen toggle option.
-- [2026-03-24] Homepage elite redesign architecture → Consolidate the homepage into a single funnel: Hero → Trusted strip → Signature Experiences → Featured Journeys → Brand Authority → How It Works → Bespoke Builder → Transfers → Testimonials → FAQ → Final CTA. Keep transfer and journey data separate, and remove duplicate homepage proof/story sections instead of stacking more content.
 
 ---
 

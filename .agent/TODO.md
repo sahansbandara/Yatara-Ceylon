@@ -3,20 +3,19 @@
 > **Agent: Read "Last Session" FIRST before doing anything else.**
 
 ## Current Milestone
-Dashboard Elite Overhaul — analytics pending after homepage redesign delivery
+Dashboard Elite Overhaul — full admin panel redesign and operational depth upgrade
 
 ---
 
 ## In Progress
-- [ ] Awaiting next active build task — next priority: Implement Analytics/Stats on Dashboard
+- [ ] Implement Analytics/Stats on Dashboard
 
 ## Just Completed (2026-03-24)
 
-### Homepage Elite Redesign
-- [x] Rebuilt homepage section order into a cleaner luxury funnel: Hero → Trust → Signature Experiences → Featured Journeys → Brand Authority → How It Works → Bespoke Builder → Transfers → Testimonials → FAQ → Final CTA
-- [x] Rewrote homepage core sections to reduce repeated messaging, simplify CTA hierarchy, and promote the bespoke planner as a flagship differentiator
-- [x] Added a dedicated `FAQSection` component and replaced the old overloaded proof/story stack on the homepage
-- [x] Standardized homepage spacing and shared luxury section styling with new `home-*` utilities in `globals.css`
+### Homepage Redesign Rollback
+- [x] Reverted the homepage redesign commits and restored the previous homepage implementation
+- [x] Removed the new homepage-only `FAQSection` and rolled back the homepage section order and styling changes
+- [x] Verified the restored state with `npm run build`
 
 ### Transfer Pages Bug Fix
 - [x] Fixed `TransferCategoryTile` slug routing for `'evening'` and `'cruise-rail-vip'` which were falling through to anchor links
@@ -53,7 +52,6 @@ Dashboard Elite Overhaul — analytics pending after homepage redesign delivery
 ---
 
 ## Priority Tasks
-- [ ] Implement Analytics/Stats on Dashboard
 - [ ] Add real images to transfer routes and transfer category pages (Wait on User)
 - [ ] Test all transfer detail pages on mobile
 - [ ] Visual QA on mobile for all dashboard pages
@@ -81,7 +79,7 @@ Dashboard Elite Overhaul — analytics pending after homepage redesign delivery
 ---
 
 ## Done
-- [x] [2026-03-24] Homepage Elite Redesign — homepage funnel restructure, CTA cleanup, bespoke promotion, FAQ addition, and premium consistency pass
+- [x] [2026-03-24] Homepage redesign rollback — restored pre-redesign homepage at user request
 - [x] [2026-03-22] Archive/Restore Center — full soft-delete + archive UI
 - [x] [2026-03-22] Admin Vehicle Calendar View
 - [x] [2026-03-22] Audit Log Viewer Page + DB Seeding
@@ -94,15 +92,15 @@ Dashboard Elite Overhaul — analytics pending after homepage redesign delivery
 
 ## Last Session
 
-**Date**: 2026-03-24 (Session 10)
+**Date**: 2026-03-24 (Session 11)
 **Agent**: Codex / GPT-5
-**Task**: Homepage Elite Redesign — luxury funnel cleanup and conversion refinement
+**Task**: Revert Homepage Elite Redesign
 
 **What was done**:
-- Reordered the homepage into a disciplined 11-section flow with one clear narrative from discovery to inquiry.
-- Rebuilt the hero, trust strip, signature experiences, featured journeys, brand authority, process, bespoke planner teaser, transfer teaser, testimonials, FAQ, and final CTA.
-- Added a new `FAQSection` component and shared homepage utility classes in `globals.css`.
-- Verified the production build with `npm run build` (passes successfully).
+- Reverted commits `e3dc002` and `616f0d8` with a non-destructive git revert to remove the homepage redesign.
+- Restored the previous homepage files and removed the new homepage-only `FAQSection`.
+- Kept unrelated environment file `.codex/environments/environment.toml` out of the revert commit.
+- Verified the restored state with `npm run build`.
 - Updated agent files (`TODO.md`, `MEMORY.md`).
 
 **Files modified**:
@@ -120,17 +118,16 @@ Dashboard Elite Overhaul — analytics pending after homepage redesign delivery
 - `src/components/public/BuildTourTeaser.tsx`
 - `src/components/public/TransfersTeaser.tsx`
 - `src/components/public/RealExperiencesSection.tsx`
-- `src/components/public/FAQSection.tsx`
 - `src/components/public/FinalCTA.tsx`
+- `src/components/public/FAQSection.tsx` (deleted)
 
 **Current state**:
-- Branch: `codex/homepage-elite-redesign` (tracking `origin/codex/homepage-elite-redesign`)
-- Last commit: `616f0d8` — `feat: redesign homepage luxury funnel`
-- Production build: `npm run build` passes
+- Branch: `codex/homepage-elite-redesign`
+- Revert in progress on top of `e3dc002`
 - Dev server: not running
-- Notes: build shows existing Tailwind warnings about ambiguous `duration-[...]` and `ease-[...]` utilities in older components, but they are non-blocking and the build completes successfully
+- Build: restored homepage passes `npm run build`
 
 **What to do next**:
-- Visually QA the new homepage on a 13-inch MacBook viewport and on mobile
-- Gather user feedback on the tighter homepage funnel and refine copy if needed
-- Return to `Implement Analytics/Stats on Dashboard`
+- Implement Analytics/Stats on Dashboard
+- Add real images to transfer routes (waiting on user)
+- Visual QA on mobile for all dashboard pages
