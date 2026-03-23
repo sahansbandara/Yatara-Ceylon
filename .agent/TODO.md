@@ -124,7 +124,8 @@ Dashboard Elite Overhaul — analytics pending after homepage redesign delivery
 - `src/components/public/FinalCTA.tsx`
 
 **Current state**:
-- Branch: `codex/homepage-elite-redesign`
+- Branch: `codex/homepage-elite-redesign` (tracking `origin/codex/homepage-elite-redesign`)
+- Last commit: `616f0d8` — `feat: redesign homepage luxury funnel`
 - Production build: `npm run build` passes
 - Dev server: not running
 - Notes: build shows existing Tailwind warnings about ambiguous `duration-[...]` and `ease-[...]` utilities in older components, but they are non-blocking and the build completes successfully
