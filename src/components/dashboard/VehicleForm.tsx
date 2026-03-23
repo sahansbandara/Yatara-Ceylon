@@ -59,7 +59,7 @@ export default function VehicleForm({ initialData, isEdit = false, redirectPath 
 
         try {
             const url = isEdit ? `/api/vehicles/${initialData._id}` : '/api/vehicles';
-            const method = isEdit ? 'PUT' : 'POST';
+            const method = isEdit ? 'PATCH' : 'POST';
 
             const res = await fetch(url, {
                 method,
