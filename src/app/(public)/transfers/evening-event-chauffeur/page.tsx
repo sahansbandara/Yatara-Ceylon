@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 export default function EveningEventChauffeurPage() {
-    const category = transferCategoryCards.find((c) => c.slug === 'event')!;
+    const category = transferCategoryCards.find((c) => c.slug === 'evening')!;
     const eventTransfers = transferProducts.filter(
         (t) => t.transferType === 'EVENT'
     );

@@ -1,7 +1,7 @@
 # MEMORY — Yatara Ceylon Project
 
 ## Mistakes
-(none yet)
+- `transferCategoryCards` slugs must match lookups in sub-pages (e.g. slug is `'evening'`, not `'event'`)
 
 ## Patterns That Work
 - DashboardHero for page headers with title and subtitle
