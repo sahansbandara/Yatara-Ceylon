@@ -12,6 +12,11 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 
 ## Just Completed (2026-03-24)
 
+### Transfer Pages Bug Fix
+- [x] Fixed `TransferCategoryTile` slug routing for `'evening'` and `'cruise-rail-vip'` which were falling through to anchor links
+- [x] Integrated `CurrencyContext` into `TransferCategoryShowcase`, `TransferCategoryTile`, `SignatureRouteCard`, and `TransfersTeaser` to respect user's LKR/USD toggle
+- [x] Restyled sub-pages `safari-national-park`, `evening-event-chauffeur`, and `cruise-rail-vip` using brand colors (`bg-off-white`, `text-deep-emerald`, `text-antique-gold`)
+
 ### Build & Vehicle Fixes
 - [x] Fixed Vercel build failure — ESLint 9 + next/typescript config precedence was overriding `warn` rules to `error` for 100+ `no-explicit-any`, `no-unescaped-entities`, etc. Added `eslint.ignoreDuringBuilds: true` in `next.config.ts` (lint still runs in dev via `npm run lint`)
 - [x] Fixed Vehicle Edit 405 error — `VehicleForm.tsx` was sending `PUT` but API route only defines `PATCH`. Changed method to `PATCH`.
@@ -81,24 +86,27 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 
 ## Last Session
 
-**Date**: 2026-03-24 (Session 8)
-**Agent**: Cowork
-**Task**: Fix Vercel Build Failure + Vehicle Edit Bug
+**Date**: 2026-03-24 (Session 9)
+**Agent**: Cowork / Antigravity
+**Task**: Transfer Pages bug fixes — Routing, Currency, and Design Consistency
 
 **What was done**:
-- Diagnosed Vercel build failure: ESLint 9 + `next/typescript` extends was overriding `.eslintrc.json` warn rules to error level (100+ `no-explicit-any`, `no-unescaped-entities`, `ban-ts-comment`, `no-require-imports`, `prefer-const` errors across 60+ files)
-- Added `eslint: { ignoreDuringBuilds: true }` to `next.config.ts` — lint rules still enforced in dev via `npm run lint`
-- Fixed vehicle edit 405 error: `VehicleForm.tsx` used `PUT` method but `/api/vehicles/[id]/route.ts` only exports `PATCH`. Changed to `PATCH`.
+- Fixed broken slug routing in transfer category tiles (`evening` and `cruise-rail-vip`).
+- Wired in `useCurrency` across transfer components (`TransferCategoryShowcase`, `TransferCategoryTile`, `SignatureRouteCard`, `TransfersTeaser`) for proper LKR/USD switching.
+- Restyled three transfer sub-pages (`safari-national-park`, `evening-event-chauffeur`, `cruise-rail-vip`) to match the luxury brand design.
 - Updated agent files (TODO.md, MEMORY.md)
 
 **Files modified**:
-- `next.config.ts` — added `eslint.ignoreDuringBuilds: true`
-- `src/components/dashboard/VehicleForm.tsx` — changed PUT to PATCH on line 62
+- `src/components/public/transfers/TransferCategoryTile.tsx`
+- `src/components/public/transfers/TransferCategoryShowcase.tsx`
+- `src/components/public/transfers/SignatureRouteCard.tsx`
+- `src/components/public/TransfersTeaser.tsx`
+- `src/app/(public)/transfers/safari-national-park/page.tsx`
+- `src/app/(public)/transfers/evening-event-chauffeur/page.tsx`
+- `src/app/(public)/transfers/cruise-rail-vip/page.tsx`
 
 **Current state**:
-- Build should now pass on Vercel (ESLint errors bypassed during build)
-- Vehicle edit form now correctly uses PATCH method matching the API route
-- All lint rules still enforced locally via `npm run lint`
+- All 6 transfer categories route correctly to their sub-pages, support currency toggling, and share the consistent brand visual design.
 
 **What to do next**:
 - Implement Analytics/Stats on Dashboard

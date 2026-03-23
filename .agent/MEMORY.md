@@ -20,6 +20,7 @@
 - [2026-03-22] `sonner` is NOT installed in this project. Use standard `alert()` for notifications in dashboard pages. Other dashboard components also use `alert()` for feedback.
 - [2026-03-24] VehicleForm used `PUT` method but the API route (`/api/vehicles/[id]/route.ts`) only exports `PATCH` → 405 Method Not Allowed on every vehicle edit → Always check which HTTP methods the API route actually exports before using them in client components.
 - [2026-03-24] ESLint 9 + `next/typescript` extends overrides `.eslintrc.json` custom rules from `warn` to `error` → Build fails on 100+ `no-explicit-any` errors despite config saying `warn` → Added `eslint.ignoreDuringBuilds: true` in `next.config.ts`. Lint runs separately via `npm run lint` in dev.
+- [2026-03-24] Mapping object keys didn't match real data slugs in Transfers (`event` instead of `evening`) → Link fell back to default `#${slug}` anchor → Always verify that dictionary keys exactly match the actual data IDs/slugs they are meant to map.
 
 ---
 
@@ -138,21 +139,27 @@
 
 ## Last Session
 
-**Date**: 2026-03-24 (Session 8)
-**Agent**: Cowork
-**Task**: Fix Vercel Build Failure + Vehicle Edit Bug
+**Date**: 2026-03-24 (Session 9)
+**Agent**: Cowork / Antigravity
+**Task**: Transfer Pages bug fixes — Routing, Currency, and Design Consistency
 
 **What was done**:
-- Added `eslint.ignoreDuringBuilds: true` to `next.config.ts` (ESLint 9 config precedence bug)
-- Fixed VehicleForm.tsx PUT→PATCH method mismatch
+- Fixed broken slug routing in transfer category tiles (`evening` and `cruise-rail-vip`).
+- Wired in `useCurrency` across transfer components (`TransferCategoryShowcase`, `TransferCategoryTile`, `SignatureRouteCard`, `TransfersTeaser`) for proper LKR/USD switching.
+- Restyled three transfer sub-pages (`safari-national-park`, `evening-event-chauffeur`, `cruise-rail-vip`) to match the luxury brand design.
+- Updated agent files (TODO.md, MEMORY.md)
 
 **Files modified**:
-- `next.config.ts` — eslint.ignoreDuringBuilds
-- `src/components/dashboard/VehicleForm.tsx` — PUT→PATCH
+- `src/components/public/transfers/TransferCategoryTile.tsx`
+- `src/components/public/transfers/TransferCategoryShowcase.tsx`
+- `src/components/public/transfers/SignatureRouteCard.tsx`
+- `src/components/public/TransfersTeaser.tsx`
+- `src/app/(public)/transfers/safari-national-park/page.tsx`
+- `src/app/(public)/transfers/evening-event-chauffeur/page.tsx`
+- `src/app/(public)/transfers/cruise-rail-vip/page.tsx`
 
 **Current state**:
-- Build should pass on Vercel
-- Vehicle edit functional
+- All 6 transfer categories route correctly, support currency toggling, and share the consistent brand design.
 
 **What to do next**:
 - Implement Analytics/Stats on Dashboard

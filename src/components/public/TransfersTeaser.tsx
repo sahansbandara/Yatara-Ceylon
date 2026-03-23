@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, PlaneLanding, BadgeDollarSign, Users, Headphones } from 'lucide-react';
-import { transferCategoryCards, formatLkr } from '@/data/transfers';
+import { transferCategoryCards } from '@/data/transfers';
+import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
 
 /* ─── Only show 3 flagship categories on the homepage ─── */
 const flagshipCategories = transferCategoryCards.slice(0, 3);
@@ -13,6 +14,9 @@ const categoryRoutes: Record<string, string> = {
     airport: '/transfers/airport-concierge',
     intercity: '/transfers/intercity-executive',
     hourly: '/transfers/on-demand-chauffeur',
+    safari: '/transfers/safari-national-park',
+    evening: '/transfers/evening-event-chauffeur',
+    'cruise-rail-vip': '/transfers/cruise-rail-vip',
 };
 
 /* ─── Trust pills ─── */
@@ -24,6 +28,8 @@ const trustPills = [
 ];
 
 export default function TransfersTeaser() {
+    const { currency, convertRate } = useCurrency();
+
     return (
         <section className="relative w-full overflow-hidden py-28 md:py-40 bg-[#043927]">
             {/* Background Image */}
@@ -128,7 +134,7 @@ export default function TransfersTeaser() {
                                                         From
                                                     </span>
                                                     <span className="text-white font-semibold">
-                                                        {formatLkr(cat.startingFromLkr)}
+                                                        {formatPrice(cat.startingFromLkr, currency, convertRate)}
                                                     </span>
                                                 </div>
                                                 <div className="text-center">

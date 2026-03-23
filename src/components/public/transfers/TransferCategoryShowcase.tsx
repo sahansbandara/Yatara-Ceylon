@@ -1,7 +1,10 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Clock, MapPin, Users } from 'lucide-react';
-import { TransferProduct, formatLkr } from '@/data/transfers';
+import { TransferProduct } from '@/data/transfers';
+import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
 
 /* ─── Transfer-type → badge label ─── */
 const typeBadge: Record<string, string> = {
@@ -24,6 +27,8 @@ export default function TransferCategoryShowcase({
     sectionTitle = 'Available Routes',
     sectionEyebrow = 'Choose Your Route',
 }: TransferCategoryShowcaseProps) {
+    const { currency, convertRate } = useCurrency();
+
     if (transfers.length === 0) return null;
 
     return (
@@ -119,8 +124,8 @@ export default function TransferCategoryShowcase({
                                                 From
                                             </span>
                                             <span className="font-serif text-xl font-bold text-deep-emerald">
-                                                {formatLkr(
-                                                    transfer.startingPriceLkr
+                                                {formatPrice(
+                                                    transfer.startingPriceLkr, currency, convertRate
                                                 )}
                                             </span>
                                         </div>

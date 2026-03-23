@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { formatLkr } from '@/data/transfers';
+import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
 
 interface TransferCategoryTileProps {
     slug: string;
@@ -30,11 +30,13 @@ export default function TransferCategoryTile({
             case 'intercity': return '/transfers/intercity-executive';
             case 'hourly': return '/transfers/on-demand-chauffeur';
             case 'safari': return '/transfers/safari-national-park';
-            case 'event': return '/transfers/evening-event-chauffeur';
+            case 'evening': return '/transfers/evening-event-chauffeur';
             case 'cruise-rail-vip': return '/transfers/cruise-rail-vip';
             default: return `/transfers#${slug}`;
         }
     };
+
+    const { currency, convertRate } = useCurrency();
 
     return (
         <Link href={getCategoryUrl(slug)} className="group block">
@@ -84,7 +86,7 @@ export default function TransferCategoryTile({
                                         From
                                     </span>
                                     <span className="text-white font-semibold">
-                                        {formatLkr(startingFromLkr)}
+                                        {formatPrice(startingFromLkr, currency, convertRate)}
                                     </span>
                                 </div>
                                 <div className="text-center">

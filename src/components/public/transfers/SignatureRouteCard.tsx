@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Clock, MapPin, Shield } from 'lucide-react';
-import { formatLkr } from '@/data/transfers';
+import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
 
 interface SignatureRouteCardProps {
     from: string;
@@ -32,6 +32,8 @@ export default function SignatureRouteCard({
     includes,
     image,
 }: SignatureRouteCardProps) {
+    const { currency, convertRate } = useCurrency();
+
     const typeBadgeColor = {
         AIRPORT: 'bg-blue-500/20 text-blue-300 border-blue-400/30',
         INTERCITY: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30',
@@ -113,7 +115,7 @@ export default function SignatureRouteCard({
                                 From
                             </span>
                             <span className="font-serif text-lg font-bold text-deep-emerald">
-                                {formatLkr(startingPriceLkr)}
+                                {formatPrice(startingPriceLkr, currency, convertRate)}
                             </span>
                         </div>
                         <div className="flex items-center gap-1.5 text-antique-gold text-xs font-nav font-semibold uppercase tracking-widest group-hover:gap-2.5 transition-all duration-300">
