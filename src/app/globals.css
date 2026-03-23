@@ -380,12 +380,19 @@
 }
 
 /* ============================================
-   🔮 PREMIUM DASHBOARD GLASS SYSTEM
+   🔮 PREMIUM DASHBOARD GLASS SYSTEM — v2
+   4-Layer Surface Hierarchy:
+   L0 (Canvas):  #060d0b — near-black charcoal-emerald
+   L1 (Sidebar): #0a1410 — darkest panel
+   L2 (Cards):   rgba(255,255,255,0.05) — subtle lift
+   L3 (Tables):  rgba(255,255,255,0.03) — flatter secondary
+   Accent: Gold only for active nav, CTA, highlights (≤10%)
+   Status: teal/blue/green/orange/red for meaning
    ============================================ */
 
 /* Dashboard Theme Classes */
 .dashboard-bg-admin {
-  background: radial-gradient(circle at top right, #11362e, #061a15 80%);
+  background: #060d0b;
   color: #FAFAFA;
 }
 
@@ -394,15 +401,11 @@
   color: #1a202c;
 }
 
-/* Dashboard sidebar — deep layered glass */
+/* Dashboard sidebar — darkest surface (L1) */
 .dashboard-sidebar-dark {
-  background: linear-gradient(180deg,
-      rgba(4, 30, 22, 0.92) 0%,
-      rgba(2, 20, 14, 0.96) 100%);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border-right: 1px solid rgba(212, 175, 55, 0.08);
-  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(180deg, #0a1410 0%, #070e0b 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
   position: relative;
 }
 
@@ -414,26 +417,25 @@
   right: 0;
   height: 1px;
   background: linear-gradient(90deg,
-      rgba(212, 175, 55, 0.3) 0%,
-      rgba(212, 175, 55, 0.1) 100%);
+      rgba(212, 175, 55, 0.2) 0%,
+      rgba(255, 255, 255, 0.05) 100%);
 }
 
-/* Premium glass stat card */
+/* Premium stat card — Surface L2 */
 .liquid-glass-stat-dark {
   background: linear-gradient(145deg,
-      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.055) 0%,
       rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 1px 4px rgba(0, 0, 0, 0.15);
   border-radius: 1rem;
   position: relative;
   overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .liquid-glass-stat-dark::before {
@@ -445,34 +447,31 @@
   height: 1px;
   background: linear-gradient(90deg,
       transparent 0%,
-      rgba(255, 255, 255, 0.2) 20%,
-      rgba(212, 175, 55, 0.3) 50%,
-      rgba(255, 255, 255, 0.2) 80%,
+      rgba(255, 255, 255, 0.1) 20%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.1) 80%,
       transparent 100%);
   z-index: 1;
 }
 
 .liquid-glass-stat-dark:hover {
-  border-color: rgba(212, 175, 55, 0.35);
+  border-color: rgba(255, 255, 255, 0.15);
   box-shadow:
-    0 16px 48px rgba(0, 0, 0, 0.5),
-    0 0 24px rgba(212, 175, 55, 0.12),
-    inset 0 1px 0 rgba(212, 175, 55, 0.2);
-  transform: translateY(-3px);
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
 }
 
-/* Premium Dashboard Hero Strip */
+/* Premium Dashboard Hero Strip — Surface L2 */
 .dashboard-hero-glass {
   background: linear-gradient(145deg,
-      rgba(255, 255, 255, 0.06) 0%,
-      rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.25rem;
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.015) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -486,8 +485,8 @@
   height: 1px;
   background: linear-gradient(90deg,
       transparent 0%,
-      rgba(212, 175, 55, 0.4) 30%,
-      rgba(212, 175, 55, 0.4) 70%,
+      rgba(255, 255, 255, 0.12) 30%,
+      rgba(255, 255, 255, 0.12) 70%,
       transparent 100%);
 }
 
@@ -496,24 +495,18 @@
   position: absolute;
   top: -80px;
   right: -60px;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.04) 0%, transparent 70%);
   pointer-events: none;
 }
 
-/* Premium Dashboard Table */
+/* Premium Dashboard Table — Surface L3 (flatter) */
 .dashboard-table-glass {
-  background: linear-gradient(145deg,
-      rgba(255, 255, 255, 0.06) 0%,
-      rgba(255, 255, 255, 0.015) 100%);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.25rem;
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   position: relative;
 }
@@ -527,21 +520,21 @@
   height: 1px;
   background: linear-gradient(90deg,
       transparent 0%,
-      rgba(255, 255, 255, 0.2) 20%,
-      rgba(212, 175, 55, 0.25) 50%,
-      rgba(255, 255, 255, 0.2) 80%,
+      rgba(255, 255, 255, 0.08) 20%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.08) 80%,
       transparent 100%);
   z-index: 1;
 }
 
 .dashboard-table-glass thead tr {
-  background: rgba(255, 255, 255, 0.04);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .dashboard-table-glass tbody tr {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s ease;
 }
 
 .dashboard-table-glass tbody tr:last-child {
@@ -549,7 +542,7 @@
 }
 
 .dashboard-table-glass tbody tr:hover {
-  background: rgba(212, 175, 55, 0.04);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* Premium Empty State */

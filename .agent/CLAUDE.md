@@ -88,6 +88,8 @@ project-root/
 - `/packages` → Journeys page (dynamic from MongoDB)
 - `/packages/[slug]` → Journey detail page
 - `/dashboard/packages` → Admin package management
+- `/dashboard/archive` → Archive/Restore Center for soft-deleted records
+- `/dashboard/audit-logs` → Audit log viewer
 
 ## Data Architecture
 - **Transfers**: Static data in `src/data/transfers.ts` (categories, packages, routes, fleet tiers)

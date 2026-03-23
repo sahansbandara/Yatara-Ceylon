@@ -85,17 +85,17 @@ const navLinks = [
                 title: 'Transfer Services',
                 links: [
                     { href: '/transfers', label: 'Transfers Overview' },
-                    { href: '/transfers/airport-executive', label: 'Executive Airport Passage' },
-                    { href: '/transfers/intercity-executive', label: 'Intercity Executive' },
-                    { href: '/transfers/wilderness-safari', label: 'Wilderness Expeditions' },
+                    { href: '/transfers/colombo-airport-to-colombo-city', label: 'Airport to Colombo' },
+                    { href: '/transfers/colombo-airport-to-kandy', label: 'Airport to Kandy' },
+                    { href: '/transfers/colombo-to-galle', label: 'Colombo to Galle' },
                 ]
             },
             {
                 title: 'More Services',
                 links: [
-                    { href: '/transfers/capital-by-night', label: 'Capital & Coastal Evenings' },
-                    { href: '/transfers/chauffeur-reserve', label: 'On-Demand Chauffeur' },
-                    { href: '/transfers/signature-fleet', label: 'The Signature Fleet' },
+                    { href: '/transfers/kandy-to-nuwara-eliya', label: 'Kandy to Nuwara Eliya' },
+                    { href: '/transfers/nuwara-eliya-to-ella', label: 'Nuwara Eliya to Ella' },
+                    { href: '/transfers/yala-to-tangalle', label: 'Yala to Tangalle' },
                 ]
             }
         ]

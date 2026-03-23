@@ -9,6 +9,11 @@ import {
     Luggage,
     MessageCircle,
     ChevronDown,
+    ShieldCheck,
+    Users,
+    Headphones,
+    BadgeDollarSign,
+    CalendarCheck,
 } from 'lucide-react';
 
 import { JsonLd, buildTravelAgency, buildFAQPage, buildBreadcrumb } from '@/lib/jsonLd';
@@ -43,6 +48,15 @@ const serviceIcons: Record<string, React.ReactNode> = {
     'message-circle': <MessageCircle className="w-6 h-6 text-antique-gold" />,
 };
 
+/* ───────── Trust Bar Items ───────── */
+const trustBarItems = [
+    { icon: PlaneLanding, label: 'Meet & Greet at Arrivals' },
+    { icon: BadgeDollarSign, label: 'Fixed Transparent Pricing' },
+    { icon: Users, label: 'Professional Chauffeurs' },
+    { icon: CalendarCheck, label: 'Flexible Cancellation' },
+    { icon: Headphones, label: 'Concierge Support' },
+];
+
 export default function TransfersPage() {
     return (
         <main className="bg-off-white">
@@ -54,9 +68,9 @@ export default function TransfersPage() {
                 { name: 'Transfers', url: '/transfers' },
             ])} />
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 1: HERO WITH BOOKING STRIP
+                SECTION 1: HERO
                 ═══════════════════════════════════════════════════════════ */}
-            <section className="bg-deep-emerald pt-32 pb-16">
+            <section className="bg-deep-emerald pt-32 pb-20">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
                     {/* Eyebrow */}
                     <div className="mb-6">
@@ -65,96 +79,33 @@ export default function TransfersPage() {
                         </span>
                     </div>
 
-                    {/* Hero Content — Two Column */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-                        {/* Left — Copy */}
-                        <div>
-                            <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
-                                Sri Lanka Transfers,{' '}
-                                <span className="italic text-antique-gold">Curated with Precision</span>
-                            </h1>
+                    {/* Hero Content */}
+                    <div className="max-w-3xl mb-12">
+                        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                            Transfers Designed Around{' '}
+                            <span className="italic text-antique-gold">Time, Privacy, and Comfort</span>
+                        </h1>
 
-                            <p className="text-white/80 text-lg font-nav max-w-xl mb-8 leading-relaxed">
-                                Airport arrivals, intercity routes, private chauffeurs, and luxury vehicle
-                                movement across the island — handled with fixed pricing, discreet service,
-                                and elegant execution.
-                            </p>
+                        <p className="text-white/80 text-lg font-nav max-w-xl mb-10 leading-relaxed">
+                            From airport arrivals to intercity travel and chauffeured day use, each transfer
+                            is tailored for seamless movement across Sri Lanka.
+                        </p>
 
-                            {/* CTAs */}
-                            <div className="flex flex-wrap gap-4 mb-8">
-                                <Link
-                                    href="/inquire"
-                                    className="inline-block px-8 py-3 bg-antique-gold text-deep-emerald font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:bg-antique-gold/90 transition-all duration-300"
-                                >
-                                    Get Instant Quote
-                                </Link>
-                                <a
-                                    href="#signature-routes"
-                                    className="inline-flex items-center gap-2 px-8 py-3 border border-antique-gold/30 text-antique-gold font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:border-antique-gold hover:bg-antique-gold/5 transition-all duration-300"
-                                >
-                                    Browse Signature Routes
-                                    <ArrowRight className="w-4 h-4" />
-                                </a>
-                            </div>
-
-                            {/* Trust Pills */}
-                            <div className="flex flex-wrap gap-3">
-                                {['Meet & greet', 'Flight tracking', 'Fixed fares', '24/7 concierge'].map(
-                                    (pill) => (
-                                        <span
-                                            key={pill}
-                                            className="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/80 text-xs font-nav"
-                                        >
-                                            {pill}
-                                        </span>
-                                    )
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Right — Floating Booking Preview Card */}
-                        <div className="hidden lg:flex items-center justify-center">
-                            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 w-full max-w-sm">
-                                <p className="text-antique-gold text-[10px] font-nav uppercase tracking-[0.2em] font-semibold mb-4">
-                                    Sample Transfer
-                                </p>
-                                <div className="space-y-3 mb-5">
-                                    <div className="flex justify-between text-sm font-nav">
-                                        <span className="text-white/60">Pickup</span>
-                                        <span className="text-white font-semibold">CMB Airport</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm font-nav">
-                                        <span className="text-white/60">Drop-off</span>
-                                        <span className="text-white font-semibold">Galle Fort</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm font-nav">
-                                        <span className="text-white/60">Vehicle</span>
-                                        <span className="text-white font-semibold">Prestige SUV</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm font-nav">
-                                        <span className="text-white/60">Duration</span>
-                                        <span className="text-white font-semibold">2.5 hrs</span>
-                                    </div>
-                                </div>
-                                <div className="border-t border-white/20 pt-4 mb-4">
-                                    <div className="flex flex-wrap gap-2">
-                                        {['Meet & greet', 'Water', 'Flight tracking'].map((item) => (
-                                            <span
-                                                key={item}
-                                                className="px-2 py-1 bg-antique-gold/10 border border-antique-gold/20 rounded text-antique-gold text-[10px] font-nav"
-                                            >
-                                                {item}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-white/50 text-xs font-nav">From</span>
-                                    <span className="font-serif text-2xl font-bold text-antique-gold">
-                                        {formatLkr(22500)}
-                                    </span>
-                                </div>
-                            </div>
+                        {/* CTAs */}
+                        <div className="flex flex-wrap gap-4">
+                            <Link
+                                href="/inquire"
+                                className="inline-block px-8 py-3 bg-antique-gold text-deep-emerald font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:bg-antique-gold/90 transition-all duration-300"
+                            >
+                                Request a Transfer
+                            </Link>
+                            <a
+                                href="#fleet"
+                                className="inline-flex items-center gap-2 px-8 py-3 border border-antique-gold/30 text-antique-gold font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:border-antique-gold hover:bg-antique-gold/5 transition-all duration-300"
+                            >
+                                View Fleet
+                                <ArrowRight className="w-4 h-4" />
+                            </a>
                         </div>
                     </div>
 
@@ -164,55 +115,46 @@ export default function TransfersPage() {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 2: WHAT'S INCLUDED — PREMIUM PROMISES
+                SECTION 2: TRUST BAR — DIRECTLY BELOW HERO
                 ═══════════════════════════════════════════════════════════ */}
-            <section className="py-16 bg-white border-b border-deep-emerald/5">
-                <div className="max-w-7xl mx-auto px-4 md:px-8">
-                    <div className="text-center mb-12">
-                        <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-nav font-semibold block mb-3">
-                            Every Transfer Includes
-                        </span>
-                        <h2 className="font-serif text-3xl md:text-4xl font-bold text-deep-emerald">
-                            Premium Service, Standard
-                        </h2>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-                        {servicePromises.map((promise) => (
-                            <div key={promise.title} className="text-center group">
-                                <div className="w-14 h-14 mx-auto mb-3 bg-antique-gold/10 rounded-xl flex items-center justify-center group-hover:bg-antique-gold/20 transition-colors duration-300">
-                                    {serviceIcons[promise.icon]}
+            <section className="bg-[#032b1e] border-t border-white/5">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
+                    <div className="flex flex-wrap items-center justify-between gap-6 md:gap-4">
+                        {trustBarItems.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                                <div key={item.label} className="flex items-center gap-3">
+                                    <div className="w-9 h-9 bg-antique-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <Icon className="w-4 h-4 text-antique-gold" />
+                                    </div>
+                                    <span className="text-white/70 text-xs font-nav font-medium tracking-wide">
+                                        {item.label}
+                                    </span>
                                 </div>
-                                <h3 className="font-nav text-sm font-semibold text-deep-emerald mb-1">
-                                    {promise.title}
-                                </h3>
-                                <p className="text-xs text-deep-emerald/50 font-nav leading-relaxed">
-                                    {promise.description}
-                                </p>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 3: CHOOSE YOUR TRANSFER TYPE
+                SECTION 3: CHOOSE YOUR TRANSFER TYPE — 6 DARK CARDS
                 ═══════════════════════════════════════════════════════════ */}
-            <section className="py-24 bg-off-white">
+            <section className="py-24 bg-[#0a1f16]">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
                     <div className="text-center mb-16">
                         <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-nav font-semibold block mb-4">
                             The Collection
                         </span>
-                        <h2 className="font-serif text-4xl md:text-5xl font-bold text-deep-emerald mb-4">
+                        <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mb-4">
                             Choose Your Transfer Type
                         </h2>
-                        <p className="text-deep-emerald/60 text-lg font-nav max-w-2xl mx-auto">
-                            Five categories of premium ground transport, each designed for a specific travel need
+                        <p className="text-white/50 text-lg font-nav max-w-2xl mx-auto">
+                            Six categories of premium ground transport, each designed for a specific travel need
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {transferCategoryCards.map((category) => (
                             <TransferCategoryTile
                                 key={category.slug}
@@ -232,7 +174,7 @@ export default function TransfersPage() {
             {/* ═══════════════════════════════════════════════════════════
                 SECTION 4: SIGNATURE ROUTES
                 ═══════════════════════════════════════════════════════════ */}
-            <section id="signature-routes" className="py-24 bg-deep-emerald/[0.03]">
+            <section id="signature-routes" className="py-24 bg-[#f7f5f0]">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
                     <div className="text-center mb-16">
                         <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-nav font-semibold block mb-4">
@@ -281,7 +223,7 @@ export default function TransfersPage() {
             {/* ═══════════════════════════════════════════════════════════
                 SECTION 5: FLEET TIERS
                 ═══════════════════════════════════════════════════════════ */}
-            <section className="py-24 bg-off-white">
+            <section id="fleet" className="py-24 bg-[#f7f5f0]">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
                     <div className="text-center mb-16">
                         <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-nav font-semibold block mb-4">
@@ -315,9 +257,41 @@ export default function TransfersPage() {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 6: HOW IT WORKS
+                SECTION 6: WHAT'S INCLUDED — PREMIUM PROMISES
                 ═══════════════════════════════════════════════════════════ */}
-            <section className="py-24 bg-white">
+            <section className="py-16 bg-white border-b border-deep-emerald/5">
+                <div className="max-w-7xl mx-auto px-4 md:px-8">
+                    <div className="text-center mb-12">
+                        <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-nav font-semibold block mb-3">
+                            Every Transfer Includes
+                        </span>
+                        <h2 className="font-serif text-3xl md:text-4xl font-bold text-deep-emerald">
+                            Premium Service, Standard
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                        {servicePromises.map((promise) => (
+                            <div key={promise.title} className="text-center group">
+                                <div className="w-14 h-14 mx-auto mb-3 bg-antique-gold/10 rounded-xl flex items-center justify-center group-hover:bg-antique-gold/20 transition-colors duration-300">
+                                    {serviceIcons[promise.icon]}
+                                </div>
+                                <h3 className="font-nav text-sm font-semibold text-deep-emerald mb-1">
+                                    {promise.title}
+                                </h3>
+                                <p className="text-xs text-deep-emerald/50 font-nav leading-relaxed">
+                                    {promise.description}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 7: HOW IT WORKS
+                ═══════════════════════════════════════════════════════════ */}
+            <section className="py-24 bg-[#f7f5f0]">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
                     <div className="text-center mb-16">
                         <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-nav font-semibold block mb-4">
@@ -368,7 +342,7 @@ export default function TransfersPage() {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 7: TRUST STRIP
+                SECTION 8: TRUST STRIP
                 ═══════════════════════════════════════════════════════════ */}
             <section className="bg-deep-emerald py-16">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -388,9 +362,9 @@ export default function TransfersPage() {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 8: FAQ
+                SECTION 9: FAQ
                 ═══════════════════════════════════════════════════════════ */}
-            <section className="py-24 bg-off-white">
+            <section className="py-24 bg-[#f7f5f0]">
                 <div className="max-w-3xl mx-auto px-4 md:px-8">
                     <div className="text-center mb-16">
                         <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-nav font-semibold block mb-4">
@@ -425,7 +399,7 @@ export default function TransfersPage() {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 9: CONCIERGE CTA
+                SECTION 10: CONCIERGE CTA
                 ═══════════════════════════════════════════════════════════ */}
             <section className="py-24 bg-deep-emerald">
                 <div className="max-w-3xl mx-auto px-4 md:px-8 text-center">

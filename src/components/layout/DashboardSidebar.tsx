@@ -19,8 +19,11 @@ import {
     Building2,
     UserCircle,
     FileText,
+    Logs,
     LogOut,
     ClipboardList,
+    Activity,
+    ArchiveRestore,
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -70,6 +73,8 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
                 { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
                 { href: '/dashboard/users', label: 'Users', icon: Users },
                 { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+                { href: '/dashboard/audit-logs', label: 'Audit Logs', icon: Activity },
+                { href: '/dashboard/archive', label: 'Archive', icon: ArchiveRestore },
             ],
         },
     ],

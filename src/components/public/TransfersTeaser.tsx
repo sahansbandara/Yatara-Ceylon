@@ -2,129 +2,174 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Plane, Route, Clock } from 'lucide-react';
+import { ArrowRight, PlaneLanding, BadgeDollarSign, Users, Headphones } from 'lucide-react';
+import { transferCategoryCards, formatLkr } from '@/data/transfers';
 
-const teaserTiles = [
-    {
-        icon: Plane,
-        title: 'Executive Airport Passage',
-        description: 'Meet & greet, porter assistance, seamless arrival to vehicle.',
-        href: '/transfers/airport-executive',
-        image: '/images/transfers/teaser-airport.webp',
-    },
-    {
-        icon: Route,
-        title: 'Intercity Executive',
-        description: 'Point-to-point luxury between signature destinations.',
-        href: '/transfers/intercity-executive',
-        image: '/images/transfers/teaser-intercity.webp',
-    },
-    {
-        icon: Clock,
-        title: 'On-Demand Chauffeur',
-        description: 'Hourly retainers, multi-stop days, premium standby.',
-        href: '/transfers/chauffeur-reserve',
-        image: '/images/transfers/teaser-chauffeur.webp',
-    },
+/* ─── Only show 3 flagship categories on the homepage ─── */
+const flagshipCategories = transferCategoryCards.slice(0, 3);
+
+/* ─── Category-to-route mapping ─── */
+const categoryRoutes: Record<string, string> = {
+    airport: '/transfers/airport-concierge',
+    intercity: '/transfers/intercity-executive',
+    hourly: '/transfers/on-demand-chauffeur',
+};
+
+/* ─── Trust pills ─── */
+const trustPills = [
+    { icon: PlaneLanding, label: 'Meet & Greet' },
+    { icon: BadgeDollarSign, label: 'Fixed Pricing' },
+    { icon: Users, label: 'Professional Chauffeurs' },
+    { icon: Headphones, label: '24/7 Concierge' },
 ];
 
 export default function TransfersTeaser() {
     return (
-        <section className="relative w-full overflow-hidden py-32 md:py-56 bg-[#043927]">
+        <section className="relative w-full overflow-hidden py-28 md:py-40 bg-[#043927]">
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/images/transfers/transfers-teaser-bg.webp"
                     alt="Luxury Fleet Transfers"
                     fill
-                    className="object-cover object-center opacity-30 mix-blend-luminosity transform scale-105"
+                    className="object-cover object-center opacity-25 mix-blend-luminosity transform scale-105"
                     quality={100}
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#021810]/100 via-transparent to-[#021810]/100" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#021810] via-transparent to-[#021810]" />
                 <div className="absolute inset-0 bg-black/40" />
             </div>
 
-            <div className="max-w-[1500px] mx-auto px-6 lg:px-10 relative z-10 flex flex-col items-center">
-                {/* Section heading */}
-                <div className="text-center mb-24 md:mb-32">
-                    <span className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-antique-gold/20 bg-black/20 backdrop-blur-md text-[10px] sm:text-xs tracking-[0.25em] font-nav text-antique-gold uppercase mb-8 shadow-[0_0_20px_rgba(212,175,55,0.05)] text-center">
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative z-10">
+                {/* ─── Section heading ─── */}
+                <div className="text-center mb-8">
+                    <span className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-antique-gold/20 bg-black/20 backdrop-blur-md text-[10px] sm:text-xs tracking-[0.25em] font-nav text-antique-gold uppercase mb-6">
                         <span className="w-1.5 h-1.5 rounded-full bg-antique-gold animate-pulse" />
-                        Signature Experiences
+                        Private Transfers
                     </span>
-                    <h2 className="text-6xl md:text-7xl lg:text-[7rem] font-display text-white mt-4 mb-8 leading-[1.1] drop-shadow-2xl font-light">
-                        Transfers, <br className="md:hidden" /><span className="italic text-antique-gold font-serif">Elevated</span>
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-display text-white mt-4 mb-6 leading-tight font-bold">
+                        Seamless Ground Transport{' '}
+                        <br className="hidden md:block" />
+                        <span className="italic text-antique-gold font-serif font-normal">Across Sri Lanka</span>
                     </h2>
-                    <p className="text-lg md:text-xl font-nav text-white/70 tracking-wide max-w-3xl mx-auto leading-relaxed font-light">
-                        Uncompromising luxury in motion. From exceptional airport arrivals to curated intercity voyages, our fleet redefines the art of travel.
+                    <p className="text-base md:text-lg font-nav text-white/70 tracking-wide max-w-2xl mx-auto leading-relaxed font-light">
+                        Airport arrivals, intercity routes, and chauffeured day use — each transfer is designed for
+                        comfort, punctuality, and privacy.
                     </p>
-                    <div className="w-px h-24 bg-gradient-to-b from-antique-gold/60 to-transparent mx-auto mt-16" />
                 </div>
 
-                {/* Three elite editorial cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 w-full mb-32">
-                    {teaserTiles.map((tile, index) => (
-                        <Link
-                            key={tile.href}
-                            href={tile.href}
-                            className="group relative flex flex-col p-8 md:p-12 overflow-hidden min-h-[500px] lg:min-h-[650px] bg-[#021810] shadow-2xl transition-transform duration-[1.5s] ease-out hover:-translate-y-4"
-                        >
-                            {/* Card Background Image */}
-                            <Image
-                                src={tile.image}
-                                alt={tile.title}
-                                fill
-                                className="object-cover object-center transition-all duration-[2s] ease-out pb-0 group-hover:scale-110 opacity-60 group-hover:opacity-100 mix-blend-luminosity group-hover:mix-blend-normal"
-                                sizes="(max-width: 768px) 100vw, 33vw"
-                            />
-                            
-                            {/* Dark vignette layers */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-black/80 pointer-events-none transition-opacity duration-1000 group-hover:opacity-70" />
-                            
-                            {/* Hover border effect */}
-                            <div className="absolute inset-4 border border-white/10 group-hover:border-antique-gold/30 transition-colors duration-1000 pointer-events-none z-20" />
-
-                            <div className="relative z-10 flex flex-col h-full justify-between">
-                                {/* Top: Index & Icon */}
-                                <div className="flex justify-between items-start w-full transform transition-all duration-1000 group-hover:translate-x-2">
-                                    <span className="text-antique-gold/60 font-serif text-lg italic tracking-widest">0{index + 1}</span>
-                                    <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white bg-black/40 backdrop-blur-md group-hover:bg-antique-gold group-hover:border-transparent group-hover:text-[#043927] transition-all duration-700 shadow-xl">
-                                        <tile.icon className="w-5 h-5" strokeWidth={1.5} />
-                                    </div>
-                                </div>
-
-                                {/* Bottom: Content sliding up */}
-                                <div className="w-full transform transition-all duration-1000 group-hover:-translate-y-4">
-                                    <h3 className="font-display text-3xl lg:text-4xl text-white mb-6 tracking-wide drop-shadow-xl font-light">
-                                        {tile.title}
-                                    </h3>
-                                    
-                                    <div className="overflow-hidden">
-                                        <p className="text-white/60 text-sm md:text-base font-light leading-relaxed mb-8 drop-shadow-md transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-[1.2s] ease-out h-0 group-hover:h-auto">
-                                            {tile.description}
-                                        </p>
-                                    </div>
-
-                                    <div className="flex items-center gap-4 text-antique-gold opacity-80 group-hover:opacity-100 transition-opacity duration-1000">
-                                        <div className="h-px w-8 bg-antique-gold/50 group-hover:w-16 transition-all duration-1000 ease-out" />
-                                        <span className="text-[10px] tracking-[0.2em] uppercase font-nav font-medium">Discover</span>
-                                    </div>
-                                </div>
+                {/* ─── Trust pills ─── */}
+                <div className="flex flex-wrap items-center justify-center gap-4 mb-16">
+                    {trustPills.map((pill) => {
+                        const Icon = pill.icon;
+                        return (
+                            <div
+                                key={pill.label}
+                                className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
+                            >
+                                <Icon className="w-3.5 h-3.5 text-antique-gold" />
+                                <span className="text-white/70 text-[11px] font-nav font-medium tracking-wide">
+                                    {pill.label}
+                                </span>
                             </div>
-                        </Link>
-                    ))}
+                        );
+                    })}
                 </div>
 
-                {/* CTA */}
-                <div className="text-center">
+                {/* ─── 3 Flagship Cards ─── */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16">
+                    {flagshipCategories.map((cat) => {
+                        const Icon = cat.icon;
+                        const href = categoryRoutes[cat.slug] || '/transfers';
+
+                        return (
+                            <Link
+                                key={cat.slug}
+                                href={href}
+                                className="group relative flex flex-col overflow-hidden min-h-[460px] lg:min-h-[520px] bg-[#021810] shadow-2xl transition-transform duration-700 ease-out hover:-translate-y-2 rounded-xl"
+                            >
+                                {/* Card Background Image */}
+                                <Image
+                                    src={cat.image}
+                                    alt={cat.title}
+                                    fill
+                                    className="object-cover object-center transition-all duration-[2s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-75"
+                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                />
+
+                                {/* Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 pointer-events-none transition-opacity duration-700 group-hover:from-black/80" />
+
+                                <div className="relative z-10 flex flex-col h-full justify-between p-7 md:p-8">
+                                    {/* Top: Icon */}
+                                    <div className="flex justify-between items-start">
+                                        <span className="inline-block px-3 py-1 bg-antique-gold/15 backdrop-blur-sm border border-antique-gold/25 rounded-full text-antique-gold text-[9px] font-nav font-semibold uppercase tracking-[0.2em]">
+                                            {cat.bestFor}
+                                        </span>
+                                        <div className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center text-white bg-black/30 backdrop-blur-md group-hover:bg-antique-gold group-hover:border-transparent group-hover:text-[#043927] transition-all duration-500">
+                                            <Icon className="w-5 h-5" strokeWidth={1.5} />
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom: Content */}
+                                    <div>
+                                        <h3 className="font-serif text-2xl lg:text-[1.7rem] text-white font-bold mb-3 leading-tight">
+                                            {cat.title}
+                                        </h3>
+                                        <p className="text-white/60 text-sm font-nav leading-relaxed mb-5 line-clamp-2">
+                                            {cat.subtitle}
+                                        </p>
+
+                                        {/* Info Bar */}
+                                        <div className="border-t border-white/10 pt-4">
+                                            <div className="grid grid-cols-3 gap-3 text-xs font-nav">
+                                                <div>
+                                                    <span className="text-antique-gold uppercase tracking-widest font-semibold block mb-1 text-[10px]">
+                                                        From
+                                                    </span>
+                                                    <span className="text-white font-semibold">
+                                                        {formatLkr(cat.startingFromLkr)}
+                                                    </span>
+                                                </div>
+                                                <div className="text-center">
+                                                    <span className="text-antique-gold uppercase tracking-widest font-semibold block mb-1 text-[10px]">
+                                                        Duration
+                                                    </span>
+                                                    <span className="text-white/80">
+                                                        {cat.typicalDuration}
+                                                    </span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="text-antique-gold uppercase tracking-widest font-semibold block mb-1 text-[10px]">
+                                                        View
+                                                    </span>
+                                                    <span className="text-white/80 group-hover:text-antique-gold transition-colors">
+                                                        Explore →
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        );
+                    })}
+                </div>
+
+                {/* ─── Bottom CTAs ─── */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                     <Link
                         href="/transfers"
-                        className="glass-hero-cta relative overflow-hidden inline-flex items-center gap-3 px-12 py-5 rounded-none text-xs font-nav font-semibold tracking-[0.2em] uppercase no-underline group border border-antique-gold/40 hover:border-antique-gold/80 bg-black/40 backdrop-blur-xl transition-all duration-700 shadow-[0_0_30px_rgba(212,175,55,0.15)]"
-                        style={{ color: '#F6F3EE' }}
+                        className="inline-flex items-center gap-3 px-10 py-4 bg-antique-gold text-deep-emerald font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:bg-antique-gold/90 transition-all duration-300"
                     >
-                        <span className="absolute inset-0 bg-gradient-to-r from-antique-gold/0 via-antique-gold/20 to-antique-gold/0 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[1.5s] ease-in-out" />
-                        <span className="relative z-10">Explore Our Fleet</span>
-                        <ArrowRight className="w-4 h-4 text-antique-gold relative z-10 transition-transform duration-700 group-hover:translate-x-2" />
+                        Explore All Transfer Services
+                        <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <Link
+                        href="/vehicles"
+                        className="inline-flex items-center gap-2 px-10 py-4 border border-antique-gold/30 text-antique-gold font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:border-antique-gold hover:bg-antique-gold/5 transition-all duration-300"
+                    >
+                        View Fleet
                     </Link>
                 </div>
             </div>

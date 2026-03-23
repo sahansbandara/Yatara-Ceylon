@@ -24,8 +24,20 @@ export default function TransferCategoryTile({
     typicalDuration,
     bestFor,
 }: TransferCategoryTileProps) {
+    const getCategoryUrl = (slug: string) => {
+        switch (slug) {
+            case 'airport': return '/transfers/airport-concierge';
+            case 'intercity': return '/transfers/intercity-executive';
+            case 'hourly': return '/transfers/on-demand-chauffeur';
+            case 'safari': return '/transfers/safari-national-park';
+            case 'event': return '/transfers/evening-event-chauffeur';
+            case 'cruise-rail-vip': return '/transfers/cruise-rail-vip';
+            default: return `/transfers#${slug}`;
+        }
+    };
+
     return (
-        <Link href={`/transfers#${slug}`} className="group block">
+        <Link href={getCategoryUrl(slug)} className="group block">
             <div className="relative h-[420px] overflow-hidden rounded-xl shadow-lg transition-all duration-500 hover:shadow-2xl cursor-pointer">
                 {/* Background Image */}
                 <div className="absolute inset-0">

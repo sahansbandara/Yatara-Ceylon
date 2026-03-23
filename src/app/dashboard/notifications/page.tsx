@@ -1,9 +1,12 @@
 import NotificationTable from '@/components/dashboard/NotificationTable';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
 import connectDB from '@/lib/mongodb';
 import Notification from '@/models/Notification';
+import { DashboardHero } from '@/components/dashboard/DashboardHero';
+import { StatCard } from '@/components/dashboard/StatCard';
+import { GlassPanel } from '@/components/dashboard/GlassPanel';
+import { Button } from '@/components/ui/button';
+import { Plus, Bell, AlertCircle, Gift } from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata = { title: 'Notifications | Dashboard' };
 
@@ -21,21 +24,48 @@ async function getNotifications() {
 export default async function NotificationsPage() {
     const notifications = await getNotifications();
 
+    const totalNotifications = notifications.length;
+    const alertCount = notifications.filter((n: any) => n.type === 'ALERT').length;
+    const offerCount = notifications.filter((n: any) => n.type === 'OFFER').length;
+
     return (
         <div className="flex flex-col gap-6 p-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-display font-bold tracking-tight text-white drop-shadow-sm">Notifications</h1>
-                    <p className="text-sm text-white/50 font-light mt-1">Manage system alerts, offers, and partner updates.</p>
-                </div>
-                <Link href="/dashboard/notifications/new">
-                    <Button className="bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0a1f15] font-semibold tracking-wider text-xs">
-                        <Plus className="mr-2 h-4 w-4" /> Send Notification
-                    </Button>
-                </Link>
+            <DashboardHero
+                title="Notifications"
+                subtitle={`${totalNotifications} total notifications`}
+                action={
+                    <Link href="/dashboard/notifications/new">
+                        <Button className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold tracking-wider text-xs rounded-lg">
+                            <Plus className="mr-2 h-4 w-4" /> Send Notification
+                        </Button>
+                    </Link>
+                }
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <StatCard
+                    title="Total Sent"
+                    value={totalNotifications.toString()}
+                    icon={Bell}
+                    accentColor="text-blue-400"
+                />
+                <StatCard
+                    title="Alerts"
+                    value={alertCount.toString()}
+                    icon={AlertCircle}
+                    accentColor="text-red-400"
+                />
+                <StatCard
+                    title="Offers"
+                    value={offerCount.toString()}
+                    icon={Gift}
+                    accentColor="text-amber-400"
+                />
             </div>
 
-            <NotificationTable initialNotifications={notifications} />
+            <GlassPanel>
+                <NotificationTable initialNotifications={notifications} />
+            </GlassPanel>
         </div>
     );
 }

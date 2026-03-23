@@ -2,8 +2,11 @@ import { Button } from '@/components/ui/button';
 import DestinationTable from '@/components/dashboard/DestinationTable';
 import connectDB from '@/lib/mongodb';
 import Destination from '@/models/Destination';
-import { Plus } from 'lucide-react';
+import { Plus, MapPin, Eye, ImageOff, Globe, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import { DashboardHero } from '@/components/dashboard/DashboardHero';
+import { StatCard } from '@/components/dashboard/StatCard';
+import { GlassPanel } from '@/components/dashboard/GlassPanel';
 
 async function getDestinations() {
     try {
@@ -19,23 +22,68 @@ async function getDestinations() {
 export default async function DestinationsPage() {
     const destinations = await getDestinations();
 
+    const totalDestinations = destinations.length;
+    const publishedCount = destinations.filter((d: any) => d.isPublished).length;
+    const withImagesCount = destinations.filter((d: any) => d.heroImage || (d.gallery && d.gallery.length > 0)).length;
+    const missingImagesCount = destinations.filter((d: any) => !d.heroImage && (!d.gallery || d.gallery.length === 0)).length;
+
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-display font-bold text-white drop-shadow-sm tracking-tight">Destinations</h1>
-                    <p className="text-sm text-white/50 mt-1 font-light">Manage travel destinations and their details.</p>
-                </div>
-                <Link href="/dashboard/destinations/new">
-                    <Button className="bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0a1f15] font-semibold text-xs tracking-widest rounded-xl transition-all hover:scale-105">
-                        <Plus className="mr-2 h-4 w-4" /> Add Destination
-                    </Button>
-                </Link>
+            <DashboardHero
+                title="Destinations"
+                subtitle="Manage travel destinations and their details."
+                action={
+                    <Link href="/dashboard/destinations/new">
+                        <Button className="bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0a1f15] font-semibold text-xs tracking-widest rounded-xl transition-all hover:scale-105">
+                            <Plus className="mr-2 h-4 w-4" /> Add Destination
+                        </Button>
+                    </Link>
+                }
+            />
+
+            {/* KPI Cards */}
+            <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+                <StatCard
+                    title="Total Destinations"
+                    value={totalDestinations.toString()}
+                    icon={MapPin}
+                    accentColor="text-emerald-400"
+                />
+                <StatCard
+                    title="Published"
+                    value={publishedCount.toString()}
+                    icon={Eye}
+                    accentColor="text-blue-400"
+                    trend={{ value: `${((publishedCount / totalDestinations) * 100).toFixed(0)}%`, positive: true }}
+                />
+                <StatCard
+                    title="With Images"
+                    value={withImagesCount.toString()}
+                    icon={Globe}
+                    accentColor="text-purple-400"
+                    trend={{ value: `${((withImagesCount / totalDestinations) * 100).toFixed(0)}% complete`, positive: true }}
+                />
+                <StatCard
+                    title="Missing Images"
+                    value={missingImagesCount.toString()}
+                    icon={ImageOff}
+                    accentColor="text-red-400"
+                    trend={{ value: missingImagesCount > 0 ? 'attention needed' : 'all set', positive: missingImagesCount === 0 }}
+                />
             </div>
 
-            <div className="liquid-glass-stat-dark rounded-2xl p-1 shadow-2xl">
+            {/* Data Quality Alert */}
+            {missingImagesCount > 0 && (
+                <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                    <AlertTriangle className="h-4 w-4 text-amber-400 flex-shrink-0" />
+                    <p className="text-xs text-amber-300">{missingImagesCount} destination(s) missing hero image or gallery. Add images to improve presentation.</p>
+                </div>
+            )}
+
+            {/* Destinations Table */}
+            <GlassPanel title="All Destinations" noPadding>
                 <DestinationTable initialDestinations={destinations} />
-            </div>
+            </GlassPanel>
         </div>
     );
 }

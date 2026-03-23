@@ -15,6 +15,9 @@
 - [2026-03-19] Don't generate images with AI tools — user has explicitly said to provide image specs (folder, filename, size, prompt) and they will generate images themselves
 - [2026-03-19] Build-tour MapViewport uses Leaflet (not Mapbox) — no tile layer by design (user's choice), uses radial-gradient CSS bg + GeoJSON districts instead. Dark premium theme replaces the old pale grey map background.
 - [2026-03-19] Build-tour planner height: calc(100vh-180px) fits 13-inch MacBook screen. Each section of the build-tour page should fit one viewport fold (~900px effective height). Do not make sections taller than 100vh.
+- [2026-03-22] Auth imports: This project does NOT use `next-auth`. Auth is custom JWT via `getSessionUser()` from `@/lib/auth`. Session returns `{ id, email, role }` directly (no `session.user` wrapper). Never import `getServerSession` or `authOptions`.
+- [2026-03-22] DB connection: Import `connectDB` from `@/lib/mongodb`, NOT `dbConnect` from `@/lib/db`. The `@/lib/db` module does not exist.
+- [2026-03-22] `sonner` is NOT installed in this project. Use standard `alert()` for notifications in dashboard pages. Other dashboard components also use `alert()` for feedback.
 
 ---
 
@@ -22,6 +25,10 @@
 
 > Solutions and approaches that proved reliable.
 
+- Dashboard pages (support, notifications, users): Use DashboardHero with title + subtitle showing summary stats. Subtitle format: "X total" or "X total • Y open". Action prop accepts Button wrapped in Link for CTAs.
+- Dashboard StatCard KPI rows: Responsive grid (grid-cols-1 md:grid-cols-2 lg:grid-cols-4 or lg:grid-cols-3). Each card shows: title (small uppercase label), numeric value (large bold), icon with hover effects. Use accentColor prop like "text-blue-400" or "text-amber-400".
+- Dashboard data queries: All server-side in page.tsx. Pattern: fetch with .find({ isDeleted: false }), filter in-memory for stats, serialize with JSON.parse(JSON.stringify()). GlassPanel wraps table content with liquid-glass-stat-dark styling.
+- Dashboard button styling: Gold CTA buttons use class="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold tracking-wider text-xs rounded-lg" for consistency across Support/Notifications/Users pages.
 - Server Components by default: pages in (public) are async server components, client components only in src/components/public/
 - Transfer data is static (src/data/transfers.ts), not MongoDB — fast, no DB dependency for public transfer pages
 - Destination data is static (src/data/destinations.ts) — 25 destinations with districtImage() helper
@@ -45,9 +52,21 @@
 - Why Yatara counts animation triggers every time using `amount: 0.2` and resetting controls to `"hidden"` when out of view.
 - Transfer page uses `generateStaticParams()` for SSG of category and package pages
 - Image fallback pattern: check if image exists, show placeholder gradient if not
+- TransferHero heroImage prop: renders full-bleed next/image with `from-deep-emerald/80 via-deep-emerald/60 to-deep-emerald/85` gradient overlay + radial vignette. Falls back to solid deep-emerald bg + accent blobs when omitted.
 - Destination images: `.webp` format in `/public/images/districts/slug.webp`, 1600×900px
 - JSON-LD structured data: centralised in `src/lib/jsonLd.tsx` with `<JsonLd data={...} />` component + builder functions per schema type. Injected at top of `<main>` in each page.
 - Real Experiences layout tuning: Used `useSpring` on Framer scroll progress to add a slow, fluid scroll effect. Fine-tuned parallax speeds so the background text moves very fast downward (`[-60%, 80%]`), while keeping the girl's upward parallax gentle (`[10%, -5%]`).
+- Finance/Packages/Destinations dashboard pages: Use 4-column KPI stat grid (grid-cols-2 lg:grid-cols-4). Finance adds revenue bar chart by month and aging buckets (0-7, 8-14, 15-30, 30+ days). Packages/Destinations show data quality alerts for pricing/image issues respectively. All tables wrap in GlassPanel with `noPadding` prop.
+- Dashboard v2 color system: 4-layer surface hierarchy. L0 canvas = #060d0b (near-black). L1 sidebar = #0a1410 (darkest). L2 cards = rgba(255,255,255,0.055) via liquid-glass-stat-dark. L3 tables = rgba(255,255,255,0.025) via dashboard-table-glass. Gold used ≤10% for CTA/active states only.
+- Dashboard layout v2: No scenic background image. Uses subtle radial gradients (rgba(255,255,255,0.02)) and faint gold accent orb (rgba(212,175,55,0.025)). Much lighter than v1.
+- GlassPanel component: Accepts `subtitle` prop (optional) for secondary text below title.
+- Dashboard Command Center (page.tsx): Imports AuditLog and PartnerRequest models for activity feed and pending approvals. Uses booking pipeline (horizontal stacked bars by status) and revenue by status charts (CSS-only, no recharts).
+- Bookings page v2: Client component with status tabs (fetch counts per status), KPI summary row (calculated client-side from fetched data), date range filters, balance-due checkbox filter, page number pagination.
+- Global search: `/api/search?q=term` searches 6 entities (Booking, Package, Destination, Vehicle, Partner, User) with regex. CommandBar.tsx uses `cmdk` package with ⌘K shortcut, 300ms debounce, grouped results.
+- TransfersTeaser v2: Data-driven from `transferCategoryCards`. First 3 categories → tall editorial cards (min-h-[650px]), last 2 → compact landscape cards (min-h-[380px], 2-column). `categoryRoutes` dict maps slugs to routes. Safari/Evening currently use anchor links (`/transfers#slug`).
+- Archive/Restore Center: API pattern uses `Promise.all()` to query all collections with `{ isDeleted: true }`, merges results with `collectionName` tag, sorts by `deletedAt` descending. Action route uses a `modelMap` object to resolve collection name to Mongoose model.
+- Soft delete pattern: Set `isDeleted: true` + `deletedAt: new Date()` on DELETE. Restore = `$set: { isDeleted: false }, $unset: { deletedAt: "" }`. Permanent delete = `findByIdAndDelete(id)`.
+- All active-record queries must filter `{ isDeleted: false }` or `{ isDeleted: { $ne: true } }` to exclude soft-deleted items.
 
 ---
 
@@ -112,3 +131,33 @@
 - Pricing: Use LKR for new transfer products (airport, intercity, hourly). Existing packages use USD.
 - No image generation by agent — provide specs for user to generate.
 - If browser verification needed, ask user to send full-page screenshot instead of struggling with browser subagent.
+
+---
+
+## Last Session
+
+**Date**: 2026-03-22 (Session 7)
+**Agent**: Antigravity
+**Task**: Archive/Restore Center + Agent File Updates
+
+**What was done**:
+- Created `GET /api/admin/archive` — fetches soft-deleted records from Users, Packages, Vehicles, Bookings
+- Created `POST /api/admin/archive/action` — restore or permanently delete archived items
+- Created `/dashboard/archive` page — admin UI for viewing/managing archived records
+- Fixed auth imports (replaced next-auth with project's `getSessionUser`)
+- Fixed DB imports (replaced `dbConnect` with `connectDB`)
+- Replaced `sonner` toast with `alert()` (sonner not installed)
+
+**Files modified**:
+- `src/app/api/admin/archive/route.ts` [NEW]
+- `src/app/api/admin/archive/action/route.ts` [NEW]
+- `src/app/dashboard/archive/page.tsx` [NEW]
+
+**Current state**:
+- Dev server running on localhost:3000
+- Archive center functional at `/dashboard/archive`
+
+**What to do next**:
+- Implement Analytics/Stats on Dashboard
+- Add real images to transfer routes (waiting on user)
+- Visual QA on mobile for all dashboard pages

@@ -3,96 +3,99 @@
 > **Agent: Read "Last Session" FIRST before doing anything else.**
 
 ## Current Milestone
-Build-Tour Elite Rebuild — upgrading planner to elite product experience
+Dashboard Elite Overhaul — full admin panel redesign and operational depth upgrade
 
 ---
 
 ## In Progress
-<!-- None -->
+- (nothing currently in progress)
 
-## Recently Completed
-- [x] Analyze Walkers Tours Real Stories section and apply exact implementation to RealExperiencesSection.tsx (increased vertical height and background positioning)
-- [x] Build-Tour V3 Elite Rebuild — planner-first page with liquid glass, 100vh-fit sections, premium map
-  - [x] Added elite planner CSS system (~200 lines: planner-shell-glass, planner-sidebar-glass, planner-map-container, planner-toolbar-glass, quick-start-card, region-card-glass, place-card-glass, how-step-glass, tour-card-elite, testimonial-glass-dark, custom Leaflet zoom controls, gold-pulse-ring animation)
-  - [x] Rebuilt BuildTourHero — compact 38vh, product-led copy, trust pills, dual CTA
-  - [x] QuickStartModes — 3 entry mode cards (Map, Style, Route) with glass hover
-  - [x] Rebuilt BuildTourShell — 32/68 desktop split, calc(100vh-180px), planner-shell-glass, floating toolbar, fullscreen toggle
-  - [x] Rebuilt MapViewport — dark premium theme, tight Sri Lanka framing (70% fill), smooth fitBounds (0.9s), gold district states
-  - [x] Rebuilt ConciergePanel — trip snapshot card, glass region/district/place cards, hover popup effects
-  - [x] Created HowItWorks strip — 3 glass step cards
-  - [x] Upgraded SelectedStopsPanel — premium drag cards, pace indicator, district count, concierge note
-  - [x] Upgraded RouteSummaryBar — glass stat cards, tighter layout
-  - [x] Upgraded PopularTours — removed broken % metrics, elite glass hover cards (tour-card-elite)
-  - [x] Upgraded ThemeCarousel — added duration, bestSeason, regions, mood metadata + "Load Theme" CTA + Honeymoon Edit theme
-  - [x] Upgraded Testimonials — dark theme matching planner page, dot indicators, concierge tie-in
-  - [x] Reordered page.tsx — Hero → QuickStart → Planner → HowItWorks → PopularTours → Themes → Parallax → Testimonials → CTA
-  - [x] Tightened vertical heights significantly on How It Works to be ultra-compact per user preference
-  - [x] TypeScript compiles cleanly (tsc --noEmit passes)
+## Just Completed (2026-03-22)
+
+### Admin Dashboard (Phase 4)
+- [x] Add audit log viewer page (Phase 4 stretch)
+- [x] Seeded MongoDB with users (Admin, Staff, Hotel Partner, etc.) for testing
+- [x] Add Archive/Restore Center (Phase 4 stretch)
+  - [x] Created `GET /api/admin/archive` — fetches all soft-deleted records across Users, Packages, Vehicles, Bookings
+  - [x] Created `POST /api/admin/archive/action` — restore or permanently delete records
+  - [x] Created `/dashboard/archive` page — grouped view of archived items with restore/delete actions
+  - [x] Updated soft-delete API endpoints for Users, Destinations, Packages, Vehicles (set `isDeleted: true` + `deletedAt`)
+  - [x] Added Archive link to `DashboardSidebar` navigation
+
+### Transfers Page & Categories Overhaul
+- [x] Redesigned `/transfers` page with new hero, trust markers, and 6 dark luxury category cards
+- [x] Updated data layer (`transfers.ts`) with new `CRUISE_RAIL_VIP` category and full packages for all 6 categories
+- [x] Redesigned Homepage `TransfersTeaser.tsx` with 3 flagship editorial cards + 2 landscape cards & trust pills
+- [x] Created 6 dedicated dynamic-feeling category pages
+- [x] Checked TypeScript build errors and resolved all component prop mismatches ✅
 
 ---
 
 ## Priority Tasks
-- [ ] Add real images to all transfer routes (user generating externally)
-- [x] Connect WhatsApp link to real number
-- [x] Add real SLTDA certification logo
+- [ ] Add real images to transfer routes and transfer category pages (Wait on User)
 - [ ] Test all transfer detail pages on mobile
-- [x] Add structured data (JSON-LD) for SEO on transfer pages
-- [x] Add structured data (JSON-LD) for SEO on destination pages
-- [x] Add structured data (JSON-LD) for SEO on package detail pages
-- [x] Add site-wide Organization + WebSite JSON-LD
-- [x] Provide Image Prompts for SLTDA logo, Theme Images (honeymoon-edit), and Transfer Route Images
+- [ ] Visual QA on mobile for all dashboard pages
+
+---
+
+## Phase 4: Extras & Polish
+- [ ] Implement Analytics/Stats on Dashboard
 
 ---
 
 ## Blocked
-<!-- None -->
+- [ ] Waiting for user to generate Transfer Category Images
 
 ---
 
 ## Nice to Have
-- [ ] Animated booking strip interactions
-- [ ] Route map visualization per transfer
-- [ ] WhatsApp bot integration for instant booking
-- [ ] Dynamic pricing calculator
-- [ ] Admin CRUD for transfer products (migrate static → MongoDB)
-- [ ] Interactive SVG map for destinations (replace region buttons with clickable map)
+- [ ] Bulk actions (publish/unpublish, archive, export)
+- [ ] File/document attachments (invoices, ID copies)
+- [ ] Form autosave (package editor, destination editor)
+- [ ] Data validation dashboards
+- [ ] Notification composer with preview panel
+- [ ] WhatsApp bot integration
 
 ---
 
 ## Done
-- [x] [2026-03-22] Tuned RealExperiencesSection UI per Sahan's request. Reduced girl image size and translated heading/reviews another 50px up. Shifted "real stories" 40px up and applied opposite parallax motion. Added slow scrolling (`useSpring`) and finely rebalanced parallax speeds (made girl much slower, "real stories" text faster).
-- [x] [2026-03-22] Fixed "Discover The Masterpiece" button link in PremiumStory section. Created a new dedicated `/the-masterpiece` page to explain the Yatara Standard and linked the button to it.
-- [x] [2026-03-22] Fixed full screen fit issue in BuildTourTeaser where parallax elements were cut off vertically on shorter screens. Changed `overflow-hidden` to `overflow-x-clip` and adjusted padding.
-- [x] [2026-03-22] Refined vertical spacing site-wide to make UI incredibly compact, significantly shortening the space between components (`TransfersTeaser`, `PremiumStory`, `ProofStack`, `TrustedByStrip`, `JourneyDayStory`).
-- [x] [2026-03-22] Rebuilt TrustedByStrip as a dark, elegant text-only strip showcasing premium accreditations.
-- [x] [2026-03-22] Enabled `scrollLock`/`overflow-hidden` correctly inside `BuildTourShell` on both client and body levels to prevent scrolling issues within the interactive planner map.
-- [x] [2026-03-22] Made BuildTourTeaser background lighter (`bg-deep-emerald`) and constrained its height (`min-h-[100dvh] flex items-center`) so it fits perfectly full-screen.
-- [x] [2026-03-22] Provided Image Prompts for SLTDA logo, Theme Images (honeymoon-edit), and Transfer Route Images in IMAGE_PROMPTS.md artifact.
-- [x] [2026-03-22] Connected real WhatsApp number (+94704239802) consistently across the site (Header, Footer).
-- [x] [2026-03-22] Refined FAQ section (PremiumStory) aesthetics with liquid glass components, satisfying click animations, a single elite background, and smoother image parallax per user request.
-- [x] [2026-03-22] Rebuilt BuildTourTeaser section with premium framer-motion animations, new layout, and imported bespoke-teaser-main / bespoke-galle-card webp images.
-- [x] [2026-03-22] Upgraded TransfersTeaser section on homepage with elite background images, 3 image cards, and massive visual prominence to highlight the main business model.
-- [x] [2026-03-22] Made "Global Accreditations" strip (TrustedByStrip) ultra-thin and compact per user request.
-- [x] [2026-03-22] Fixed number counting animations: added proper IntersectionObserver to stats grid to prevent premature triggering, updated AnimatedStat regex to handle non-numeric prefixes/suffixes properly, added rewind-when-hidden logic for replayability.
-- [x] [2026-03-20] Reduced Signature Experiences pattern band opacity to 0.05 and applied curated pattern to Featured Journeys
+- [x] [2026-03-22] Archive/Restore Center — full soft-delete + archive UI
+- [x] [2026-03-22] Admin Vehicle Calendar View
+- [x] [2026-03-22] Audit Log Viewer Page + DB Seeding
+- [x] [2026-03-22] Dashboard Elite Overhaul — full 4-phase rebuild
+- [x] [2026-03-22] Build-Tour V3 Elite Rebuild
+- [x] [2026-03-22] Transfers Premium Category Model overhaul
+- [x] [2026-03-22] All previous items (see git history)
 
 ---
 
 ## Last Session
 
-**Date**: 2026-03-21
+**Date**: 2026-03-22 (Session 7)
 **Agent**: Antigravity
-**What was done**:
-- Analyzed Walkers Tours Real Stories section reference and rebuilt the `RealExperiencesSection.tsx` component to identically match its proportions, layout, and textual hierarchy.
-- Adjusted vertical spacing and sizing dynamically (`clamp`, `h-[...vh]`, `min-h`) to perfectly recreate the reference layout with overlapping text layers and parallax scrolling elements.
-- Maintained user directives to explain where values can be tweaked manually via inline comments in the code.
+**Task**: Archive/Restore Center + Agent File Updates
 
-**What to do next**:
-- Visual QA on 13-inch MacBook — verify all sections fit viewport folds.
-- Test mobile bottom drawer on real device for the updated Build Tour planner.
-- Real images for tours and transfers still needed (user generating externally).
+**What was done**:
+- Created `GET /api/admin/archive` endpoint — queries all soft-deleted records from Users, Packages, Vehicles, Bookings collections, merges and sorts by deletedAt
+- Created `POST /api/admin/archive/action` endpoint — handles restore (unset isDeleted/deletedAt) and permanent delete (findByIdAndDelete) actions
+- Created `/dashboard/archive` page — full admin UI with tabular view of archived items, collection badges, restore/delete buttons, loading states
+- Fixed import errors: replaced `next-auth`/`getServerSession` with project's `getSessionUser` from `@/lib/auth`, replaced `dbConnect` with `connectDB` from `@/lib/mongodb`
+- Replaced `sonner` toast with standard `alert()` (sonner not in project dependencies)
+- Archive link was already present in DashboardSidebar from a prior session
+
+**Files modified**:
+- `src/app/api/admin/archive/route.ts` [NEW]
+- `src/app/api/admin/archive/action/route.ts` [NEW]
+- `src/app/dashboard/archive/page.tsx` [NEW]
+- `.agent/TODO.md` — updated tasks and last session
+- `.agent/MEMORY.md` — added new patterns and mistakes
 
 **Current state**:
-- Branch: main (changes committed and pushed)
-- Last commit: UI: Rebuild RealExperiencesSection layout to match reference proportions exactly
-- Key design decisions: Increased minimum heights (`min-h-[1000px]`) and object positions for background images to create ample breathing room for the large text overlays in the Real Experiences section.
+- Dev server running on localhost:3000
+- TypeScript compilation pending (tsc was running at session end)
+- All archive API routes use project's auth pattern (`getSessionUser`) and DB connection (`connectDB`)
+
+**What to do next**:
+- Implement Analytics/Stats on Dashboard
+- Add real images to transfer routes (waiting on user)
+- Visual QA on mobile for all dashboard pages
