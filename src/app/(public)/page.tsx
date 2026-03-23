@@ -1,64 +1,29 @@
 import HeroSection from '@/components/public/HeroSection';
 import TrustedByStrip from '@/components/public/TrustedByStrip';
-import TourCategoriesCarousel from '@/components/public/TourCategoriesCarousel';
-import AuthoritySection from '@/components/public/AuthoritySection';
-import WhyYataraTextSection from '@/components/public/WhyYataraTextSection';
+import SignatureExperiences from '@/components/public/SignatureExperiences';
 import FeaturedJourneys from '@/components/public/FeaturedJourneys';
+import HeritageStory from '@/components/public/HeritageStory';
 import HowItWorks from '@/components/public/HowItWorks';
-import ProofStack from '@/components/public/ProofStack';
 import BuildTourTeaser from '@/components/public/BuildTourTeaser';
 import TransfersTeaser from '@/components/public/TransfersTeaser';
-import PremiumStory from '@/components/public/PremiumStory';
-import JourneyDayStory from '@/components/public/JourneyDayStory';
 import RealExperiencesSection from '@/components/public/RealExperiencesSection';
+import FAQSection from '@/components/public/FAQSection';
 import FinalCTA from '@/components/public/FinalCTA';
 
-export default async function HomePage() {
+export default function HomePage() {
     return (
-        <main className="min-h-screen bg-off-white flex flex-col">
-            {/* 1. Hook — Hero with trip-builder */}
+        <main className="flex min-h-screen flex-col bg-off-white">
             <HeroSection />
-
-            {/* 2. Trust — Partner & press logos */}
             <TrustedByStrip />
-
-            {/* 3. Browse fast — Signature Experiences carousel */}
-            <TourCategoriesCarousel />
-
-            {/* 4. Authority — editorial who-we-are */}
-            <AuthoritySection />
-
-            {/* 5. Why Yatara — text benefits + stats */}
-            <WhyYataraTextSection />
-
-            {/* 6. Featured journeys — catalog-grade cards + filter */}
+            <SignatureExperiences />
             <FeaturedJourneys />
-
-            {/* 7. Clarity — How It Works */}
+            <HeritageStory />
             <HowItWorks />
-
-            {/* 8. Proof — Evidence stack */}
-            <ProofStack />
-
-            {/* 8.5. Transfers — Premium transport teaser */}
-            <TransfersTeaser />
-
-            {/* 9. Drive to differentiator — Bespoke Tour Builder */}
             <BuildTourTeaser />
-
-            {/* 10. Premium justification — The Yatara Standard */}
-            <PremiumStory />
-
-            {/* 11. Storytelling — A Day on Your Journey */}
-            <JourneyDayStory />
-
-            {/* 12. Emotion — Testimonials */}
+            <TransfersTeaser />
             <RealExperiencesSection />
-
-            {/* 13. Convert — Final CTA */}
+            <FAQSection />
             <FinalCTA />
-
-            {/* 14. Footer is handled in layout.tsx */}
         </main>
     );
 }

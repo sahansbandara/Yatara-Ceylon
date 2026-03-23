@@ -3,14 +3,20 @@
 > **Agent: Read "Last Session" FIRST before doing anything else.**
 
 ## Current Milestone
-Dashboard Elite Overhaul — full admin panel redesign and operational depth upgrade
+Dashboard Elite Overhaul — analytics pending after homepage redesign delivery
 
 ---
 
 ## In Progress
-- [ ] Implement Analytics/Stats on Dashboard
+- [ ] Awaiting next active build task — next priority: Implement Analytics/Stats on Dashboard
 
 ## Just Completed (2026-03-24)
+
+### Homepage Elite Redesign
+- [x] Rebuilt homepage section order into a cleaner luxury funnel: Hero → Trust → Signature Experiences → Featured Journeys → Brand Authority → How It Works → Bespoke Builder → Transfers → Testimonials → FAQ → Final CTA
+- [x] Rewrote homepage core sections to reduce repeated messaging, simplify CTA hierarchy, and promote the bespoke planner as a flagship differentiator
+- [x] Added a dedicated `FAQSection` component and replaced the old overloaded proof/story stack on the homepage
+- [x] Standardized homepage spacing and shared luxury section styling with new `home-*` utilities in `globals.css`
 
 ### Transfer Pages Bug Fix
 - [x] Fixed `TransferCategoryTile` slug routing for `'evening'` and `'cruise-rail-vip'` which were falling through to anchor links
@@ -47,6 +53,7 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## Priority Tasks
+- [ ] Implement Analytics/Stats on Dashboard
 - [ ] Add real images to transfer routes and transfer category pages (Wait on User)
 - [ ] Test all transfer detail pages on mobile
 - [ ] Visual QA on mobile for all dashboard pages
@@ -74,6 +81,7 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## Done
+- [x] [2026-03-24] Homepage Elite Redesign — homepage funnel restructure, CTA cleanup, bespoke promotion, FAQ addition, and premium consistency pass
 - [x] [2026-03-22] Archive/Restore Center — full soft-delete + archive UI
 - [x] [2026-03-22] Admin Vehicle Calendar View
 - [x] [2026-03-22] Audit Log Viewer Page + DB Seeding
@@ -86,29 +94,42 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 
 ## Last Session
 
-**Date**: 2026-03-24 (Session 9)
-**Agent**: Cowork / Antigravity
-**Task**: Transfer Pages bug fixes — Routing, Currency, and Design Consistency
+**Date**: 2026-03-24 (Session 10)
+**Agent**: Codex / GPT-5
+**Task**: Homepage Elite Redesign — luxury funnel cleanup and conversion refinement
 
 **What was done**:
-- Fixed broken slug routing in transfer category tiles (`evening` and `cruise-rail-vip`).
-- Wired in `useCurrency` across transfer components (`TransferCategoryShowcase`, `TransferCategoryTile`, `SignatureRouteCard`, `TransfersTeaser`) for proper LKR/USD switching.
-- Restyled three transfer sub-pages (`safari-national-park`, `evening-event-chauffeur`, `cruise-rail-vip`) to match the luxury brand design.
-- Updated agent files (TODO.md, MEMORY.md)
+- Reordered the homepage into a disciplined 11-section flow with one clear narrative from discovery to inquiry.
+- Rebuilt the hero, trust strip, signature experiences, featured journeys, brand authority, process, bespoke planner teaser, transfer teaser, testimonials, FAQ, and final CTA.
+- Added a new `FAQSection` component and shared homepage utility classes in `globals.css`.
+- Verified the production build with `npm run build` (passes successfully).
+- Updated agent files (`TODO.md`, `MEMORY.md`).
 
 **Files modified**:
-- `src/components/public/transfers/TransferCategoryTile.tsx`
-- `src/components/public/transfers/TransferCategoryShowcase.tsx`
-- `src/components/public/transfers/SignatureRouteCard.tsx`
+- `.agent/TODO.md`
+- `.agent/MEMORY.md`
+- `src/app/(public)/page.tsx`
+- `src/app/globals.css`
+- `src/components/public/HeroSection.tsx`
+- `src/components/public/TrustedByStrip.tsx`
+- `src/components/public/SignatureExperiences.tsx`
+- `src/components/public/FeaturedJourneys.tsx`
+- `src/components/public/FeaturedJourneysClient.tsx`
+- `src/components/public/HeritageStory.tsx`
+- `src/components/public/HowItWorks.tsx`
+- `src/components/public/BuildTourTeaser.tsx`
 - `src/components/public/TransfersTeaser.tsx`
-- `src/app/(public)/transfers/safari-national-park/page.tsx`
-- `src/app/(public)/transfers/evening-event-chauffeur/page.tsx`
-- `src/app/(public)/transfers/cruise-rail-vip/page.tsx`
+- `src/components/public/RealExperiencesSection.tsx`
+- `src/components/public/FAQSection.tsx`
+- `src/components/public/FinalCTA.tsx`
 
 **Current state**:
-- All 6 transfer categories route correctly to their sub-pages, support currency toggling, and share the consistent brand visual design.
+- Branch: `codex/homepage-elite-redesign`
+- Production build: `npm run build` passes
+- Dev server: not running
+- Notes: build shows existing Tailwind warnings about ambiguous `duration-[...]` and `ease-[...]` utilities in older components, but they are non-blocking and the build completes successfully
 
 **What to do next**:
-- Implement Analytics/Stats on Dashboard
-- Add real images to transfer routes (waiting on user)
-- Visual QA on mobile for all dashboard pages
+- Visually QA the new homepage on a 13-inch MacBook viewport and on mobile
+- Gather user feedback on the tighter homepage funnel and refine copy if needed
+- Return to `Implement Analytics/Stats on Dashboard`
