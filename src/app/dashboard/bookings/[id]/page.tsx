@@ -10,6 +10,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CalendarCheck, CreditCard, Car, Users, MapPin, FileText } from "lucide-react";
 import BookingStatusUpdater from "./BookingStatusUpdater";
+import { getSessionUser } from "@/lib/auth";
+import AssignVehicleModal from "@/components/dashboard/bookings/AssignVehicleModal";
+import FinalizePricingModal from "@/components/dashboard/bookings/FinalizePricingModal";
 
 const STATUS_COLORS: Record<string, string> = {
     NEW: 'bg-blue-500/15 text-blue-300',
@@ -58,6 +61,9 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
     const { id } = await params;
     const data = await getBookingDetail(id);
     if (!data) notFound();
+
+    const session = await getSessionUser();
+    const userRole = session?.role || 'USER';
 
     const { booking, payments, invoices, vehicles } = data;
     const pkg = booking.packageId;
@@ -208,7 +214,6 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                         )}
                     </div>
 
-                    {/* Vehicle Assignment */}
                     <div className="liquid-glass-stat rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-4">
                             <Car className="h-4 w-4 text-antique-gold" />
@@ -225,6 +230,13 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                         ) : (
                             <p className="text-sm text-gray-400 italic">No vehicle assigned yet.</p>
                         )}
+                        {(userRole === 'ADMIN' || userRole === 'VEHICLE_OWNER' || userRole === 'STAFF') && (
+                            <AssignVehicleModal 
+                                bookingId={booking._id} 
+                                currentVehicleId={booking.assignedVehicleId?._id}
+                                vehicles={vehicles} 
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -238,8 +250,8 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                                 <span className="text-lg font-bold text-off-white">LKR {(booking.totalCost || 0).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-white/50">Advance ({booking.advancePercentage || 20}%)</span>
-                                <span className="text-sm font-semibold text-antique-gold">LKR {(booking.advanceAmount || 0).toLocaleString()}</span>
+                                <span className="text-xs text-white/50">Advance (20%)</span>
+                                <span className="text-sm font-semibold text-antique-gold">LKR {((booking.totalCost || 0) * 0.2).toLocaleString()}</span>
                             </div>
                             <hr className="border-white/[0.08]" />
                             <div className="flex justify-between items-center">
@@ -252,8 +264,13 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                             </div>
                         </div>
                         {booking.remainingBalance > 0 && (
-                            <div className="mt-6 pt-4 border-t border-white/[0.08] flex justify-center">
+                            <div className="mt-6 pt-4 border-t border-white/[0.08] flex justify-center flex-col gap-2">
                                 <RecordPaymentModal bookingId={booking._id} remainingBalance={booking.remainingBalance} />
+                            </div>
+                        )}
+                        {userRole === 'ADMIN' && booking.status === 'NEW' && (
+                            <div className="mt-2 text-center">
+                                <FinalizePricingModal bookingId={booking._id} currentTotalCost={booking.totalCost || 0} />
                             </div>
                         )}
                     </div>

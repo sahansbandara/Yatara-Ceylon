@@ -8,9 +8,13 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## In Progress
-- (nothing currently in progress)
+- [ ] Implement Analytics/Stats on Dashboard
 
 ## Just Completed (2026-03-22)
+
+### Dashboard Improvements
+- [x] Actionable dashboard cards on Booking Details: Assign vehicle modal (for Partner/Admin) and Finalize pricing modal (for Admin).
+- [x] Fixed dashboard side navigation active links to be visibly highlighted.
 
 ### Admin Dashboard (Phase 4)
 - [x] Add audit log viewer page (Phase 4 stretch)
@@ -39,7 +43,7 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## Phase 4: Extras & Polish
-- [ ] Implement Analytics/Stats on Dashboard
+- (Analytics moved to In Progress)
 
 ---
 

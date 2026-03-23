@@ -24,6 +24,7 @@ import {
     ClipboardList,
     Activity,
     ArchiveRestore,
+    TrendingUp,
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -48,6 +49,7 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
             label: 'Overview',
             links: [
                 { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+                { href: '/dashboard/analytics', label: 'Analytics', icon: TrendingUp },
             ],
         },
         {
@@ -211,23 +213,27 @@ function SidebarContent({ userRole, userName, isLoading }: { userRole: string; u
                                 const Icon = link.icon;
                                 const isActive =
                                     pathname === link.href ||
-                                    (link.href !== '/dashboard' && pathname.startsWith(link.href));
+                                    (link.href !== '/dashboard' && pathname?.startsWith(link.href + '/')) ||
+                                    (link.href !== '/dashboard' && pathname === link.href);
                                 return (
                                     <Link
                                         key={link.href}
                                         href={link.href}
                                         className={cn(
-                                            'flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300',
+                                            'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 overflow-hidden',
                                             isActive
-                                                ? 'bg-antique-gold/[0.12] border border-antique-gold/20 text-antique-gold shadow-[0_0_12px_rgba(212,175,55,0.06)]'
+                                                ? 'bg-antique-gold/20 border border-antique-gold/30 text-antique-gold shadow-[0_0_15px_rgba(212,175,55,0.15)]'
                                                 : 'text-off-white/50 hover:text-off-white/80 hover:bg-white/[0.04] border border-transparent'
                                         )}
                                     >
+                                        {isActive && (
+                                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-antique-gold shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
+                                        )}
                                         <Icon className={cn(
                                             "h-4 w-4 flex-shrink-0 transition-all duration-300",
-                                            isActive ? "text-antique-gold" : "text-off-white/30 group-hover:text-off-white/50"
+                                            isActive ? "text-antique-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" : "text-off-white/30 group-hover:text-off-white/50"
                                         )} />
-                                        <span>{link.label}</span>
+                                        <span className={cn(isActive && "drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]")}>{link.label}</span>
                                     </Link>
                                 );
                             })}
