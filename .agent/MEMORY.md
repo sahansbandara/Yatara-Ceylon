@@ -22,6 +22,7 @@
 - [2026-03-24] ESLint 9 + `next/typescript` extends overrides `.eslintrc.json` custom rules from `warn` to `error` → Build fails on 100+ `no-explicit-any` errors despite config saying `warn` → Added `eslint.ignoreDuringBuilds: true` in `next.config.ts`. Lint runs separately via `npm run lint` in dev.
 - [2026-03-24] Mapping object keys didn't match real data slugs in Transfers (`event` instead of `evening`) → Link fell back to default `#${slug}` anchor → Always verify that dictionary keys exactly match the actual data IDs/slugs they are meant to map.
 - [2026-03-24] React hydration mismatch on Transfers page observed via browser tools. Caused by client-side state initializing (`useCurrency` or similar) differently than SSR. While not breaking layout, it should be investigated for perfect performance. Always ensure initial client render matches server HTML output.
+- [2026-03-24] After reverting a large frontend commit, `next build` failed with missing `.next/server/pages/_document.js` during page-data collection → stale build output was reused across incompatible states → if a revert causes this, move or remove the generated `.next` directory and rebuild from a clean output path.
 
 ---
 

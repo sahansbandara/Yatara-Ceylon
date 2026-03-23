@@ -123,9 +123,11 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 
 **Current state**:
 - Branch: `codex/homepage-elite-redesign`
-- Revert in progress on top of `e3dc002`
+- Last commits:
+  - `f6c37e4` — `chore: remove codex environment file from branch`
+  - `c563bb7` — `revert: restore previous homepage`
 - Dev server: not running
-- Build: restored homepage passes `npm run build`
+- Build: restored homepage passes `npm run build` after rebuilding from a clean `.next` output path
 
 **What to do next**:
 - Implement Analytics/Stats on Dashboard
