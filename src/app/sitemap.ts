@@ -32,20 +32,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: route === '' ? 1 : 0.8,
     }));
 
-    // Dynamic routes (Packages)
+    // Dynamic routes (Packages) - gracefully handle missing MONGODB_URI
     let dynamicRoutes: MetadataRoute.Sitemap = [];
-    try {
-        await connectDB();
-        const packages = await Package.find({ status: 'ACTIVE' }, 'slug updatedAt');
 
-        dynamicRoutes = packages.map((pkg) => ({
-            url: `${baseUrl}/packages/${pkg.slug}`,
-            lastModified: pkg.updatedAt?.toISOString() || new Date().toISOString(),
-            changeFrequency: 'weekly' as const,
-            priority: 0.9,
-        }));
-    } catch (error) {
-        console.error('Error generating sitemap for packages:', error);
+    if (process.env.MONGODB_URI) {
+        try {
+            await connectDB();
+            const packages = await Package.find({ status: 'ACTIVE' }, 'slug updatedAt');
+
+            dynamicRoutes = packages.map((pkg) => ({
+                url: `${baseUrl}/packages/${pkg.slug}`,
+                lastModified: pkg.updatedAt?.toISOString() || new Date().toISOString(),
+                changeFrequency: 'weekly' as const,
+                priority: 0.9,
+            }));
+        } catch (error) {
+            console.error('Error generating sitemap for packages:', error);
+        }
+    } else {
+        console.warn('MONGODB_URI not set — sitemap will only include static routes');
     }
 
     return [...staticRoutes, ...dynamicRoutes];
