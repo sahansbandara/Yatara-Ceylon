@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
