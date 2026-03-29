@@ -81,15 +81,15 @@ export default function PremiumStory() {
                             style={{ y }}
                             className="absolute -top-[35%] -bottom-[35%] -left-[10%] -right-[10%] -z-10 transition-transform duration-[2s] ease-out group-hover:scale-105"
                         >
-                        <Image
-                            src="/images/home/faq-luxury-experience.webp"
-                            alt="Yatara Luxury Experience"
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 45vw"
-                            className="object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-1000 mix-blend-luminosity hover:mix-blend-normal"
-                            priority
-                            quality={100}
-                        />
+                            <Image
+                                src="/images/home/faq-luxury-experience.webp"
+                                alt="Yatara Luxury Experience"
+                                fill
+                                sizes="(max-width: 1024px) 100vw, 45vw"
+                                className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-1000"
+                                priority
+                                quality={100}
+                            />
                     </motion.div>
 
                     {/* Subtle vignette overlay */}

@@ -53,6 +53,7 @@
 - Build-tour color palette: district default #1f4d3d, hover #2a6b54, selected #2a6b54 + gold border, dimmed #1a3a2e. Map bg radial gradient from #1a3a2e to #050e0a.
 - How It Works section intentionally kept very compact vertically (minimal py, mb, mt) based on user's luxury/space-efficiency preference.
 - Packages Section (FeaturedJourneysClient) and CuratedCollection use a very subtle mix-blend-multiply pattern background for luxury feel (`packages-bg-pattern.webp`). Opacity is usually between `opacity-[0.05]` and `opacity-[0.15]`.
+- Featured Journeys section: plain white bg, no card borders/frames, liquid glass pagination dots (gold gradient active, expanding pill), duration tags use `bg-white/10 backdrop-blur-md border-antique-gold/40` (NOT black). Cards show only title + subtitle, matching Signature Experiences editorial style. Filter bar sits inline with title on md+ screens.
 - Why Yatara counts animation triggers every time using `amount: 0.2` and resetting controls to `"hidden"` when out of view.
 - Transfer page uses `generateStaticParams()` for SSG of category and package pages
 - Image fallback pattern: check if image exists, show placeholder gradient if not
@@ -140,29 +141,30 @@
 
 ## Last Session
 
-**Date**: 2026-03-24 (Session 9)
+**Date**: 2026-03-29 (Session 10)
 **Agent**: Cowork / Antigravity
-**Task**: Transfer Pages bug fixes — Routing, Currency, and Design Consistency
+**Task**: Featured Journeys Polish + Adventure & Highlands Package Content
 
 **What was done**:
-- Fixed broken slug routing in transfer category tiles (`evening` and `cruise-rail-vip`).
-- Wired in `useCurrency` across transfer components (`TransferCategoryShowcase`, `TransferCategoryTile`, `SignatureRouteCard`, `TransfersTeaser`) for proper LKR/USD switching.
-- Restyled three transfer sub-pages (`safari-national-park`, `evening-event-chauffeur`, `cruise-rail-vip`) to match the luxury brand design.
-- Updated agent files (TODO.md, MEMORY.md)
+- Removed black card frames, set white bg, liquid glass pagination on Featured Journeys.
+- Updated duration tags on both carousels to liquid glass with gold tint.
+- Redesigned Featured Journeys header: gold accent line, inline filters, minimal layout.
+- Updated Adventure & Highlands MongoDB doc with full content (6-day itinerary, 4 highlights, 7 inclusions, 5 exclusions, LKR 245k–290k, style=adventure, 6 tags).
+- Made package detail page sidebar dynamic: bespoke copy and upgrade options vary per slug.
+- Made booking card Style row and hero quick-fact dynamic based on `pkg.style` field.
 
 **Files modified**:
-- `src/components/public/transfers/TransferCategoryTile.tsx`
-- `src/components/public/transfers/TransferCategoryShowcase.tsx`
-- `src/components/public/transfers/SignatureRouteCard.tsx`
-- `src/components/public/TransfersTeaser.tsx`
-- `src/app/(public)/transfers/safari-national-park/page.tsx`
-- `src/app/(public)/transfers/evening-event-chauffeur/page.tsx`
-- `src/app/(public)/transfers/cruise-rail-vip/page.tsx`
+- `src/components/public/FeaturedJourneysClient.tsx`
+- `src/components/public/TourCategoriesCarousel.tsx`
+- `src/app/(public)/packages/[slug]/page.tsx`
+- `scripts/update-adventure-highlands.js` (one-time DB update)
 
 **Current state**:
-- All 6 transfer categories route correctly, support currency toggling, and share the consistent brand design.
+- Adventure & Highlands at `/packages/adventure-and-highlands` now shows full PDF-reference page content.
+- Featured Journeys polished with white bg, no black frames, liquid glass dots.
 
 **What to do next**:
 - Implement Analytics/Stats on Dashboard
-- Add real images to transfer routes (waiting on user)
-- Visual QA on mobile for all dashboard pages
+- Mobile QA for liquid glass pagination and package detail pages
+- Continue polish per user feedback
+

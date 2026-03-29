@@ -7,8 +7,8 @@ const Package = mongoose.models.Package || mongoose.model('Package', schema);
 
 async function run() {
   await mongoose.connect(process.env.MONGODB_URI as string);
-  const pkgs = await Package.find({}, { title: 1, slug: 1, isPublished: 1 }).lean();
-  console.log(JSON.stringify(pkgs, null, 2));
+  const pkg = await Package.findOne({ slug: 'east-coast-surf-and-sun' }).lean();
+  console.log(JSON.stringify(pkg, null, 2));
   process.exit(0);
 }
 run().catch(err => {

@@ -116,7 +116,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                             )}
                             <span className="flex items-center gap-2">
                                 <Compass className="w-4 h-4 text-antique-gold" />
-                                Private Guide
+                                {pkg.style === 'adventure' ? 'Soft Adventure' : 'Private Guide'}
                             </span>
                         </div>
                     </div>
@@ -284,7 +284,13 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                                         <span className="text-gray-400 font-light flex items-center gap-2">
                                             <Users className="h-4 w-4 text-antique-gold/60" /> Style
                                         </span>
-                                        <span className="text-deep-emerald font-medium text-[13px]">Private Tour</span>
+                                        <span className="text-deep-emerald font-medium text-[13px]">
+                                            {pkg.style === 'adventure' ? 'Private Adventure Tour' : 
+                                             pkg.style === 'cultural' ? 'Private Cultural Tour' : 
+                                             pkg.style === 'wildlife' ? 'Private Wildlife Tour' : 
+                                             pkg.style === 'wellness' ? 'Private Wellness Tour' :
+                                             'Private Tour'}
+                                        </span>
                                     </div>
                                 </div>
 
@@ -307,39 +313,68 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                             </div>
 
                             {/* Bespoke CTA */}
-                            <div className="bg-deep-emerald rounded-2xl p-6 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-antique-gold/[0.08] rounded-full blur-2xl" />
-                                <div className="relative z-10">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <Sparkles className="w-4 h-4 text-antique-gold" />
-                                        <span className="text-[10px] tracking-[0.2em] uppercase text-antique-gold font-medium">Bespoke</span>
+                            {(() => {
+                                const bespokeContent: Record<string, { copy: string }> = {
+                                    'adventure-and-highlands': { copy: 'We can adjust adventure pace, stay style, scenic routes, and activity intensity to match your comfort level.' },
+                                    'ramayana-trail-deluxe': { copy: 'We can adjust pace, duration, and stays to match your vision.' },
+                                };
+                                const bespoke = bespokeContent[pkg.slug] || { copy: 'We can adjust pace, duration, and stays to match your vision.' };
+                                return (
+                                    <div className="bg-deep-emerald rounded-2xl p-6 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-antique-gold/[0.08] rounded-full blur-2xl" />
+                                        <div className="relative z-10">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <Sparkles className="w-4 h-4 text-antique-gold" />
+                                                <span className="text-[10px] tracking-[0.2em] uppercase text-antique-gold font-medium">Bespoke</span>
+                                            </div>
+                                            <h4 className="font-display text-white text-lg mb-2">Need It Tailored?</h4>
+                                            <p className="text-white/50 text-sm font-light mb-4 leading-relaxed">
+                                                {bespoke.copy}
+                                            </p>
+                                            <Link
+                                                href="/build-tour"
+                                                className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase font-semibold text-antique-gold hover:text-white transition-colors duration-300"
+                                            >
+                                                Design My Trip <ArrowRight className="h-3.5 w-3.5" />
+                                            </Link>
+                                        </div>
                                     </div>
-                                    <h4 className="font-display text-white text-lg mb-2">Need It Tailored?</h4>
-                                    <p className="text-white/50 text-sm font-light mb-4 leading-relaxed">
-                                        We can adjust pace, duration, and stays to match your vision.
-                                    </p>
-                                    <Link
-                                        href="/build-tour"
-                                        className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase font-semibold text-antique-gold hover:text-white transition-colors duration-300"
-                                    >
-                                        Design My Trip <ArrowRight className="h-3.5 w-3.5" />
-                                    </Link>
-                                </div>
-                            </div>
+                                );
+                            })()}
 
                             {/* Upgrade Options */}
-                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100/80">
-                                <h4 className="text-sm font-display text-deep-emerald mb-4">Upgrade Options</h4>
-                                <div className="space-y-3">
-                                    {['Private jeep safari upgrade', 'Villa/suite room upgrade', 'Helicopter scenic transfer', 'Private dining experience'].map((opt) => (
-                                        <div key={opt} className="flex items-start gap-2.5 text-[12px] text-gray-500 font-light">
-                                            <span className="text-antique-gold leading-none mt-0.5">+</span>
-                                            {opt}
+                            {(() => {
+                                const upgradeContent: Record<string, string[]> = {
+                                    'adventure-and-highlands': [
+                                        'Luxury boutique mountain lodge upgrade',
+                                        'Private scenic train class upgrade',
+                                        'Helicopter transfer from hill country',
+                                        'Private picnic by waterfall',
+                                        'Guided sunrise ridge experience',
+                                    ],
+                                    'ramayana-trail-deluxe': [
+                                        'Private jeep safari upgrade',
+                                        'Villa/suite room upgrade',
+                                        'Helicopter scenic transfer',
+                                        'Private dining experience',
+                                    ],
+                                };
+                                const upgrades = upgradeContent[pkg.slug] || ['Private jeep safari upgrade', 'Villa/suite room upgrade', 'Helicopter scenic transfer', 'Private dining experience'];
+                                return (
+                                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100/80">
+                                        <h4 className="text-sm font-display text-deep-emerald mb-4">Upgrade Options</h4>
+                                        <div className="space-y-3">
+                                            {upgrades.map((opt) => (
+                                                <div key={opt} className="flex items-start gap-2.5 text-[12px] text-gray-500 font-light">
+                                                    <span className="text-antique-gold leading-none mt-0.5">+</span>
+                                                    {opt}
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
-                                <p className="text-[10px] text-gray-400 mt-3 font-light">Priced on request</p>
-                            </div>
+                                        <p className="text-[10px] text-gray-400 mt-3 font-light">Priced on request</p>
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,46 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## In Progress
-- [ ] Implement Analytics/Stats on Dashboard
+- [x] Test all transfer detail pages on mobile
+- [x] Visual QA on mobile for all dashboard pages
+- [ ] Implement Analytics/Stats on Dashboard (User feedback needed on visual scope)
+
+## Just Completed (2026-03-29)
+
+### Featured Journeys Aesthetic Refinement
+- [x] Removed black frames/borders (`bg-stone-900 border border-white/5`) from Featured Journeys package cards for edge-to-edge immersive images.
+- [x] Changed Featured Journeys section background from patterned to plain white (`bg-white`).
+- [x] Reduced section vertical padding (`py-8 md:py-10`) for tighter viewport fit.
+- [x] Updated duration tags on both Signature Experiences and Featured Journeys from harsh black (`bg-black/70`) to liquid glass style (`bg-white/10 backdrop-blur-md border-antique-gold/40`).
+- [x] Redesigned Featured Journeys header to match Signature Experiences — added gold accent line, hover underline on italic "Journeys", moved filter bar inline with title.
+- [x] Removed verbose description paragraph and "journeys count" label from header to reduce vertical space.
+- [x] Simplified card content to show only title + subtitle (removed MapPin region info) to match Signature Experiences editorial style.
+- [x] Styled Swiper pagination dots with liquid glass effect (gold gradient active state, expanding pill shape).
+- [x] Cleaned up unused `MapPin` import.
+
+### Adventure & Highlands Package Detail Page
+- [x] Updated MongoDB document with full content: summary, fullDescription, 6-day itinerary, 4 highlights, 7 inclusions, 5 exclusions, tags, priceMin/Max (LKR 245k–290k), style=adventure.
+- [x] Made package detail page sidebar dynamic: bespoke card copy and upgrade options now vary per slug.
+- [x] Made booking card "Style" row and hero "Private Guide" fact dynamic based on `pkg.style` field.
+- [x] Kept all existing images (no changes to image assets).
+
+## Just Completed (2026-03-28)
+
+### Homepage Reordering & Redesign
+- [x] Restored the `AuthoritySection` component to the homepage, placing it just before the `Why Yatara` section, as requested.
+- [x] Moved the Testimonials section below the Final CTA.
+- [x] Reordered the homepage sections to match the desired sequence: Hero, Trust, Signature Experiences, Featured Journeys, Authority, Why Yatara, How it Works, Bespoke Journey Builder, Transfers, FAQ (PremiumStory), CTA, Testimonials.
+- [x] Redesigned the "Signature Experiences" carousel into a 3-column x 4-row grid.
+- [x] Make "Bespoke Tour" occupy a 2x2 primary slot (top-left).
+- [x] Add "Adventure & Highlands" to `tourCategories.ts` to formulate exactly 9 categories.
+- [x] Adjust column spanning to naturally fill space and remove width-specific overrides.
+- [x] Ensure 13-inch Macbook responsiveness for the entire section.
+- [x] Enhanced grid spacing (`lg:gap-6`, `lg:p-8`), row heights (`lg:auto-rows-[240px]`), and typography to create a more elite and attractive package layout.
+- [x] Expanded layout to `max-w-[1600px]`. Replaced `rounded-[32px]` with `rounded-2xl` for sharper premium card corners. Removed the outer white glass box to allow cards to sit directly on the background natively.
+- [x] Standardized the hover glass effects and translations across all packages. Added an elegant, tactile pill button for the Call to Action on hover.
+- [x] Pushed the glass pane down slightly (`top-12`) on non-bespoke packages so it comfortably sits under the `durationTag` ("3-7 NIGHTS") without awkward collisions.
+- [x] *Re-Adjustment:* Decoupled the glass pane completely from the text context to enforce a strict **75% height** across all non-bespoke cards. Moved the `durationTag` to the **Top-Right Corner**, matched its style with the top-left tags, and applied a uniform "fade-in from nowhere" hover effect to ALL floating tags.
+- [x] Transformed cards into a premium "liquid glass" UI with mouse-following hover glares and a soft, non-intrusive Web Audio API synthetic "pop" sound on hover.
 
 ## Just Completed (2026-03-24)
 
@@ -44,12 +83,21 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 - [x] Created 6 dedicated dynamic-feeling category pages
 - [x] Checked TypeScript build errors and resolved all component prop mismatches ✅
 
+## Just Completed (2026-03-28 Part 2)
+
+### Journeys Page & Adventure Package
+- [x] Inserted perfectly structured "Adventure & Highlands" package into the MongoDB database with accurate tags, summary, and duration attributes.
+- [x] Established dynamic detailed page rendering by simply ensuring the database entry matches schema requirements.
+- [x] Redesigned the "Journeys" page (`JourneysGrid.tsx`) with a new highlighted header section.
+- [x] Implemented a 3-row, 2-column CSS Grid. Configured "Most Popular" to span 2x2, "Most Affordable" 1x1, and "Most Luxury" 1x1.
+- [x] Added distinct overlay badging and price formatting to match the liquid glass and elite editorial style.
+
 ---
 
 ## Priority Tasks
-- [ ] Add real images to transfer routes and transfer category pages (Wait on User)
-- [ ] Test all transfer detail pages on mobile
-- [ ] Visual QA on mobile for all dashboard pages
+- [x] Add real images to transfer routes and transfer category pages (User completed)
+- [x] Test all transfer detail pages on mobile
+- [x] Visual QA on mobile for all dashboard pages
 
 ---
 
@@ -59,7 +107,7 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## Blocked
-- [ ] Waiting for user to generate Transfer Category Images
+- None for now
 
 ---
 
@@ -86,29 +134,29 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 
 ## Last Session
 
-**Date**: 2026-03-24 (Session 9)
+**Date**: 2026-03-29
 **Agent**: Cowork / Antigravity
-**Task**: Transfer Pages bug fixes — Routing, Currency, and Design Consistency
+**Task**: Featured Journeys Polish + Adventure & Highlands Package Content
 
 **What was done**:
-- Fixed broken slug routing in transfer category tiles (`evening` and `cruise-rail-vip`).
-- Wired in `useCurrency` across transfer components (`TransferCategoryShowcase`, `TransferCategoryTile`, `SignatureRouteCard`, `TransfersTeaser`) for proper LKR/USD switching.
-- Restyled three transfer sub-pages (`safari-national-park`, `evening-event-chauffeur`, `cruise-rail-vip`) to match the luxury brand design.
-- Updated agent files (TODO.md, MEMORY.md)
+- Removed black card frames from Featured Journeys, set white background, liquid glass pagination.
+- Updated duration tags on both carousels to liquid glass with gold tint.
+- Redesigned Featured Journeys header: gold accent line, inline filters, minimal layout.
+- Updated Adventure & Highlands MongoDB document with full detail page content (6-day itinerary, highlights, inclusions/exclusions, LKR pricing, tags).
+- Made package detail page sidebar dynamic: bespoke copy and upgrade options vary per slug.
+- Made booking card Style row and hero quick-fact dynamic based on `pkg.style` field.
 
 **Files modified**:
-- `src/components/public/transfers/TransferCategoryTile.tsx`
-- `src/components/public/transfers/TransferCategoryShowcase.tsx`
-- `src/components/public/transfers/SignatureRouteCard.tsx`
-- `src/components/public/TransfersTeaser.tsx`
-- `src/app/(public)/transfers/safari-national-park/page.tsx`
-- `src/app/(public)/transfers/evening-event-chauffeur/page.tsx`
-- `src/app/(public)/transfers/cruise-rail-vip/page.tsx`
+- `src/components/public/FeaturedJourneysClient.tsx`
+- `src/components/public/TourCategoriesCarousel.tsx`
+- `src/app/(public)/packages/[slug]/page.tsx`
+- `scripts/update-adventure-highlands.js` (one-time DB update script)
 
 **Current state**:
-- All 6 transfer categories route correctly to their sub-pages, support currency toggling, and share the consistent brand visual design.
+- Adventure & Highlands detail page at `/packages/adventure-and-highlands` now shows full content matching PDF reference.
+- Featured Journeys section polished with white background, no black frames, liquid glass dots.
 
 **What to do next**:
 - Implement Analytics/Stats on Dashboard
-- Add real images to transfer routes (waiting on user)
-- Visual QA on mobile for all dashboard pages
+- Mobile QA for liquid glass pagination and package detail pages
+- Continue polish per user feedback

@@ -47,7 +47,7 @@ export const tourCategories: TourCategory[] = [
         promise: 'Guided wellness reset, daily treatments, calm setting',
         description: 'Ancient wellness traditions in serene tropical settings — restore body, mind, and spirit.',
         image: '/images/home/cat-ayurvedic.webp',
-        href: '/packages/ayurveda-wellness-sanctuary',
+        href: '/packages/wellness-reset-ayurveda-lite',
         tags: ['Slow Travel', 'Spa', '5–10 Nights'],
     },
     {
@@ -55,7 +55,7 @@ export const tourCategories: TourCategory[] = [
         promise: 'Tea bungalows, scenic train, misty highlands',
         description: 'Misty tea plantations, scenic train rides, and cool mountain air in Sri Lanka\'s highlands.',
         image: '/images/home/cat-hillcountry.webp',
-        href: '/packages/hill-country-tea-rail-retreat',
+        href: '/packages/tea-trails-waterfalls',
         tags: ['Scenic Rail', 'Couples', '3–7 Nights'],
     },
     {
@@ -63,8 +63,16 @@ export const tourCategories: TourCategory[] = [
         promise: 'Secluded beaches, villa stays, whale watching',
         description: 'From Mirissa\'s whale-watching shores to Trincomalee\'s turquoise waters — ocean bliss awaits.',
         image: '/images/home/cat-coastal.webp',
-        href: '/packages/east-coast-summer-escape',
+        href: '/packages/east-coast-surf-and-sun',
         tags: ['Beach', 'Luxury', '4–8 Nights'],
+    },
+    {
+        title: 'Adventure & Highlands',
+        promise: 'Misty peaks, wild rivers, and refined adventure escapes.',
+        description: 'A premium soft-adventure journey through Sri Lanka\'s highlands, forests, rivers, and scenic ridgelines.',
+        image: '/images/home/package-adventure.webp',
+        href: '/packages/adventure-and-highlands',
+        tags: ['Adventure', 'Highlands', '5 Nights'],
     },
     {
         title: 'Ramayana Trail Deluxe',
