@@ -618,11 +618,11 @@ After running `npm run seed`, these demo accounts are available:
 
 | Role | Email | Password | Dashboard |
 |------|-------|----------|-----------|
-| **Administrator** | `admin@yataraceylon.com` | `Admin@123` | `/dashboard` (full access) |
-| **Concierge Staff** | `concierge@yataraceylon.com` | `Concierge@123` | `/dashboard` (no Finance/Users) |
-| **Hotel Partner** | `hotel.partner@yataraceylon.com` | `Hotel@123` | `/dashboard/hotel` |
-| **Fleet Partner** | `fleet.partner@yataraceylon.com` | `Fleet@123` | `/dashboard/fleet` |
-| **Customer** | `customer1@yataraceylon.com` | `Customer@123` | `/dashboard/my-bookings` |
+| **Administrator** | `admin@yataraceylon.me` | `Admin@123` | `/dashboard` (full access) |
+| **Concierge Staff** | `concierge@yataraceylon.me` | `Concierge@123` | `/dashboard` (no Finance/Users) |
+| **Hotel Partner** | `hotel.partner@yataraceylon.me` | `Hotel@123` | `/dashboard/hotel` |
+| **Fleet Partner** | `fleet.partner@yataraceylon.me` | `Fleet@123` | `/dashboard/fleet` |
+| **Customer** | `customer1@yataraceylon.me` | `Customer@123` | `/dashboard/my-bookings` |
 | **Legacy Admin** | `admin@ceylonescapes.lk` | `Admin@123` | `/dashboard` |
 
 > **PayHere Sandbox**: Use test card `4916217501611292` with any future expiry and CVV `123`.

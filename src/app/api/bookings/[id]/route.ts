@@ -3,16 +3,17 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
 import VehicleBlock from '@/models/VehicleBlock';
-import { staffOrAdmin } from '@/lib/rbac';
+import { staffOrAdmin, withAuth } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { updateBookingStatusSchema, assignBookingSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
 import { generateWhatsAppLink } from '@/lib/whatsapp';
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+// GET /api/bookings/[id] – protected: staff/admin see all, customers see only their own
+export const GET = withAuth(async (_req, context) => {
     try {
         await connectDB();
-        const { id } = await params;
+        const { id } = await context.params;
         const booking = await Booking.findOne({ _id: id, isDeleted: false })
             .populate('packageId', 'title slug priceMin priceMax')
             .populate('assignedStaffId', 'name email')
@@ -20,8 +21,13 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
             .lean();
         if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-        // Generate WhatsApp link
+        // Customers can only view their own bookings
         const bookingAny = booking as any;
+        if (context.user.role === 'USER' && bookingAny.email !== context.user.email) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        // Generate WhatsApp link
         const whatsAppLink = generateWhatsAppLink(
             process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '',
             {
@@ -36,7 +42,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
         return NextResponse.json({ booking, whatsAppLink });
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
-}
+});
 
 export const PATCH = staffOrAdmin(async (request, context) => {
     try {

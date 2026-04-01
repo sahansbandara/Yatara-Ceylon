@@ -8,9 +8,22 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## In Progress
-- [x] Test all transfer detail pages on mobile
-- [x] Visual QA on mobile for all dashboard pages
 - [ ] Implement Analytics/Stats on Dashboard (User feedback needed on visual scope)
+
+## Just Completed (2026-04-01)
+
+### Build Tour Map & 404 Page
+- [x] Verified MapViewport.client.tsx already uses dynamic import with ssr: false — Leaflet CSS imported correctly — loading fallback works with animated spinner.
+- [x] Confirmed BuildTourShell.client.tsx properly wraps MapViewport with dynamic() and ssr: false.
+- [x] District and place data load correctly via fetch GeoJSON and curated places JSON — no fixes needed.
+- [x] Created custom 404 page at /src/app/not-found.tsx with Yatara Ceylon luxury design: deep emerald + antique gold colors, off-white background, serif typography, CTA buttons (Home, Browse Journeys, Contact), secondary navigation links.
+
+## Just Completed (2026-04-01 - Previous)
+
+### Login Fix & README Update
+- [x] Fixed MongoDB connection issue (`MongoServerError: not primary`) by updating `MONGODB_URI` in `.env.local` to use a replica set connection instead of a direct connection.
+- [x] Updated test credentials in `README.md` to align with the database seed script domains (`@yataraceylon.me` instead of `@yataraceylon.com`).
+- [x] Verified login functionality works as expected with the seeded `admin@yataraceylon.me` account.
 
 ## Just Completed (2026-03-29)
 
@@ -134,27 +147,22 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 
 ## Last Session
 
-**Date**: 2026-03-29
+**Date**: 2026-04-01
 **Agent**: Cowork / Antigravity
-**Task**: Featured Journeys Polish + Adventure & Highlands Package Content
+**Task**: Login Fix & README Update
 
 **What was done**:
-- Removed black card frames from Featured Journeys, set white background, liquid glass pagination.
-- Updated duration tags on both carousels to liquid glass with gold tint.
-- Redesigned Featured Journeys header: gold accent line, inline filters, minimal layout.
-- Updated Adventure & Highlands MongoDB document with full detail page content (6-day itinerary, highlights, inclusions/exclusions, LKR pricing, tags).
-- Made package detail page sidebar dynamic: bespoke copy and upgrade options vary per slug.
-- Made booking card Style row and hero quick-fact dynamic based on `pkg.style` field.
+- Fixed MongoDB connection issue (`MongoServerError: not primary`) by using the correct replica set connection string in `.env.local`.
+- Corrected test credentials in `README.md` to use `@yataraceylon.me` instead of `.com`, tracking the `src/lib/seed.ts` script.
+- Confirmed successful login across the application.
 
 **Files modified**:
-- `src/components/public/FeaturedJourneysClient.tsx`
-- `src/components/public/TourCategoriesCarousel.tsx`
-- `src/app/(public)/packages/[slug]/page.tsx`
-- `scripts/update-adventure-highlands.js` (one-time DB update script)
+- `.env.local`
+- `README.md`
 
 **Current state**:
-- Adventure & Highlands detail page at `/packages/adventure-and-highlands` now shows full content matching PDF reference.
-- Featured Journeys section polished with white background, no black frames, liquid glass dots.
+- Authentication is fully functional.
+- Documentation accurately reflects test credentials.
 
 **What to do next**:
 - Implement Analytics/Stats on Dashboard

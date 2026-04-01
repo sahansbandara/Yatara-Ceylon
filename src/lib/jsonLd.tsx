@@ -9,6 +9,13 @@ const SITE_URL = 'https://yataraceylon.me';
 const SITE_NAME = 'Yatara Ceylon';
 const LOGO_URL = `${SITE_URL}/images/logo.png`;
 
+/** Return absolute URL for an image — if already absolute, return as-is */
+function absImageUrl(src?: string): string | undefined {
+    if (!src) return undefined;
+    if (src.startsWith('http://') || src.startsWith('https://')) return src;
+    return `${SITE_URL}${src.startsWith('/') ? '' : '/'}${src}`;
+}
+
 /* ═══════════════════════════════════════════════════════════
    Reusable Component
    ═══════════════════════════════════════════════════════════ */
@@ -143,7 +150,7 @@ export function buildTransferProduct(transfer: {
         '@type': 'Product',
         name: transfer.title,
         description: transfer.seoDescription,
-        image: `${SITE_URL}${transfer.heroImage}`,
+        image: absImageUrl(transfer.heroImage),
         url: `${SITE_URL}/transfers/${transfer.slug}`,
         brand: {
             '@type': 'Organization',
@@ -204,9 +211,7 @@ export function buildDestinationPlace(destination: {
         name: destination.title,
         description: destination.longDescription || destination.description,
         url: `${SITE_URL}/destinations/${destination.slug}`,
-        image: destination.images?.[0]
-            ? `${SITE_URL}${destination.images[0]}`
-            : undefined,
+        image: absImageUrl(destination.images?.[0]),
         touristType: 'Luxury travellers',
         containedInPlace: {
             '@type': 'Country',
@@ -245,9 +250,7 @@ export function buildTourPackage(pkg: {
         name: pkg.title,
         description: pkg.summary,
         url: `${SITE_URL}/packages/${pkg.slug}`,
-        image: pkg.images?.[0]
-            ? `${SITE_URL}${pkg.images[0]}`
-            : undefined,
+        image: absImageUrl(pkg.images?.[0]),
         provider: {
             '@type': 'TravelAgency',
             name: SITE_NAME,

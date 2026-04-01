@@ -33,3 +33,7 @@
 - API endpoint: `/api/bookings?status=STATUS&search=QUERY&page=PAGE&limit=LIMIT` returns { bookings, total, page, totalPages }
 - Gold color is `antique-gold` in Tailwind config
 - Background is near-black (handled by layout, not component)
+- Payment model includes: status, provider, type (PAYMENT/REFUND), paidAt, voidedAt, amount, bookingId, etc.
+- CSV export for finance reports uses format=csv query param; returns text/csv with proper headers
+- Phone validation regex: `^\+?[\d\s\-\(\)]{7,}$` (supports international format, min 7 chars)
+- Password requirements: min 8 chars, 1 uppercase, 1 lowercase, 1 number

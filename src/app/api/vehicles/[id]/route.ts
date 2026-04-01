@@ -94,8 +94,8 @@ export const POST = withAuth(async (request, context) => {
             assignedVehicleId: id,
             isDeleted: false,
             status: { $in: ['CONFIRMED', 'ASSIGNED', 'IN_PROGRESS'] },
-            'dates.start': { $lte: new Date(data!.to) },
-            'dates.end': { $gte: new Date(data!.from) }
+            'dates.from': { $lte: new Date(data!.to) },
+            'dates.to': { $gte: new Date(data!.from) }
         });
 
         if (bookingOverlap) {

@@ -83,7 +83,7 @@ export const updateNotificationSchema = createNotificationSchema.partial();
 // ─── Bookings ───
 export const createBookingSchema = z.object({
     customerName: z.string().min(1),
-    phone: z.string().min(1),
+    phone: z.string().min(1).regex(/^\+?[\d\s\-\(\)]{7,}$/, 'Invalid phone number format'),
     email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
     city: z.string().optional(),
@@ -101,7 +101,10 @@ export const createBookingSchema = z.object({
     }),
     notes: z.string().optional(),
     specialRequests: z.string().optional(),
-});
+}).refine(
+    (data) => new Date(data.dates.from) <= new Date(data.dates.to),
+    { message: 'Start date must be before or equal to end date', path: ['dates'] }
+);
 
 export const updateBookingStatusSchema = z.object({
     status: z.enum(['NEW', 'PAYMENT_PENDING', 'CONTACTED', 'ADVANCE_PAID', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']),
@@ -137,7 +140,10 @@ export const createVehicleBlockSchema = z.object({
 // ─── Support Tickets ───
 export const createTicketSchema = z.object({
     customerName: z.string().min(1),
-    phone: z.string().optional(),
+    phone: z.string().optional().refine(
+        (phone) => !phone || /^\+?[\d\s\-\(\)]{7,}$/.test(phone),
+        'Invalid phone number format'
+    ),
     email: z.string().email().optional().or(z.literal('')),
     subject: z.string().min(1),
     message: z.string().min(1),
@@ -180,7 +186,7 @@ export const createPartnerSchema = z.object({
     type: z.enum(['GUIDE', 'HOTEL', 'DRIVER', 'RESTAURANT', 'OTHER']),
     name: z.string().min(1),
     contactPerson: z.string().optional(),
-    phone: z.string().min(1),
+    phone: z.string().min(1).regex(/^\+?[\d\s\-\(\)]{7,}$/, 'Invalid phone number format'),
     email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
     status: z.enum(['ACTIVE', 'INACTIVE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('ACTIVE'),
@@ -225,8 +231,15 @@ export const updatePlaceSchema = createPlaceSchema.partial();
 export const createUserSchema = z.object({
     name: z.string().min(1),
     email: z.string().email(),
-    phone: z.string().optional(),
-    password: z.string().min(6),
+    phone: z.string().optional().refine(
+        (phone) => !phone || /^\+?[\d\s\-\(\)]{7,}$/.test(phone),
+        'Invalid phone number format'
+    ),
+    password: z.string()
+        .min(8, 'Password must be at least 8 characters')
+        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+        .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+        .regex(/[0-9]/, 'Password must contain at least one number'),
     role: z.enum(['ADMIN', 'STAFF']).default('STAFF'),
 });
 export const updateUserSchema = z.object({

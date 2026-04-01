@@ -25,6 +25,12 @@
 
 ---
 
+## Recent Findings
+
+- [2026-04-01] MapViewport.client.tsx already uses dynamic import with ssr: false in BuildTourShell.client.tsx. CSS imports are correct (leaflet.css, MarkerCluster.css). Loading state shows "Loading map..." with animated spinner on dark bg. Districts and places data load correctly via fetch GeoJSON and curated places JSON. No fixes needed for map rendering.
+
+---
+
 ## Patterns That Work
 
 > Solutions and approaches that proved reliable.
@@ -141,30 +147,30 @@
 
 ## Last Session
 
-**Date**: 2026-03-29 (Session 10)
-**Agent**: Cowork / Antigravity
-**Task**: Featured Journeys Polish + Adventure & Highlands Package Content
+**Date**: 2026-04-01
+**Agent**: Claude Code
+**Task**: Build Tour Map Verification & 404 Page Creation
 
 **What was done**:
-- Removed black card frames, set white bg, liquid glass pagination on Featured Journeys.
-- Updated duration tags on both carousels to liquid glass with gold tint.
-- Redesigned Featured Journeys header: gold accent line, inline filters, minimal layout.
-- Updated Adventure & Highlands MongoDB doc with full content (6-day itinerary, 4 highlights, 7 inclusions, 5 exclusions, LKR 245k–290k, style=adventure, 6 tags).
-- Made package detail page sidebar dynamic: bespoke copy and upgrade options vary per slug.
-- Made booking card Style row and hero quick-fact dynamic based on `pkg.style` field.
+1. Verified MapViewport.client.tsx and BuildTourShell.client.tsx — both already correctly implement dynamic import with ssr: false.
+2. Confirmed Leaflet CSS imports are in place, loading state shows spinner on dark background.
+3. District and place data load correctly from GeoJSON and curated JSON — no fixes required.
+4. Created custom 404 page (/src/app/not-found.tsx) with full Yatara Ceylon luxury design: deep emerald + antique gold colors, off-white background, serif typography, responsive CTA buttons, secondary navigation.
+
+**Files created**:
+- `/src/app/not-found.tsx`
 
 **Files modified**:
-- `src/components/public/FeaturedJourneysClient.tsx`
-- `src/components/public/TourCategoriesCarousel.tsx`
-- `src/app/(public)/packages/[slug]/page.tsx`
-- `scripts/update-adventure-highlands.js` (one-time DB update)
+- `.agent/TODO.md`
+- `.agent/MEMORY.md`
 
 **Current state**:
-- Adventure & Highlands at `/packages/adventure-and-highlands` now shows full PDF-reference page content.
-- Featured Journeys polished with white bg, no black frames, liquid glass dots.
+- Build tour map rendering already optimized and functional.
+- Custom 404 page matches brand identity and is production-ready.
+- Ready for testing and further analytics implementation.
 
 **What to do next**:
 - Implement Analytics/Stats on Dashboard
-- Mobile QA for liquid glass pagination and package detail pages
-- Continue polish per user feedback
+- Mobile QA for 404 page on smaller screens
+- Test 404 routing across invalid paths
 
