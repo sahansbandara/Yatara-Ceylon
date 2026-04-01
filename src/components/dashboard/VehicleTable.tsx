@@ -32,6 +32,33 @@ interface VehicleTableProps {
     initialVehicles: Vehicle[];
 }
 
+const ALLOWED_REMOTE_IMAGE_HOSTS = new Set([
+    'lh3.googleusercontent.com',
+    'overatours.com',
+    'images.unsplash.com',
+    'res.cloudinary.com',
+    'i.pravatar.cc',
+    'dxk1acp76n912.cloudfront.net',
+    'media-cdn.tripadvisor.com',
+    's.yimg.com',
+]);
+
+function isRenderableVehicleImage(src?: string) {
+    const value = src?.trim();
+    if (!value) return false;
+
+    if (value.startsWith('/')) {
+        return true;
+    }
+
+    try {
+        const url = new URL(value);
+        return ['http:', 'https:'].includes(url.protocol) && ALLOWED_REMOTE_IMAGE_HOSTS.has(url.hostname);
+    } catch {
+        return false;
+    }
+}
+
 export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
     const [vehicles, setVehicles] = useState<Vehicle[]>(initialVehicles);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -110,70 +137,75 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
                 </TableHeader>
                 <TableBody>
                     {vehicles.length > 0 ? (
-                        vehicles.map((vehicle) => (
-                            <TableRow key={vehicle._id}>
-                                <TableCell>
-                                    <div className="relative h-10 w-16 rounded overflow-hidden bg-white/5 flex items-center justify-center text-white/30">
-                                        {vehicle.images && vehicle.images[0] ? (
-                                            <Image
-                                                src={vehicle.images[0]}
-                                                alt={vehicle.model}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <Car className="h-5 w-5" />
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="font-medium text-off-white">{vehicle.model}</TableCell>
-                                <TableCell>{vehicle.type}</TableCell>
-                                <TableCell>{vehicle.plateNumber || '-'}</TableCell>
-                                <TableCell>
-                                    <div className="text-xs text-white/50 space-y-1">
-                                        <div>{vehicle.seats} Seats</div>
-                                        {vehicle.luggage && <div>{vehicle.luggage} Lugg.</div>}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-white/70">LKR {(vehicle.dailyRate ?? 0).toLocaleString()} per km</TableCell>
-                                <TableCell>
-                                    <Badge variant="outline" className={getStatusColor(vehicle.status)}>
-                                        {vehicle.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                        {vehicle.status === 'PENDING_APPROVAL' && (
+                        vehicles.map((vehicle) => {
+                            const primaryImage = vehicle.images?.[0];
+                            const canRenderImage = isRenderableVehicleImage(primaryImage);
+
+                            return (
+                                <TableRow key={vehicle._id}>
+                                    <TableCell>
+                                        <div className="relative h-10 w-16 rounded overflow-hidden bg-white/5 flex items-center justify-center text-white/30">
+                                            {canRenderImage ? (
+                                                <Image
+                                                    src={primaryImage!}
+                                                    alt={vehicle.model}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <Car className="h-5 w-5" />
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="font-medium text-off-white">{vehicle.model}</TableCell>
+                                    <TableCell>{vehicle.type}</TableCell>
+                                    <TableCell>{vehicle.plateNumber || '-'}</TableCell>
+                                    <TableCell>
+                                        <div className="text-xs text-white/50 space-y-1">
+                                            <div>{vehicle.seats} Seats</div>
+                                            {vehicle.luggage && <div>{vehicle.luggage} Lugg.</div>}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-white/70">LKR {(vehicle.dailyRate ?? 0).toLocaleString()} per km</TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline" className={getStatusColor(vehicle.status)}>
+                                            {vehicle.status}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            {vehicle.status === 'PENDING_APPROVAL' && (
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                    className="h-8 w-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10"
+                                                    onClick={() => handleApprove(vehicle._id)}
+                                                    title="Approve Vehicle"
+                                                >
+                                                    <CheckCircle className="h-4 w-4" />
+                                                </Button>
+                                            )}
                                             <Button
                                                 size="icon"
                                                 variant="ghost"
-                                                className="h-8 w-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10"
-                                                onClick={() => handleApprove(vehicle._id)}
-                                                title="Approve Vehicle"
+                                                className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-white/10"
+                                                onClick={() => router.push(`/dashboard/vehicles/${vehicle._id}`)}
                                             >
-                                                <CheckCircle className="h-4 w-4" />
+                                                <Edit className="h-4 w-4" />
                                             </Button>
-                                        )}
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-white/10"
-                                            onClick={() => router.push(`/dashboard/vehicles/${vehicle._id}`)}
-                                        >
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-white/10"
-                                            onClick={() => handleDelete(vehicle._id)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-white/10"
+                                                onClick={() => handleDelete(vehicle._id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })
                     ) : (
                         <TableRow>
                             <TableCell colSpan={8} className="h-24 text-center">

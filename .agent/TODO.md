@@ -81,6 +81,13 @@ Production Readiness — final QA pass and polish before go-live
 
 ## Just Completed (2026-04-01)
 
+### Dashboard Demo Data Coverage
+- [x] Expanded `src/lib/seed.ts` to upsert a rich demo graph for hotel, fleet, finance, support, notifications, admin applications, analytics, and customer dashboards.
+- [x] Added owned hotel partner/services/blocks, fleet vehicles/blocks, customer saved plans, bookings across every major status, invoices, payments, support tickets, notifications, partner requests, and audit-log fixtures.
+- [x] Fixed the hotel dashboard property card to read `Partner.email` / `Partner.phone` instead of a non-existent nested `contact` object.
+- [x] Hardened `VehicleTable` so malformed legacy image URLs fall back to the icon placeholder instead of crashing `/dashboard/vehicles`.
+- [x] Verified the seeded role dashboards end-to-end via local auth + route/API smoke checks and a successful `npm run build`.
+
 ### Security Hardening & Account Recovery Completion
 - [x] Closed the remaining exposed partner reads by protecting `/api/booking-partners` and `/api/partners/[id]` with role-aware auth guards and ownership checks.
 - [x] Blocked inactive partners and inactive partner services from being assigned to bookings, with clear `409` API responses and regression tests.
@@ -219,22 +226,25 @@ Production Readiness — final QA pass and polish before go-live
 
 **Date**: 2026-04-01
 **What was done**:
-- Verified on the live site that all published demo credentials currently return `200 OK` and their role-specific dashboard pages load successfully (`/dashboard`, `/dashboard/hotel`, `/dashboard/fleet`, `/dashboard/my-bookings`).
-- Verified locally that `/login` and `/auth/login` were inconsistent implementations even though the underlying auth worked for non-admin roles.
-- Replaced `src/app/login/page.tsx` with a redirect alias to `/auth/login`, preserving query params so there is now one canonical login flow for verification messaging, captcha, redirect handling, and role-based landing behavior.
-- Verified locally in the browser that `/login?redirect=%2Fdashboard%2Fmy-bookings` redirects to `/auth/login?...` and the non-admin flow still reaches the correct dashboard destination.
+- Expanded `src/lib/seed.ts` so `npm run seed` now refreshes a rich, idempotent dashboard demo graph instead of only basic users/packages/vehicles.
+- Seeded hotel partner data, hotel services and service blocks, fleet-owned vehicles and vehicle blocks, bookings across multiple statuses, invoices, payments, notifications, support tickets, partner requests, audit logs, and customer saved plans.
+- Fixed the hotel dashboard property card to render top-level partner contact fields and hardened the dashboard vehicle table against malformed legacy image URLs.
+- Reseeded locally and verified role-based access plus non-empty content for admin, hotel, fleet, and customer dashboard routes/APIs.
+- Verified the change set with a successful `npm run build`.
 
 **What to do next**:
-- If desired, add a small regression test around the `/login` → `/auth/login` alias and the seed/demo-account invariants so future auth changes do not silently reintroduce split behavior.
-- Continue the remaining manual QA matrix and broader mobile/cross-browser checks.
+- If desired, expose the new richer demo entities in README/test-credential docs so collaborators know hotel/fleet dashboards now depend on rerunning `npm run seed`.
+- Continue the remaining manual QA matrix and broader mobile/cross-browser checks on real devices/browsers.
 
 **Current state**:
 - Branch: `main`
-- Dev server: running during verification; can be stopped after push
-- Last verified routes: live `/dashboard`, `/dashboard/hotel`, `/dashboard/fleet`, `/dashboard/my-bookings`; local `/auth/login?redirect=...`
-- Residual dev-only noise: favicon 404 on `/login` and browser autocomplete suggestion for the password field
+- Dev server: running on port 3000 during verification
+- Last verified local surfaces: `/dashboard`, `/dashboard/partners`, `/dashboard/vehicles`, `/dashboard/finance`, `/dashboard/support`, `/dashboard/notifications`, `/dashboard/hotel`, `/dashboard/fleet`, `/dashboard/my-bookings`, `/dashboard/my-plans`, `/api/partner-requests`, `/api/bookings`
+- Residual build noise: existing Tailwind ambiguous-class warnings (`duration-[...]`, `ease-[...]`) still appear during `npm run build`, but the build completes successfully
 
 **Files changed**:
 - `.agent/TODO.md`
 - `.agent/MEMORY.md`
-- `src/app/login/page.tsx`
+- `src/app/dashboard/hotel/page.tsx`
+- `src/components/dashboard/VehicleTable.tsx`
+- `src/lib/seed.ts`

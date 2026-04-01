@@ -8,6 +8,8 @@
 
 > Format: `[DATE]` What went wrong → Root cause → What to do instead
 
+- [2026-04-01] Hotel dashboard property cards read `p.contact?.email` / `p.contact?.phone`, but the `Partner` model stores `email` and `phone` at the top level → hotel partner fixtures existed yet rendered as blank contact info, making the dashboard look unseeded → When wiring dashboard demo data, verify the render layer matches the real schema fields instead of assuming nested contact objects.
+- [2026-04-01] `/dashboard/vehicles` could hard-crash during render because legacy vehicle records contained invalid `images[0]` values like `sdfghjkl;` and the table passed them straight into `next/image` → one malformed DB value blanked the whole fleet management page even though the rest of the data was valid → Validate dashboard image URLs before rendering `next/image`, and fall back to the icon placeholder for malformed or non-whitelisted hosts.
 - [2026-04-01] Demo/test accounts created by `src/lib/seed.ts` were left with the model default `emailVerified: false` → `/api/auth/login` correctly rejected them with "Please verify your email before signing in", so the published test credentials were unusable even though the password hashes were valid → Seeded demo accounts must be explicitly marked `emailVerified: true` and refreshed on re-seed so existing local databases are repaired.
 - [2026-04-01] `npm run seed` did not load `.env.local` / `.env` before reading `MONGODB_URI` → the script silently fell back to `mongodb://localhost:27017/toms` and failed with `ECONNREFUSED`, so the documented demo-account bootstrap often never ran at all → Standalone scripts in this repo must load env files explicitly before touching database config.
 - [2026-04-01] `Booking.findOne(...).lean()` in `src/app/api/bookings/route.ts` widened to a document-or-array type under the current Mongoose typings → build failed when reading `duplicateCheck.bookingNo` even though runtime returns one document → Narrow the result before property access (or explicitly type/select the lean payload) when adding duplicate-warning metadata.
@@ -59,6 +61,7 @@
 
 > Solutions and approaches that proved reliable.
 
+- Dashboard demo fixtures: seed them with stable business keys (`bookingNo`, `invoiceNo`, `orderId`, `plateNumber`, partner `name + type`, service `partnerId + serviceName`) and refresh via upserts so rerunning `npm run seed` repairs hotel, fleet, finance, support, and customer dashboards without creating duplicate rows.
 - Seeded demo accounts: treat them as fixtures, not one-time inserts. Load `.env.local`/`.env` inside the script, upsert by email, force `emailVerified: true`, reset lockout state, and refresh the known password on every `npm run seed` so local databases stay recoverable.
 - Login routes: use `/auth/login` as the canonical page; keep `/login` as a simple redirect alias so redirects, captcha, verification messaging, and role-based post-login routing stay in one place.
 - Dashboard pages (support, notifications, users): Use DashboardHero with title + subtitle showing summary stats. Subtitle format: "X total" or "X total • Y open". Action prop accepts Button wrapped in Link for CTAs.

@@ -87,7 +87,7 @@ export default async function HotelDashboardPage() {
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-white/85">{p.name}</p>
                                     <p className="text-[11px] text-white/40 mt-0.5">
-                                        {p.contact?.email} · {p.contact?.phone}
+                                        {p.email || '—'} · {p.phone || '—'}
                                     </p>
                                 </div>
                                 <span className="status-pill status-pill-success flex-shrink-0">Active</span>
