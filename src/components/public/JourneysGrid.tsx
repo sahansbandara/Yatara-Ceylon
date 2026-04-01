@@ -217,7 +217,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                 <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                                 
                                 <div className="absolute top-6 left-6">
-                                    <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-antique-gold bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-antique-gold/30">
+                                    <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
                                         Most Popular
                                     </span>
                                 </div>
@@ -244,10 +244,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                         </p>
                                         <div className="flex-shrink-0 text-right">
                                             {featuredJourneys[0].priceMin > 0 && (
-                                                <>
-                                                    <p className="text-[10px] text-white/40 tracking-widest uppercase mb-0.5">From</p>
-                                                    <PackagePriceDisplay priceMin={featuredJourneys[0].priceMin} />
-                                                </>
+                                                <PackagePriceDisplay priceMin={featuredJourneys[0].priceMin} variant="white" />
                                             )}
                                         </div>
                                     </div>
@@ -267,7 +264,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                 <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                                 
                                 <div className="absolute top-5 left-5">
-                                    <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-deep-emerald bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white">
+                                    <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
                                         Most Affordable
                                     </span>
                                 </div>
@@ -283,7 +280,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                             </span>
                                         </div>
                                         {featuredJourneys[1].priceMin > 0 && (
-                                            <PackagePriceDisplay priceMin={featuredJourneys[1].priceMin} />
+                                            <PackagePriceDisplay priceMin={featuredJourneys[1].priceMin} variant="white" />
                                         )}
                                     </div>
                                 </div>
@@ -318,7 +315,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                             </span>
                                         </div>
                                         {featuredJourneys[2].priceMin > 0 && (
-                                            <PackagePriceDisplay priceMin={featuredJourneys[2].priceMin} />
+                                            <PackagePriceDisplay priceMin={featuredJourneys[2].priceMin} variant="white" />
                                         )}
                                     </div>
                                 </div>

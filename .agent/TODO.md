@@ -10,6 +10,7 @@ Production Readiness — final QA pass and polish before go-live
 ## In Progress (2026-04-01)
 
 - [x] Investigated why seeded test credentials failed locally and fixed the auth/demo account flow end-to-end (2026-04-01)
+- [x] Make all published demo credentials usable end-to-end across their role-specific dashboard destinations (2026-04-01)
 
 ---
 
@@ -218,24 +219,22 @@ Production Readiness — final QA pass and polish before go-live
 
 **Date**: 2026-04-01
 **What was done**:
-- Diagnosed the broken demo credentials to two concrete causes in `src/lib/seed.ts`: the script did not load `.env.local`/`.env`, and seeded demo users were left with `emailVerified: false`.
-- Fixed `npm run seed` so it loads env files, upserts demo users by email, forces them active/verified/undeleted, resets lockout state, and refreshes the published passwords on every seed run.
-- Aligned the login form placeholder in `src/app/login/page.tsx` with the current primary admin email (`admin@yataraceylon.me`).
-- Re-ran `npm run seed`, then verified `POST /api/auth/login` returns `200 OK` for both `admin@yataraceylon.me / Admin@123` and `customer1@yataraceylon.me / Customer@123`.
-- Verified the browser login flow reaches `/dashboard` successfully with the repaired admin credentials.
+- Verified on the live site that all published demo credentials currently return `200 OK` and their role-specific dashboard pages load successfully (`/dashboard`, `/dashboard/hotel`, `/dashboard/fleet`, `/dashboard/my-bookings`).
+- Verified locally that `/login` and `/auth/login` were inconsistent implementations even though the underlying auth worked for non-admin roles.
+- Replaced `src/app/login/page.tsx` with a redirect alias to `/auth/login`, preserving query params so there is now one canonical login flow for verification messaging, captcha, redirect handling, and role-based landing behavior.
+- Verified locally in the browser that `/login?redirect=%2Fdashboard%2Fmy-bookings` redirects to `/auth/login?...` and the non-admin flow still reaches the correct dashboard destination.
 
 **What to do next**:
-- If desired, add a small regression test around seed/demo-account invariants so future auth changes do not silently break published test credentials again.
+- If desired, add a small regression test around the `/login` → `/auth/login` alias and the seed/demo-account invariants so future auth changes do not silently reintroduce split behavior.
 - Continue the remaining manual QA matrix and broader mobile/cross-browser checks.
 
 **Current state**:
 - Branch: `main`
-- Dev server: stopped after successful login verification
-- Last verified route: `/dashboard`
+- Dev server: running during verification; can be stopped after push
+- Last verified routes: live `/dashboard`, `/dashboard/hotel`, `/dashboard/fleet`, `/dashboard/my-bookings`; local `/auth/login?redirect=...`
 - Residual dev-only noise: favicon 404 on `/login` and browser autocomplete suggestion for the password field
 
 **Files changed**:
 - `.agent/TODO.md`
 - `.agent/MEMORY.md`
-- `src/lib/seed.ts`
 - `src/app/login/page.tsx`
