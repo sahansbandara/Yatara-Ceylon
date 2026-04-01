@@ -10,7 +10,7 @@ import { logAudit } from '@/lib/audit';
 export const PATCH = staffOrAdmin(async (request, { user, params }) => {
     try {
         await connectDB();
-        const { id } = params;
+        const { id } = await params;
         const { action } = await request.json();
 
         if (action !== 'VOID') {
