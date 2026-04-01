@@ -5,10 +5,19 @@ import { verifyToken } from "@/lib/auth";
 import Link from "next/link";
 import { FileText, ArrowUpRight, MapPin } from "lucide-react";
 
-async function getCustomerPlans(userId: string) {
+async function getCustomerPlans(userId: string, email?: string) {
     try {
         await connectDB();
-        const plans = await CustomPlan.find({ userId, isDeleted: { $ne: true } })
+        const filters: Record<string, unknown> = { isDeleted: { $ne: true } };
+        if (userId && email) {
+            filters.$or = [{ userId }, { customerEmail: email }];
+        } else if (userId) {
+            filters.userId = userId;
+        } else if (email) {
+            filters.customerEmail = email;
+        }
+
+        const plans = await CustomPlan.find(filters)
             .sort({ createdAt: -1 })
             .lean();
         return JSON.parse(JSON.stringify(plans));
@@ -22,8 +31,9 @@ export default async function MyPlansPage() {
     const token = cookieStore.get('toms_token')?.value;
     const payload = token ? await verifyToken(token) : null;
     const userId = payload?.userId || '';
+    const email = payload?.email;
 
-    const plans = await getCustomerPlans(userId);
+    const plans = await getCustomerPlans(userId, email);
 
     return (
         <div className="flex flex-col gap-8">
@@ -45,8 +55,8 @@ export default async function MyPlansPage() {
                                     <p className="text-[10px] text-white/40 uppercase tracking-wider">{plan.status}</p>
                                 </div>
                             </div>
-                            {plan.districts && (
-                                <p className="text-xs text-white/50">{plan.districts.length} districts selected</p>
+                            {plan.districtsUsed?.length > 0 && (
+                                <p className="text-xs text-white/50">{plan.districtsUsed.length} districts selected</p>
                             )}
                             <p className="text-[10px] text-white/30 mt-2">
                                 Created {new Date(plan.createdAt).toLocaleDateString()}

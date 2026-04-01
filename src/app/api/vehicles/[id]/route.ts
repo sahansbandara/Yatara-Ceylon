@@ -8,16 +8,26 @@ import { validateBody } from '@/lib/validate';
 import { updateVehicleSchema, createVehicleBlockSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export const GET = withAuth(async (_req, context) => {
     try {
         await connectDB();
-        const { id } = await params;
+        const { id } = await (context.params as unknown as Promise<{ id: string }>);
         const vehicle = await Vehicle.findOne({ _id: id, isDeleted: false }).lean();
         if (!vehicle) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+        const userRole = context.user.role;
+        const vehicleAny = vehicle as any;
+        if (userRole === 'VEHICLE_OWNER' && vehicleAny.ownerId?.toString?.() !== context.user.userId) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+        if (!['ADMIN', 'STAFF', 'VEHICLE_OWNER'].includes(userRole)) {
+            return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+        }
+
         const blocks = await VehicleBlock.find({ vehicleId: id }).sort({ from: 1 }).lean();
         return NextResponse.json({ vehicle, blocks });
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
-}
+});
 
 export const PATCH = withAuth(async (request, context) => {
     const { data, error } = await validateBody(request, updateVehicleSchema);

@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit, CheckCircle, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/input';
 
 interface User {
     _id: string;
@@ -31,8 +32,20 @@ interface UserTableProps {
 
 export default function UserTable({ initialUsers }: UserTableProps) {
     const [users, setUsers] = useState<User[]>(initialUsers);
+    const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    const filteredUsers = users.filter((user) => {
+        const term = query.trim().toLowerCase();
+        if (!term) return true;
+        return (
+            user.name.toLowerCase().includes(term) ||
+            user.email.toLowerCase().includes(term) ||
+            user.role.toLowerCase().includes(term) ||
+            user.status.toLowerCase().includes(term)
+        );
+    });
 
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this user?')) return;
@@ -79,6 +92,14 @@ export default function UserTable({ initialUsers }: UserTableProps) {
 
     return (
         <div className="liquid-glass-panel rounded-xl overflow-hidden border border-white/10">
+            <div className="border-b border-white/10 bg-black/20 p-4">
+                <Input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search users by name, email, role, or status"
+                    className="h-11 border-white/10 bg-white/5 text-white placeholder:text-white/30"
+                />
+            </div>
             <Table>
                 <TableHeader className="bg-black/20">
                     <TableRow className="border-white/10 hover:bg-transparent">
@@ -91,8 +112,8 @@ export default function UserTable({ initialUsers }: UserTableProps) {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {users.length > 0 ? (
-                        users.map((user) => (
+                    {filteredUsers.length > 0 ? (
+                        filteredUsers.map((user) => (
                             <TableRow key={user._id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
                                 <TableCell className="font-medium text-off-white">{user.name}</TableCell>
                                 <TableCell className="text-white/70">{user.email}</TableCell>

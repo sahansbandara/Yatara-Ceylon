@@ -10,16 +10,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
-export default function NotificationForm() {
+interface NotificationFormProps {
+    initialData?: any;
+    isEdit?: boolean;
+}
+
+export default function NotificationForm({ initialData, isEdit = false }: NotificationFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
-        title: '',
-        body: '',
-        type: 'UPDATE',
-        visibleTo: 'ALL',
-        isPublished: true,
+        title: initialData?.title || '',
+        body: initialData?.body || '',
+        type: initialData?.type || 'UPDATE',
+        visibleTo: initialData?.visibleTo || 'ALL',
+        isPublished: initialData?.isPublished ?? true,
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -27,8 +32,9 @@ export default function NotificationForm() {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/notifications', {
-                method: 'POST',
+            const url = isEdit ? `/api/notifications/${initialData._id}` : '/api/notifications';
+            const res = await fetch(url, {
+                method: isEdit ? 'PATCH' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
@@ -38,7 +44,7 @@ export default function NotificationForm() {
                 router.refresh();
             } else {
                 const error = await res.json();
-                alert(`Error: ${error.message || 'Something went wrong'}`);
+                alert(`Error: ${error.error || error.message || 'Something went wrong'}`);
             }
         } catch (error) {
             console.error(error);
@@ -52,7 +58,9 @@ export default function NotificationForm() {
         <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl liquid-glass-stat-dark p-8 rounded-2xl border border-white/[0.08] shadow-2xl text-white">
             <div className="flex flex-col mb-4">
                 <h2 className="text-xl font-semibold text-white mb-2">Notification Details</h2>
-                <p className="text-white/40 text-sm">Configure who sees this notification and its importance.</p>
+                <p className="text-white/40 text-sm">
+                    {isEdit ? 'Update visibility, publish status, and message content.' : 'Configure who sees this notification and its importance.'}
+                </p>
             </div>
 
             <div className="grid gap-6">
@@ -66,7 +74,7 @@ export default function NotificationForm() {
                     <Textarea id="body" required value={formData.body} onChange={(e) => setFormData({ ...formData, body: e.target.value })} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl min-h-[120px]" placeholder="We will be undergoing maintenance..." />
                 </div>
 
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid gap-5 md:grid-cols-3">
                     <div className="grid gap-2">
                         <Label htmlFor="type" className="text-white/70">Type</Label>
                         <Select value={formData.type} onValueChange={(val) => setFormData({ ...formData, type: val })}>
@@ -95,6 +103,18 @@ export default function NotificationForm() {
                             </SelectContent>
                         </Select>
                     </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="isPublished" className="text-white/70">Publish Status</Label>
+                        <Select value={formData.isPublished ? 'true' : 'false'} onValueChange={(val) => setFormData({ ...formData, isPublished: val === 'true' })}>
+                            <SelectTrigger className="bg-white/[0.04] border-white/[0.08] text-white focus:ring-antique-gold/20 h-11 rounded-xl">
+                                <SelectValue placeholder="Select publish status" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-[#020b08] border-white/[0.08] text-white">
+                                <SelectItem value="true" className="focus:bg-white/[0.06] focus:text-antique-gold cursor-pointer">Published</SelectItem>
+                                <SelectItem value="false" className="focus:bg-white/[0.06] focus:text-antique-gold cursor-pointer">Draft</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </div>
 
@@ -102,7 +122,7 @@ export default function NotificationForm() {
                 <Button type="button" variant="outline" onClick={() => router.back()} className="border-antique-gold/40 text-antique-gold hover:bg-antique-gold/10 rounded-xl h-10 px-6 transition-all">Cancel</Button>
                 <Button type="submit" disabled={loading} className="bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_20px_rgba(212,175,55,0.2)] rounded-xl h-10 px-6 font-semibold">
                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#020b08]/60" /> : null}
-                    Send Notification
+                    {isEdit ? 'Update Notification' : 'Send Notification'}
                 </Button>
             </div>
         </form>

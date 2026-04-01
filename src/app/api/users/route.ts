@@ -8,10 +8,26 @@ import { createUserSchema, updateUserSchema } from '@/lib/validations';
 import { hashPassword } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
 
-export const GET = adminOnly(async () => {
+export const GET = adminOnly(async (request) => {
     try {
         await connectDB();
-        const users = await User.find({ isDeleted: false }).select('-passwordHash').sort({ createdAt: -1 }).lean();
+        const { searchParams } = new URL(request.url);
+        const query = searchParams.get('q')?.trim();
+        const role = searchParams.get('role');
+        const status = searchParams.get('status');
+
+        const filter: Record<string, unknown> = { isDeleted: false };
+        if (role) filter.role = role;
+        if (status) filter.status = status;
+        if (query) {
+            filter.$or = [
+                { name: { $regex: query, $options: 'i' } },
+                { email: { $regex: query, $options: 'i' } },
+                { phone: { $regex: query, $options: 'i' } },
+            ];
+        }
+
+        const users = await User.find(filter).select('-passwordHash').sort({ createdAt: -1 }).lean();
         return NextResponse.json({ users });
     } catch (error) {
         console.error(error);

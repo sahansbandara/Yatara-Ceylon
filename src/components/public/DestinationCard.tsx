@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, Moon } from 'lucide-react';
+import { normalizeImageUrl } from '@/lib/image-utils';
 
 interface DestinationCardProps {
     destination: {
@@ -20,6 +21,7 @@ interface DestinationCardProps {
 
 export default function DestinationCard({ destination, variant = 'default' }: DestinationCardProps) {
     const heightClass = variant === 'tall' ? 'h-[480px]' : variant === 'featured' ? 'h-[420px]' : 'h-[380px]';
+    const heroImage = normalizeImageUrl(destination.images?.[0], `/images/districts/${destination.slug}.jpg`);
 
     return (
         <Link
@@ -32,7 +34,7 @@ export default function DestinationCard({ destination, variant = 'default' }: De
             <div className={`relative w-full ${heightClass} overflow-hidden`}>
                 {/* Image */}
                 <Image
-                    src={destination.images[0]}
+                    src={heroImage}
                     alt={`${destination.title}, Sri Lanka — luxury destination`}
                     fill
                     className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"

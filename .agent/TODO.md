@@ -8,9 +8,18 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## In Progress
-- [ ] Implement Analytics/Stats on Dashboard (User feedback needed on visual scope)
+- [ ] Final verification, commit, and push audit remediation changes
 
 ## Just Completed (2026-04-01)
+
+### TOMS Audit Remediation & Report Refresh
+- [x] Closed stale audit gaps around user CRUD, notification management, saved-plan ownership, finance protection, and vehicle conflict reporting.
+- [x] Added authenticated plan update/delete support and aligned `CustomPlan` persistence with the dashboard's ownership model.
+- [x] Restricted internal notification reads to staff/admin while preserving public access for published notifications only.
+- [x] Protected receipt PDF and vehicle detail reads that were still too open.
+- [x] Added regression coverage for notifications auth, plan ownership, payment void recalculation, and vehicle booking/block overlap.
+- [x] Refreshed `TOMS-Completion-Audit-Report.md` to reflect the current codebase instead of the stale earlier audit.
+- [x] Closed the stale "Implement Analytics/Stats on Dashboard" TODO after verifying the analytics page already exists and works from real data.
 
 ### Login Stability & Dev Server Fix
 - [x] Hardened `/api/auth/login` so a failed `lastLogin` write no longer blocks a valid login and surfaces as `Internal server error`.

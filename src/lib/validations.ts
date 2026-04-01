@@ -203,8 +203,10 @@ export const createPartnerServiceSchema = z.object({
 
 // ─── Custom Plans ───
 export const createPlanSchema = z.object({
+    title: z.string().min(1).max(120).optional(),
     customerName: z.string().optional(),
     customerPhone: z.string().optional(),
+    customerEmail: z.string().email().optional().or(z.literal('')),
     days: z.array(z.object({
         dayNo: z.number().min(1),
         places: z.array(z.string()),

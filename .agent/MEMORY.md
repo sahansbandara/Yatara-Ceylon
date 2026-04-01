@@ -24,6 +24,9 @@
 - [2026-03-24] React hydration mismatch on Transfers page observed via browser tools. Caused by client-side state initializing (`useCurrency` or similar) differently than SSR. While not breaking layout, it should be investigated for perfect performance. Always ensure initial client render matches server HTML output.
 - [2026-04-01] Login route treated `lastLogin` persistence as part of the critical auth path → a transient Mongo write failure after valid credentials would surface to the UI as `Internal server error` → Keep login success independent from non-essential metadata writes; update `lastLogin` with a separate best-effort write and regression-test that behavior.
 - [2026-04-01] Running `next dev` and `next build` against the same `.next` directory can corrupt local server bundles in this repo → `/api/auth/login` started throwing `Cannot find module './chunks/vendor-chunks/next.js'` and the UI only showed `Internal server error` → Use a separate development dist directory (`.next-dev`) so local auth routes do not depend on a shared artifact tree.
+- [2026-04-01] Dashboard `UserForm` edit mode was still sending `PUT` while `/api/users/[id]` only implements `PATCH` → user edits silently failed despite the backend capability existing → Always verify form verbs against the actual route exports before trusting an audit claim like "edit missing".
+- [2026-04-01] `CustomPlan` dashboard flow expected ownership fields (`userId`, sometimes `title`) that were not actually persisted by the model/API → "My Plans" could not reliably show saved plans for authenticated users → Keep model, API, and dashboard queries aligned for ownership fields, and backstop with route tests.
+- [2026-04-01] Destination imagery from the database can contain malformed absolute URLs like `yataraceylon.mehttps://...` → `next/image` receives an invalid src and the public destination hero/cards break → Normalize stored image URLs before rendering and fall back to local district images when the value is unusable.
 
 ---
 
@@ -33,6 +36,8 @@
 - [2026-04-01] `/api/auth/login` succeeds locally for `admin@ceylonescapes.lk` and `Admin@123`. The vulnerable point was the post-auth `lastLogin` write, not credential lookup or JWT issuance.
 - [2026-04-01] The observed local 500 could also be reproduced from a corrupted Next dev bundle, not just auth logic. After a `next build` while dev was running, the login route resolved to a missing vendor chunk inside `.next`.
 - [2026-04-01] Live Vercel behavior on `https://www.yataraceylon.me/api/auth/login`: malformed email returns `400`, missing user returns `401`, but valid admin credentials return `500`. This strongly indicates production reaches the database and only fails in the post-auth success path, matching the pre-patch `lastLogin` save behavior. Domain redirect (`yataraceylon.me` → `www.yataraceylon.me`) is normal and not the cause.
+- [2026-04-01] `TOMS-Completion-Audit-Report.md` is partially stale: several items flagged as missing were already implemented (`/api/users/[id]` PATCH/DELETE, notification PATCH/DELETE, bookings/tickets/invoices/payments auth, finance CSV export, analytics page, tests, custom 404). Re-audit the code before treating the report as source of truth.
+- [2026-04-01] Destination cards/detail pages now normalize malformed stored image URLs before sending them to `next/image`, which prevents broken hero/card imagery when DB content contains duplicated domains.
 
 ---
 
@@ -43,6 +48,7 @@
 - Dashboard pages (support, notifications, users): Use DashboardHero with title + subtitle showing summary stats. Subtitle format: "X total" or "X total • Y open". Action prop accepts Button wrapped in Link for CTAs.
 - Auth routes: verify credentials first, then treat audit/profile updates like `lastLogin` as best-effort follow-up work so a transient write issue cannot block a valid login.
 - Next.js local workflow: keep development output separate from production build output when both commands may run on the same repo; `.next-dev` for dev and `.next` for build avoids broken route bundles.
+- Saved plan ownership: persist `userId` for authenticated plan saves and let reads fall back to `customerEmail` for legacy records until data is backfilled.
 - Dashboard StatCard KPI rows: Responsive grid (grid-cols-1 md:grid-cols-2 lg:grid-cols-4 or lg:grid-cols-3). Each card shows: title (small uppercase label), numeric value (large bold), icon with hover effects. Use accentColor prop like "text-blue-400" or "text-amber-400".
 - Dashboard data queries: All server-side in page.tsx. Pattern: fetch with .find({ isDeleted: false }), filter in-memory for stats, serialize with JSON.parse(JSON.stringify()). GlassPanel wraps table content with liquid-glass-stat-dark styling.
 - Dashboard button styling: Gold CTA buttons use class="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold tracking-wider text-xs rounded-lg" for consistency across Support/Notifications/Users pages.

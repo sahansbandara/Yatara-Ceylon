@@ -31,7 +31,7 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
 
         try {
             const url = isEdit ? `/api/users/${initialData._id}` : '/api/users';
-            const method = isEdit ? 'PUT' : 'POST';
+            const method = isEdit ? 'PATCH' : 'POST';
 
             const payload: any = { ...formData };
             if (isEdit && !payload.password) {
@@ -49,7 +49,7 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
                 router.refresh();
             } else {
                 const error = await res.json();
-                alert(`Error: ${error.message || 'Something went wrong'}`);
+                alert(`Error: ${error.error || error.message || 'Something went wrong'}`);
             }
         } catch (error) {
             console.error(error);

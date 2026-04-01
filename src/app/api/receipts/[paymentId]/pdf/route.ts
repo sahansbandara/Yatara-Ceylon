@@ -4,12 +4,13 @@ import connectDB from '@/lib/mongodb';
 import Payment from '@/models/Payment';
 import Booking from '@/models/Booking';
 import { jsPDF } from 'jspdf';
+import { staffOrAdmin } from '@/lib/rbac';
 
 // GET /api/receipts/[paymentId]/pdf – generate PDF receipt
-export async function GET(_req: Request, { params }: { params: Promise<{ paymentId: string }> }) {
+export const GET = staffOrAdmin(async (_req, context) => {
     try {
         await connectDB();
-        const { paymentId } = await params;
+        const { paymentId } = await (context.params as Promise<{ paymentId: string }>);
         const payment = await Payment.findById(paymentId).lean();
         if (!payment) return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
 
@@ -81,4 +82,4 @@ export async function GET(_req: Request, { params }: { params: Promise<{ payment
         console.error(error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-}
+});

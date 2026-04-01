@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────
 
 import React from 'react';
+import { normalizeImageUrl } from '@/lib/image-utils';
 
 const SITE_URL = 'https://yataraceylon.me';
 const SITE_NAME = 'Yatara Ceylon';
@@ -12,8 +13,10 @@ const LOGO_URL = `${SITE_URL}/images/logo.png`;
 /** Return absolute URL for an image — if already absolute, return as-is */
 function absImageUrl(src?: string): string | undefined {
     if (!src) return undefined;
-    if (src.startsWith('http://') || src.startsWith('https://')) return src;
-    return `${SITE_URL}${src.startsWith('/') ? '' : '/'}${src}`;
+    const sanitized = normalizeImageUrl(src);
+    if (!sanitized) return undefined;
+    if (sanitized.startsWith('http://') || sanitized.startsWith('https://')) return sanitized;
+    return `${SITE_URL}${sanitized.startsWith('/') ? '' : '/'}${sanitized}`;
 }
 
 /* ═══════════════════════════════════════════════════════════

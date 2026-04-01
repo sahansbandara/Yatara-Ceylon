@@ -1,679 +1,370 @@
-# TOMS — Full Project Completion Audit Report
+# TOMS — Completion Audit Report (Refreshed)
 
 **Project:** Yatara Ceylon — Tour Operator Management System
 **Website:** https://www.yataraceylon.me
-**Audit Date:** April 1, 2026
-**Auditor:** Automated Codebase + Live Site Analysis
+**Refresh Date:** April 1, 2026
+**Auditor:** Codex codebase audit + targeted verification
 
 ---
 
 ## Executive Summary
 
-**Overall Completion: ~72%**
+**Overall Completion: ~84%**
 
-The project has a strong foundation — the public website is polished, the backend architecture is solid with 23 models and comprehensive API routes, and the dashboard system covers all 5 roles. However, there are critical gaps in security (unauthenticated GET endpoints), missing CRUD operations (user update/delete, notification edit), broken cross-module connections, and missing features that prevent this from being "fully complete" by your standard.
+The system is materially further along than the previous audit claimed. The public site is broad and polished, the dashboard covers all five roles, and the backend already contains more protected CRUD coverage than the older report recorded. This refresh also includes additional remediation completed during the audit pass:
+
+- user dashboard edit/delete/search flow verified and completed
+- notification edit/delete/publish flow completed in API and dashboard UI
+- saved plan ownership aligned across model, API, and customer dashboard
+- public notification leakage closed
+- receipt and vehicle detail reads protected
+- payment void flow verified and regression-tested
+- destination image URL normalization added to prevent malformed stored URLs from breaking public cards and hero images
+
+The main unfinished work is no longer core CRUD. The remaining high-priority gaps are **account recovery and anti-abuse controls**: password reset, email verification, CSRF protection, and stronger login lockout behavior. Most remaining dashboard gaps are polish items such as bulk actions, sorting, and broader browser/mobile QA.
 
 ---
 
-## OVERALL SCORE BY LAYER
+## Audit Corrections
+
+The previous audit report was stale in several important places. The following items were already implemented or were completed during this refresh:
+
+- `/api/users/[id]` already supports `GET`, `PATCH`, and `DELETE`
+- `/api/notifications/[id]` already supports `GET`, `PATCH`, and `DELETE`
+- `/api/bookings`, `/api/bookings/[id]`, `/api/tickets`, `/api/invoices`, `/api/payments`, and `/api/reports/finance` are protected
+- finance CSV export already exists
+- analytics dashboard page already exists
+- project test files already exist under `src`
+- custom 404 page already exists
+- vehicle block logic uses `from`/`to`; the previously reported `dates.start`/`dates.end` mismatch is not present in the current codebase
+
+---
+
+## Score By Layer
 
 | Layer | Score | Status |
 |-------|-------|--------|
-| Public Website | 88% | STRONG — All main pages exist, real data, good UX |
-| Authentication | 75% | GOOD — Login/logout/roles work, missing password reset & email verify |
-| Dashboard System | 82% | GOOD — All 5 role dashboards exist, some gaps in data/features |
-| Module 1: Account Management | 60% | WEAK — User create/list works, no update/delete, weak notification mgmt |
-| Module 2: Products & Content | 85% | GOOD — Package/destination CRUD solid, content types covered |
-| Module 3: Vehicle Fleet | 85% | GOOD — Full CRUD, blocking system, availability check works |
-| Module 4: Booking & Reservation | 80% | GOOD — Full lifecycle, support tickets, some status gaps |
-| Module 5: Finance | 70% | FAIR — Invoice/payment/receipt works, missing refund void, weak reporting |
-| Module 6: Supplier/Partner | 80% | GOOD — Full CRUD, services, assignment works |
-| Cross-Module Connections | 75% | FAIR — Core connections work, some isolated areas |
-| Validation & Security | 55% | WEAK — Zod schemas exist but many GET routes unprotected |
-| Operational Quality | 60% | FAIR — No tests, missing error states, some responsiveness gaps |
+| Public Website | 90% | STRONG |
+| Authentication | 76% | GOOD |
+| Dashboard System | 88% | STRONG |
+| Module 1: Account Management | 88% | GOOD |
+| Module 2: Products & Content | 88% | GOOD |
+| Module 3: Vehicle Fleet | 88% | GOOD |
+| Module 4: Booking & Reservation | 84% | GOOD |
+| Module 5: Finance | 86% | GOOD |
+| Module 6: Supplier/Partner | 80% | GOOD |
+| Cross-Module Connections | 84% | GOOD |
+| Validation & Security | 72% | FAIR |
+| Operational Quality | 78% | FAIR |
 
 ---
 
-## 1) PUBLIC WEBSITE AUDIT
+## Public Website
 
-### Pages That Exist and Work
+### Verified Complete
 
-| Page | Status | Notes |
+- Homepage and major marketing flows
+- Packages listing and package detail pages
+- Destinations listing and destination detail pages
+- Transfers landing page, category pages, and route detail pages
+- Build Your Tour planner shell and dynamic Leaflet loading flow
+- Booking request, inquiry, contact, FAQ, legal, services, MICE, careers, and guide pages
+- Custom `404` page
+
+### Fixed During Refresh
+
+- destination image rendering now normalizes malformed stored absolute URLs before sending them to `next/image`
+
+### Remaining Notes
+
+- Build Tour map has the correct dynamic import and loading state, but cross-browser manual QA is still recommended
+- blog/content architecture remains outside this audit scope
+
+---
+
+## Authentication & Roles
+
+### Verified Complete
+
+- login, register, logout, and current-user routes
+- JWT cookie auth and role-based dashboard middleware
+- inactive user blocking
+- rate limiting on auth routes
+- role-specific dashboard navigation
+
+### Remaining Gaps
+
+- no password reset / forgot-password flow
+- no email verification on registration
+- no explicit CSRF protection layer
+- no account lockout / escalating cooldown after repeated failed logins
+- no 2FA for privileged roles
+
+---
+
+## Dashboard System
+
+### Admin / Staff
+
+| Area | Status | Notes |
 |------|--------|-------|
-| Homepage | ✅ COMPLETE | 15+ sections, real data, all CTAs work |
-| Packages listing | ✅ COMPLETE | 24+ packages, filters (category/duration/sort), real data |
-| Package detail (e.g. /packages/east-coast-surf-and-sun) | ✅ COMPLETE | Full itinerary, pricing, Book Now + Inquire CTAs |
-| Destinations listing | ✅ COMPLETE | 25 destinations, filters, real data |
-| Destination detail (e.g. /destinations/sigiriya) | ⚠️ PARTIAL | Real data works BUT hero image URL is malformed (double domain: "yataraceylon.mehttps://dxk1acp76n912.cloudfront.net...") |
-| Transfers listing | ✅ COMPLETE | 6 categories, 8 signature routes, pricing, fare checker |
-| Transfer detail pages | ✅ COMPLETE | Airport, intercity, chauffeur, safari, evening, cruise/rail |
-| Build Your Tour | ⚠️ PARTIAL | Interactive planner exists with districts/places, BUT map shows "Loading map..." — may not render for all users |
-| Vehicles page | ✅ COMPLETE | 9 vehicle classes, specs, rates, CTAs |
-| Booking Request | ✅ COMPLETE | Full form with payment integration |
-| Inquiry page | ✅ COMPLETE | Form with name, email, WhatsApp, dates, party size |
-| Contact page | ✅ COMPLETE | Form + WhatsApp + email + address |
-| FAQ page | ✅ COMPLETE | 12 FAQs in 4 categories |
-| Login page | ✅ COMPLETE | Login form + Sign Up link |
-| About page | ✅ EXISTS | Brand story |
-| About/team | ✅ EXISTS | Team page |
-| About/fleet | ✅ EXISTS | Fleet info |
-| About/sustainability | ✅ EXISTS | Sustainability page |
-| About/brands | ✅ EXISTS | Brands page |
-| Search page | ✅ EXISTS | Search modal (⌘K) |
-| Tours category pages | ✅ EXISTS | Cultural, coastal, hill-country, honeymoon, wellness, wildlife, experiences |
-| Guide pages | ✅ EXISTS | Guide, blog, regions, best-time-to-visit |
-| Legal pages | ✅ EXISTS | Terms, privacy, return policy |
-| Services page | ✅ EXISTS | Services listing |
-| MICE page | ✅ EXISTS | Corporate events |
-| Careers page | ✅ EXISTS | Careers |
+| Overview | ✅ | KPI cards with real data |
+| Analytics | ✅ | Monthly booking and revenue stats |
+| Bookings | ✅ | List, detail, status, assignment, archive |
+| Packages | ✅ | CRUD, publish, feature controls |
+| Destinations | ✅ | CRUD and publish flow |
+| Vehicles | ✅ | CRUD, block management, calendar |
+| Finance | ✅ | Invoices, payments, receipts, reports |
+| Partners | ✅ | CRUD, services, assignments |
+| Users | ✅ | List, search, create, edit, disable/delete |
+| Notifications | ✅ | List, create, edit, delete, publish toggle |
+| Support Tickets | ✅ | List, detail, reply, status updates |
+| Audit Logs | ✅ | Admin-only |
+| Archive Center | ✅ | Restore and permanent delete flow |
 
-### Public Pages — MISSING or BROKEN
+### Customer / Owner Dashboards
 
-| Issue | Severity |
-|-------|----------|
-| Destination detail hero images have malformed URLs (double domain concatenation) | HIGH |
-| Build Tour map shows "Loading map..." — may not render client-side for some users | MEDIUM |
-| No 404/not-found page tested — unclear if custom error page exists | MEDIUM |
-| Blog page exists but unclear if it pulls from DB or is static | LOW |
-
-### Public Workflows
-
-| Workflow | Status |
-|----------|--------|
-| Visitor lands on homepage | ✅ WORKS |
-| Visitor browses packages/destinations/transfers | ✅ WORKS |
-| Visitor opens a detail page | ✅ WORKS (except destination hero image bug) |
-| Visitor submits booking request | ✅ WORKS — form submits to /api/public/booking-request |
-| Request stored and visible in dashboard | ✅ WORKS — creates booking + support ticket |
-| Visitor builds custom plan and saves | ⚠️ PARTIAL — planner exists, save calls /api/plans, but map rendering uncertain |
-
----
-
-## 2) AUTHENTICATION & ROLES AUDIT
-
-### What Exists
-
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Login (POST /api/auth/login) | ✅ WORKS | JWT + bcrypt, rate limited, sets HttpOnly cookie |
-| Register (POST /api/auth/register) | ✅ WORKS | Rate limited, partner roles get PENDING_APPROVAL |
-| Logout (POST /api/auth/logout) | ✅ WORKS | Clears cookie |
-| Current user (GET /api/auth/me) | ✅ WORKS | Returns user, checks active status |
-| Role-based middleware | ✅ WORKS | Protects /dashboard/*, injects role headers |
-| Role-based sidebar | ✅ WORKS | Different nav for ADMIN/STAFF/USER/VEHICLE_OWNER/HOTEL_OWNER |
-| Invalid credentials error | ✅ WORKS | Generic "Invalid email or password" (good security practice) |
-| Disabled user blocked | ✅ WORKS | Only ACTIVE users can login |
-| Security headers | ✅ WORKS | X-Frame-Options, X-Content-Type, Referrer-Policy, XSS-Protection |
-
-### What's MISSING
-
-| Feature | Severity | Impact |
-|---------|----------|--------|
-| Password reset / forgot password | **CRITICAL** | Users cannot recover accounts |
-| Email verification on registration | **HIGH** | Fake accounts can be created |
-| Account lockout after failed attempts | **MEDIUM** | Brute force vulnerability |
-| CSRF protection | **HIGH** | POST endpoints vulnerable to cross-site attacks |
-| Two-factor authentication | **LOW** | Admin accounts less secure |
-| Refresh token mechanism | **LOW** | 1-day JWT expiry with no refresh |
-
----
-
-## 3) DASHBOARD SYSTEM AUDIT
-
-### Admin Dashboard
-
-| Page | Status | Notes |
+| Area | Status | Notes |
 |------|--------|-------|
-| Overview (/dashboard) | ✅ WORKS | KPI cards with real data from /api/dashboard/overview |
-| Analytics | ✅ WORKS | 6-month booking/revenue charts, top packages |
-| Bookings list | ✅ WORKS | Filter by status/type, search, pagination |
-| Booking detail | ✅ WORKS | Full detail, status updater, assignments, finance link |
-| Packages list | ✅ WORKS | Search, filter, create/edit/delete |
-| Package create/edit | ✅ WORKS | Full form with itinerary, images, publish toggle |
-| Destinations list | ✅ WORKS | CRUD with publish/unpublish |
-| Destination create/edit | ✅ WORKS | Full form |
-| Vehicles list | ✅ WORKS | Filter by type/status, CRUD |
-| Vehicle detail | ✅ WORKS | Block management, calendar |
-| Vehicle calendar | ✅ WORKS | Visual availability calendar |
-| Finance | ✅ WORKS | Invoice/payment management, receipt generation |
-| Partners list | ✅ WORKS | Filter by type/status, CRUD |
-| Partner detail | ✅ WORKS | Services management, rates |
-| Users list | ⚠️ PARTIAL | List + create works, NO edit/delete user |
-| User detail | ⚠️ PARTIAL | View only, no update capability |
-| Notifications | ⚠️ PARTIAL | Create + list works, NO edit/delete/publish toggle |
-| Support tickets | ✅ WORKS | List, detail, reply, status update |
-| Audit logs | ✅ WORKS | Admin-only, filtered, paginated |
-| Archive | ✅ WORKS | View/restore/permanently delete archived items |
-| Admin applications | ✅ EXISTS | Partner approval workflow |
+| Customer My Bookings | ✅ | filtered to current user |
+| Customer My Plans | ✅ | ownership fixed for authenticated + legacy email-linked plans |
+| Customer Profile | ✅ | editable profile flow |
+| Vehicle Owner Fleet | ✅ | owner-restricted fleet management |
+| Vehicle Owner Calendar | ✅ | owner availability view |
+| Hotel Owner Property | ✅ | property/service management |
 
-### Staff Dashboard
+### Remaining Dashboard Gaps
 
-| Page | Status | Notes |
-|------|--------|-------|
-| Overview | ✅ WORKS | Same overview page |
-| Bookings | ✅ WORKS | Full access |
-| Vehicles | ✅ WORKS | Full access |
-| Support | ✅ WORKS | Full access |
-| Packages | ✅ WORKS | Content management |
-| Destinations | ✅ WORKS | Content management |
-| Partners | ✅ WORKS | Partner management |
-| Applications | ✅ WORKS | Review applications |
-| Notifications | ⚠️ PARTIAL | Same gaps as admin |
-
-### Customer Dashboard (USER role)
-
-| Page | Status | Notes |
-|------|--------|-------|
-| My Bookings | ✅ WORKS | Lists customer's bookings |
-| My Plans | ✅ WORKS | Lists saved custom plans |
-| Profile | ✅ WORKS | View/edit profile |
-
-### Vehicle Owner Dashboard
-
-| Page | Status | Notes |
-|------|--------|-------|
-| My Vehicles (fleet) | ✅ WORKS | KPI cards, vehicle list, block management, assignments |
-| Fleet calendar | ✅ WORKS | Visual availability |
-| Add Vehicle | ✅ WORKS | Create form, auto-sets PENDING_APPROVAL |
-| Profile | ✅ WORKS | View/edit profile |
-
-### Hotel Owner Dashboard
-
-| Page | Status | Notes |
-|------|--------|-------|
-| My Property (hotel) | ✅ WORKS | Properties list, services/rates, service blocks |
-| Add Property | ✅ WORKS | Create form |
-| Profile | ✅ WORKS | View/edit profile |
-
-### Dashboard — MISSING
-
-| Issue | Severity |
-|-------|----------|
-| No way to edit/delete users from dashboard | HIGH |
-| No way to edit/update/delete notifications | HIGH |
-| No notification publish/unpublish toggle | MEDIUM |
-| No bulk actions on any list page | LOW |
-| No column sorting on table views | LOW |
-| Analytics has no custom date range picker | LOW |
-| Archive has no filtering by collection type | LOW |
+- no bulk actions across list pages
+- no column sorting on most tables
+- analytics has no custom date-range controls
+- broader mobile dashboard QA still needed
 
 ---
 
-## 4) MODULE 1 — ACCOUNT MANAGEMENT
+## Module 1 — Account Management
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Create user | ✅ WORKS | Admin-only, validation, duplicate email check |
-| List users | ✅ WORKS | Admin-only, excludes passwordHash |
-| Search users | ❌ MISSING | No search endpoint on user list API |
-| Edit user | ❌ MISSING | No PATCH /api/users/[id] endpoint |
-| Disable/delete user | ❌ MISSING | No DELETE endpoint, no status toggle |
-| Assign role | ⚠️ PARTIAL | Set at creation only, cannot change later |
-| View customer profile | ✅ WORKS | Profile page exists |
-| Link customer to booking history | ✅ WORKS | My Bookings page filters by user |
-| Create notification | ✅ WORKS | Staff/admin, validation |
-| List notifications | ✅ WORKS | Filter by published/type |
-| Edit notification | ❌ MISSING | No PATCH endpoint |
-| Delete notification | ❌ MISSING | No DELETE endpoint |
-| Publish/unpublish notification | ❌ MISSING | No toggle |
+| Create user | ✅ | admin-only |
+| List users | ✅ | admin-only |
+| Search/filter users | ✅ | query support on API + dashboard search UI |
+| Edit user | ✅ | `PATCH /api/users/[id]` + dashboard form |
+| Disable/delete user | ✅ | soft delete + status update |
+| Assign / change role | ✅ | supported through user update schema |
+| View customer profile | ✅ | dashboard profile page |
+| Link customer to booking history | ✅ | customer bookings filtered by user/email |
+| Create notification | ✅ | staff/admin |
+| List notifications | ✅ | public published-only, staff/admin full list |
+| Edit notification | ✅ | dashboard edit page + `PATCH` route |
+| Delete notification | ✅ | dashboard action + soft delete |
+| Publish/unpublish notification | ✅ | dashboard toggle + persisted `isPublished` |
 
-**Module Score: 60% — Needs significant work on user CRUD and notification management**
+**Module Score: 88%**
 
 ---
 
-## 5) MODULE 2 — PRODUCTS & CONTENT MANAGEMENT
+## Module 2 — Products & Content
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Create package | ✅ WORKS | Full form, validation, slug generation |
-| View package list | ✅ WORKS | Search, filter by status/category |
-| Filter/search packages | ✅ WORKS | Text search, category filter |
-| Edit package | ✅ WORKS | PATCH endpoint with validation |
-| Soft delete package | ✅ WORKS | Sets isDeleted=true |
-| Publish/unpublish | ✅ WORKS | isPublished toggle |
-| Featured/home controls | ✅ WORKS | isFeatured, isFeaturedHome, homeRank fields |
-| Itinerary management | ✅ WORKS | Day-by-day itinerary array |
-| Image management | ✅ WORKS | Multiple images per package |
-| Create destination | ✅ WORKS | Full CRUD |
-| Edit destination | ✅ WORKS | PATCH with validation |
-| Publish/unpublish destination | ✅ WORKS | isPublished toggle |
-| FAQ CRUD | ✅ WORKS | /api/faqs with full CRUD |
-| Testimonial CRUD | ✅ WORKS | /api/testimonials with full CRUD |
-| Gallery CRUD | ✅ WORKS | /api/gallery with full CRUD |
-| District management | ✅ WORKS | /api/districts with CRUD |
-| Place management | ✅ WORKS | /api/places |
-| Save custom plan | ✅ WORKS | POST /api/plans creates plan |
-| Edit saved plan | ⚠️ UNCERTAIN | Need to verify PATCH exists |
-| Delete saved plan | ⚠️ UNCERTAIN | Need to verify DELETE exists |
-| Public shows only published | ✅ WORKS | Filter on isPublished in public queries |
+| Package CRUD | ✅ | create, edit, soft delete, publish |
+| Destination CRUD | ✅ | create, edit, soft delete, publish |
+| FAQ CRUD | ✅ | implemented |
+| Testimonial CRUD | ✅ | implemented |
+| Gallery CRUD | ✅ | implemented |
+| District / place management | ✅ | implemented |
+| Save custom plan | ✅ | public and authenticated save flow |
+| Edit saved plan | ✅ | authenticated `PATCH /api/plans?id=` |
+| Delete saved plan | ✅ | authenticated soft delete |
+| Customer "My Plans" | ✅ | user ownership now works reliably |
+| Public published-only filtering | ✅ | implemented |
 
-**Module Score: 85% — Strong, minor gaps in plan edit/delete verification**
+**Module Score: 88%**
 
 ---
 
-## 6) MODULE 3 — VEHICLE FLEET MANAGEMENT
+## Module 3 — Vehicle Fleet Management
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Create vehicle | ✅ WORKS | Validation, owner auto-sets PENDING_APPROVAL |
-| List vehicles | ✅ WORKS | Filter by type/status/transferType |
-| Edit vehicle | ✅ WORKS | PATCH with validation, owner check |
-| Soft delete vehicle | ✅ WORKS | Staff/admin only |
-| Status: available/maintenance/unavailable | ✅ WORKS | Status enum enforced |
-| Add blocked date range | ✅ WORKS | POST to /api/vehicles/[id], overlap detection |
-| Remove blocked date | ✅ WORKS | DELETE /api/blocks/[blockId] |
-| Check availability | ✅ WORKS | Date range filtering on GET |
-| Assign vehicle to booking | ✅ WORKS | PATCH booking with assignedVehicleId |
-| Auto-block on confirmed booking | ✅ WORKS | Creates VehicleBlock on CONFIRMED status |
-| Auto-unblock on cancelled | ✅ WORKS | Removes block on CANCELLED |
-| Fleet owner view | ✅ WORKS | Filtered by ownerId |
-| Vehicle calendar | ✅ WORKS | Visual calendar page |
+| Vehicle CRUD | ✅ | create, edit, soft delete |
+| Vehicle status management | ✅ | enum-based |
+| Vehicle block dates | ✅ | overlap checks on manual blocks |
+| Booking conflict checks | ✅ | active-booking overlap check present and regression-tested |
+| Vehicle assignment to booking | ✅ | implemented |
+| Auto-block / unblock from booking status | ✅ | confirmed/cancelled flows handled |
+| Owner-restricted fleet view | ✅ | enforced |
+| Vehicle calendar | ✅ | implemented |
+| Protected vehicle detail reads | ✅ | now restricted to admin/staff/owner |
 
-### BUGS FOUND
-
-| Bug | Severity |
-|-----|----------|
-| **Vehicle block date field mismatch**: Code checks `dates.start` and `dates.end` but model uses `dates.from` and `dates.to` — booking conflict check WILL NOT WORK | **CRITICAL** |
-
-**Module Score: 85% — Solid, but the date field bug is critical to fix**
+**Module Score: 88%**
 
 ---
 
-## 7) MODULE 4 — BOOKING & RESERVATION MANAGEMENT
+## Module 4 — Booking & Reservation Management
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Public booking request submission | ✅ WORKS | POST /api/public/booking-request, rate limited |
-| Create booking from admin/staff | ✅ WORKS | POST /api/bookings, validation |
-| Booking list | ✅ WORKS | Filter status/type, search, pagination |
-| Booking detail page | ✅ WORKS | Full detail with populated relations |
-| Update booking status | ✅ WORKS | PATCH with status validation |
-| Assign staff | ✅ WORKS | assignedStaffId field |
-| Assign vehicle | ✅ WORKS | assignedVehicleId + auto-blocking |
-| Attach custom plan | ✅ WORKS | customPlanId field on booking |
-| Cancel booking | ✅ WORKS | Status → CANCELLED, unblocks vehicle |
-| Archive/soft delete booking | ✅ WORKS | isDeleted soft delete |
-| Search/filter bookings | ✅ WORKS | Text search + status/type filters |
-| Support ticket creation | ✅ WORKS | Auto-created with public booking |
-| Support ticket reply | ✅ WORKS | PATCH /api/tickets/[id] adds reply |
-| Support ticket status | ✅ WORKS | OPEN/REPLIED/CLOSED |
-| Close support ticket | ✅ WORKS | Status update |
-| Customer views own bookings | ✅ WORKS | My Bookings page |
+| Public booking request submission | ✅ | rate limited |
+| Staff/admin booking creation | ✅ | validated |
+| Booking list and detail pages | ✅ | filters, pagination, populated relations |
+| Booking status updates | ✅ | full lifecycle enums present |
+| Staff assignment | ✅ | implemented |
+| Vehicle assignment | ✅ | implemented |
+| Custom plan attachment | ✅ | supported |
+| Cancel/archive | ✅ | implemented |
+| Support ticket creation and replies | ✅ | implemented |
+| Customer views own bookings | ✅ | enforced |
+| Booking GET auth | ✅ | protected |
 
-### Booking Statuses Implemented
+### Remaining Gaps
 
-All required statuses exist: NEW, PAYMENT_PENDING, CONTACTED, ADVANCE_PAID, CONFIRMED, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED
+- no dedicated booking timeline / history stream beyond audit log events
+- no duplicate-booking detection
 
-### Issues
-
-| Issue | Severity |
-|-------|----------|
-| GET /api/bookings has NO AUTH — anyone can read all bookings | **CRITICAL** |
-| GET /api/bookings/[id] has NO AUTH — any booking readable by ID | **CRITICAL** |
-| GET /api/tickets has NO AUTH — all support tickets publicly readable | **HIGH** |
-| No booking timeline/history log (who changed what when) | MEDIUM |
-| No duplicate booking detection | LOW |
-
-**Module Score: 80% — Functionally strong but has critical auth gaps on read endpoints**
+**Module Score: 84%**
 
 ---
 
-## 8) MODULE 5 — FINANCE MANAGEMENT
+## Module 5 — Finance Management
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Create invoice | ✅ WORKS | Auto-numbering, item calculation, staff/admin only |
-| View invoice | ⚠️ PARTIAL | List works, but NO individual GET /api/invoices/[id] |
-| Update invoice (DRAFT→FINAL) | ✅ WORKS | PATCH transitions status |
-| Record payment | ✅ WORKS | Manual + PayHere + Stripe, auto-updates booking balance |
-| Record refund | ✅ WORKS | type=REFUND on payment |
-| Void incorrect entry | ❌ MISSING | No void/cancel mechanism for wrong payments |
-| Auto-calculate paid/remaining | ✅ WORKS | Booking paidAmount and remainingBalance auto-updated |
-| Per-booking finance summary | ✅ WORKS | Payments list filtered by bookingId |
-| Finance dashboard | ✅ WORKS | Revenue, refunds, net revenue, monthly breakdown |
-| Receipt generation | ✅ WORKS | PDF receipt via jsPDF |
-| CSV/PDF export | ⚠️ PARTIAL | Receipt PDF works, no CSV export for reports |
+| Create invoice | ✅ | auto-calculated totals |
+| List invoices | ✅ | protected |
+| View single invoice | ✅ | `GET /api/invoices/[id]` exists |
+| Finalize invoice | ✅ | DRAFT to FINAL supported |
+| Record payment | ✅ | manual + provider flows |
+| Record refund | ✅ | `type=REFUND` |
+| Void payment | ✅ | `PATCH /api/payments/[id]` with `VOID` action |
+| Auto-calculate paid / remaining | ✅ | booking balances update |
+| Receipt PDF generation | ✅ | implemented |
+| Finance JSON report | ✅ | protected |
+| Finance CSV export | ✅ | implemented |
+| Payments / invoices / reports auth | ✅ | protected |
 
-### Issues
+### Remaining Gaps
 
-| Issue | Severity |
-|-------|----------|
-| GET /api/invoices has NO AUTH — invoices publicly readable | **CRITICAL** |
-| GET /api/payments has NO AUTH — payment history publicly readable | **CRITICAL** |
-| GET /api/finance/receipt has NO AUTH — any booking receipt downloadable | **HIGH** |
-| GET /api/reports/finance has NO AUTH — financial reports publicly readable | **CRITICAL** |
-| No void/cancel mechanism for incorrect payments | HIGH |
-| No individual invoice GET by ID | MEDIUM |
-| No CSV export for finance reports | MEDIUM |
-| Invoice can only go DRAFT→FINAL, no VOID transition from FINAL | MEDIUM |
+- no invoice-level VOID / cancellation state transition after FINAL
+- finance reporting UX could still use richer filters and date controls
 
-**Module Score: 70% — Core works but major auth gaps expose financial data**
+**Module Score: 86%**
 
 ---
 
-## 9) MODULE 6 — SUPPLIER/PARTNER MANAGEMENT
+## Module 6 — Supplier / Partner Management
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Create partner | ✅ WORKS | Validation, hotel owners get PENDING_APPROVAL |
-| List/search partners | ✅ WORKS | Filter by type/status |
-| Edit partner | ✅ WORKS | PATCH with validation, owner check |
-| Deactivate/delete partner | ✅ WORKS | Soft delete, staff/admin only |
-| Create service rate card | ✅ WORKS | POST to /api/partners/[id] |
-| Edit service rate card | ⚠️ UNCERTAIN | Need to verify PATCH for services |
-| Assign partner to booking | ✅ WORKS | BookingPartnerAssignment model + /api/booking-partners |
-| Show assigned partners on booking | ✅ WORKS | Populated in booking detail |
-| Hotel partner view | ✅ WORKS | Filtered dashboard for HOTEL_OWNER |
-| Partner service blocks | ✅ WORKS | /api/partner-service-blocks |
-| Inactive partner blocking | ⚠️ UNCERTAIN | Need to verify assignment prevents inactive partners |
+| Partner CRUD | ✅ | implemented |
+| Partner service / rate-card creation | ✅ | implemented |
+| Partner assignment to bookings | ✅ | implemented |
+| Assigned partners on booking detail | ✅ | implemented |
+| Hotel owner restricted view | ✅ | implemented |
+| Partner service blocks | ✅ | implemented |
 
-**Module Score: 80% — Solid overall**
+### Remaining Notes
+
+- some deeper partner workflow rules still need targeted QA, especially around inactive-partner assignment edge cases
+
+**Module Score: 80%**
 
 ---
 
-## 10) CROSS-MODULE CONNECTIONS
+## Cross-Module Connections
 
 | Connection | Status | Notes |
 |------------|--------|-------|
-| Content → Public website (published packages/destinations appear) | ✅ WORKS | isPublished filter on public pages |
-| Public booking → Booking module (form creates record) | ✅ WORKS | /api/public/booking-request creates booking + ticket |
-| Booking → Finance (total, payments, balance connected) | ✅ WORKS | paidAmount/remainingBalance auto-calculated |
-| Booking → Vehicle (assigned vehicle respects availability) | ✅ WORKS | Auto-block on CONFIRMED, unblock on CANCELLED |
-| Booking → Partner (assigned partner appears on booking) | ✅ WORKS | BookingPartnerAssignment populated |
-| Booking → User (customer booking history) | ✅ WORKS | My Bookings filtered by user |
-| Build Tour → Booking/Inquiry | ⚠️ PARTIAL | Save plan works, but plan→booking conversion flow is indirect (CTA goes to /inquire) |
-| Auth → Dashboard (correct role sees correct pages) | ✅ WORKS | Middleware + sidebar role mapping |
-| Vehicle block date field bug breaks booking↔vehicle conflict check | ❌ BROKEN | Critical bug: dates.start/end vs dates.from/to mismatch |
+| Content publish state affects public site | ✅ | works |
+| Public booking creates operational records | ✅ | booking + support flow |
+| Booking finance linkage | ✅ | invoice/payment/balance linkage works |
+| Booking vehicle linkage | ✅ | assignment and conflict checks work |
+| Booking partner linkage | ✅ | assignment model in use |
+| Customer booking history | ✅ | works |
+| Customer plan ownership | ✅ | fixed across model/API/dashboard |
+| Build Tour to inquiry flow | ✅ | indirect but functional |
 
-**Connection Score: 75% — Core connections work, vehicle conflict check is broken**
+**Connection Score: 84%**
 
 ---
 
-## 11) VALIDATION, SECURITY & EDGE CASES
+## Validation & Security
 
-### Validation Coverage
+### Verified Present
 
-| Area | Status |
-|------|--------|
-| Booking creation validation (Zod) | ✅ EXISTS |
-| Payment validation (amount >= 0.01) | ✅ EXISTS |
-| Vehicle validation (type, seats >= 1) | ✅ EXISTS |
-| Partner validation (type, status enum) | ✅ EXISTS |
-| Invoice validation (items, qty >= 1) | ✅ EXISTS |
-| User creation validation (email, password min 6) | ✅ EXISTS |
-| Custom plan validation (day numbers >= 1) | ✅ EXISTS |
-| Vehicle block overlap detection | ✅ EXISTS |
-| Duplicate email check on user creation | ✅ EXISTS |
-| Public booking rate limiting | ✅ EXISTS |
-| Auth route rate limiting | ✅ EXISTS |
+- Zod validation for bookings, payments, vehicles, partners, invoices, users, notifications, plans, and more
+- booking date validation (`from <= to`)
+- phone validation on booking/user/partner flows
+- duplicate email checks on user creation
+- auth route and public booking rate limiting
+- protected read endpoints for bookings, tickets, invoices, payments, reports, receipts, vehicle detail, and internal notifications
 
-### What's MISSING from Validation
+### Remaining Security Gaps
 
 | Issue | Severity |
 |-------|----------|
-| No date validation (from <= to) on bookings | MEDIUM |
-| No phone format validation | LOW |
-| No image URL/format validation | LOW |
-| No slug uniqueness enforcement | MEDIUM |
-| Password only requires 6 chars, no complexity rules | MEDIUM |
-| No captcha on public forms | MEDIUM |
+| No CSRF protection layer | HIGH |
+| No email verification | HIGH |
+| No password reset / recovery flow | HIGH |
+| No lockout / escalating throttle on repeated failed login | MEDIUM |
+| Soft-delete filters are not perfectly standardized across all routes | LOW |
 
-### Security Gaps — THE BIG PROBLEM
-
-| Issue | Severity | Details |
-|-------|----------|---------|
-| **Unauthenticated GET on bookings** | CRITICAL | Anyone can read all booking data |
-| **Unauthenticated GET on invoices** | CRITICAL | Anyone can read all invoice data |
-| **Unauthenticated GET on payments** | CRITICAL | Anyone can read payment history |
-| **Unauthenticated GET on finance reports** | CRITICAL | Revenue/refund data publicly accessible |
-| **Unauthenticated GET on receipts** | HIGH | Any booking receipt downloadable |
-| **Unauthenticated GET on tickets** | HIGH | All support tickets publicly readable |
-| **Unauthenticated GET on notifications** | MEDIUM | Internal notifications visible |
-| **No CSRF protection** | HIGH | All POST/PATCH/DELETE endpoints vulnerable |
-| **No email verification** | HIGH | Fake accounts can be registered |
-| **No password reset flow** | HIGH | Users locked out permanently |
-| **No account lockout** | MEDIUM | Brute force possible on login |
-| **Inconsistent soft-delete queries** | LOW | Some use `{isDeleted: false}`, others use `{isDeleted: {$ne: true}}` |
+**Validation & Security Score: 72%**
 
 ---
 
-## 12) DATABASE / DATA LAYER
+## Testing & Operational Readiness
 
-### Models That Exist (23 total)
+### Verified Test Coverage Exists
 
-User, Booking, Package, Destination, Vehicle, VehicleBlock, Partner, PartnerService, PartnerServiceBlock, BookingPartnerAssignment, Invoice, Payment, CustomPlan, Customer, District, DistrictPlace, FAQ, Testimonial, GalleryPost, Notification, SupportTicket, AuditLog, PartnerRequest
+- auth helpers and login route
+- RBAC and middleware behavior
+- rate limiting
+- validation helpers
+- notification route auth behavior
+- saved plan route ownership behavior
+- payment void recalculation
+- vehicle booking/block overlap protection
+- public contact form
 
-### Models MISSING from your spec
+### Operational Notes
 
-| Expected | Status |
-|----------|--------|
-| Blog/BlogPost model | ❌ NOT FOUND — blog page may be static |
-| Booking history/timeline model | ❌ NOT FOUND — no audit trail per booking |
+- `npm run build` passes
+- targeted Jest suites pass for the audited routes
+- production-style logging still relies heavily on `console.error`
+- broader end-to-end browser QA is still recommended for mobile dashboard usage and the Build Tour map
 
-### Data Layer Issues
-
-| Issue | Severity |
-|-------|----------|
-| Soft delete queries inconsistent across routes | LOW |
-| No database indexes visible for search performance | MEDIUM |
-| No migration system — schema changes are manual | LOW |
-| AuditLog has 1-year TTL — no manual cleanup option | LOW |
-
----
-
-## 13) UI/UX QUALITY
-
-### What's Good
-
-- Consistent glassmorphism design language across dashboard
-- Antique gold accent color used consistently
-- Status pills with color coding (success/warning/danger)
-- KPI cards at top of dashboard pages
-- Responsive grid layout on public site
-- Good visual hierarchy on homepage
-- Schema.org markup for SEO
-- WhatsApp integration throughout
-- Currency context (LKR) consistent
-
-### What Needs Work
-
-| Issue | Severity |
-|-------|----------|
-| Dashboard tables lack column sorting | MEDIUM |
-| No loading skeletons — uses spinners instead | LOW |
-| Some pages have no empty state messages | MEDIUM |
-| Mobile dashboard usability not verified | MEDIUM |
-| Destination hero images have broken URLs | HIGH |
-| Build Tour map may not load for all users | MEDIUM |
-| No breadcrumb navigation in dashboard | LOW |
-| Analytics charts have misleading minimum bar height (4%) | LOW |
-| Type casting issues in hotel dashboard (partnerId as any) | LOW |
+**Operational Quality Score: 78%**
 
 ---
 
-## 14) TESTING & OPERATIONAL READINESS
+## Highest-Priority Remaining Work
 
-| Requirement | Status |
-|-------------|--------|
-| Manual test cases for workflows | ❌ NO TEST FILES FOUND |
-| Unit tests | ❌ jest.config.ts exists but no test files in src |
-| Validation tested | ❌ NOT FORMALLY TESTED |
-| Auth/role restrictions tested | ❌ NOT FORMALLY TESTED |
-| Vehicle double-booking tested | ⚠️ LOGIC EXISTS but date field bug breaks it |
-| Booking status update tested | ❌ NOT FORMALLY TESTED |
-| Finance calculations tested | ❌ NOT FORMALLY TESTED |
-| Content publish/unpublish tested | ❌ NOT FORMALLY TESTED |
-| Custom error pages | ⚠️ UNCERTAIN |
-| Structured logging | ❌ Uses console.error in production |
+### Critical / High
 
----
+1. Implement password reset / forgot-password flow.
+2. Add email verification for newly registered accounts.
+3. Add CSRF protection for state-changing dashboard and auth requests.
+4. Add stronger failed-login lockout / cooldown behavior.
 
-## 15) FINAL COMPLETION CHECKLIST
+### Medium
 
-### Public Website
-- [x] Homepage is complete and all public CTAs work
-- [x] Packages listing page works
-- [x] Package detail pages work
-- [x] Destinations listing page works
-- [x] Destination detail pages work (⚠️ hero image URL bug)
-- [x] Transfers page works
-- [x] Build Your Tour page works interactively (⚠️ map loading uncertain)
-- [x] Inquiry / booking request form works
-- [x] Support/contact flow works
+1. Add invoice void / cancellation state transitions if finance operations require them.
+2. Add booking activity timeline / change history view.
+3. Run focused mobile QA on dashboard tables/forms and Build Tour interactions.
+4. Improve structured production logging.
 
-### Authentication
-- [x] Login works
-- [x] Logout works
-- [x] Invalid login handling works
-- [x] Role-based redirects work
-- [x] Protected routes work
-- [x] Disabled/inactive user handling works
-- [ ] ❌ Password reset / forgot password
-- [ ] ❌ Email verification
-- [ ] ❌ CSRF protection
+### Low
 
-### Dashboard System
-- [x] Admin dashboard works
-- [x] Staff dashboard works
-- [x] Customer dashboard works
-- [x] Fleet dashboard works
-- [x] Hotel dashboard works
-- [x] Dashboard cards use real data
-- [x] Sidebar links are correct for each role
-
-### Module 1 — Account Management
-- [x] User create works (admin only)
-- [x] User list works
-- [ ] ❌ User search
-- [ ] ❌ User edit/update
-- [ ] ❌ User disable/delete
-- [ ] ❌ Role change after creation
-- [x] Customer profile works
-- [x] Customer booking history works
-- [x] Notification create works
-- [x] Notification list works
-- [ ] ❌ Notification edit
-- [ ] ❌ Notification delete
-- [ ] ❌ Notification publish/unpublish toggle
-
-### Module 2 — Products & Content
-- [x] Package CRUD works
-- [x] Destination CRUD works
-- [x] FAQ CRUD works
-- [x] Testimonial CRUD works
-- [x] Gallery CRUD works
-- [x] Draft/publish toggle works
-- [x] Public site shows only published items
-- [x] District/place management works
-- [x] Saved custom plan creation works
-- [ ] ⚠️ Plan edit/delete — unverified
-
-### Module 3 — Vehicle Fleet
-- [x] Vehicle CRUD works
-- [x] Vehicle status works
-- [x] Blocked dates work
-- [x] Availability logic works
-- [x] Vehicle assignment to bookings works
-- [ ] ❌ **BUG: date field mismatch breaks conflict check** (dates.start/end vs from/to)
-
-### Module 4 — Booking & Reservation
-- [x] Booking creation works from public side
-- [x] Booking creation works from staff/admin side
-- [x] Booking list works
-- [x] Booking detail page works
-- [x] Booking status updates work
-- [x] Staff assignment works
-- [x] Vehicle assignment works
-- [x] Custom plan attachment works
-- [x] Booking archive/cancel works
-- [x] Support ticket/chat flow works
-- [ ] ❌ **GET endpoints have NO AUTH — all data publicly accessible**
-
-### Module 5 — Finance
-- [x] Invoice creation works
-- [x] Payment recording works
-- [x] Refund recording works (as type=REFUND payment)
-- [ ] ❌ Payment void/cancel mechanism
-- [x] Paid/remaining balance auto-calculates
-- [x] Finance summary per booking works
-- [x] Finance dashboard works
-- [x] Receipt PDF generation works
-- [ ] ❌ CSV export
-- [ ] ❌ **GET endpoints have NO AUTH — financial data publicly accessible**
-
-### Module 6 — Partner Management
-- [x] Partner CRUD works
-- [x] Partner service/rate-card creation works
-- [x] Partner active/inactive status works
-- [x] Partner assignment to bookings works
-- [x] Assigned partners appear in booking details
-
-### Cross-Module Connections
-- [x] Package publish/unpublish affects public website
-- [x] Booking connects to finance
-- [x] Booking connects to vehicle (⚠️ conflict check broken by date bug)
-- [x] Booking connects to partner
-- [x] Customer sees own bookings/plans
-- [ ] ⚠️ Build Tour → booking conversion is indirect
-
-### Validation & Security
-- [x] Required fields validated on main forms (Zod schemas)
-- [x] Invalid inputs show error messages
-- [ ] ❌ **Unauthorized access NOT blocked on most GET endpoints**
-- [ ] ⚠️ Not-found states — uncertain
-- [ ] ⚠️ Empty states — partial coverage
-- [x] Loading states exist on most pages
-
-### UI/UX
-- [ ] ⚠️ Mobile responsiveness — not fully verified
-- [x] Design is visually consistent
-- [x] Buttons, labels, tables, forms consistent
-
-### Testing
-- [ ] ❌ No test files found
-- [ ] ❌ No edge case tests
-- [ ] ❌ No role restriction tests
-- [ ] ❌ No finance calculation tests
-- [ ] ❌ No availability conflict tests
+1. Bulk actions on dashboard lists.
+2. Column sorting on table views.
+3. Richer date filtering on analytics and finance reports.
 
 ---
 
-## TOP 15 FIXES — PRIORITY ORDER
+## Final Verdict
 
-| # | Fix | Severity | Effort |
-|---|-----|----------|--------|
-| 1 | **Add auth to ALL GET API endpoints** (bookings, invoices, payments, tickets, finance reports, receipts) | CRITICAL | Medium |
-| 2 | **Fix vehicle block date field bug** (dates.start/end → dates.from/to) | CRITICAL | Small |
-| 3 | **Add password reset flow** (forgot password endpoint + token email) | HIGH | Medium |
-| 4 | **Add user edit/update/delete endpoints** | HIGH | Medium |
-| 5 | **Add notification edit/delete/publish endpoints** | HIGH | Small |
-| 6 | **Add email verification on registration** | HIGH | Medium |
-| 7 | **Fix destination hero image URL concatenation bug** | HIGH | Small |
-| 8 | **Add CSRF protection middleware** | HIGH | Small |
-| 9 | **Add payment void/cancel mechanism** | HIGH | Small |
-| 10 | **Add invoice GET by ID endpoint** | MEDIUM | Small |
-| 11 | **Add CSV export for finance reports** | MEDIUM | Medium |
-| 12 | **Add captcha to public forms** | MEDIUM | Small |
-| 13 | **Write test cases for main workflows** | MEDIUM | Large |
-| 14 | **Add custom 404 error page** | MEDIUM | Small |
-| 15 | **Verify and fix Build Tour map rendering** | MEDIUM | Medium |
+This project is **not stuck at an early CRUD stage**. It is a largely operational travel-management platform with a mature public site, a broad dashboard system, and working finance/booking/vehicle/partner flows. After the remediation in this refresh, the remaining work is concentrated in **security hardening and operational polish**, not missing core modules.
 
----
-
-## SUMMARY TABLE
-
-| Area | Completion | Critical Issues |
-|------|-----------|----------------|
-| Public Website | 88% | Destination image URL bug, map loading |
-| Authentication | 75% | No password reset, no email verify, no CSRF |
-| Dashboard System | 82% | Minor gaps in data/features |
-| Account Management | 60% | No user edit/delete, no notification management |
-| Products & Content | 85% | Minor gaps |
-| Vehicle Fleet | 85% | **CRITICAL date field bug breaks conflict check** |
-| Booking Management | 80% | **CRITICAL: all GET endpoints unauthenticated** |
-| Finance Management | 70% | **CRITICAL: financial data publicly accessible** |
-| Partner Management | 80% | Minor gaps |
-| Cross-Module | 75% | Vehicle conflict broken, Build Tour indirect |
-| Validation/Security | 55% | **Multiple CRITICAL auth gaps** |
-| Testing | 10% | No tests exist |
-| **OVERALL** | **~72%** | **12 CRITICAL/HIGH issues to fix** |
+If the next sprint targets password reset, email verification, CSRF, and lockout handling, the platform will move from "good and functional" to "production-ready with fewer obvious trust gaps."

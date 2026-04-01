@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Calendar, Moon, MapPin, ArrowRight, Sparkles } from 'lucide-react';
+import { normalizeImageUrl } from '@/lib/image-utils';
 
 interface FeaturedDestinationSpotlightProps {
     destination: {
@@ -20,6 +21,8 @@ interface FeaturedDestinationSpotlightProps {
 }
 
 export default function FeaturedDestinationSpotlight({ destination }: FeaturedDestinationSpotlightProps) {
+    const heroImage = normalizeImageUrl(destination.images?.[0], `/images/districts/${destination.slug}.jpg`);
+
     return (
         <motion.section
             initial={{ opacity: 0, y: 40 }}
@@ -47,7 +50,7 @@ export default function FeaturedDestinationSpotlight({ destination }: FeaturedDe
                         {/* Image side — 3/5 */}
                         <div className="relative lg:col-span-3 h-[280px] sm:h-[320px] lg:h-auto overflow-hidden">
                             <Image
-                                src={destination.images[0]}
+                                src={heroImage}
                                 alt={`${destination.title} — featured luxury destination in Sri Lanka`}
                                 fill
                                 className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1400ms] ease-out"
