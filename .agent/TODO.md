@@ -8,7 +8,7 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## In Progress
-- [ ] Final verification, commit, and push audit remediation changes
+- None currently
 
 ## Just Completed (2026-04-01)
 
@@ -20,6 +20,7 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 - [x] Added regression coverage for notifications auth, plan ownership, payment void recalculation, and vehicle booking/block overlap.
 - [x] Refreshed `TOMS-Completion-Audit-Report.md` to reflect the current codebase instead of the stale earlier audit.
 - [x] Closed the stale "Implement Analytics/Stats on Dashboard" TODO after verifying the analytics page already exists and works from real data.
+- [x] Verified the remediation set with targeted Jest suites and a successful production build, then pushed the changes to GitHub on `main` (`ed11c01`).
 
 ### Login Stability & Dev Server Fix
 - [x] Hardened `/api/auth/login` so a failed `lastLogin` write no longer blocks a valid login and surfaces as `Internal server error`.
@@ -166,34 +167,54 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 
 **Date**: 2026-04-01
 **Agent**: Codex
-**Task**: Login Internal Server Error Fix
+**Task**: TOMS Audit Remediation, Report Refresh, and Push
 
 **What was done**:
-- Hardened `/api/auth/login` so valid credentials still succeed if the non-critical `lastLogin` update fails.
-- Added `src/app/api/auth/login/route.test.ts` to lock in that behavior.
-- Fixed `test-login.ts` so local bcrypt/JWT auth verification works again.
-- Split Next.js dev/build outputs (`.next-dev` for dev, `.next` for build) to prevent the local login route from breaking with missing vendor chunks after a build.
-- Verified the login route returns `200 OK` for `admin@ceylonescapes.lk` / `Admin@123` both before and after `npm run build`.
+- Closed the stale high-priority gaps that remained from the old TOMS audit across users, notifications, plans, receipts, vehicle detail reads, and report accuracy.
+- Added and verified regression tests for notification auth, plan ownership, payment void recalculation, and vehicle booking/block overlap.
+- Normalized malformed destination image URLs before sending them to `next/image` so broken absolute URLs no longer take down public destination cards or the detail hero.
+- Rewrote `TOMS-Completion-Audit-Report.md` into a refreshed audit that reflects the real current completion state and remaining gaps.
+- Ran targeted Jest coverage and `npm run build`, then pushed the remediation set to GitHub.
 
 **Files changed**:
 - `.agent/MEMORY.md`
 - `.agent/TODO.md`
-- `.gitignore`
-- `next.config.ts`
-- `src/app/api/auth/login/route.ts`
-- `src/app/api/auth/login/route.test.ts`
-- `test-login.ts`
-- `tsconfig.json`
+- `TOMS-Completion-Audit-Report.md`
+- `src/app/(public)/destinations/[slug]/page.tsx`
+- `src/app/api/notifications/route.ts`
+- `src/app/api/notifications/[id]/route.ts`
+- `src/app/api/notifications/route.test.ts`
+- `src/app/api/payments/[id]/route.test.ts`
+- `src/app/api/plans/route.ts`
+- `src/app/api/plans/route.test.ts`
+- `src/app/api/receipts/[paymentId]/pdf/route.ts`
+- `src/app/api/users/route.ts`
+- `src/app/api/vehicles/[id]/route.ts`
+- `src/app/api/vehicles/[id]/route.test.ts`
+- `src/app/dashboard/my-plans/page.tsx`
+- `src/app/dashboard/notifications/[id]/page.tsx`
+- `src/components/dashboard/NotificationForm.tsx`
+- `src/components/dashboard/NotificationTable.tsx`
+- `src/components/dashboard/UserForm.tsx`
+- `src/components/dashboard/UserTable.tsx`
+- `src/components/public/DestinationCard.tsx`
+- `src/components/public/FeaturedDestinationSpotlight.tsx`
+- `src/lib/image-utils.ts`
+- `src/lib/jsonLd.tsx`
+- `src/lib/validations.ts`
+- `src/models/CustomPlan.ts`
 
 **Current state**:
 - Branch: `main`
-- Dev server: running via `npm run dev` on `http://localhost:3000` using `.next-dev`
+- Dev server: not rechecked this handoff; production build passes
 - Build: `npm run build` passes
-- Remote: pushed to `origin/main` at commit `882f1ba`
-- Last file touched: `next.config.ts`
-- Errors: none currently reproduced on `/api/auth/login`
+- Tests: targeted Jest suites pass (`33/33`)
+- Remote: pushed to `origin/main` at commit `ed11c01`
+- Last file touched: `.agent/TODO.md`
+- Errors: no known blocking errors after this remediation set
 
 **What to do next**:
-- Implement Analytics/Stats on Dashboard
-- Browser-check the `/auth/login` flow end to end after reload to confirm the UI no longer shows the generic server error
-- Mobile QA for liquid glass pagination and package detail pages
+- Implement password reset / forgot-password flow
+- Add email verification on registration
+- Add CSRF protection and stronger failed-login lockout behavior
+- Run broader mobile/browser QA for dashboard tables/forms and Build Tour interactions
