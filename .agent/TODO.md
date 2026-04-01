@@ -8,7 +8,6 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## In Progress
-- [ ] Commit and push login stability fixes to GitHub
 - [ ] Implement Analytics/Stats on Dashboard (User feedback needed on visual scope)
 
 ## Just Completed (2026-04-01)
@@ -19,6 +18,7 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 - [x] Fixed the local auth verification script (`test-login.ts`) so bcrypt/JWT checks run correctly again.
 - [x] Isolated Next.js development output to `.next-dev` so `next dev` and `next build` no longer corrupt the same artifact tree and break `/api/auth/login` with missing vendor chunks.
 - [x] Verified `admin@ceylonescapes.lk` + `Admin@123` returns `200 OK` before and after a production build while the dev server stays running.
+- [x] Pushed the login stability fix to GitHub on `main` (`882f1ba`).
 
 ### Build Tour Map & 404 Page
 - [x] Verified MapViewport.client.tsx already uses dynamic import with ssr: false — Leaflet CSS imported correctly — loading fallback works with animated spinner.
@@ -180,6 +180,7 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 - Branch: `main`
 - Dev server: running via `npm run dev` on `http://localhost:3000` using `.next-dev`
 - Build: `npm run build` passes
+- Remote: pushed to `origin/main` at commit `882f1ba`
 - Last file touched: `next.config.ts`
 - Errors: none currently reproduced on `/api/auth/login`
 
