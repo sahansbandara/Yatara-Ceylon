@@ -6,6 +6,7 @@ import Vehicle from "@/models/Vehicle";
 import RecordPaymentModal from "@/components/dashboard/finance/RecordPaymentModal";
 import CreateInvoiceModal from "@/components/dashboard/finance/CreateInvoiceModal";
 import FinalizeInvoiceButton from "@/components/dashboard/finance/FinalizeInvoiceButton";
+import VoidInvoiceButton from "@/components/dashboard/finance/VoidInvoiceButton";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CalendarCheck, CreditCard, Car, Users, MapPin, FileText } from "lucide-react";
@@ -204,6 +205,9 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                                             </span>
                                             {inv.status === 'DRAFT' && (
                                                 <FinalizeInvoiceButton invoiceId={inv._id.toString()} />
+                                            )}
+                                            {inv.status === 'FINAL' && (
+                                                <VoidInvoiceButton invoiceId={inv._id.toString()} />
                                             )}
                                         </div>
                                     </div>

@@ -6,6 +6,8 @@ import { Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { BookingStatus } from '@/lib/constants';
+import { useTableSort } from '@/hooks/useTableSort';
+import SortableHeader from './SortableHeader';
 
 interface Booking {
     _id: string;
@@ -26,6 +28,7 @@ interface BookingTableProps {
 export default function BookingTable({ initialBookings }: BookingTableProps) {
     const [bookings, setBookings] = useState<Booking[]>(initialBookings);
     const router = useRouter();
+    const { sortedData, sortConfig, requestSort } = useTableSort(bookings);
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -44,12 +47,48 @@ export default function BookingTable({ initialBookings }: BookingTableProps) {
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="bg-white/[0.03] border-b border-white/[0.06]">
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Booking No</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Customer</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Type</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Dates</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Amount</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Status</th>
+                            <SortableHeader
+                                label="Booking No"
+                                sortKey="bookingNo"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Customer"
+                                sortKey="customerName"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Type"
+                                sortKey="type"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Dates"
+                                sortKey="startDate"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Amount"
+                                sortKey="totalAmount"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Status"
+                                sortKey="status"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
                             <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Actions</th>
                         </tr>
                     </thead>

@@ -2,16 +2,26 @@ import connectDB from "@/lib/mongodb";
 import Payment from "@/models/Payment";
 import Booking from "@/models/Booking";
 import Invoice from "@/models/Invoice";
-import { DollarSign, TrendingUp, CreditCard, AlertTriangle, ArrowUpRight, Receipt, Clock, CalendarClock } from "lucide-react";
+import { DollarSign, TrendingUp, CreditCard, AlertTriangle, ArrowUpRight, Receipt, Clock, CalendarClock, Download } from "lucide-react";
 import Link from "next/link";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
 
-async function getFinanceData() {
+async function getFinanceData(dateFrom?: string, dateTo?: string) {
     try {
         await connectDB();
+
+        // Build date filter for payments
+        const paymentDateMatch: Record<string, unknown> = {};
+        if (dateFrom) paymentDateMatch.$gte = new Date(dateFrom);
+        if (dateTo) paymentDateMatch.$lte = new Date(dateTo + 'T23:59:59.999Z');
+        const hasDateFilter = Object.keys(paymentDateMatch).length > 0;
+        const paymentBaseMatch: Record<string, unknown> = { status: 'SUCCESS', type: 'PAYMENT', isDeleted: false };
+        if (hasDateFilter) paymentBaseMatch.createdAt = paymentDateMatch;
+        const allPaymentMatch: Record<string, unknown> = { isDeleted: false };
+        if (hasDateFilter) allPaymentMatch.createdAt = paymentDateMatch;
 
         const [
             totalRevenueAgg,
@@ -24,7 +34,7 @@ async function getFinanceData() {
             agingBucketsData,
         ] = await Promise.all([
             Payment.aggregate([
-                { $match: { status: 'SUCCESS', type: 'PAYMENT', isDeleted: false } },
+                { $match: paymentBaseMatch },
                 { $group: { _id: null, total: { $sum: "$amount" } } }
             ]),
             Booking.aggregate([
@@ -35,7 +45,7 @@ async function getFinanceData() {
                 { $match: { isDeleted: false, paidAmount: { $gt: 0 } } },
                 { $group: { _id: null, total: { $sum: "$paidAmount" }, count: { $sum: 1 } } }
             ]),
-            Payment.find({ isDeleted: false })
+            Payment.find(allPaymentMatch)
                 .sort({ createdAt: -1 })
                 .limit(10)
                 .populate('bookingId', 'bookingNo customerName')

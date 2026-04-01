@@ -6,19 +6,21 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { CalendarCheck, DollarSign, PackageIcon, TrendingUp } from "lucide-react";
 import Package from "@/models/Package";
+import AnalyticsDateFilter from "@/components/dashboard/analytics/AnalyticsDateFilter";
 
 export const revalidate = 0; // Disable static rendering for this page
 
-async function getAnalyticsData() {
+async function getAnalyticsData(months: number = 6) {
   try {
     await connectDB();
 
-    // Last 6 months calculation
+    // Custom range calculation
     const currentDate = new Date();
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(currentDate.getMonth() - 5);
-    sixMonthsAgo.setDate(1);
-    sixMonthsAgo.setHours(0, 0, 0, 0);
+    const startDate = new Date();
+    startDate.setMonth(currentDate.getMonth() - (months - 1));
+    startDate.setDate(1);
+    startDate.setHours(0, 0, 0, 0);
+    const sixMonthsAgo = startDate;
 
     // Fetch Monthly Bookings Volume
     const bookingsByMonth = await Booking.aggregate([
@@ -107,17 +109,17 @@ async function getAnalyticsData() {
 }
 
 // Helper to fill empty months
-function buildFilledMonthsData(rawData: any[], field: string, defaultValue: number = 0) {
+function buildFilledMonthsData(rawData: any[], field: string, months: number = 6, defaultValue: number = 0) {
   const monthsData = [];
   const now = new Date();
-  
-  for (let i = 5; i >= 0; i--) {
+
+  for (let i = months - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const m = d.getMonth() + 1; // 1-12
     const y = d.getFullYear();
-    
+
     const record = rawData.find(r => r._id?.month === m && r._id?.year === y);
-    
+
     monthsData.push({
       label: d.toLocaleDateString('en-US', { month: 'short' }),
       value: record ? record[field] || defaultValue : defaultValue
@@ -126,14 +128,16 @@ function buildFilledMonthsData(rawData: any[], field: string, defaultValue: numb
   return monthsData;
 }
 
-export default async function AnalyticsPage() {
-  const data = await getAnalyticsData();
-  
+export default async function AnalyticsPage({ searchParams }: { searchParams: Promise<{ months?: string }> }) {
+  const params = await searchParams;
+  const months = Math.min(Math.max(parseInt(params.months || '6'), 3), 24);
+  const data = await getAnalyticsData(months);
+
   // Format for charts
-  const bookingsChartData = buildFilledMonthsData(data.monthlyBookings, 'count');
+  const bookingsChartData = buildFilledMonthsData(data.monthlyBookings, 'count', months);
   const maxBookings = Math.max(...bookingsChartData.map(d => d.value), 1); // Avoid div by 0
 
-  const revenueChartData = buildFilledMonthsData(data.monthlyRevenue, 'revenue');
+  const revenueChartData = buildFilledMonthsData(data.monthlyRevenue, 'revenue', months);
   const maxRevenue = Math.max(...revenueChartData.map(d => d.value), 1000); // Avoid div by 0
 
   // Quick Stats
@@ -162,6 +166,9 @@ export default async function AnalyticsPage() {
         subtitle="Performance metrics and growth trends"
         badge="Analytics"
       />
+
+      {/* Date Range Selector */}
+      <AnalyticsDateFilter currentMonths={months} />
 
       {/* High-Level Month over Month Stats */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">

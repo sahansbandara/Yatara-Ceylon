@@ -18,6 +18,10 @@ export const GET = withAuth(async (request, { user }) => {
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '20');
 
+        const dateFrom = searchParams.get('dateFrom');
+        const dateTo = searchParams.get('dateTo');
+        const hasBalanceDue = searchParams.get('hasBalanceDue');
+
         const filter: Record<string, unknown> = { isDeleted: false };
 
         // Customers can only see their own bookings
@@ -35,12 +39,31 @@ export const GET = withAuth(async (request, { user }) => {
             ];
         }
 
+        // Date range filter on booking travel dates
+        if (dateFrom || dateTo) {
+            const dateFilter: Record<string, unknown> = {};
+            if (dateFrom) dateFilter.$gte = new Date(dateFrom);
+            if (dateTo) dateFilter.$lte = new Date(dateTo);
+            filter['dates.from'] = dateFilter;
+        }
+
+        // Filter bookings with outstanding balance
+        if (hasBalanceDue === 'true') {
+            filter.remainingBalance = { $gt: 0 };
+        }
+
+        // Sorting
+        const sortBy = searchParams.get('sortBy') || 'createdAt';
+        const sortOrder = searchParams.get('sortOrder') === 'asc' ? 1 : -1;
+        const allowedSortFields = ['createdAt', 'customerName', 'totalCost', 'paidAmount', 'remainingBalance', 'dates.from', 'bookingNo', 'status'];
+        const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+
         const [bookings, total] = await Promise.all([
             Booking.find(filter)
                 .populate('packageId', 'title slug')
                 .populate('assignedStaffId', 'name')
                 .populate('assignedVehicleId', 'model type')
-                .sort({ createdAt: -1 })
+                .sort({ [sortField]: sortOrder })
                 .skip((page - 1) * limit)
                 .limit(limit)
                 .lean(),
@@ -56,11 +79,33 @@ export const POST = staffOrAdmin(async (request, { user }) => {
     if (error) return error;
     try {
         await connectDB();
+
+        // Duplicate booking detection: same customer name + overlapping dates
+        const fromDate = new Date(data!.dates.from);
+        const toDate = new Date(data!.dates.to);
+        const duplicateCheckResult = await Booking.findOne({
+            isDeleted: false,
+            customerName: { $regex: `^${data!.customerName.trim()}$`, $options: 'i' },
+            status: { $nin: ['CANCELLED'] },
+            'dates.from': { $lte: toDate },
+            'dates.to': { $gte: fromDate },
+        })
+            .select('bookingNo customerName')
+            .lean();
+        const duplicateCheck = Array.isArray(duplicateCheckResult)
+            ? duplicateCheckResult[0]
+            : duplicateCheckResult;
+
         const booking = await Booking.create({
             ...data,
-            dates: { from: new Date(data!.dates.from), to: new Date(data!.dates.to) },
+            dates: { from: fromDate, to: toDate },
         });
         await logAudit({ actorUserId: user.userId, action: 'CREATE', entity: 'Booking', entityId: booking._id.toString() });
-        return NextResponse.json({ booking }, { status: 201 });
+        return NextResponse.json({
+            booking,
+            warning: duplicateCheck
+                ? `Possible duplicate: ${duplicateCheck.bookingNo} for "${duplicateCheck.customerName}" has overlapping dates.`
+                : undefined,
+        }, { status: 201 });
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
 });

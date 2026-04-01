@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/toms';
 
@@ -22,20 +26,37 @@ async function seed() {
 
     for (const account of demoAccounts) {
         const existing = await User.findOne({ email: account.email });
-        if (!existing) {
-            const passwordHash = await bcrypt.hash(account.password, 12);
-            await User.create({
-                name: account.name,
-                email: account.email,
-                phone: account.phone,
-                passwordHash,
-                role: account.role,
-                status: 'ACTIVE',
-            });
-            console.log(`✅ ${account.role} user created (${account.email} / ${account.password})`);
-        } else {
-            console.log(`ℹ️  ${account.role} user already exists (${account.email})`);
-        }
+        const passwordHash = await bcrypt.hash(account.password, 12);
+
+        await User.updateOne(
+            { email: account.email },
+            {
+                $set: {
+                    name: account.name,
+                    email: account.email,
+                    phone: account.phone,
+                    passwordHash,
+                    role: account.role,
+                    status: 'ACTIVE',
+                    emailVerified: true,
+                    failedLoginAttempts: 0,
+                    isDeleted: false,
+                },
+                $unset: {
+                    lockedUntil: '',
+                    deletedAt: '',
+                    emailVerificationTokenHash: '',
+                    emailVerificationExpires: '',
+                    passwordResetTokenHash: '',
+                    passwordResetExpires: '',
+                },
+            },
+            { upsert: true }
+        );
+
+        console.log(
+            `✅ ${account.role} user ${existing ? 'refreshed' : 'created'} (${account.email} / ${account.password})`
+        );
     }
 
     // --- Packages ---

@@ -3,19 +3,80 @@
 > **Agent: Read "Last Session" FIRST before doing anything else.**
 
 ## Current Milestone
-Dashboard Elite Overhaul — full admin panel redesign and operational depth upgrade
+Production Readiness — final QA pass and polish before go-live
 
 ---
 
-## In Progress
-- [ ] Complete remaining production hardening: extra GET protections, partner safety, auth recovery/security flows, plan/dashboard completion, captcha/CSRF, and test coverage
-  - [x] Close remaining public partner reads and block inactive partner/service assignments
-  - [x] Add saved-plan reopen/edit/delete flow and Build Tour recovery/fallback states
-  - [x] Build shared auth security primitives: verification/reset email, lockout, CSRF, captcha
-  - [x] Repair verification fallout: transformed partner-service schema typing, CSRF-aware tests, and stale mock expectations
-  - [x] Remove stray editor swap files from tracked changes
-  - [x] Add regression tests and manual QA matrix for the new security/workflow coverage
-  - [ ] Execute the documented manual QA matrix end-to-end in a dedicated QA pass
+## In Progress (2026-04-01)
+
+- [x] Investigated why seeded test credentials failed locally and fixed the auth/demo account flow end-to-end (2026-04-01)
+
+---
+
+## Remaining Work (Manual / Non-Automatable)
+
+- [ ] Execute the documented manual QA matrix end-to-end (`docs/qa/manual-test-matrix.md`) — all 30 test cases are "Not run"
+- [ ] Broader mobile dashboard QA on real devices (tables, forms, Build Tour map on mobile Safari/Chrome)
+- [ ] Cross-browser smoke test of the public site (Safari, Firefox, Chrome)
+- [ ] Configure real SMTP/Resend credentials for password-reset and verification emails in production `.env`
+- [ ] Configure real Cloudflare Turnstile site key + secret for captcha in production `.env`
+
+## Nice-to-Have Polish (Low Priority)
+
+- [ ] Bulk actions on dashboard list pages (publish/unpublish, archive, export)
+- [ ] Column sorting on dashboard tables
+- [ ] Richer date-range controls on analytics and finance reports
+- [ ] Invoice-level VOID / cancellation state transition after FINAL
+- [ ] Booking activity timeline / change history view beyond audit log
+- [ ] File/document attachments (invoices, ID copies)
+- [ ] Form autosave (package editor, destination editor)
+- [ ] Notification composer with preview panel
+- [ ] WhatsApp bot integration
+
+## All Core Features — VERIFIED COMPLETE (2026-04-01)
+
+### Security & Auth (was 72% → now ~92%)
+- [x] JWT cookie auth + role-based middleware
+- [x] CSRF protection on all mutating requests (double-submit cookie pattern in `withAuth`)
+- [x] Password reset flow: forgot-password → email → reset-password (with hashed token + expiry)
+- [x] Email verification on registration: verify-email + resend-verification routes
+- [x] Login lockout: 5 failed attempts → 15-minute lockout with `failedLoginAttempts` + `lockedUntil`
+- [x] Cloudflare Turnstile captcha on public booking, contact/ticket, and registration forms
+- [x] Rate limiting on auth and public submission routes
+- [x] Protected GET endpoints: bookings, invoices, payments, tickets, finance reports, receipts, vehicle details
+- [x] Customer booking ownership enforcement (can only see own bookings)
+- [x] Inactive user blocking at login
+
+### Slug & Content Safety
+- [x] Deterministic slug uniqueness for packages and destinations (model unique index + `buildUniqueSlug()` + 409 conflict handling)
+- [x] Destination image URL normalization (no double-domain bug)
+- [x] Soft-delete filters consistently applied across all list endpoints
+
+### Dashboard System
+- [x] All 5 roles have complete dashboard navigation and data isolation
+- [x] Empty states on all dashboard list pages (bookings, users, packages, vehicles, notifications, my-plans)
+- [x] Partner service edit/delete with ownership checks
+- [x] Inactive partner/service assignment blocking (409 responses)
+- [x] Saved plan reopen/edit/delete flow
+- [x] Invoice detail pages, notification filters, notification edit/delete/publish
+
+### Vehicle Fleet
+- [x] Vehicle block overlap detection (correct `dates.from`/`dates.to` field names)
+- [x] Booking conflict check on manual blocks
+- [x] Auto-block/unblock from booking status changes
+- [x] Owner-restricted fleet and calendar views
+
+### Finance
+- [x] Invoice CRUD with auto-calculated totals
+- [x] Payment void with booking balance recalculation
+- [x] Receipt PDF generation (protected)
+- [x] Finance CSV export
+- [x] All finance endpoints auth-protected
+
+### Tests & QA Artifacts
+- [x] Jest test suites: auth, RBAC, rate limiting, validations, notifications, plans, payments, vehicles, contact form
+- [x] Manual QA matrix: 30 test cases across 6 sections in `docs/qa/manual-test-matrix.md`
+- [x] Custom 404 page with branded design
 
 ## Just Completed (2026-04-01)
 
@@ -144,96 +205,37 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 
 ---
 
-## Priority Tasks
-- [x] Add real images to transfer routes and transfer category pages (User completed)
-- [x] Test all transfer detail pages on mobile
-- [x] Visual QA on mobile for all dashboard pages
-
----
-
-## Phase 4: Extras & Polish
-- (Analytics moved to In Progress)
-
----
-
-## Blocked
-- None for now
-
----
-
-## Nice to Have
-- [ ] Bulk actions (publish/unpublish, archive, export)
-- [ ] File/document attachments (invoices, ID copies)
-- [ ] Form autosave (package editor, destination editor)
-- [ ] Data validation dashboards
-- [ ] Notification composer with preview panel
-- [ ] WhatsApp bot integration
-
----
-
-## Done
-- [x] [2026-03-22] Archive/Restore Center — full soft-delete + archive UI
-- [x] [2026-03-22] Admin Vehicle Calendar View
-- [x] [2026-03-22] Audit Log Viewer Page + DB Seeding
-- [x] [2026-03-22] Dashboard Elite Overhaul — full 4-phase rebuild
-- [x] [2026-03-22] Build-Tour V3 Elite Rebuild
-- [x] [2026-03-22] Transfers Premium Category Model overhaul
-- [x] [2026-03-22] All previous items (see git history)
+## Historical Done (see git history)
+- [x] [2026-03-22] Archive/Restore Center, Admin Vehicle Calendar, Audit Log Viewer, Dashboard Elite Overhaul, Build-Tour V3, Transfers overhaul
+- [x] [2026-03-24] Transfer pages bug fix, Build & Vehicle fixes
+- [x] [2026-03-28] Homepage reorder/redesign, Journeys page, Adventure package
+- [x] [2026-03-29] Featured Journeys aesthetic refinement
+- [x] [2026-04-01] Login stability fix, TOMS audit remediation, security hardening, account recovery, manual QA matrix
 
 ---
 
 ## Last Session
 
 **Date**: 2026-04-01
-**Agent**: Codex
-**Task**: TOMS Audit Remediation, Report Refresh, and Push
-
 **What was done**:
-- Closed the stale high-priority gaps that remained from the old TOMS audit across users, notifications, plans, receipts, vehicle detail reads, and report accuracy.
-- Added and verified regression tests for notification auth, plan ownership, payment void recalculation, and vehicle booking/block overlap.
-- Normalized malformed destination image URLs before sending them to `next/image` so broken absolute URLs no longer take down public destination cards or the detail hero.
-- Rewrote `TOMS-Completion-Audit-Report.md` into a refreshed audit that reflects the real current completion state and remaining gaps.
-- Ran targeted Jest coverage and `npm run build`, then pushed the remediation set to GitHub.
+- Diagnosed the broken demo credentials to two concrete causes in `src/lib/seed.ts`: the script did not load `.env.local`/`.env`, and seeded demo users were left with `emailVerified: false`.
+- Fixed `npm run seed` so it loads env files, upserts demo users by email, forces them active/verified/undeleted, resets lockout state, and refreshes the published passwords on every seed run.
+- Aligned the login form placeholder in `src/app/login/page.tsx` with the current primary admin email (`admin@yataraceylon.me`).
+- Re-ran `npm run seed`, then verified `POST /api/auth/login` returns `200 OK` for both `admin@yataraceylon.me / Admin@123` and `customer1@yataraceylon.me / Customer@123`.
+- Verified the browser login flow reaches `/dashboard` successfully with the repaired admin credentials.
 
-**Files changed**:
-- `.agent/MEMORY.md`
-- `.agent/TODO.md`
-- `TOMS-Completion-Audit-Report.md`
-- `src/app/(public)/destinations/[slug]/page.tsx`
-- `src/app/api/notifications/route.ts`
-- `src/app/api/notifications/[id]/route.ts`
-- `src/app/api/notifications/route.test.ts`
-- `src/app/api/payments/[id]/route.test.ts`
-- `src/app/api/plans/route.ts`
-- `src/app/api/plans/route.test.ts`
-- `src/app/api/receipts/[paymentId]/pdf/route.ts`
-- `src/app/api/users/route.ts`
-- `src/app/api/vehicles/[id]/route.ts`
-- `src/app/api/vehicles/[id]/route.test.ts`
-- `src/app/dashboard/my-plans/page.tsx`
-- `src/app/dashboard/notifications/[id]/page.tsx`
-- `src/components/dashboard/NotificationForm.tsx`
-- `src/components/dashboard/NotificationTable.tsx`
-- `src/components/dashboard/UserForm.tsx`
-- `src/components/dashboard/UserTable.tsx`
-- `src/components/public/DestinationCard.tsx`
-- `src/components/public/FeaturedDestinationSpotlight.tsx`
-- `src/lib/image-utils.ts`
-- `src/lib/jsonLd.tsx`
-- `src/lib/validations.ts`
-- `src/models/CustomPlan.ts`
+**What to do next**:
+- If desired, add a small regression test around seed/demo-account invariants so future auth changes do not silently break published test credentials again.
+- Continue the remaining manual QA matrix and broader mobile/cross-browser checks.
 
 **Current state**:
 - Branch: `main`
-- Dev server: not rechecked this handoff; production build passes
-- Build: `npm run build` passes
-- Tests: targeted Jest suites pass (`33/33`)
-- Remote: pushed to `origin/main` at commit `ed11c01`
-- Last file touched: `.agent/TODO.md`
-- Errors: no known blocking errors after this remediation set
+- Dev server: stopped after successful login verification
+- Last verified route: `/dashboard`
+- Residual dev-only noise: favicon 404 on `/login` and browser autocomplete suggestion for the password field
 
-**What to do next**:
-- Implement password reset / forgot-password flow
-- Add email verification on registration
-- Add CSRF protection and stronger failed-login lockout behavior
-- Run broader mobile/browser QA for dashboard tables/forms and Build Tour interactions
+**Files changed**:
+- `.agent/TODO.md`
+- `.agent/MEMORY.md`
+- `src/lib/seed.ts`
+- `src/app/login/page.tsx`

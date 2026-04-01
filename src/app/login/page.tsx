@@ -69,7 +69,7 @@ export default function LoginPage() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="admin@ceylonescapes.lk"
+                                placeholder="admin@yataraceylon.me"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required

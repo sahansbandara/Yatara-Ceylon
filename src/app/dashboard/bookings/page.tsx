@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { CalendarCheck, Search, Eye, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarCheck, Search, Eye, MessageSquare, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { EmptyStateCard } from '@/components/dashboard/EmptyStateCard';
@@ -55,6 +55,8 @@ export default function BookingsPage() {
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [hasBalanceDue, setHasBalanceDue] = useState(false);
+    const [sortBy, setSortBy] = useState('createdAt');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const [loading, setLoading] = useState(true);
     const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
     const [summary, setSummary] = useState<BookingSummary>({
@@ -95,6 +97,11 @@ export default function BookingsPage() {
             const params = new URLSearchParams({ page: String(page), limit: '20' });
             if (search) params.set('search', search);
             if (statusFilter) params.set('status', statusFilter);
+            if (dateFrom) params.set('dateFrom', dateFrom);
+            if (dateTo) params.set('dateTo', dateTo);
+            if (hasBalanceDue) params.set('hasBalanceDue', 'true');
+            if (sortBy) params.set('sortBy', sortBy);
+            if (sortOrder) params.set('sortOrder', sortOrder);
 
             const res = await fetch(`/api/bookings?${params}`);
             const data = await res.json();
@@ -129,7 +136,7 @@ export default function BookingsPage() {
     useEffect(() => {
         setPage(1);
         fetchBookings();
-    }, [statusFilter, search, dateFrom, dateTo, hasBalanceDue]);
+    }, [statusFilter, search, dateFrom, dateTo, hasBalanceDue, sortBy, sortOrder]);
 
     useEffect(() => {
         fetchBookings();
@@ -143,6 +150,23 @@ export default function BookingsPage() {
 
     const handleStatusTabClick = (status: string) => {
         setStatusFilter(status === statusFilter ? '' : status);
+    };
+
+    const handleSort = (field: string) => {
+        if (sortBy === field) {
+            setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortBy(field);
+            setSortOrder('desc');
+        }
+        setPage(1);
+    };
+
+    const SortIcon = ({ field }: { field: string }) => {
+        if (sortBy !== field) return <ArrowUpDown className="h-3 w-3 ml-1 opacity-30" />;
+        return sortOrder === 'asc'
+            ? <ArrowUp className="h-3 w-3 ml-1 text-antique-gold" />
+            : <ArrowDown className="h-3 w-3 ml-1 text-antique-gold" />;
     };
 
     const maxPage = Math.ceil(total / 20);
@@ -271,14 +295,28 @@ export default function BookingsPage() {
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="bg-white/[0.03] border-b border-white/[0.06]">
-                                        <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Code</th>
-                                        <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Customer</th>
+                                        <th onClick={() => handleSort('bookingNo')} className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold cursor-pointer hover:text-white/50 select-none">
+                                            <span className="inline-flex items-center">Code<SortIcon field="bookingNo" /></span>
+                                        </th>
+                                        <th onClick={() => handleSort('customerName')} className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold cursor-pointer hover:text-white/50 select-none">
+                                            <span className="inline-flex items-center">Customer<SortIcon field="customerName" /></span>
+                                        </th>
                                         <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold hidden md:table-cell">Package</th>
-                                        <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold hidden lg:table-cell">Dates</th>
-                                        <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Total</th>
-                                        <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold hidden md:table-cell">Paid</th>
-                                        <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold hidden lg:table-cell">Due</th>
-                                        <th className="text-center px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Status</th>
+                                        <th onClick={() => handleSort('dates.from')} className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold hidden lg:table-cell cursor-pointer hover:text-white/50 select-none">
+                                            <span className="inline-flex items-center">Dates<SortIcon field="dates.from" /></span>
+                                        </th>
+                                        <th onClick={() => handleSort('totalCost')} className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold cursor-pointer hover:text-white/50 select-none">
+                                            <span className="inline-flex items-center justify-end">Total<SortIcon field="totalCost" /></span>
+                                        </th>
+                                        <th onClick={() => handleSort('paidAmount')} className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold hidden md:table-cell cursor-pointer hover:text-white/50 select-none">
+                                            <span className="inline-flex items-center justify-end">Paid<SortIcon field="paidAmount" /></span>
+                                        </th>
+                                        <th onClick={() => handleSort('remainingBalance')} className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold hidden lg:table-cell cursor-pointer hover:text-white/50 select-none">
+                                            <span className="inline-flex items-center justify-end">Due<SortIcon field="remainingBalance" /></span>
+                                        </th>
+                                        <th onClick={() => handleSort('status')} className="text-center px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold cursor-pointer hover:text-white/50 select-none">
+                                            <span className="inline-flex items-center">Status<SortIcon field="status" /></span>
+                                        </th>
                                         <th className="text-center px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Actions</th>
                                     </tr>
                                 </thead>
