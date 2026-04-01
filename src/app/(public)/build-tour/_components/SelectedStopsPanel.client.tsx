@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
-    GripVertical, X, Sparkles, MapPin, Trash2, Wand2, Send, Clock,
+    GripVertical, X, Sparkles, MapPin, Trash2, Wand2, Send, Clock, Save, Loader2,
 } from 'lucide-react';
 import {
     DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -102,13 +102,21 @@ function SortableStopItem({
 
 /* ─── Main Panel ──────────────────────────────────────────────── */
 
-export default function SelectedStopsPanel() {
+export default function SelectedStopsPanel({
+    activePlanId,
+    onPlanSaved,
+}: {
+    activePlanId?: string | null;
+    onPlanSaved?: (planId: string) => void;
+}) {
     const stops = useBuildTourStore((s) => s.stops);
     const removeStop = useBuildTourStore((s) => s.removeStop);
     const reorderStops = useBuildTourStore((s) => s.reorderStops);
     const clearStops = useBuildTourStore((s) => s.clearStops);
     const optimizeOrder = useBuildTourStore((s) => s.optimizeOrder);
     const getTripEstimate = useBuildTourStore((s) => s.getTripEstimate);
+    const [savingPlan, setSavingPlan] = useState(false);
+    const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -131,6 +139,55 @@ export default function SelectedStopsPanel() {
 
     const tripEstimate = getTripEstimate();
     const uniqueDistricts = new Set(stops.map((s) => s.place.district));
+    const saveLabel = useMemo(
+        () => (activePlanId ? 'Update Saved Plan' : 'Save Plan'),
+        [activePlanId]
+    );
+
+    const handleSavePlan = async () => {
+        setSavingPlan(true);
+        setSaveMessage(null);
+
+        try {
+            const payload = {
+                title: uniqueDistricts.size > 0
+                    ? `${Array.from(uniqueDistricts).join(' • ')} itinerary`
+                    : 'Custom Sri Lanka itinerary',
+                days: [
+                    {
+                        dayNo: 1,
+                        places: stops.map((stop) => stop.placeId),
+                    },
+                ],
+                districtsUsed: Array.from(uniqueDistricts),
+                totalDays: 1,
+                status: 'SAVED',
+            };
+
+            const response = await fetch(activePlanId ? `/api/plans?id=${activePlanId}` : '/api/plans', {
+                method: activePlanId ? 'PATCH' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                setSaveMessage(data.error || 'Unable to save this plan right now.');
+                return;
+            }
+
+            const savedPlanId = data.plan?._id || activePlanId;
+            if (savedPlanId) {
+                onPlanSaved?.(savedPlanId);
+            }
+            setSaveMessage(activePlanId ? 'Saved changes to your plan.' : 'Plan saved. You can reopen it later from My Plans.');
+        } catch (error) {
+            console.error(error);
+            setSaveMessage('Unable to save this plan right now.');
+        } finally {
+            setSavingPlan(false);
+        }
+    };
 
     /* ── Empty state ─────────────────────────────────────────── */
     if (stops.length === 0) {
@@ -225,18 +282,31 @@ export default function SelectedStopsPanel() {
             {/* Send to concierge — glass CTA */}
             {stops.length >= 2 && (
                 <div className="p-3 border-t border-white/5 bg-antique-gold/[0.02]">
-                    <button
-                        onClick={() => {
-                            const itinerary = stops.map((s) => s.place.name).join(', ');
-                            const districts = Array.from(uniqueDistricts).join(', ');
-                            const params = new URLSearchParams({ itinerary, districts, source: 'build-tour' });
-                            window.location.href = `/inquire?${params.toString()}`;
-                        }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-antique-gold text-deep-emerald font-serif text-[11px] uppercase tracking-[0.2em] rounded-lg hover:shadow-lg hover:shadow-antique-gold/30 hover:scale-[1.01] transition-all font-semibold"
-                    >
-                        <Send className="w-3.5 h-3.5" />
-                        Send Plan to Concierge
-                    </button>
+                    <div className="grid gap-2">
+                        <button
+                            onClick={handleSavePlan}
+                            disabled={savingPlan}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/5 border border-white/10 text-white font-serif text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-antique-gold/40 hover:text-antique-gold transition-all disabled:opacity-60"
+                        >
+                            {savingPlan ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                            {saveLabel}
+                        </button>
+                        <button
+                            onClick={() => {
+                                const itinerary = stops.map((s) => s.place.name).join(', ');
+                                const districts = Array.from(uniqueDistricts).join(', ');
+                                const params = new URLSearchParams({ itinerary, districts, source: 'build-tour' });
+                                window.location.href = `/inquire?${params.toString()}`;
+                            }}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-antique-gold text-deep-emerald font-serif text-[11px] uppercase tracking-[0.2em] rounded-lg hover:shadow-lg hover:shadow-antique-gold/30 hover:scale-[1.01] transition-all font-semibold"
+                        >
+                            <Send className="w-3.5 h-3.5" />
+                            Send Plan to Concierge
+                        </button>
+                    </div>
+                    {saveMessage ? (
+                        <p className="text-center text-white/35 text-[10px] font-light mt-2">{saveMessage}</p>
+                    ) : null}
                     <p className="text-center text-white/10 text-[8px] font-light mt-2">
                         Your concierge will refine routing, transfers, and luxury details.
                     </p>

@@ -21,6 +21,7 @@ interface BuildTourState {
     // ─── Selected Stops ──────────────────────────────────────────────────
     stops: Stop[];
     addStop: (place: Place) => void;
+    hydrateStopsFromPlaceIds: (placeIds: string[]) => void;
     removeStop: (stopId: string) => void;
     reorderStops: (oldIndex: number, newIndex: number) => void;
     clearStops: () => void;
@@ -118,6 +119,28 @@ export const useBuildTourStore = create<BuildTourState>()(
                     order: s.stops.length,
                 };
                 return { stops: [...s.stops, newStop], activeTab: 'stops' as PanelTab };
+            }),
+        hydrateStopsFromPlaceIds: (placeIds) =>
+            set((s) => {
+                const nextStops = placeIds
+                    .map((placeId, index) => {
+                        const place = s.places.find((entry) => entry.id === placeId);
+                        if (!place) return null;
+
+                        return {
+                            stopId: `hydrated-stop-${index}-${place.id}`,
+                            placeId: place.id,
+                            place,
+                            order: index,
+                        } as Stop;
+                    })
+                    .filter(Boolean) as Stop[];
+
+                return {
+                    stops: nextStops,
+                    route: null,
+                    activeTab: nextStops.length > 0 ? 'stops' as PanelTab : s.activeTab,
+                };
             }),
         removeStop: (stopId) =>
             set((s) => ({

@@ -14,7 +14,13 @@ export const metadata: Metadata = {
     description: 'Build a smarter Sri Lanka journey. Explore the island visually on our interactive map, choose regions with confidence, and shape an elegant route with concierge-ready planning.',
 };
 
-export default function BuildTourPage() {
+export default async function BuildTourPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ planId?: string }>;
+}) {
+    const { planId } = await searchParams;
+
     return (
         <main className="bg-[#0a0f0d] min-h-screen">
             {/* 1. Hero — compact, product-led framing */}
@@ -25,7 +31,7 @@ export default function BuildTourPage() {
 
             {/* 3. Main planner — the star of the page */}
             <div id="planner">
-                <BuildTourShell />
+                <BuildTourShell initialPlanId={planId} />
             </div>
 
             {/* 4. How it works — 3-step strip */}

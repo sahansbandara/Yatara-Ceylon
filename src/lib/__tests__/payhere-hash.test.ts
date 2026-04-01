@@ -10,6 +10,7 @@ jest.mock('../payhere/config', () => ({
     PAYHERE_CURRENCY: 'LKR',
     PAYHERE_MODE: 'sandbox',
     APP_BASE_URL: 'http://localhost:3000',
+    getMerchantSecret: () => 'TEST_SECRET',
     getPayhereCheckoutUrl: () => 'https://sandbox.payhere.lk/pay/checkout',
 }));
 

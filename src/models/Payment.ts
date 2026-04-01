@@ -5,7 +5,7 @@ export interface IPayment extends Document {
     invoiceId?: Types.ObjectId;
     amount: number;
     provider: 'PAYHERE' | 'STRIPE' | 'MANUAL';
-    status: 'INITIATED' | 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELED' | 'CHARGEDBACK';
+    status: 'INITIATED' | 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELED' | 'CHARGEDBACK' | 'VOIDED';
     orderId?: string;
     payherePaymentId?: string;
     stripeSessionId?: string;
@@ -18,6 +18,7 @@ export interface IPayment extends Document {
     type: 'PAYMENT' | 'REFUND';
     notes?: string;
     recordedBy?: Types.ObjectId;
+    voidedAt?: Date;
     isDeleted: boolean;
     deletedAt?: Date;
     createdAt: Date;
@@ -41,7 +42,7 @@ const PaymentSchema = new Schema<IPayment>(
         },
         status: {
             type: String,
-            enum: ['INITIATED', 'PENDING', 'SUCCESS', 'FAILED', 'CANCELED', 'CHARGEDBACK'],
+            enum: ['INITIATED', 'PENDING', 'SUCCESS', 'FAILED', 'CANCELED', 'CHARGEDBACK', 'VOIDED'],
             default: 'SUCCESS', // Default for backward compatibility with existing manual payments
         },
         orderId: { type: String, unique: true, sparse: true },
@@ -64,6 +65,7 @@ const PaymentSchema = new Schema<IPayment>(
         },
         notes: String,
         recordedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+        voidedAt: Date,
         isDeleted: { type: Boolean, default: false },
         deletedAt: Date,
     },

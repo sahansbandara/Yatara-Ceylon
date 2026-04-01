@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2, User, Building2, Car, Shield, Users, Mail, Lock, Phone, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import TurnstileField from '@/components/public/TurnstileField';
 
 type AuthMode = 'login' | 'signup';
 
@@ -27,6 +28,8 @@ function LoginContent() {
     const [showPassword, setShowPassword] = useState(false);
     const [role, setRole] = useState('USER');
     const [showPartnerAccess, setShowPartnerAccess] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState('');
+    const [resendingVerification, setResendingVerification] = useState(false);
 
     // Form fields
     const [name, setName] = useState('');
@@ -37,6 +40,8 @@ function LoginContent() {
     const [successMsg, setSuccessMsg] = useState('');
     const searchParams = useSearchParams();
     const redirectTo = searchParams.get('redirect');
+    const verificationState = searchParams.get('verified');
+    const resetState = searchParams.get('reset');
 
     // Role-based redirect mapping
     const getRoleRedirect = (role: string) => {
@@ -49,6 +54,24 @@ function LoginContent() {
             default: return '/dashboard';
         }
     };
+
+    useEffect(() => {
+        if (verificationState === 'success') {
+            setSuccessMsg('Email verified successfully. You can now sign in.');
+            setError('');
+        } else if (verificationState === 'invalid') {
+            setError('Verification link is invalid or expired. Request a new one below.');
+        } else if (verificationState === 'missing') {
+            setError('Verification token is missing.');
+        } else if (verificationState === 'error') {
+            setError('Email verification failed. Please request a new link.');
+        }
+
+        if (resetState === 'success') {
+            setSuccessMsg('Password updated successfully. Please sign in with your new password.');
+            setError('');
+        }
+    }, [verificationState, resetState]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -91,24 +114,47 @@ function LoginContent() {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, phone, password, role }),
+                body: JSON.stringify({ name, email, phone, password, role, turnstileToken }),
             });
             const data = await res.json();
             if (!res.ok) {
                 setError(data.error || 'Registration failed');
                 return;
             }
-
-            if (role === 'USER') {
-                setSuccessMsg('Account created successfully! Please sign in.');
-            } else {
-                setSuccessMsg('Application submitted! Pending admin approval before sign in.');
-            }
+            setSuccessMsg(data.message || 'Account created successfully! Please verify your email before signing in.');
             setAuthMode('login');
         } catch {
             setError('Network error. Please try again.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleResendVerification = async () => {
+        if (!email.trim()) {
+            setError('Enter your email address first so we know where to resend the verification link.');
+            return;
+        }
+
+        setResendingVerification(true);
+        setError('');
+        try {
+            const response = await fetch('/api/auth/resend-verification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                setError(data.error || 'Unable to resend verification email.');
+                return;
+            }
+
+            setSuccessMsg(data.message || 'Verification email resent.');
+        } catch {
+            setError('Unable to resend verification email right now.');
+        } finally {
+            setResendingVerification(false);
         }
     };
 
@@ -237,6 +283,20 @@ function LoginContent() {
                                     </>
                                 )}
                             </Button>
+
+                            <div className="flex items-center justify-between text-[11px] text-white/45 pt-1">
+                                <Link href={`/auth/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ''}`} className="hover:text-antique-gold transition-colors">
+                                    Forgot password?
+                                </Link>
+                                <button
+                                    type="button"
+                                    disabled={resendingVerification}
+                                    onClick={handleResendVerification}
+                                    className="hover:text-antique-gold transition-colors disabled:opacity-50"
+                                >
+                                    {resendingVerification ? 'Sending...' : 'Resend verification'}
+                                </button>
+                            </div>
                         </form>
                     )}
 
@@ -268,7 +328,7 @@ function LoginContent() {
                                     </button>
                                 </div>
 
-
+                                <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} theme="dark" />
 
                                 <Button type="submit" disabled={loading} className="w-full bg-antique-gold hover:bg-antique-gold/90 text-[#0a1f15] font-bold text-xs tracking-[0.15em] h-11 mt-2 rounded-xl shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 flex items-center justify-center gap-2 uppercase">
                                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (

@@ -61,7 +61,8 @@ describe('POST /api/vehicles/[id] block dates', () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    cookie: 'toms_token=token',
+                    cookie: 'toms_token=token; toms_csrf=csrf-token',
+                    'x-csrf-token': 'csrf-token',
                 },
                 body: JSON.stringify({
                     from: '2026-04-10',

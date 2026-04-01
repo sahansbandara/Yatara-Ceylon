@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon, Loader2, MapPin, CheckCircle2, BookmarkIcon } from 'lucide-react';
 import MapWrapper from './MapWrapper';
 import { useRouter } from 'next/navigation';
+import TurnstileField from '@/components/public/TurnstileField';
 
 interface TourBuilderProps {
     districts: any[];
@@ -25,6 +26,7 @@ export default function TourBuilder({ districts: rawDistricts, places: rawPlaces
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [draftLoading, setDraftLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState('');
 
     // Form State
     const [formData, setFormData] = useState({
@@ -84,6 +86,7 @@ export default function TourBuilder({ districts: rawDistricts, places: rawPlaces
             email: formData.email || 'draft@yataraceylon.me',
             phone: formData.phone || '',
             type: isDraft ? 'DRAFT' : 'CUSTOM',
+            turnstileToken,
             message: `
                 ${isDraft ? '[DRAFT]' : ''} Bespoke Tour Request
                 Duration: ${formData.duration} days
@@ -332,6 +335,8 @@ export default function TourBuilder({ districts: rawDistricts, places: rawPlaces
                                 {formData.duration || '-'} days planned • {formData.adults} Adults, {formData.children} Children • {formData.selectedPlaces.length} Destinations curated
                             </p>
                         </div>
+
+                        <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
                     </div>
                 )}
 

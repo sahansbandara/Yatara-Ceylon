@@ -8,7 +8,26 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## In Progress
-- None currently
+- [ ] Complete remaining production hardening: extra GET protections, partner safety, auth recovery/security flows, plan/dashboard completion, captcha/CSRF, and test coverage
+  - [x] Close remaining public partner reads and block inactive partner/service assignments
+  - [x] Add saved-plan reopen/edit/delete flow and Build Tour recovery/fallback states
+  - [x] Build shared auth security primitives: verification/reset email, lockout, CSRF, captcha
+  - [x] Repair verification fallout: transformed partner-service schema typing, CSRF-aware tests, and stale mock expectations
+  - [x] Remove stray editor swap files from tracked changes
+  - [x] Add regression tests and manual QA matrix for the new security/workflow coverage
+  - [ ] Execute the documented manual QA matrix end-to-end in a dedicated QA pass
+
+## Just Completed (2026-04-01)
+
+### Security Hardening & Account Recovery Completion
+- [x] Closed the remaining exposed partner reads by protecting `/api/booking-partners` and `/api/partners/[id]` with role-aware auth guards and ownership checks.
+- [x] Blocked inactive partners and inactive partner services from being assigned to bookings, with clear `409` API responses and regression tests.
+- [x] Added shared CSRF protection, captcha verification, verification/reset email plumbing, stronger password rules, and login lockout handling.
+- [x] Added forgot-password, reset-password, resend-verification, verify-email, and CSRF bootstrap routes/pages.
+- [x] Added saved-plan reopen/update/delete flow, dashboard invoice detail pages, notification filters, and partner service edit/delete management.
+- [x] Added deterministic slug collision handling for packages/destinations and stronger phone/password validation coverage.
+- [x] Added a manual QA matrix under `docs/qa/manual-test-matrix.md` and expanded Jest coverage for the new security, partner, booking, and password-reset flows.
+- [x] Verified the remediation set with `npm run build`, a full Jest pass (`18/18` suites), and a browser smoke-check confirming `/build-tour` renders Leaflet without hanging on the loading/error fallback.
 
 ## Just Completed (2026-04-01)
 

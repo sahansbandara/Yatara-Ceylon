@@ -5,11 +5,25 @@ import SupportTicket from '@/models/SupportTicket';
 import { validateBody } from '@/lib/validate';
 import { createTicketSchema } from '@/lib/validations';
 import { rateLimit } from '@/lib/rate-limit';
+import { enforceCsrf } from '@/lib/csrf';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 // Public ticket submission – no auth required
 export async function POST(request: NextRequest) {
+    const csrfError = await enforceCsrf(request);
+    if (csrfError) return csrfError;
+
     const limitError = await rateLimit(request);
     if (limitError) return limitError;
+
+    const rawBody = await request.clone().json().catch(() => null);
+    const captchaResult = await verifyTurnstileToken(
+        rawBody?.turnstileToken || null,
+        request.headers.get('x-forwarded-for')
+    );
+    if (!captchaResult.success) {
+        return NextResponse.json({ error: captchaResult.error }, { status: 400 });
+    }
 
     // Parse body manually since validateBody consumes the stream
     // Actually validateBody clones it? Let's check validateBody.

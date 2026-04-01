@@ -6,6 +6,7 @@ import { staffOrAdmin } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { updatePackageSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
+import { buildUniqueSlug } from '@/lib/slug';
 
 // GET /api/packages/[id] – get single package by id or slug
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -41,9 +42,13 @@ export const PATCH = staffOrAdmin(async (request, context) => {
     try {
         await connectDB();
         const { id } = await context.params;
+        const update: Record<string, unknown> = { ...data };
+        if (data?.title) {
+            update.slug = await buildUniqueSlug(Package, data.title, id);
+        }
         const pkg = await Package.findOneAndUpdate(
             { _id: id, isDeleted: false },
-            { $set: data },
+            { $set: update },
             { new: true }
         );
 
@@ -56,6 +61,9 @@ export const PATCH = staffOrAdmin(async (request, context) => {
         return NextResponse.json({ package: pkg });
     } catch (error) {
         console.error('PATCH /api/packages/[id] error:', error);
+        if ((error as { code?: number }).code === 11000) {
+            return NextResponse.json({ error: 'A package with a conflicting slug already exists. Update the title and try again.' }, { status: 409 });
+        }
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 });

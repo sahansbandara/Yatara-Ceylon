@@ -2,22 +2,30 @@ export const dynamic = 'force-dynamic';
 import { NextResponse, type NextRequest } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
-import { getTokenFromRequest, verifyToken } from '@/lib/auth';
+import { withAuth } from '@/lib/rbac';
+import { z } from 'zod';
+import { phoneRegex } from '@/lib/password-policy';
 
-export async function PATCH(request: NextRequest) {
+const updateProfileSchema = z.object({
+    name: z.string().min(1).optional(),
+    phone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
+    avatar: z.string().optional(),
+});
+
+export const PATCH = withAuth(async (request, context) => {
     try {
-        const token = getTokenFromRequest(request);
-        if (!token) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const payload = await verifyToken(token);
-        if (!payload) {
-            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-        }
-
         const body = await request.json();
-        const { name, phone, avatar } = body;
+        const parsed = updateProfileSchema.safeParse(body);
+        if (!parsed.success) {
+            return NextResponse.json(
+                { error: 'Validation failed', details: parsed.error.flatten().fieldErrors },
+                { status: 400 }
+            );
+        }
+        const { name, phone, avatar } = parsed.data;
 
         await connectDB();
 
@@ -27,7 +35,7 @@ export async function PATCH(request: NextRequest) {
         if (avatar !== undefined) updateData.avatar = avatar; // Allow setting avatar string
 
         const updatedUser = await User.findByIdAndUpdate(
-            payload.userId,
+            context.user.userId,
             { $set: updateData },
             { new: true }
         ).select('-passwordHash').lean();
@@ -47,4 +55,4 @@ export async function PATCH(request: NextRequest) {
             { status: 500 }
         );
     }
-}
+});

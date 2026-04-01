@@ -78,7 +78,8 @@ describe('PATCH /api/payments/[id]', () => {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    cookie: 'toms_token=token',
+                    cookie: 'toms_token=token; toms_csrf=csrf-token',
+                    'x-csrf-token': 'csrf-token',
                 },
                 body: JSON.stringify({ action: 'VOID' }),
             }),

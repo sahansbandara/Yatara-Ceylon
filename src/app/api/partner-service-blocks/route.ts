@@ -50,8 +50,8 @@ export const POST = withAuth(async (request, context) => {
             assignedPartnerServiceId: serviceId, // Assuming they might use assignedPartnerServiceId
             isDeleted: false,
             status: { $in: ['CONFIRMED', 'ASSIGNED', 'IN_PROGRESS'] },
-            'dates.start': { $lte: new Date(to) },
-            'dates.end': { $gte: new Date(from) }
+            'dates.from': { $lte: new Date(to) },
+            'dates.to': { $gte: new Date(from) }
         });
 
         if (bookingOverlap) {

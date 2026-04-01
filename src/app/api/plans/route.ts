@@ -18,8 +18,10 @@ export const GET = withAuth(async (request, { user }) => {
     try {
         await connectDB();
         const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
         const status = searchParams.get('status');
         const filter: Record<string, unknown> = { isDeleted: { $ne: true } };
+        if (id) filter._id = id;
         if (status) filter.status = status;
         if (!['ADMIN', 'STAFF'].includes(user.role)) {
             filter.$or = [
@@ -28,6 +30,16 @@ export const GET = withAuth(async (request, { user }) => {
             ];
         }
         const plans = await CustomPlan.find(filter).sort({ createdAt: -1 }).lean();
+
+        if (id) {
+            const plan = plans[0];
+            if (!plan) {
+                return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
+            }
+
+            return NextResponse.json({ plan });
+        }
+
         return NextResponse.json({ plans });
     } catch (error) {
         console.error(error);

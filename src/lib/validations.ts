@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { passwordSchema, phoneRegex } from '@/lib/password-policy';
 
 // ─── Packages ───
 export const createPackageSchema = z.object({
@@ -83,7 +84,7 @@ export const updateNotificationSchema = createNotificationSchema.partial();
 // ─── Bookings ───
 export const createBookingSchema = z.object({
     customerName: z.string().min(1),
-    phone: z.string().min(1).regex(/^\+?[\d\s\-\(\)]{7,}$/, 'Invalid phone number format'),
+    phone: z.string().min(1).regex(phoneRegex, 'Invalid phone number format'),
     email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
     city: z.string().optional(),
@@ -141,7 +142,7 @@ export const createVehicleBlockSchema = z.object({
 export const createTicketSchema = z.object({
     customerName: z.string().min(1),
     phone: z.string().optional().refine(
-        (phone) => !phone || /^\+?[\d\s\-\(\)]{7,}$/.test(phone),
+        (phone) => !phone || phoneRegex.test(phone),
         'Invalid phone number format'
     ),
     email: z.string().email().optional().or(z.literal('')),
@@ -186,7 +187,7 @@ export const createPartnerSchema = z.object({
     type: z.enum(['GUIDE', 'HOTEL', 'DRIVER', 'RESTAURANT', 'OTHER']),
     name: z.string().min(1),
     contactPerson: z.string().optional(),
-    phone: z.string().min(1).regex(/^\+?[\d\s\-\(\)]{7,}$/, 'Invalid phone number format'),
+    phone: z.string().min(1).regex(phoneRegex, 'Invalid phone number format'),
     email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
     status: z.enum(['ACTIVE', 'INACTIVE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('ACTIVE'),
@@ -194,18 +195,40 @@ export const createPartnerSchema = z.object({
 });
 export const updatePartnerSchema = createPartnerSchema.partial();
 
-export const createPartnerServiceSchema = z.object({
+const partnerServiceBaseSchema = z.object({
     serviceName: z.string().min(1),
     rate: z.number().min(0),
     unit: z.enum(['PER_DAY', 'PER_TRIP', 'PER_PERSON', 'PER_NIGHT', 'FLAT']),
+    description: z.string().optional(),
     notes: z.string().optional(),
 });
+
+const normalizePartnerServicePayload = ({
+    notes,
+    description,
+    ...rest
+}: {
+    notes?: string;
+    description?: string;
+    serviceName?: string;
+    rate?: number;
+    unit?: 'PER_DAY' | 'PER_TRIP' | 'PER_PERSON' | 'PER_NIGHT' | 'FLAT';
+}) => ({
+    ...rest,
+    description: description ?? notes,
+});
+
+export const createPartnerServiceSchema = partnerServiceBaseSchema.transform(normalizePartnerServicePayload);
+export const updatePartnerServiceSchema = partnerServiceBaseSchema.partial().transform(normalizePartnerServicePayload);
 
 // ─── Custom Plans ───
 export const createPlanSchema = z.object({
     title: z.string().min(1).max(120).optional(),
     customerName: z.string().optional(),
-    customerPhone: z.string().optional(),
+    customerPhone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
     customerEmail: z.string().email().optional().or(z.literal('')),
     days: z.array(z.object({
         dayNo: z.number().min(1),
@@ -234,20 +257,19 @@ export const createUserSchema = z.object({
     name: z.string().min(1),
     email: z.string().email(),
     phone: z.string().optional().refine(
-        (phone) => !phone || /^\+?[\d\s\-\(\)]{7,}$/.test(phone),
+        (phone) => !phone || phoneRegex.test(phone),
         'Invalid phone number format'
     ),
-    password: z.string()
-        .min(8, 'Password must be at least 8 characters')
-        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-        .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-        .regex(/[0-9]/, 'Password must contain at least one number'),
+    password: passwordSchema,
     role: z.enum(['ADMIN', 'STAFF']).default('STAFF'),
 });
 export const updateUserSchema = z.object({
     name: z.string().min(1).optional(),
     email: z.string().email().optional(),
-    phone: z.string().optional(),
+    phone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
     role: z.enum(['ADMIN', 'STAFF', 'USER', 'VEHICLE_OWNER', 'HOTEL_OWNER']).optional(),
     status: z.enum(['ACTIVE', 'DISABLED', 'PENDING_APPROVAL', 'REJECTED']).optional(),
 });

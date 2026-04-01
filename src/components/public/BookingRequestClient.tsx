@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, CreditCard, DollarSign, AlertCircle } from 'lucide-react';
 import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
+import TurnstileField from '@/components/public/TurnstileField';
 
 interface BookingRequestClientProps {
     vehicle?: any;
@@ -24,6 +25,7 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
 
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<{ message: string; success: boolean } | null>(null);
+    const [turnstileToken, setTurnstileToken] = useState('');
 
     const [form, setForm] = useState({
         customerName: '',
@@ -113,6 +115,7 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
             const bookingPayload: any = {
                 ...form,
                 totalCost: amounts.total,
+                turnstileToken,
             };
 
             const bookingRes = await fetch('/api/public/booking-request', {
@@ -293,6 +296,8 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                         className="w-full min-h-[80px] px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-antique-gold/30 focus:border-antique-gold"
                     />
                 </div>
+
+                <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
 
                 <Button
                     type="submit"

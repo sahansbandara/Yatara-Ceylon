@@ -6,7 +6,7 @@ import { getCategoryColor } from '@/lib/trip/types';
 import { resolveGeoNameToId, getDistrictById } from '@/lib/districts';
 import { DISTRICT_TO_REGION } from '@/lib/regions';
 import type { Place } from '@/lib/trip/types';
-import { MapPin, Route, Clock } from 'lucide-react';
+import { MapPin, Route, Clock, AlertTriangle, RefreshCw } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
@@ -39,10 +39,18 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
     const [L, setL] = useState<any>(null);
     const [geoData, setGeoData] = useState<any>(null);
     const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
+    const [mapError, setMapError] = useState<string | null>(null);
+    const [isLoadingMap, setIsLoadingMap] = useState(true);
+    const [reloadKey, setReloadKey] = useState(0);
 
     // Load Leaflet + GeoJSON
     useEffect(() => {
         let cancelled = false;
+        setMapError(null);
+        setIsLoadingMap(true);
+        setL(null);
+        setGeoData(null);
+
         (async () => {
             try {
                 const leaflet = await import('leaflet');
@@ -58,12 +66,17 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                 if (cancelled) return;
                 setL(leaflet.default || leaflet);
                 setGeoData(geo);
+                setIsLoadingMap(false);
             } catch (err) {
                 console.error("Error loading map assets:", err);
+                if (!cancelled) {
+                    setMapError('We could not load the interactive map right now. Retry to continue planning.');
+                    setIsLoadingMap(false);
+                }
             }
         })();
         return () => { cancelled = true; };
-    }, []);
+    }, [reloadKey]);
 
     // Init map — dark premium theme with tight Sri Lanka framing
     useEffect(() => {
@@ -229,6 +242,28 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
         }).addTo(mapRef.current);
     }, [L, geoData, selectedDistrictId, activeRegionId, setDistrictFilter]);
 
+    if (mapError) {
+        return (
+            <div className="w-full h-full flex items-center justify-center bg-[#081c16] px-6">
+                <div className="max-w-sm rounded-3xl border border-antique-gold/20 bg-black/25 px-6 py-8 text-center backdrop-blur-md">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-antique-gold/20 bg-antique-gold/10">
+                        <AlertTriangle className="h-5 w-5 text-antique-gold" />
+                    </div>
+                    <h3 className="text-lg font-serif text-antique-gold">Map unavailable</h3>
+                    <p className="mt-2 text-sm text-white/55">{mapError}</p>
+                    <button
+                        type="button"
+                        onClick={() => setReloadKey((current) => current + 1)}
+                        className="mt-5 inline-flex items-center gap-2 rounded-full border border-antique-gold/35 px-4 py-2 text-xs uppercase tracking-[0.2em] text-antique-gold hover:bg-antique-gold/10 transition-all"
+                    >
+                        <RefreshCw className="h-3.5 w-3.5" />
+                        Retry map
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     // Place markers — ONLY shown when a district is selected
     const updateMarkers = useCallback(() => {
         if (!L || !mapRef.current) return;
@@ -384,6 +419,15 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
         <div className="w-full h-full relative">
             {/* Dark premium map background */}
             <div ref={mapContainerRef} className="w-full h-full z-0" />
+
+            {isLoadingMap && (
+                <div className="absolute inset-0 z-[1200] flex items-center justify-center bg-[#081c16]/95">
+                    <div className="flex flex-col items-center gap-3">
+                        <div className="w-10 h-10 border-2 border-antique-gold/30 border-t-antique-gold rounded-full animate-spin" />
+                        <span className="text-white/25 text-[10px] uppercase tracking-wider font-serif">Loading map...</span>
+                    </div>
+                </div>
+            )}
 
             {/* Floating Stats Overlay — glass effect */}
             <div className="absolute top-4 left-4 z-[1000]">

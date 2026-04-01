@@ -10,6 +10,7 @@ export const UserStatus = {
     ACTIVE: 'ACTIVE',
     DISABLED: 'DISABLED',
     PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
 } as const;
 
 export const BookingTypes = {

@@ -18,17 +18,23 @@ import { Input } from '@/components/ui/input';
 export default function NotificationTable({ initialNotifications }: { initialNotifications: any[] }) {
     const [notifications, setNotifications] = useState(initialNotifications);
     const [query, setQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState<'ALL' | 'PUBLISHED' | 'DRAFT'>('ALL');
+    const [typeFilter, setTypeFilter] = useState<'ALL' | 'ALERT' | 'OFFER' | 'UPDATE'>('ALL');
     const router = useRouter();
 
     const filteredNotifications = notifications.filter((notif: any) => {
         const term = query.trim().toLowerCase();
-        if (!term) return true;
-        return (
+        const matchesQuery = !term || (
             notif.title?.toLowerCase().includes(term) ||
             notif.body?.toLowerCase().includes(term) ||
             notif.type?.toLowerCase().includes(term) ||
             notif.visibleTo?.toLowerCase().includes(term)
         );
+        const matchesStatus = statusFilter === 'ALL'
+            || (statusFilter === 'PUBLISHED' ? notif.isPublished : !notif.isPublished);
+        const matchesType = typeFilter === 'ALL' || notif.type === typeFilter;
+
+        return matchesQuery && matchesStatus && matchesType;
     });
 
     const togglePublish = async (id: string, isPublished: boolean) => {
@@ -64,13 +70,39 @@ export default function NotificationTable({ initialNotifications }: { initialNot
 
     return (
         <div className="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-xl shadow-xl overflow-hidden">
-            <div className="border-b border-white/10 p-4">
+            <div className="border-b border-white/10 p-4 space-y-3">
                 <Input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search notifications by title, body, type, or audience"
                     className="h-11 border-white/10 bg-white/5 text-white placeholder:text-white/30"
                 />
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div className="flex flex-col gap-3 md:flex-row">
+                        <select
+                            value={statusFilter}
+                            onChange={(event) => setStatusFilter(event.target.value as 'ALL' | 'PUBLISHED' | 'DRAFT')}
+                            className="h-10 rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none"
+                        >
+                            <option value="ALL" className="bg-[#08110d]">All statuses</option>
+                            <option value="PUBLISHED" className="bg-[#08110d]">Published</option>
+                            <option value="DRAFT" className="bg-[#08110d]">Drafts</option>
+                        </select>
+                        <select
+                            value={typeFilter}
+                            onChange={(event) => setTypeFilter(event.target.value as 'ALL' | 'ALERT' | 'OFFER' | 'UPDATE')}
+                            className="h-10 rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none"
+                        >
+                            <option value="ALL" className="bg-[#08110d]">All types</option>
+                            <option value="ALERT" className="bg-[#08110d]">Alerts</option>
+                            <option value="OFFER" className="bg-[#08110d]">Offers</option>
+                            <option value="UPDATE" className="bg-[#08110d]">Updates</option>
+                        </select>
+                    </div>
+                    <p className="text-xs text-white/35">
+                        Showing {filteredNotifications.length} of {notifications.length} notifications
+                    </p>
+                </div>
             </div>
             <Table>
                 <TableHeader className="bg-black/40">

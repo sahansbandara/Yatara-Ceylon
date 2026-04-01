@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
-import { ZodSchema, ZodError } from 'zod';
+import { ZodError } from 'zod';
+
+type ParsableSchema<T> = {
+    parse: (input: unknown) => T;
+};
 
 // Validate request body against a Zod schema
 export async function validateBody<T>(
     request: Request,
-    schema: ZodSchema<T>
+    schema: ParsableSchema<T>
 ): Promise<{ data: T; error: null } | { data: null; error: NextResponse }> {
     try {
         const body = await request.json();
@@ -39,7 +43,7 @@ export async function validateBody<T>(
 // Validate query parameters
 export function validateQuery<T>(
     url: string,
-    schema: ZodSchema<T>
+    schema: ParsableSchema<T>
 ): { data: T; error: null } | { data: null; error: NextResponse } {
     try {
         const { searchParams } = new URL(url);

@@ -28,16 +28,20 @@ const TABS: { id: PanelTab; label: string; icon: typeof Map }[] = [
     { id: 'summary', label: 'Route', icon: Route },
 ];
 
-export default function BuildTourShell() {
+export default function BuildTourShell({ initialPlanId }: { initialPlanId?: string | null }) {
     const setPlaces = useBuildTourStore((s) => s.setPlaces);
     const stops = useBuildTourStore((s) => s.stops);
     const activeTab = useBuildTourStore((s) => s.activeTab);
     const setActiveTab = useBuildTourStore((s) => s.setActiveTab);
     const drawerExpanded = useBuildTourStore((s) => s.drawerExpanded);
     const setDrawerExpanded = useBuildTourStore((s) => s.setDrawerExpanded);
+    const hydrateStopsFromPlaceIds = useBuildTourStore((s) => s.hydrateStopsFromPlaceIds);
 
     const [activeRegionId, setActiveRegionId] = useState<string | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [activePlanId, setActivePlanId] = useState<string | null>(null);
+    const [planStatusMessage, setPlanStatusMessage] = useState<string | null>(null);
+    const [loadingPlan, setLoadingPlan] = useState(false);
 
     useEffect(() => {
         setPlaces(curatedPlaces as Place[]);
@@ -58,6 +62,48 @@ export default function BuildTourShell() {
         setIsFullscreen(!isFullscreen);
     };
 
+    useEffect(() => {
+        if (!initialPlanId) return;
+
+        let cancelled = false;
+        setLoadingPlan(true);
+        setPlanStatusMessage(null);
+
+        void fetch(`/api/plans?id=${initialPlanId}`)
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to load saved plan.');
+                }
+
+                const plan = data.plan;
+                const placeIds = (plan.days || []).flatMap((day: { places?: string[] }) => day.places || []);
+                if (!cancelled) {
+                    hydrateStopsFromPlaceIds(placeIds);
+                    setActivePlanId(plan._id);
+                    setActiveTab(placeIds.length > 0 ? 'stops' : 'discover');
+                    setPlanStatusMessage('Loaded your saved plan. Continue editing or save over it when ready.');
+                    setTimeout(() => {
+                        void useBuildTourStore.getState().fetchRoute();
+                    }, 0);
+                }
+            })
+            .catch((error) => {
+                if (!cancelled) {
+                    setPlanStatusMessage(error.message || 'Unable to load this saved plan.');
+                }
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setLoadingPlan(false);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [hydrateStopsFromPlaceIds, initialPlanId, setActiveTab]);
+
     return (
         <section
             id="trip-builder"
@@ -71,6 +117,14 @@ export default function BuildTourShell() {
                         Interactive Planner
                     </span>
                     <div className="h-px w-10 bg-antique-gold/20" />
+                </div>
+            )}
+
+            {(loadingPlan || planStatusMessage) && !isFullscreen && (
+                <div className="px-4 sm:px-6 lg:px-8 pb-3">
+                    <div className="mx-auto max-w-[1600px] rounded-2xl border border-antique-gold/20 bg-antique-gold/5 px-4 py-3 text-xs text-antique-gold/80">
+                        {loadingPlan ? 'Loading saved plan...' : planStatusMessage}
+                    </div>
                 </div>
             )}
 
@@ -119,7 +173,15 @@ export default function BuildTourShell() {
                                         onSelectRegion={setActiveRegionId}
                                     />
                                 )}
-                                {activeTab === 'stops' && <SelectedStopsPanel />}
+                                {activeTab === 'stops' && (
+                                    <SelectedStopsPanel
+                                        activePlanId={activePlanId}
+                                        onPlanSaved={(planId) => {
+                                            setActivePlanId(planId);
+                                            setPlanStatusMessage('Saved to My Plans. You can reopen or delete it from your dashboard.');
+                                        }}
+                                    />
+                                )}
                                 {activeTab === 'summary' && <RouteSummaryBar />}
                             </div>
                         </div>
@@ -237,7 +299,15 @@ export default function BuildTourShell() {
                                             onSelectRegion={setActiveRegionId}
                                         />
                                     )}
-                                    {activeTab === 'stops' && <SelectedStopsPanel />}
+                                    {activeTab === 'stops' && (
+                                        <SelectedStopsPanel
+                                            activePlanId={activePlanId}
+                                            onPlanSaved={(planId) => {
+                                                setActivePlanId(planId);
+                                                setPlanStatusMessage('Saved to My Plans. You can reopen or delete it from your dashboard.');
+                                            }}
+                                        />
+                                    )}
                                     {activeTab === 'summary' && <RouteSummaryBar />}
                                 </div>
                             </>

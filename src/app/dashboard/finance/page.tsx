@@ -1,6 +1,7 @@
 import connectDB from "@/lib/mongodb";
 import Payment from "@/models/Payment";
 import Booking from "@/models/Booking";
+import Invoice from "@/models/Invoice";
 import { DollarSign, TrendingUp, CreditCard, AlertTriangle, ArrowUpRight, Receipt, Clock, CalendarClock } from "lucide-react";
 import Link from "next/link";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
@@ -17,6 +18,7 @@ async function getFinanceData() {
             pendingBalancesAgg,
             advancePaidAgg,
             recentPayments,
+            recentInvoices,
             bookingsWithBalance,
             revenueByMonth,
             agingBucketsData,
@@ -36,6 +38,11 @@ async function getFinanceData() {
             Payment.find({ isDeleted: false })
                 .sort({ createdAt: -1 })
                 .limit(10)
+                .populate('bookingId', 'bookingNo customerName')
+                .lean(),
+            Invoice.find({ isDeleted: { $ne: true } })
+                .sort({ createdAt: -1 })
+                .limit(5)
                 .populate('bookingId', 'bookingNo customerName')
                 .lean(),
             Booking.find({ isDeleted: false, remainingBalance: { $gt: 0 } })
@@ -72,6 +79,7 @@ async function getFinanceData() {
             advancePaid: advancePaidAgg[0]?.total || 0,
             advanceCount: advancePaidAgg[0]?.count || 0,
             recentPayments: JSON.parse(JSON.stringify(recentPayments)),
+            recentInvoices: JSON.parse(JSON.stringify(recentInvoices)),
             bookingsWithBalance: JSON.parse(JSON.stringify(bookingsWithBalance)),
             revenueByMonth: JSON.parse(JSON.stringify(revenueByMonth)),
             aging: {
@@ -85,7 +93,7 @@ async function getFinanceData() {
         console.error("Finance data fetch error:", error);
         return {
             totalRevenue: 0, pendingBalances: 0, pendingCount: 0,
-            advancePaid: 0, advanceCount: 0, recentPayments: [], bookingsWithBalance: [],
+            advancePaid: 0, advanceCount: 0, recentPayments: [], recentInvoices: [], bookingsWithBalance: [],
             revenueByMonth: [], aging: { "0-7": 0, "8-14": 0, "15-30": 0, "30+": 0 }
         };
     }
@@ -273,6 +281,42 @@ export default async function FinancePage() {
                     )}
                 </GlassPanel>
             </div>
+
+            <GlassPanel title="Recent Invoices">
+                {data.recentInvoices.length > 0 ? (
+                    <div className="space-y-2">
+                        {data.recentInvoices.map((invoice: any) => (
+                            <Link
+                                key={invoice._id}
+                                href={`/dashboard/finance/invoices/${invoice._id}`}
+                                className="flex items-center justify-between rounded-xl border border-white/[0.04] bg-white/[0.02] px-4 py-3 transition-all duration-300 hover:bg-white/[0.05] group"
+                            >
+                                <div className="min-w-0">
+                                    <p className="text-xs font-mono font-medium text-white/80">{invoice.invoiceNo}</p>
+                                    <p className="mt-0.5 text-[10px] text-white/40">
+                                        {(invoice.bookingId as any)?.bookingNo || '—'} · {(invoice.bookingId as any)?.customerName || '—'}
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="text-right">
+                                        <p className="text-sm font-bold text-white/85">LKR {(invoice.total || 0).toLocaleString()}</p>
+                                        <span className={`status-pill mt-1 ${invoice.status === 'FINAL' ? 'status-pill-success' : invoice.status === 'VOID' ? 'status-pill-danger' : 'status-pill-warning'}`}>
+                                            {invoice.status}
+                                        </span>
+                                    </div>
+                                    <ArrowUpRight className="h-4 w-4 text-white/20 transition-colors group-hover:text-antique-gold" />
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                ) : (
+                    <EmptyStateCard
+                        icon={Receipt}
+                        title="No invoices generated"
+                        description="Finalized and draft invoices will appear here once finance starts billing bookings."
+                    />
+                )}
+            </GlassPanel>
         </div>
     );
 }

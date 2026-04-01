@@ -66,6 +66,7 @@ describe('ContactForm', () => {
                 subject: 'Test Subject',
                 message: 'Test Message',
                 priority: 'MEDIUM',
+                turnstileToken: 'dev-turnstile-bypass-token',
             }),
         }));
     });
@@ -111,6 +112,7 @@ describe('ContactForm', () => {
     });
 
     it('shows error alert on network failure', async () => {
+        const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
         mockFetch.mockImplementationOnce(() => Promise.reject(new Error('Network error')));
 
         render(<ContactForm />);
@@ -125,5 +127,7 @@ describe('ContactForm', () => {
         await waitFor(() => {
             expect(global.alert).toHaveBeenCalledWith('An error occurred.');
         });
+
+        errorSpy.mockRestore();
     });
 });

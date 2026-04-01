@@ -2,8 +2,8 @@ import connectDB from "@/lib/mongodb";
 import Partner from "@/models/Partner";
 import PartnerService from "@/models/PartnerService";
 import PartnerServiceBlock from "@/models/PartnerServiceBlock";
-import { Building2, DollarSign, Plus, Layers, Tag } from "lucide-react";
-import ServiceBlockManager from "@/components/dashboard/ServiceBlockManager";
+import { Building2, Plus, Layers } from "lucide-react";
+import HotelServicesManager from "@/components/dashboard/HotelServicesManager";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
@@ -18,14 +18,10 @@ async function getHotelData(userId: string) {
         const partners = await Partner.find({ ownerId: userId, type: 'HOTEL', status: 'ACTIVE' }).lean();
         const partnerIds = partners.map(p => p._id);
 
-        const [services, blocks] = await Promise.all([
-            PartnerService.find({ partnerId: { $in: partnerIds } }).populate('partnerId', 'name type').lean(),
-            PartnerServiceBlock.find({
-                // To fetch only relevant blocks, we need serviceIds
-            }).lean()
+        const [services] = await Promise.all([
+            PartnerService.find({ partnerId: { $in: partnerIds }, isDeleted: false }).populate('partnerId', 'name type').lean(),
         ]);
 
-        // Let's optimize blocks map
         const serviceIds = services.map((s: any) => s._id);
         const filteredBlocks = await PartnerServiceBlock.find({ serviceId: { $in: serviceIds } }).lean();
 
@@ -112,32 +108,7 @@ export default async function HotelDashboardPage() {
             {/* Services & Rates */}
             <GlassPanel title="Services & Rates">
                 {services.length > 0 ? (
-                    <div className="grid gap-3 md:grid-cols-2">
-                        {services.map((s: any) => {
-                            const serviceBlocks = blocks.filter((b: any) => b.serviceId === s._id);
-                            return (
-                                <div key={s._id} className="px-4 py-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                            <Tag className="h-3.5 w-3.5 text-white/30" />
-                                            <p className="text-sm font-medium text-white/85">{s.name}</p>
-                                        </div>
-                                        <div className="flex items-center gap-1 bg-antique-gold/10 px-2.5 py-1 rounded-lg border border-antique-gold/20">
-                                            <DollarSign className="h-3 w-3 text-antique-gold" />
-                                            <span className="text-sm font-bold text-antique-gold">{s.rate}</span>
-                                        </div>
-                                    </div>
-                                    <p className="text-[11px] text-white/40 mb-4">
-                                        {s.unit} · {(s.partnerId as any)?.name || 'Partner'}
-                                    </p>
-
-                                    <div className="pt-4 border-t border-white/[0.06]">
-                                        <ServiceBlockManager serviceId={s._id} initialBlocks={serviceBlocks} hideTitle={true} />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                    <HotelServicesManager initialServices={services as any} initialBlocks={blocks as any} />
                 ) : (
                     <EmptyStateCard
                         icon={Layers}

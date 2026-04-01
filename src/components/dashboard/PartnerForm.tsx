@@ -40,7 +40,7 @@ export default function PartnerForm({ initialData, isEdit = false, redirectPath 
 
         try {
             const url = isEdit ? `/api/partners/${initialData._id}` : '/api/partners';
-            const method = isEdit ? 'PUT' : 'POST';
+            const method = isEdit ? 'PATCH' : 'POST';
 
             const res = await fetch(url, {
                 method,
