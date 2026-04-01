@@ -11,6 +11,17 @@ const loginSchema = z.object({
     password: z.string().min(1, 'Password is required'),
 });
 
+async function updateLastLogin(userId: string) {
+    try {
+        await User.updateOne(
+            { _id: userId },
+            { $set: { lastLogin: new Date() } }
+        );
+    } catch (error) {
+        console.warn('Login lastLogin update failed:', error);
+    }
+}
+
 export async function POST(request: NextRequest) {
     try {
         // Rate Limiting
@@ -50,9 +61,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Update last login
-        user.lastLogin = new Date();
-        await user.save();
+        await updateLastLogin(user._id.toString());
 
         const token = await signToken({
             userId: user._id.toString(),

@@ -8,9 +8,17 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ---
 
 ## In Progress
+- [ ] Commit and push login stability fixes to GitHub
 - [ ] Implement Analytics/Stats on Dashboard (User feedback needed on visual scope)
 
 ## Just Completed (2026-04-01)
+
+### Login Stability & Dev Server Fix
+- [x] Hardened `/api/auth/login` so a failed `lastLogin` write no longer blocks a valid login and surfaces as `Internal server error`.
+- [x] Added a route regression test covering successful login when the `lastLogin` update fails.
+- [x] Fixed the local auth verification script (`test-login.ts`) so bcrypt/JWT checks run correctly again.
+- [x] Isolated Next.js development output to `.next-dev` so `next dev` and `next build` no longer corrupt the same artifact tree and break `/api/auth/login` with missing vendor chunks.
+- [x] Verified `admin@ceylonescapes.lk` + `Admin@123` returns `200 OK` before and after a production build while the dev server stays running.
 
 ### Build Tour Map & 404 Page
 - [x] Verified MapViewport.client.tsx already uses dynamic import with ssr: false — Leaflet CSS imported correctly — loading fallback works with animated spinner.
@@ -148,23 +156,34 @@ Dashboard Elite Overhaul — full admin panel redesign and operational depth upg
 ## Last Session
 
 **Date**: 2026-04-01
-**Agent**: Cowork / Antigravity
-**Task**: Login Fix & README Update
+**Agent**: Codex
+**Task**: Login Internal Server Error Fix
 
 **What was done**:
-- Fixed MongoDB connection issue (`MongoServerError: not primary`) by using the correct replica set connection string in `.env.local`.
-- Corrected test credentials in `README.md` to use `@yataraceylon.me` instead of `.com`, tracking the `src/lib/seed.ts` script.
-- Confirmed successful login across the application.
+- Hardened `/api/auth/login` so valid credentials still succeed if the non-critical `lastLogin` update fails.
+- Added `src/app/api/auth/login/route.test.ts` to lock in that behavior.
+- Fixed `test-login.ts` so local bcrypt/JWT auth verification works again.
+- Split Next.js dev/build outputs (`.next-dev` for dev, `.next` for build) to prevent the local login route from breaking with missing vendor chunks after a build.
+- Verified the login route returns `200 OK` for `admin@ceylonescapes.lk` / `Admin@123` both before and after `npm run build`.
 
-**Files modified**:
-- `.env.local`
-- `README.md`
+**Files changed**:
+- `.agent/MEMORY.md`
+- `.agent/TODO.md`
+- `.gitignore`
+- `next.config.ts`
+- `src/app/api/auth/login/route.ts`
+- `src/app/api/auth/login/route.test.ts`
+- `test-login.ts`
+- `tsconfig.json`
 
 **Current state**:
-- Authentication is fully functional.
-- Documentation accurately reflects test credentials.
+- Branch: `main`
+- Dev server: running via `npm run dev` on `http://localhost:3000` using `.next-dev`
+- Build: `npm run build` passes
+- Last file touched: `next.config.ts`
+- Errors: none currently reproduced on `/api/auth/login`
 
 **What to do next**:
 - Implement Analytics/Stats on Dashboard
+- Browser-check the `/auth/login` flow end to end after reload to confirm the UI no longer shows the generic server error
 - Mobile QA for liquid glass pagination and package detail pages
-- Continue polish per user feedback
