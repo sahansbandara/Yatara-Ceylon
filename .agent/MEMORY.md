@@ -129,6 +129,7 @@
 
 - MongoDB connection: src/lib/mongodb.ts with global caching
 - Turnstile verification should only send the first client IP from `x-forwarded-for`; Vercel may include a comma-separated proxy chain that Cloudflare rejects if passed through unchanged
+- Turnstile helper now emits failure-only diagnostics in Vercel logs via `[Turnstile] ...` entries, including `errorCodes`, `hostname`, response status, and presence booleans for token/IP, but never the raw token or secret
 - Local `.env.local` has Turnstile configured as of 2026-04-02; restart the Next.js dev server after env edits so the client-side site key is reloaded.
 - Turnstile env placeholders now live in `.env.example`; production needs both `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` configured for `www.yataraceylon.me` / `yataraceylon.me`
 - Root web-app TypeScript config now excludes the nested Expo app at `mobile/Yatara-Ceylon` so `next build` only checks the web project

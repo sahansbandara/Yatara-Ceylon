@@ -49,6 +49,11 @@ Production Readiness — final QA pass and polish before go-live
 
 ## Just Completed (2026-04-02)
 
+- [x] Added production-safe Turnstile diagnostics so Vercel logs reveal the exact Cloudflare verify failure without leaking secrets/tokens (2026-04-02)
+  - [x] Logged failure-only `siteverify` metadata (`error-codes`, hostname, response status, token present, remote IP present)
+  - [x] Kept the raw token and secret out of logs
+  - [x] Added a regression test to ensure failure diagnostics still avoid logging the token/secret
+  - [ ] Re-run a clean verification pass after deploy; both `npm run build` and `tsc --noEmit` stalled unexpectedly in this session after startup
 - [x] Fixed production Turnstile verification mismatch where the widget succeeded but `/api/auth/register` still returned `Captcha verification failed`
   - [x] Confirmed the linked Vercel production project already has both `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`
   - [x] Traced the signup client payload and server register route to confirm the token/env field names already matched
@@ -352,23 +357,26 @@ Production Readiness — final QA pass and polish before go-live
 - Identified the backend verification helper as the production-only failure point because it passed Vercel's raw `x-forwarded-for` header through to Cloudflare, even though that header can contain a comma-separated proxy chain.
 - Updated `src/lib/turnstile.ts` to sanitize `remoteip` down to the first forwarded IP before posting to Cloudflare `siteverify`.
 - Added `src/lib/__tests__/turnstile.test.ts` covering the forwarded-IP proxy chain case.
+- Added failure-only Turnstile diagnostics in `src/lib/turnstile.ts` so Vercel logs now record safe `siteverify` details (`errorCodes`, hostname, response status, token present, remote IP present) without logging the raw token or secret.
+- Extended `src/lib/__tests__/turnstile.test.ts` with a guard that asserts the diagnostics do not leak the token or secret when verification is rejected.
 - Verified the repo still builds with `npm run build`; the repo's focused Jest bootstrap still stalls after the known Next/Jest workspace-root warning, so the new helper test was added but not observed to completion in this session.
 - Prepared the full tracked Turnstile fix worktree for direct publication on `main`, including the required `.agent` documentation updates.
+- Build/type verification after the diagnostic addition stalled unexpectedly after startup in this session, so the diagnostic patch is being pushed with that caveat in order to unblock production log collection.
 
 **What to do next**:
-- Verify `origin/main` reflects the same commit pushed from this session, wait for the production deployment to finish, then smoke-test signup plus the other public captcha-protected forms (`/booking-request`, `/contact`, `/inquire`) against `www.yataraceylon.me`.
+- Wait for the new `main` deployment containing the Turnstile diagnostics, then reproduce signup once with a brand-new email and inspect the Vercel logs for `[Turnstile]` entries.
+- Use the new logged `errorCodes`/`hostname` to determine whether the live issue is a widget mismatch, secret mismatch, duplicate/expired token, or hostname rejection.
 - If captcha still fails after this code deploy, inspect the Cloudflare widget configuration itself to confirm the current site key and secret belong to the same Turnstile widget/domain allowlist.
 
 **Current state**:
 - Branch: `main`
 - Dev server: not started in this session
-- Verification: `npm run build` passed; focused Jest still stalls after the Next/Jest workspace-root warning before printing results
+- Verification: the earlier Turnstile fix passed `npm run build`, but after adding the new diagnostics both `npm run build` and `tsc --noEmit` stalled unexpectedly in this session after the startup banner and before reporting success/failure
 - Env state: local `.env.local` has Turnstile configured, and Vercel production/development/preview all show both Turnstile env vars present
-- Current live bug status: the code now sanitizes the forwarded IP it sends to Cloudflare; production needs the pushed `main` commit to deploy before the signup captcha flow can be re-tested
+- Current live bug status: production is on the latest non-diagnostic Turnstile fix, but the exact Cloudflare rejection reason is still unknown until the new `[Turnstile]` diagnostics are deployed and reproduced
 - Residual build noise: existing Tailwind ambiguous-class warnings (`duration-[...]`, `ease-[...]`) still appear during `npm run build`, but the build completes successfully
 
 **Files changed**:
 - `.agent/TODO.md`
-- `.agent/MEMORY.md`
 - `src/lib/__tests__/turnstile.test.ts`
 - `src/lib/turnstile.ts`
