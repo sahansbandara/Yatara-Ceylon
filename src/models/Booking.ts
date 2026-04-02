@@ -1,5 +1,9 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 import { BookingStatus, BookingTypes, VehicleBlockReasons } from '@/lib/constants';
+import './Package';
+import './User';
+import './Vehicle';
+import './CustomPlan';
 import VehicleBlock from './VehicleBlock'; // Import VehicleBlock model
 
 export interface IBooking extends Document {

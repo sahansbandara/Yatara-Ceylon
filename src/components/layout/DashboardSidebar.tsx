@@ -194,17 +194,17 @@ function SidebarContent({ userRole, userName, isLoading }: { userRole: string; u
                 {isLoading ? (
                     <div className="h-10 w-10 bg-white/10 rounded-full animate-pulse flex-shrink-0" />
                 ) : (
-                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-antique-gold/20 border border-antique-gold/30 flex items-center justify-center text-antique-gold font-bold text-sm liquid-glass-card-dark">
+                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-antique-gold/20 to-antique-gold/5 border border-antique-gold/30 flex items-center justify-center text-antique-gold font-bold text-sm shadow-[0_0_15px_rgba(212,175,55,0.15)] ring-1 ring-antique-gold/20 ring-offset-1 ring-offset-transparent">
                         {userName ? userName.charAt(0).toUpperCase() : 'U'}
                     </div>
                 )}
                 <div className="min-w-0">
-                    <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
+                    <p className="text-[10px] tracking-[0.12em] text-off-white/30 uppercase font-medium">Signed in as</p>
                     {isLoading ? (
                         <div className="h-4 w-24 bg-white/10 rounded mt-1 animate-pulse" />
                     ) : (
-                        <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">
-                            {userName || 'User'} <span className="text-off-white/50 font-normal text-[10px] block">({ROLE_LABELS[userRole] || 'Customer'})</span>
+                        <p className="text-xs text-antique-gold font-semibold mt-0.5 truncate tracking-wide">
+                            {userName || 'User'} <span className="text-off-white/50 font-normal text-[10px] block mt-0.5">({ROLE_LABELS[userRole] || 'Customer'})</span>
                         </p>
                     )}
                 </div>
@@ -229,20 +229,20 @@ function SidebarContent({ userRole, userName, isLoading }: { userRole: string; u
                                         key={link.href}
                                         href={link.href}
                                         className={cn(
-                                            'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 overflow-hidden',
+                                            'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 overflow-hidden group',
                                             isActive
-                                                ? 'bg-antique-gold/15 border border-antique-gold/20 text-antique-gold'
-                                                : 'text-off-white/50 hover:text-off-white/80 hover:bg-white/[0.04] border border-transparent'
+                                                ? 'sidebar-link-active text-antique-gold shadow-[0_4px_12px_rgba(212,175,55,0.08)]'
+                                                : 'text-off-white/50 hover:text-antique-gold hover:bg-white/[0.04] border border-transparent'
                                         )}
                                     >
                                         {isActive && (
-                                            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-antique-gold" />
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-antique-gold rounded-r-md shadow-[0_0_8px_rgba(212,175,55,0.6)]" />
                                         )}
                                         <Icon className={cn(
                                             "h-4 w-4 flex-shrink-0 transition-all duration-300",
-                                            isActive ? "text-antique-gold" : "text-off-white/30 group-hover:text-off-white/50"
+                                            isActive ? "text-antique-gold drop-shadow-[0_0_6px_rgba(212,175,55,0.5)]" : "text-off-white/40 group-hover:text-antique-gold"
                                         )} />
-                                        <span>{link.label}</span>
+                                        <span className={cn("transition-all duration-300", isActive && "drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]")}>{link.label}</span>
                                     </Link>
                                 );
                             })}

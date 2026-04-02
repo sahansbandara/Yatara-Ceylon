@@ -34,6 +34,16 @@ Production Readiness — final QA pass and polish before go-live
   - [x] Re-rank outstanding balances toward current actionable bookings so seeded active bookings are not displaced by stale higher-balance records
   - [x] Add focused regression coverage for the new ranking rule
   - [x] Re-run verification and refresh `Last Session`
+- [x] Investigate why production `/dashboard/bookings` shows an empty state while local shows the seeded booking dataset (2026-04-02)
+  - [x] Trace the dashboard fetch/query path used by `/dashboard/bookings`
+  - [x] Compare local versus production data source/environment behavior
+  - [x] Identify the root cause and apply the smallest safe fix
+  - [x] Verify locally and document the deployment follow-up
+- [ ] Push the full staged worktree to GitHub and deploy the latest code to Vercel production
+  - [ ] Confirm the staged scope and current branch/remote
+  - [ ] Commit all staged changes to `main`
+  - [ ] Push `main` to GitHub
+  - [ ] Trigger/verify a Vercel production deployment
 
 ---
 
@@ -211,6 +221,16 @@ Production Readiness — final QA pass and polish before go-live
 - [x] Updated test credentials in `README.md` to align with the database seed script domains (`@yataraceylon.me` instead of `@yataraceylon.com`).
 - [x] Verified login functionality works as expected with the seeded `admin@yataraceylon.me` account.
 
+## Just Completed (2026-04-02)
+
+### Production bookings dashboard blank-state fix
+- [x] Confirmed the production database configured in Vercel already contains the seeded demo dataset (`36` bookings, `31` users, `4` invoices) and the issue is not a missing seed.
+- [x] Reproduced the live failure directly against `https://www.yataraceylon.me/api/bookings`, which returned `500 Internal server error` after a successful admin login.
+- [x] Inspected Vercel production logs and confirmed the root cause: `MissingSchemaError: Schema hasn't been registered for model "Package"` during `Booking` population on cold starts.
+- [x] Fixed the root cause by eagerly registering `Package`, `User`, `Vehicle`, and `CustomPlan` when `src/models/Booking.ts` loads, so isolated serverless runtimes can populate refs safely.
+- [x] Added a focused regression test for booking model registration and extended the Jest ESM transform allowlist so the model test runs in this repo.
+- [x] Verified the fix with the focused Jest run and a successful `npm run build`.
+
 ## Just Completed (2026-03-29)
 
 ### Featured Journeys Aesthetic Refinement
@@ -304,32 +324,31 @@ Production Readiness — final QA pass and polish before go-live
 
 ## Last Session
 
-**Date**: 2026-04-01
+**Date**: 2026-04-02
 **What was done**:
-- Expanded `src/lib/seed.ts` so `npm run seed` now refreshes a rich, idempotent dashboard demo graph instead of only basic users/packages/vehicles.
-- Seeded hotel partner data, hotel services and service blocks, fleet-owned vehicles and vehicle blocks, bookings across multiple statuses, invoices, payments, notifications, support tickets, partner requests, audit logs, and customer saved plans.
-- Fixed the hotel dashboard property card to render top-level partner contact fields and hardened the dashboard vehicle table against malformed legacy image URLs.
-- Reseeded locally and verified role-based access plus non-empty content for admin, hotel, fleet, and customer dashboard routes/APIs.
-- Verified the change set with a successful `npm run build`.
-- Linked the local checkout to `sithmi/yatara-ceylon`, replaced the production Vercel `MONGODB_URI` single-host direct connection with a writable Atlas SRV URI, and successfully seeded the live production database twice to verify the fix.
-- Triggered a production redeploy from the latest ready deployment and verified the new deployment reached `Ready` on `www.yataraceylon.me`.
-- Smoke-tested live sign-in for the hotel partner account and confirmed `/dashboard/hotel` shows seeded property, services, and availability-block data.
+- Confirmed the production database configured in Vercel already contains the seeded demo dataset (`36` bookings, `31` users, `4` invoices), so the issue was not a missing seed.
+- Reproduced the live failure directly against `https://www.yataraceylon.me/api/bookings`: admin login succeeds, but the bookings API returned `500 Internal server error`.
+- Inspected Vercel production logs and identified the root cause: `MissingSchemaError: Schema hasn't been registered for model "Package"` during `Booking.find(...).populate(...)` on cold starts.
+- Fixed `src/models/Booking.ts` to eagerly register `Package`, `User`, `Vehicle`, and `CustomPlan` whenever `Booking` loads.
+- Added `src/models/__tests__/booking-model-registration.test.ts` and expanded the Jest ESM transform allowlist in `jest.config.ts` so the regression test runs in this repo.
+- Verified the fix with a passing focused Jest run and a successful `npm run build`.
 
 **What to do next**:
-- Run additional live smoke tests on fleet, finance, notifications, and customer booking dashboards using the seeded demo accounts.
+- Redeploy the current code to Vercel once the current dirty worktree is reviewed, then re-check `https://www.yataraceylon.me/dashboard/bookings`.
+- After redeploy, continue the remaining manual QA items at the top of this file.
 
 **Current state**:
 - Branch: `main`
-- Dev server: local dev server was previously running on port 3000; production verification in this session used Vercel env pulls + CLI seeding
+- Dev server: not used for this investigation; production debugging was done via live HTTP requests and Vercel CLI
 - Vercel project: `sithmi/yatara-ceylon` linked locally
-- Production MongoDB: `mongodb+srv://ac-dhyrkz5.lrmzamd.mongodb.net/...` with `retryWrites=true&w=majority`, no `directConnection`
-- Last verified production action: `npm run seed` completed successfully twice against the pulled production env
-- Current production deployment: `https://yatara-ceylon-afis0uxba-sithmi.vercel.app` (`Ready`) aliased to `https://www.yataraceylon.me`
+- Production MongoDB: seeded and reachable; counts verified via pulled production env (`36` bookings, `31` users, `4` invoices)
+- Current live bug status: production `/api/bookings` is still failing on the deployed build until the new `Booking` model-registration fix is deployed
 - Residual build noise: existing Tailwind ambiguous-class warnings (`duration-[...]`, `ease-[...]`) still appear during `npm run build`, but the build completes successfully
+- Worktree note: unrelated pre-existing modifications remain in hotel/dashboard files, so deploy/push scope should be chosen deliberately
 
 **Files changed**:
 - `.agent/TODO.md`
 - `.agent/MEMORY.md`
-- `src/app/dashboard/hotel/page.tsx`
-- `src/components/dashboard/VehicleTable.tsx`
-- `src/lib/seed.ts`
+- `jest.config.ts`
+- `src/models/Booking.ts`
+- `src/models/__tests__/booking-model-registration.test.ts`

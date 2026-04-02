@@ -29,8 +29,8 @@ const jestConfig = createJestConfig(config)
 export default async () => {
     const resolvedConfig = await jestConfig()
     resolvedConfig.transformIgnorePatterns = [
-        '/node_modules/(?!.pnpm)(?!(jose|geist)/)',
-        '/node_modules/.pnpm/(?!(jose|geist)@)',
+        '/node_modules/(?!.pnpm)(?!(jose|geist|bson|mongodb|mongoose)/)',
+        '/node_modules/.pnpm/(?!(jose|geist|bson|mongodb|mongoose)@)',
         '^.+\\.module\\.(css|sass|scss)$',
     ]
     return resolvedConfig

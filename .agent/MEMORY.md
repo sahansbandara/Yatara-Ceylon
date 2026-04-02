@@ -8,6 +8,7 @@
 
 > Format: `[DATE]` What went wrong → Root cause → What to do instead
 
+- [2026-04-02] Production `/api/bookings` populated `packageId` / `assignedStaffId` / `assignedVehicleId` from `Booking` without guaranteeing the referenced schemas were registered in that serverless runtime → Vercel cold starts threw `MissingSchemaError: Schema hasn't been registered for model "Package"` and the dashboard fell back to an empty state even though data existed → When a model will be populated in isolated runtimes, eagerly import/register its referenced models (or import them in the route) and add a regression test for schema registration.
 - [2026-04-02] Package and destination dashboard forms/toggles still sent `PUT` requests while `/api/packages/[id]` and `/api/destinations/[id]` only expose `PATCH` for updates → publish toggles and edit submits silently fail or 405 even though the backend exists → Before wiring any polish on dashboard CRUD tables/forms, verify the real route methods and align every client action to them.
 - [2026-04-02] The root Next.js build picked up files from the separate Expo app under `mobile/Yatara-Ceylon` because `tsconfig.json` included every `**/*.ts(x)` file in the repo → `npm run build` failed on mobile-only path aliases unrelated to the web app → Exclude nested projects from the root TypeScript config so the web build only validates the intended app.
 - [2026-04-02] Jest scanned the generated `.claude/worktrees/.../package.json` files and threw a haste-map naming collision before route tests even ran → targeted API regression tests became unreliable despite the code being valid → Ignore `.claude/worktrees/` in `jest.config.ts` so local worktrees do not contaminate the repo test graph.
@@ -45,6 +46,7 @@
 
 ## Recent Findings
 
+- [2026-04-02] Vercel production uses the seeded `toms` database and currently contains `36` non-deleted bookings, `31` users, and `4` invoices. The blank bookings dashboard was caused by `/api/bookings` crashing with `MissingSchemaError`, not by missing seed data.
 - [2026-04-02] Production smoke testing showed the finance dashboard's "Outstanding Balances" panel is still ranked purely by `remainingBalance DESC`, which hides nearer operational demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` behind older high-balance records. For operator follow-up panels, prioritize actionable current bookings over raw historical debt size.
 - [2026-04-01] Local DB check confirmed `admin@yataraceylon.me` exists, bcrypt validation succeeds for `Admin@123`, and the account still has `emailVerified: false`. The test-credential failure is in seeded account state, not password hashing or JWT generation.
 - [2026-04-01] `npm run seed` currently ignores `.env.local`; when run from the repo root it attempts localhost Mongo unless the shell already exported `MONGODB_URI`. That makes the README instruction inaccurate until the seed script loads env files itself.
