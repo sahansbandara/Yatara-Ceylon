@@ -29,6 +29,7 @@ function LoginContent() {
     const [role, setRole] = useState('USER');
     const [showPartnerAccess, setShowPartnerAccess] = useState(false);
     const [turnstileToken, setTurnstileToken] = useState('');
+    const [turnstileError, setTurnstileError] = useState('');
     const [resendingVerification, setResendingVerification] = useState(false);
 
     // Form fields
@@ -73,6 +74,19 @@ function LoginContent() {
         }
     }, [verificationState, resetState]);
 
+    const getRegistrationErrorMessage = (data: any) => {
+        const details = data?.details;
+        if (!details || typeof details !== 'object') {
+            return data?.error || 'Registration failed';
+        }
+
+        const firstFieldError = Object.values(details)
+            .flat()
+            .find((value): value is string => typeof value === 'string' && value.length > 0);
+
+        return firstFieldError || data?.error || 'Registration failed';
+    };
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -107,6 +121,12 @@ function LoginContent() {
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!turnstileToken) {
+            setError(turnstileError || 'Please complete the captcha before creating your account.');
+            setSuccessMsg('');
+            return;
+        }
+
         setLoading(true);
         setError('');
         setSuccessMsg('');
@@ -118,7 +138,7 @@ function LoginContent() {
             });
             const data = await res.json();
             if (!res.ok) {
-                setError(data.error || 'Registration failed');
+                setError(getRegistrationErrorMessage(data));
                 return;
             }
             setSuccessMsg(data.message || 'Account created successfully! Please verify your email before signing in.');
@@ -328,9 +348,18 @@ function LoginContent() {
                                     </button>
                                 </div>
 
-                                <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} theme="dark" />
+                                <TurnstileField
+                                    token={turnstileToken}
+                                    onTokenChange={setTurnstileToken}
+                                    onErrorChange={setTurnstileError}
+                                    theme="dark"
+                                />
 
-                                <Button type="submit" disabled={loading} className="w-full bg-antique-gold hover:bg-antique-gold/90 text-[#0a1f15] font-bold text-xs tracking-[0.15em] h-11 mt-2 rounded-xl shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 flex items-center justify-center gap-2 uppercase">
+                                <Button
+                                    type="submit"
+                                    disabled={loading || !turnstileToken}
+                                    className="w-full bg-antique-gold hover:bg-antique-gold/90 text-[#0a1f15] font-bold text-xs tracking-[0.15em] h-11 mt-2 rounded-xl shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 flex items-center justify-center gap-2 uppercase disabled:cursor-not-allowed disabled:bg-antique-gold/60 disabled:text-[#0a1f15]/70"
+                                >
                                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                                         <>CREATE ACCOUNT <ArrowRight className="h-3.5 w-3.5" /></>
                                     )}

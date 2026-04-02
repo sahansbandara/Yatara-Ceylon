@@ -49,11 +49,13 @@ function loadTurnstileScript() {
 export default function TurnstileField({
     token,
     onTokenChange,
+    onErrorChange,
     theme = 'light',
     className = '',
 }: {
     token: string;
     onTokenChange: (token: string) => void;
+    onErrorChange?: (error: string) => void;
     theme?: 'light' | 'dark' | 'auto';
     className?: string;
 }) {
@@ -65,17 +67,23 @@ export default function TurnstileField({
     useEffect(() => {
         let cancelled = false;
 
+        const syncError = (nextError: string) => {
+            setError(nextError);
+            onErrorChange?.(nextError);
+        };
+
         if (!siteKey) {
             if (process.env.NODE_ENV !== 'production') {
                 onTokenChange(DEV_BYPASS_TOKEN);
+                syncError('');
             } else {
-                setError('Captcha is unavailable right now.');
+                syncError('Captcha is unavailable right now.');
             }
             return;
         }
 
         onTokenChange('');
-        setError('');
+        syncError('');
 
         void loadTurnstileScript()
             .then(() => {
@@ -86,22 +94,22 @@ export default function TurnstileField({
                     theme,
                     callback: (nextToken: string) => {
                         onTokenChange(nextToken);
-                        setError('');
+                        syncError('');
                     },
                     'expired-callback': () => {
                         onTokenChange('');
-                        setError('Captcha expired. Please verify again.');
+                        syncError('Captcha expired. Please verify again.');
                     },
                     'error-callback': () => {
                         onTokenChange('');
-                        setError('Captcha failed. Please try again.');
+                        syncError('Captcha failed. Please try again.');
                     },
                 });
             })
             .catch(() => {
                 if (!cancelled) {
                     onTokenChange('');
-                    setError('Captcha failed to load. Please refresh and try again.');
+                    syncError('Captcha failed to load. Please refresh and try again.');
                 }
             });
 
@@ -111,7 +119,7 @@ export default function TurnstileField({
                 window.turnstile.remove(widgetIdRef.current);
             }
         };
-    }, [siteKey, onTokenChange, theme]);
+    }, [siteKey, onErrorChange, onTokenChange, theme]);
 
     return (
         <div className={className}>

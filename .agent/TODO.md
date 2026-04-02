@@ -47,6 +47,27 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
+## Just Completed (2026-04-02)
+
+- [x] Fixed production Turnstile verification mismatch where the widget succeeded but `/api/auth/register` still returned `Captcha verification failed`
+  - [x] Confirmed the linked Vercel production project already has both `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`
+  - [x] Traced the signup client payload and server register route to confirm the token/env field names already matched
+  - [x] Identified the backend verifier as the root cause: it forwarded Vercel's raw `x-forwarded-for` proxy chain to Cloudflare instead of a single client IP
+  - [x] Updated `src/lib/turnstile.ts` to sanitize `remoteip` down to the first forwarded IP before calling Cloudflare `siteverify`
+  - [x] Added `src/lib/__tests__/turnstile.test.ts` to lock in the proxy-chain parsing behavior
+  - [x] Verified the code change with a successful `npm run build` (focused Jest bootstrap still stalls in this repo after the Next/Jest workspace-root warning)
+- [x] Fixed signup captcha validation UX so missing Turnstile config no longer degrades into a generic `Validation failed` message
+  - [x] Traced the auth signup client + `/api/auth/register` contract
+  - [x] Surfaced a specific captcha/setup error in the UI instead of generic validation noise
+  - [x] Prevented submit when captcha is unavailable or not yet completed
+  - [x] Documented the required Turnstile env/domain setup for production in `.env.example`
+  - [x] Verified with a focused Jest regression and a successful `npm run build`
+- [x] Add the provided Turnstile keys to local env so captcha works locally (2026-04-02)
+  - [x] Update `.env.local` with the provided site key and secret
+  - [x] Record the local env change in project memory and handoff
+
+---
+
 ## Remaining Work (Manual / Non-Automatable)
 
 - [ ] Execute the documented manual QA matrix end-to-end (`docs/qa/manual-test-matrix.md`) — all 30 test cases are "Not run"
@@ -326,31 +347,28 @@ Production Readiness — final QA pass and polish before go-live
 
 **Date**: 2026-04-02
 **What was done**:
-- Confirmed the production database configured in Vercel already contains the seeded demo dataset (`36` bookings, `31` users, `4` invoices), so the issue was not a missing seed.
-- Reproduced the live failure directly against `https://www.yataraceylon.me/api/bookings`: admin login succeeded, but the bookings API returned `500 Internal server error`.
-- Inspected Vercel production logs and identified the root cause: `MissingSchemaError: Schema hasn't been registered for model "Package"` during `Booking.find(...).populate(...)` on cold starts.
-- Fixed `src/models/Booking.ts` to eagerly register `Package`, `User`, `Vehicle`, and `CustomPlan` whenever `Booking` loads.
-- Added `src/models/__tests__/booking-model-registration.test.ts` and expanded the Jest ESM transform allowlist in `jest.config.ts` so the regression test runs in this repo.
-- Committed the full staged worktree on `main` as `19dc2f1` (`feat: update hotel dashboard and fix production bookings`) and pushed it to GitHub.
-- Verified the Git-connected Vercel production deployment `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` reached `Ready` and is aliased to `https://www.yataraceylon.me`.
-- Re-tested live auth and `/api/bookings?limit=5` on production and confirmed the bookings API now returns data instead of `500`. Recent production 500 logs are empty.
+- Confirmed the linked Vercel production project (`yatara-ceylon`) already has both `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`, and that a fresh production deployment exists after those env changes.
+- Traced `/auth/login` signup → `/api/auth/register` → `src/lib/turnstile.ts` and confirmed the token field (`turnstileToken`) plus env names already match end to end.
+- Identified the backend verification helper as the production-only failure point because it passed Vercel's raw `x-forwarded-for` header through to Cloudflare, even though that header can contain a comma-separated proxy chain.
+- Updated `src/lib/turnstile.ts` to sanitize `remoteip` down to the first forwarded IP before posting to Cloudflare `siteverify`.
+- Added `src/lib/__tests__/turnstile.test.ts` covering the forwarded-IP proxy chain case.
+- Verified the repo still builds with `npm run build`; the repo's focused Jest bootstrap still stalls after the known Next/Jest workspace-root warning, so the new helper test was added but not observed to completion in this session.
+- Prepared the full tracked Turnstile fix worktree for direct publication on `main`, including the required `.agent` documentation updates.
 
 **What to do next**:
-- Continue the remaining manual QA items at the top of this file, especially the documented manual matrix and cross-browser/device checks.
+- Verify `origin/main` reflects the same commit pushed from this session, wait for the production deployment to finish, then smoke-test signup plus the other public captcha-protected forms (`/booking-request`, `/contact`, `/inquire`) against `www.yataraceylon.me`.
+- If captcha still fails after this code deploy, inspect the Cloudflare widget configuration itself to confirm the current site key and secret belong to the same Turnstile widget/domain allowlist.
 
 **Current state**:
 - Branch: `main`
-- Dev server: not used for this investigation; production debugging was done via live HTTP requests and Vercel CLI
-- GitHub state: `origin/main` at `19dc2f1dc78dfa6371c490018801200aa9e014a7`
-- Vercel project: `sithmi/yatara-ceylon` linked locally
-- Current production deployment: `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` (`Ready`) aliased to `https://www.yataraceylon.me`
-- Production MongoDB: seeded and reachable; counts verified via pulled production env (`36` bookings, `31` users, `4` invoices)
-- Current live bug status: fixed for `/api/bookings`; production login + bookings API verification is green
+- Dev server: not started in this session
+- Verification: `npm run build` passed; focused Jest still stalls after the Next/Jest workspace-root warning before printing results
+- Env state: local `.env.local` has Turnstile configured, and Vercel production/development/preview all show both Turnstile env vars present
+- Current live bug status: the code now sanitizes the forwarded IP it sends to Cloudflare; production needs the pushed `main` commit to deploy before the signup captcha flow can be re-tested
 - Residual build noise: existing Tailwind ambiguous-class warnings (`duration-[...]`, `ease-[...]`) still appear during `npm run build`, but the build completes successfully
 
 **Files changed**:
 - `.agent/TODO.md`
 - `.agent/MEMORY.md`
-- `jest.config.ts`
-- `src/models/Booking.ts`
-- `src/models/__tests__/booking-model-registration.test.ts`
+- `src/lib/__tests__/turnstile.test.ts`
+- `src/lib/turnstile.ts`

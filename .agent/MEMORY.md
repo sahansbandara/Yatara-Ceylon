@@ -8,6 +8,8 @@
 
 > Format: `[DATE]` What went wrong → Root cause → What to do instead
 
+- [2026-04-02] Production signup could show Cloudflare Turnstile `Success!` while `/api/auth/register` still returned `Captcha verification failed` → the backend passed Vercel's raw `x-forwarded-for` header straight to Cloudflare `siteverify`, and that header can contain a comma-separated proxy chain instead of a single client IP → When forwarding `remoteip` to Turnstile, sanitize proxy headers first (use only the first client IP, or omit the field).
+- [2026-04-02] Registration kept posting an empty `turnstileToken` when Turnstile was not configured or failed to load, so the API answered with generic `Validation failed` while the page separately showed "Captcha is unavailable right now." → The signup UI did not gate submission on captcha readiness and did not map Zod field errors into a user-facing captcha/setup message → When a security widget is mandatory, block submit until it is ready/solved and translate missing-token validation into a specific configuration or verification error.
 - [2026-04-02] Production `/api/bookings` populated `packageId` / `assignedStaffId` / `assignedVehicleId` from `Booking` without guaranteeing the referenced schemas were registered in that serverless runtime → Vercel cold starts threw `MissingSchemaError: Schema hasn't been registered for model "Package"` and the dashboard fell back to an empty state even though data existed → When a model will be populated in isolated runtimes, eagerly import/register its referenced models (or import them in the route) and add a regression test for schema registration.
 - [2026-04-02] Package and destination dashboard forms/toggles still sent `PUT` requests while `/api/packages/[id]` and `/api/destinations/[id]` only expose `PATCH` for updates → publish toggles and edit submits silently fail or 405 even though the backend exists → Before wiring any polish on dashboard CRUD tables/forms, verify the real route methods and align every client action to them.
 - [2026-04-02] The root Next.js build picked up files from the separate Expo app under `mobile/Yatara-Ceylon` because `tsconfig.json` included every `**/*.ts(x)` file in the repo → `npm run build` failed on mobile-only path aliases unrelated to the web app → Exclude nested projects from the root TypeScript config so the web build only validates the intended app.
@@ -46,6 +48,7 @@
 
 ## Recent Findings
 
+- [2026-04-02] Local `.env.local` now includes real Turnstile keys, so local signup/public captcha flows can run against Cloudflare once the Next dev server is restarted. Vercel production still needs the same keys configured separately.
 - [2026-04-02] After pushing commit `19dc2f1` to `main`, Vercel’s Git-connected production deployment `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` went `Ready` and `https://www.yataraceylon.me/api/bookings?limit=5` returned seeded booking data successfully. The missing-schema fix is confirmed live.
 - [2026-04-02] Vercel production uses the seeded `toms` database and currently contains `36` non-deleted bookings, `31` users, and `4` invoices. The blank bookings dashboard was caused by `/api/bookings` crashing with `MissingSchemaError`, not by missing seed data.
 - [2026-04-02] Production smoke testing showed the finance dashboard's "Outstanding Balances" panel is still ranked purely by `remainingBalance DESC`, which hides nearer operational demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` behind older high-balance records. For operator follow-up panels, prioritize actionable current bookings over raw historical debt size.
@@ -69,6 +72,7 @@
 
 > Solutions and approaches that proved reliable.
 
+- Auth/signup flows with required captcha: let the server-side verifier own the final captcha message, but block the UI submit button until a token exists and surface the first field-level API error instead of raw `Validation failed`.
 - Dashboard demo fixtures: seed them with stable business keys (`bookingNo`, `invoiceNo`, `orderId`, `plateNumber`, partner `name + type`, service `partnerId + serviceName`) and refresh via upserts so rerunning `npm run seed` repairs hotel, fleet, finance, support, and customer dashboards without creating duplicate rows.
 - Seeded demo accounts: treat them as fixtures, not one-time inserts. Load `.env.local`/`.env` inside the script, upsert by email, force `emailVerified: true`, reset lockout state, and refresh the known password on every `npm run seed` so local databases stay recoverable.
 - Login routes: use `/auth/login` as the canonical page; keep `/login` as a simple redirect alias so redirects, captcha, verification messaging, and role-based post-login routing stay in one place.
@@ -124,6 +128,9 @@
 ## Project Knowledge
 
 - MongoDB connection: src/lib/mongodb.ts with global caching
+- Turnstile verification should only send the first client IP from `x-forwarded-for`; Vercel may include a comma-separated proxy chain that Cloudflare rejects if passed through unchanged
+- Local `.env.local` has Turnstile configured as of 2026-04-02; restart the Next.js dev server after env edits so the client-side site key is reloaded.
+- Turnstile env placeholders now live in `.env.example`; production needs both `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` configured for `www.yataraceylon.me` / `yataraceylon.me`
 - Root web-app TypeScript config now excludes the nested Expo app at `mobile/Yatara-Ceylon` so `next build` only checks the web project
 - Low-priority polish wave (2026-04-02): packages/destinations/notifications now support bulk toolbar actions and CSV export, and the remaining operator tables reuse `useTableSort` + `SortableHeader`
 - Dashboard date-range presets now live in `src/lib/date-range.ts` and power both analytics and finance pages via `from` / `to` / `preset` URL params

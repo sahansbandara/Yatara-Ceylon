@@ -21,7 +21,7 @@ const registerSchema = z.object({
     ),
     password: passwordSchema,
     role: z.enum(['USER', 'VEHICLE_OWNER', 'HOTEL_OWNER']).default('USER'),
-    turnstileToken: z.string().min(1, 'Captcha verification is required'),
+    turnstileToken: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
         const { name, email, phone, password, role, turnstileToken } = result.data;
         const captchaResult = await verifyTurnstileToken(
-            turnstileToken,
+            turnstileToken?.trim() || null,
             request.headers.get('x-forwarded-for')
         );
         if (!captchaResult.success) {
