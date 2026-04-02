@@ -43,12 +43,13 @@ export async function POST(request: NextRequest) {
                 to: user.email,
                 name: user.name,
                 verificationUrl,
+                mode: 'resend',
             });
         }
 
         return NextResponse.json({
             success: true,
-            message: 'If the account requires verification, a new verification email has been sent.',
+            message: 'If the account requires verification, a new verification email has been sent. Only the latest verification link will work.',
         });
     } catch (error) {
         console.error('Resend verification error:', error);

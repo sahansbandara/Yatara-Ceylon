@@ -61,7 +61,7 @@ function LoginContent() {
             setSuccessMsg('Email verified successfully. You can now sign in.');
             setError('');
         } else if (verificationState === 'invalid') {
-            setError('Verification link is invalid or expired. Request a new one below.');
+            setError('This verification link is invalid, expired, or has already been replaced by a newer email. Request a new one below and use only the most recent email.');
         } else if (verificationState === 'missing') {
             setError('Verification token is missing.');
         } else if (verificationState === 'error') {

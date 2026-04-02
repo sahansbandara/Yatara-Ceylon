@@ -53,26 +53,33 @@ export async function sendVerificationEmail(params: {
     to: string;
     name: string;
     verificationUrl: string;
+    mode?: 'signup' | 'resend';
 }) {
+    const isResend = params.mode === 'resend';
     const text = [
         `Hello ${params.name},`,
         '',
         'Verify your Yatara Ceylon account by opening the link below:',
         params.verificationUrl,
         '',
+        isResend ? 'This new link replaces any previous verification emails.' : null,
+        isResend ? 'Only the most recent verification link will work.' : null,
         'This link will expire in 24 hours.',
-    ].join('\n');
+    ].filter(Boolean).join('\n');
 
     const html = `
         <p>Hello ${params.name},</p>
         <p>Verify your Yatara Ceylon account by opening the link below:</p>
         <p><a href="${params.verificationUrl}">${params.verificationUrl}</a></p>
+        ${isResend ? '<p>This new link replaces any previous verification emails. Only the most recent verification link will work.</p>' : ''}
         <p>This link will expire in 24 hours.</p>
     `;
 
     return sendEmail({
         to: params.to,
-        subject: 'Verify your Yatara Ceylon account',
+        subject: isResend
+            ? 'Your new Yatara Ceylon verification link'
+            : 'Verify your Yatara Ceylon account',
         text,
         html,
     });

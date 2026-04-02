@@ -49,6 +49,21 @@ Production Readiness — final QA pass and polish before go-live
 
 ## Just Completed (2026-04-02)
 
+- [x] Investigate verification-link expiry + resend-verification behavior in production auth flow (2026-04-02)
+  - [x] Traced the token lifecycle across register, resend, and verify routes and confirmed resend rotates the stored verification token immediately
+  - [x] Checked live production logs and confirmed the resend request completed, followed by a verify-link click against an older token
+  - [x] Identified the real issue as user-facing confusion: old links become invalid after resend, but the app/email copy did not make that obvious and resend emails reused the original subject
+  - [x] Updated the resend API, verification email helper, and login-page messaging so only-the-newest-link behavior is explicit and resend emails are easier to spot in threaded inboxes
+  - [ ] Focused Jest/build verification still stalled after startup in this session, matching the repo's existing intermittent startup hang
+- [x] Add the provided Zoho SMTP settings to local `.env.local` for verification-email testing (2026-04-02)
+  - [x] Confirm the local env file did not already contain `SMTP_*` entries
+  - [x] Add the provided Zoho SMTP host/port/user/pass/from values to `.env.local`
+  - [x] Record the local mail-config change in project memory for future debugging handoff
+- [x] Investigated why production signup says "Please verify your email before signing in" but no verification email arrives (2026-04-02)
+  - [x] Traced the registration email send path and confirmed `/api/auth/register` calls `sendVerificationEmail()`
+  - [x] Checked live Vercel production logs and found the exact warning: `Email delivery skipped because SMTP is not configured`
+  - [x] Confirmed this is configuration-only right now: the verification email helper intentionally skips delivery when `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` are missing
+  - [x] Confirmed separate failed signup attempts were due to Turnstile `timeout-or-duplicate`, meaning the same/expired token was reused after waiting too long or retrying
 - [x] Added production-safe Turnstile diagnostics so Vercel logs reveal the exact Cloudflare verify failure without leaking secrets/tokens (2026-04-02)
   - [x] Logged failure-only `siteverify` metadata (`error-codes`, hostname, response status, token present, remote IP present)
   - [x] Kept the raw token and secret out of logs
@@ -352,31 +367,31 @@ Production Readiness — final QA pass and polish before go-live
 
 **Date**: 2026-04-02
 **What was done**:
-- Confirmed the linked Vercel production project (`yatara-ceylon`) already has both `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`, and that a fresh production deployment exists after those env changes.
-- Traced `/auth/login` signup → `/api/auth/register` → `src/lib/turnstile.ts` and confirmed the token field (`turnstileToken`) plus env names already match end to end.
-- Identified the backend verification helper as the production-only failure point because it passed Vercel's raw `x-forwarded-for` header through to Cloudflare, even though that header can contain a comma-separated proxy chain.
-- Updated `src/lib/turnstile.ts` to sanitize `remoteip` down to the first forwarded IP before posting to Cloudflare `siteverify`.
-- Added `src/lib/__tests__/turnstile.test.ts` covering the forwarded-IP proxy chain case.
-- Added failure-only Turnstile diagnostics in `src/lib/turnstile.ts` so Vercel logs now record safe `siteverify` details (`errorCodes`, hostname, response status, token present, remote IP present) without logging the raw token or secret.
-- Extended `src/lib/__tests__/turnstile.test.ts` with a guard that asserts the diagnostics do not leak the token or secret when verification is rejected.
-- Verified the repo still builds with `npm run build`; the repo's focused Jest bootstrap still stalls after the known Next/Jest workspace-root warning, so the new helper test was added but not observed to completion in this session.
-- Prepared the full tracked Turnstile fix worktree for direct publication on `main`, including the required `.agent` documentation updates.
-- Build/type verification after the diagnostic addition stalled unexpectedly after startup in this session, so the diagnostic patch is being pushed with that caveat in order to unblock production log collection.
+- Traced the production verification-email lifecycle across `register`, `resend-verification`, and `verify-email` and confirmed the token TTL is still 24 hours; the issue was not an instantly expiring token.
+- Checked live Vercel production logs and confirmed a resend request completed at `16:19:44`, then another verify-link click happened at `16:20:32`, which is consistent with the user clicking an older email after the token had already been replaced.
+- Identified the real UX bug: resending email verification rotates the stored token hash immediately, but the app previously said only "a new verification email has been sent" and resend emails reused the original subject, making newer emails easy to miss in threaded inboxes like Gmail.
+- Updated `src/lib/email.ts` so resend emails use the subject `Your new Yatara Ceylon verification link` and explicitly say they replace previous verification links.
+- Updated `src/app/api/auth/resend-verification/route.ts` to return a success message that tells the client only the latest verification link will work.
+- Updated `src/app/auth/login/page.tsx` so `verified=invalid` explains that the link may have been replaced by a newer email, not just "expired".
+- Added `src/app/api/auth/resend-verification/route.test.ts` covering token rotation + resend-specific email invocation.
+- Attempted focused Jest verification and a full `npm run build`, but both stalled after the usual workspace-root/startup warnings in this session and never produced a clean pass/fail result.
 
 **What to do next**:
-- Wait for the new `main` deployment containing the Turnstile diagnostics, then reproduce signup once with a brand-new email and inspect the Vercel logs for `[Turnstile]` entries.
-- Use the new logged `errorCodes`/`hostname` to determine whether the live issue is a widget mismatch, secret mismatch, duplicate/expired token, or hostname rejection.
-- If captcha still fails after this code deploy, inspect the Cloudflare widget configuration itself to confirm the current site key and secret belong to the same Turnstile widget/domain allowlist.
+- Deploy the resend-verification UX change to production, then trigger `Resend verification` again and confirm the inbox shows a new email with the new subject line.
+- Instruct testers to use only the most recent verification email; any previous verification links become invalid as soon as resend is requested.
+- If users still report "no new email", inspect the inbox thread/spam folder first, because the old and new messages may still be grouped by the provider despite the subject change.
 
 **Current state**:
 - Branch: `main`
 - Dev server: not started in this session
-- Verification: the earlier Turnstile fix passed `npm run build`, but after adding the new diagnostics both `npm run build` and `tsc --noEmit` stalled unexpectedly in this session after the startup banner and before reporting success/failure
-- Env state: local `.env.local` has Turnstile configured, and Vercel production/development/preview all show both Turnstile env vars present
-- Current live bug status: production is on the latest non-diagnostic Turnstile fix, but the exact Cloudflare rejection reason is still unknown until the new `[Turnstile]` diagnostics are deployed and reproduced
-- Residual build noise: existing Tailwind ambiguous-class warnings (`duration-[...]`, `ease-[...]`) still appear during `npm run build`, but the build completes successfully
+- Verification: focused Jest for auth resend/register and `npm run build` both stalled after the standard Next.js workspace-root warning in this session; no fresh green verification result yet
+- Env state: local `.env.local` has both Turnstile and Zoho SMTP configured; production SMTP is now functional because verification emails are being sent
+- Current live auth bug status: the remaining confusion is resend-token invalidation / inbox visibility, not a short TTL
+- Residual build noise: existing Next.js workspace-root warning still appears on both test/build startup
 
 **Files changed**:
 - `.agent/TODO.md`
-- `src/lib/__tests__/turnstile.test.ts`
-- `src/lib/turnstile.ts`
+- `src/app/api/auth/resend-verification/route.test.ts`
+- `src/app/api/auth/resend-verification/route.ts`
+- `src/app/auth/login/page.tsx`
+- `src/lib/email.ts`
