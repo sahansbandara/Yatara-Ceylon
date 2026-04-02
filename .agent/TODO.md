@@ -39,11 +39,11 @@ Production Readiness — final QA pass and polish before go-live
   - [x] Compare local versus production data source/environment behavior
   - [x] Identify the root cause and apply the smallest safe fix
   - [x] Verify locally and document the deployment follow-up
-- [ ] Push the full staged worktree to GitHub and deploy the latest code to Vercel production
-  - [ ] Confirm the staged scope and current branch/remote
-  - [ ] Commit all staged changes to `main`
-  - [ ] Push `main` to GitHub
-  - [ ] Trigger/verify a Vercel production deployment
+- [x] Push the full staged worktree to GitHub and deploy the latest code to Vercel production (2026-04-02)
+  - [x] Confirm the staged scope and current branch/remote
+  - [x] Commit all staged changes to `main`
+  - [x] Push `main` to GitHub
+  - [x] Trigger/verify a Vercel production deployment
 
 ---
 
@@ -327,24 +327,26 @@ Production Readiness — final QA pass and polish before go-live
 **Date**: 2026-04-02
 **What was done**:
 - Confirmed the production database configured in Vercel already contains the seeded demo dataset (`36` bookings, `31` users, `4` invoices), so the issue was not a missing seed.
-- Reproduced the live failure directly against `https://www.yataraceylon.me/api/bookings`: admin login succeeds, but the bookings API returned `500 Internal server error`.
+- Reproduced the live failure directly against `https://www.yataraceylon.me/api/bookings`: admin login succeeded, but the bookings API returned `500 Internal server error`.
 - Inspected Vercel production logs and identified the root cause: `MissingSchemaError: Schema hasn't been registered for model "Package"` during `Booking.find(...).populate(...)` on cold starts.
 - Fixed `src/models/Booking.ts` to eagerly register `Package`, `User`, `Vehicle`, and `CustomPlan` whenever `Booking` loads.
 - Added `src/models/__tests__/booking-model-registration.test.ts` and expanded the Jest ESM transform allowlist in `jest.config.ts` so the regression test runs in this repo.
-- Verified the fix with a passing focused Jest run and a successful `npm run build`.
+- Committed the full staged worktree on `main` as `19dc2f1` (`feat: update hotel dashboard and fix production bookings`) and pushed it to GitHub.
+- Verified the Git-connected Vercel production deployment `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` reached `Ready` and is aliased to `https://www.yataraceylon.me`.
+- Re-tested live auth and `/api/bookings?limit=5` on production and confirmed the bookings API now returns data instead of `500`. Recent production 500 logs are empty.
 
 **What to do next**:
-- Redeploy the current code to Vercel once the current dirty worktree is reviewed, then re-check `https://www.yataraceylon.me/dashboard/bookings`.
-- After redeploy, continue the remaining manual QA items at the top of this file.
+- Continue the remaining manual QA items at the top of this file, especially the documented manual matrix and cross-browser/device checks.
 
 **Current state**:
 - Branch: `main`
 - Dev server: not used for this investigation; production debugging was done via live HTTP requests and Vercel CLI
+- GitHub state: `origin/main` at `19dc2f1dc78dfa6371c490018801200aa9e014a7`
 - Vercel project: `sithmi/yatara-ceylon` linked locally
+- Current production deployment: `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` (`Ready`) aliased to `https://www.yataraceylon.me`
 - Production MongoDB: seeded and reachable; counts verified via pulled production env (`36` bookings, `31` users, `4` invoices)
-- Current live bug status: production `/api/bookings` is still failing on the deployed build until the new `Booking` model-registration fix is deployed
+- Current live bug status: fixed for `/api/bookings`; production login + bookings API verification is green
 - Residual build noise: existing Tailwind ambiguous-class warnings (`duration-[...]`, `ease-[...]`) still appear during `npm run build`, but the build completes successfully
-- Worktree note: unrelated pre-existing modifications remain in hotel/dashboard files, so deploy/push scope should be chosen deliberately
 
 **Files changed**:
 - `.agent/TODO.md`

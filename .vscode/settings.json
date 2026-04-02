@@ -16,5 +16,6 @@
         "antigravity.ruleEditor": true,
         "imagePreview.previewEditor": true,
         "vscode.audioPreview": true
-    }
+    },
+    "kiroAgent.configureMCP": "Disabled"
 }
