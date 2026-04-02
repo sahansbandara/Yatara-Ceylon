@@ -15,6 +15,8 @@ import { Trash2, Edit, CheckCircle, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
+import { useTableSort } from '@/hooks/useTableSort';
+import SortableHeader from './SortableHeader';
 
 interface User {
     _id: string;
@@ -45,6 +47,10 @@ export default function UserTable({ initialUsers }: UserTableProps) {
             user.role.toLowerCase().includes(term) ||
             user.status.toLowerCase().includes(term)
         );
+    });
+    const { sortedData, sortConfig, requestSort } = useTableSort(filteredUsers, {
+        key: 'createdAt',
+        direction: 'desc',
     });
 
     const handleDelete = async (id: string) => {
@@ -103,17 +109,47 @@ export default function UserTable({ initialUsers }: UserTableProps) {
             <Table>
                 <TableHeader className="bg-black/20">
                     <TableRow className="border-white/10 hover:bg-transparent">
-                        <TableHead className="text-white/60 font-medium">Name</TableHead>
-                        <TableHead className="text-white/60 font-medium">Email</TableHead>
-                        <TableHead className="text-white/60 font-medium">Role</TableHead>
-                        <TableHead className="text-white/60 font-medium">Status</TableHead>
-                        <TableHead className="text-white/60 font-medium">Last Login</TableHead>
+                        <SortableHeader
+                            label="Name"
+                            sortKey="name"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Email"
+                            sortKey="email"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Role"
+                            sortKey="role"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Status"
+                            sortKey="status"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Last Login"
+                            sortKey="lastLogin"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
                         <TableHead className="text-white/60 font-medium text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {filteredUsers.length > 0 ? (
-                        filteredUsers.map((user) => (
+                    {sortedData.length > 0 ? (
+                        sortedData.map((user) => (
                             <TableRow key={user._id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
                                 <TableCell className="font-medium text-off-white">{user.name}</TableCell>
                                 <TableCell className="text-white/70">{user.email}</TableCell>

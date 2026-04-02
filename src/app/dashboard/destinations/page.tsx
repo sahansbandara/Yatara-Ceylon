@@ -34,7 +34,7 @@ export default async function DestinationsPage() {
                 subtitle="Manage travel destinations and their details."
                 action={
                     <Link href="/dashboard/destinations/new">
-                        <Button className="bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0a1f15] font-semibold text-xs tracking-widest rounded-xl transition-all hover:scale-105">
+                        <Button variant="glass">
                             <Plus className="mr-2 h-4 w-4" /> Add Destination
                         </Button>
                     </Link>

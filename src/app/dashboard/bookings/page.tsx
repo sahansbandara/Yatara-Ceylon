@@ -1,8 +1,10 @@
 'use client';
 
+import { formatLKR, formatLKRCompact } from '@/lib/currency';
+
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { CalendarCheck, Search, Eye, MessageSquare, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { CalendarCheck, Search, Eye, MessageSquare, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, CheckSquare, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { EmptyStateCard } from '@/components/dashboard/EmptyStateCard';
@@ -57,6 +59,8 @@ export default function BookingsPage() {
     const [hasBalanceDue, setHasBalanceDue] = useState(false);
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [bulkLoading, setBulkLoading] = useState(false);
     const [loading, setLoading] = useState(true);
     const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
     const [summary, setSummary] = useState<BookingSummary>({
@@ -169,6 +173,46 @@ export default function BookingsPage() {
             : <ArrowDown className="h-3 w-3 ml-1 text-antique-gold" />;
     };
 
+    const toggleSelect = (id: string) => {
+        setSelectedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.size === bookings.length) {
+            setSelectedIds(new Set());
+        } else {
+            setSelectedIds(new Set(bookings.map(b => b._id)));
+        }
+    };
+
+    const handleBulkStatusUpdate = async (newStatus: string) => {
+        if (selectedIds.size === 0) return;
+        if (!confirm(`Update ${selectedIds.size} booking(s) to "${STATUS_DISPLAY_NAMES[newStatus] || newStatus}"?`)) return;
+
+        setBulkLoading(true);
+        try {
+            const res = await fetch('/api/bookings/bulk', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingIds: Array.from(selectedIds), status: newStatus }),
+            });
+            if (!res.ok) throw new Error('Bulk update failed');
+            setSelectedIds(new Set());
+            fetchBookings();
+            fetchStatusCounts();
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update bookings');
+        } finally {
+            setBulkLoading(false);
+        }
+    };
+
     const maxPage = Math.ceil(total / 20);
     const totalPages = maxPage || 1;
 
@@ -217,19 +261,19 @@ export default function BookingsPage() {
                 />
                 <StatCard
                     title="Total Revenue"
-                    value={`LKR ${(summary.totalRevenue / 1000000).toFixed(1)}M`}
+                    value={formatLKRCompact(summary.totalRevenue)}
                     icon={CalendarCheck}
                     accentColor="text-emerald-400"
                 />
                 <StatCard
                     title="Pending Balance"
-                    value={`LKR ${(summary.pendingBalance / 1000000).toFixed(1)}M`}
+                    value={formatLKRCompact(summary.pendingBalance)}
                     icon={CalendarCheck}
                     accentColor="text-amber-400"
                 />
                 <StatCard
                     title="Avg Booking Value"
-                    value={`LKR ${(summary.avgBookingValue / 100000).toFixed(1)}K`}
+                    value={formatLKRCompact(summary.avgBookingValue)}
                     icon={CalendarCheck}
                     accentColor="text-purple-400"
                 />
@@ -274,6 +318,37 @@ export default function BookingsPage() {
                 </div>
             </div>
 
+            {/* Bulk Action Bar */}
+            {selectedIds.size > 0 && (
+                <div className="liquid-glass-stat-dark rounded-2xl p-3 flex items-center gap-3 border border-antique-gold/20 animate-in fade-in">
+                    <div className="flex items-center gap-2 px-2">
+                        <CheckSquare className="h-4 w-4 text-antique-gold" />
+                        <span className="text-xs font-medium text-antique-gold">{selectedIds.size} selected</span>
+                    </div>
+                    <div className="h-4 w-px bg-white/10" />
+                    <span className="text-[10px] text-white/40">Move to:</span>
+                    <div className="flex gap-1.5 flex-wrap">
+                        {ALL_STATUSES.map(s => (
+                            <button
+                                key={s}
+                                onClick={() => handleBulkStatusUpdate(s)}
+                                disabled={bulkLoading}
+                                className="px-2.5 py-1 text-[10px] font-medium rounded-lg bg-white/[0.04] border border-white/[0.08] text-white/50 hover:bg-white/[0.08] hover:text-white/70 transition-colors disabled:opacity-30"
+                            >
+                                {STATUS_DISPLAY_NAMES[s]}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        onClick={() => setSelectedIds(new Set())}
+                        className="ml-auto p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+                        title="Clear selection"
+                    >
+                        <X className="h-3.5 w-3.5 text-white/30" />
+                    </button>
+                </div>
+            )}
+
             {/* Main Table */}
             <div className="dashboard-table-glass">
                 {loading ? (
@@ -295,6 +370,14 @@ export default function BookingsPage() {
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="bg-white/[0.03] border-b border-white/[0.06]">
+                                        <th className="px-3 py-3.5 w-10">
+                                            <input
+                                                type="checkbox"
+                                                checked={bookings.length > 0 && selectedIds.size === bookings.length}
+                                                onChange={toggleSelectAll}
+                                                className="w-3.5 h-3.5 rounded accent-antique-gold cursor-pointer"
+                                            />
+                                        </th>
                                         <th onClick={() => handleSort('bookingNo')} className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold cursor-pointer hover:text-white/50 select-none">
                                             <span className="inline-flex items-center">Code<SortIcon field="bookingNo" /></span>
                                         </th>
@@ -322,7 +405,15 @@ export default function BookingsPage() {
                                 </thead>
                                 <tbody>
                                     {bookings.map((b) => (
-                                        <tr key={b._id} className="border-b border-white/[0.04] last:border-b-0 hover:bg-white/[0.02] transition-colors">
+                                        <tr key={b._id} className={`border-b border-white/[0.04] last:border-b-0 hover:bg-white/[0.02] transition-colors ${selectedIds.has(b._id) ? 'bg-antique-gold/[0.04]' : ''}`}>
+                                            <td className="px-3 py-3.5">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedIds.has(b._id)}
+                                                    onChange={() => toggleSelect(b._id)}
+                                                    className="w-3.5 h-3.5 rounded accent-antique-gold cursor-pointer"
+                                                />
+                                            </td>
                                             <td className="px-5 py-3.5">
                                                 <span className="font-mono font-semibold text-white/75 text-xs">{b.bookingNo}</span>
                                             </td>
@@ -340,14 +431,14 @@ export default function BookingsPage() {
                                                 </p>
                                             </td>
                                             <td className="px-5 py-3.5 text-right">
-                                                <span className="text-xs font-bold text-white/85">LKR {(b.totalCost || 0).toLocaleString()}</span>
+                                                <span className="text-xs font-bold text-white/85">{formatLKR(b.totalCost || 0)}</span>
                                             </td>
                                             <td className="px-5 py-3.5 text-right hidden md:table-cell">
-                                                <span className="text-xs text-emerald-400/80">LKR {(b.paidAmount || 0).toLocaleString()}</span>
+                                                <span className="text-xs text-emerald-400/80">{formatLKR(b.paidAmount || 0)}</span>
                                             </td>
                                             <td className="px-5 py-3.5 text-right hidden lg:table-cell">
                                                 <span className={`text-xs ${(b.remainingBalance || 0) > 0 ? 'text-amber-400/80' : 'text-white/25'}`}>
-                                                    LKR {(b.remainingBalance || 0).toLocaleString()}
+                                                    {formatLKR(b.remainingBalance || 0)}
                                                 </span>
                                             </td>
                                             <td className="px-5 py-3.5 text-center">

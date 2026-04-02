@@ -170,6 +170,16 @@ export const createInvoiceSchema = z.object({
 });
 export const updateInvoiceSchema = createInvoiceSchema.partial();
 
+// ─── Attachments ───
+export const createAttachmentSchema = z.object({
+    label: z.string().min(1).max(120),
+    type: z.enum(['INVOICE', 'ID_COPY', 'PASSPORT', 'VOUCHER', 'OTHER']).default('OTHER'),
+    url: z.string().url(),
+    invoiceId: z.string().optional(),
+    fileName: z.string().max(160).optional(),
+    notes: z.string().max(500).optional(),
+});
+
 // ─── Payments ───
 export const createPaymentSchema = z.object({
     bookingId: z.string().min(1),

@@ -181,9 +181,9 @@ export default function VehicleForm({ initialData, isEdit = false, redirectPath 
             </div>
 
             <div className="flex justify-end gap-3 pt-6 border-t border-white/[0.06] mt-4">
-                <Button type="button" variant="outline" onClick={() => router.back()} className="border-antique-gold/40 text-antique-gold hover:bg-antique-gold/10 rounded-xl h-10 px-6 transition-all">Cancel</Button>
-                <Button type="submit" disabled={loading} className="bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_20px_rgba(212,175,55,0.2)] rounded-xl h-10 px-6 font-semibold">
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#020b08]/60" /> : null}
+                <Button type="button" variant="glass-outline" onClick={() => router.back()} className="text-white/60 hover:text-white">Cancel</Button>
+                <Button type="submit" variant="glass-outline" disabled={loading} className="font-semibold text-antique-gold">
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-antique-gold/60" /> : null}
                     {isEdit ? 'Update Vehicle' : 'Add Vehicle'}
                 </Button>
             </div>

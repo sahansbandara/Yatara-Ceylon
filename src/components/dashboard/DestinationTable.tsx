@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Trash2, Edit, Eye, EyeOff } from 'lucide-react';
+import { Download, Edit, Eye, EyeOff, Trash2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useTableSort } from '@/hooks/useTableSort';
+import SortableHeader from './SortableHeader';
+import { downloadCsv } from '@/lib/export-utils';
 
 interface Destination {
     _id: string;
@@ -19,93 +22,324 @@ interface DestinationTableProps {
     initialDestinations: Destination[];
 }
 
+type BulkAction = 'publish' | 'unpublish' | 'archive';
+
 export default function DestinationTable({ initialDestinations }: DestinationTableProps) {
     const [destinations, setDestinations] = useState<Destination[]>(initialDestinations);
     const [loading, setLoading] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const router = useRouter();
+    const { sortedData, sortConfig, requestSort } = useTableSort(destinations, {
+        key: 'title',
+        direction: 'asc',
+    });
+
+    const visibleDestinations = sortedData;
+    const allVisibleSelected =
+        visibleDestinations.length > 0 &&
+        visibleDestinations.every((destination) => selectedIds.has(destination._id));
+
+    const clearSelection = () => setSelectedIds(new Set());
+
+    const toggleSelect = (id: string) => {
+        setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    };
+
+    const toggleSelectAll = () => {
+        setSelectedIds((prev) => {
+            if (allVisibleSelected) {
+                const next = new Set(prev);
+                visibleDestinations.forEach((destination) => next.delete(destination._id));
+                return next;
+            }
+
+            const next = new Set(prev);
+            visibleDestinations.forEach((destination) => next.add(destination._id));
+            return next;
+        });
+    };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this destination?')) return;
+        if (!confirm('Are you sure you want to archive this destination?')) return;
 
         setLoading(true);
         try {
             const res = await fetch(`/api/destinations/${id}`, { method: 'DELETE' });
             if (res.ok) {
-                setDestinations(destinations.filter(d => d._id !== id));
+                setDestinations((prev) => prev.filter((destination) => destination._id !== id));
+                setSelectedIds((prev) => {
+                    const next = new Set(prev);
+                    next.delete(id);
+                    return next;
+                });
                 router.refresh();
             } else {
-                alert('Failed to delete destination');
+                alert('Failed to archive destination');
             }
         } catch (error) {
             console.error(error);
-            alert('Error deleting destination');
+            alert('Error archiving destination');
         } finally {
             setLoading(false);
         }
     };
 
-    const togglePublish = async (dest: Destination) => {
+    const togglePublish = async (destination: Destination) => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/destinations/${dest._id}`, {
-                method: 'PUT',
+            const res = await fetch(`/api/destinations/${destination._id}`, {
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ isPublished: !dest.isPublished })
+                body: JSON.stringify({ isPublished: !destination.isPublished }),
             });
             if (res.ok) {
-                setDestinations(destinations.map(d => d._id === dest._id ? { ...d, isPublished: !d.isPublished } : d));
+                setDestinations((prev) =>
+                    prev.map((item) =>
+                        item._id === destination._id
+                            ? { ...item, isPublished: !destination.isPublished }
+                            : item
+                    )
+                );
                 router.refresh();
+            } else {
+                alert('Failed to update destination status');
             }
         } catch (error) {
             console.error(error);
+            alert('Error updating destination status');
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleBulkAction = async (action: BulkAction) => {
+        const ids = Array.from(selectedIds);
+        if (ids.length === 0) return;
+
+        const confirmMessage =
+            action === 'archive'
+                ? `Archive ${ids.length} selected destination(s)?`
+                : `${action === 'publish' ? 'Publish' : 'Unpublish'} ${ids.length} selected destination(s)?`;
+
+        if (!confirm(confirmMessage)) return;
+
+        setLoading(true);
+        try {
+            const res = await fetch('/api/destinations/bulk', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids, action }),
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.error || 'Bulk action failed');
+            }
+
+            setDestinations((prev) => {
+                if (action === 'archive') {
+                    return prev.filter((destination) => !selectedIds.has(destination._id));
+                }
+
+                return prev.map((destination) =>
+                    selectedIds.has(destination._id)
+                        ? { ...destination, isPublished: action === 'publish' }
+                        : destination
+                );
+            });
+            clearSelection();
+            router.refresh();
+        } catch (error) {
+            console.error(error);
+            alert(error instanceof Error ? error.message : 'Bulk action failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const exportSelected = () => {
+        const rows = destinations
+            .filter((destination) => selectedIds.has(destination._id))
+            .map((destination) => ({
+                title: destination.title,
+                slug: destination.slug,
+                location: destination.location || '',
+                published: destination.isPublished,
+            }));
+
+        downloadCsv('destinations-export.csv', rows);
     };
 
     return (
         <div className="dashboard-table-glass overflow-hidden rounded-2xl w-full">
+            {selectedIds.size > 0 && (
+                <div className="flex flex-col gap-3 border-b border-white/[0.06] bg-antique-gold/[0.05] px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs font-medium uppercase tracking-[0.18em] text-antique-gold/80">
+                            {selectedIds.size} selected
+                        </span>
+                        <button
+                            type="button"
+                            onClick={clearSelection}
+                            className="inline-flex items-center gap-1 text-xs text-white/45 transition-colors hover:text-white/70"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                            Clear
+                        </button>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            disabled={loading}
+                            className="h-8 border border-emerald-500/30 bg-emerald-500/10 px-3 text-[11px] text-emerald-300 hover:bg-emerald-500/20"
+                            onClick={() => handleBulkAction('publish')}
+                        >
+                            Publish
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            disabled={loading}
+                            className="h-8 border border-white/10 bg-white/[0.04] px-3 text-[11px] text-white/70 hover:bg-white/[0.08]"
+                            onClick={() => handleBulkAction('unpublish')}
+                        >
+                            Unpublish
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            disabled={loading}
+                            className="h-8 border border-red-500/30 bg-red-500/10 px-3 text-[11px] text-red-300 hover:bg-red-500/20"
+                            onClick={() => handleBulkAction('archive')}
+                        >
+                            Archive
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            disabled={loading}
+                            className="h-8 border border-antique-gold/30 bg-antique-gold/10 px-3 text-[11px] text-antique-gold hover:bg-antique-gold/20"
+                            onClick={exportSelected}
+                        >
+                            <Download className="mr-1.5 h-3.5 w-3.5" />
+                            Export CSV
+                        </Button>
+                    </div>
+                </div>
+            )}
+
             <div className="overflow-x-auto w-full">
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="bg-white/[0.03] border-b border-white/[0.06]">
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold w-[80px]">Image</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Title</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Location</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Status</th>
-                            <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Actions</th>
+                            <th className="w-[44px] px-3 py-3.5 text-left">
+                                <input
+                                    type="checkbox"
+                                    checked={allVisibleSelected}
+                                    onChange={toggleSelectAll}
+                                    className="h-3.5 w-3.5 cursor-pointer rounded accent-antique-gold"
+                                    aria-label="Select all destinations"
+                                />
+                            </th>
+                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold w-[80px]">
+                                Image
+                            </th>
+                            <SortableHeader
+                                label="Title"
+                                sortKey="title"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Location"
+                                sortKey="location"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Status"
+                                sortKey="isPublished"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {destinations.length > 0 ? (
-                            destinations.map((dest) => (
-                                <tr key={dest._id} className="border-b border-white/[0.04] last:border-b-0 hover:bg-antique-gold/[0.03] transition-colors">
+                        {visibleDestinations.length > 0 ? (
+                            visibleDestinations.map((destination) => (
+                                <tr
+                                    key={destination._id}
+                                    className={`border-b border-white/[0.04] last:border-b-0 transition-colors hover:bg-antique-gold/[0.03] ${
+                                        selectedIds.has(destination._id)
+                                            ? 'bg-antique-gold/[0.04]'
+                                            : ''
+                                    }`}
+                                >
+                                    <td className="px-3 py-3.5">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedIds.has(destination._id)}
+                                            onChange={() => toggleSelect(destination._id)}
+                                            className="h-3.5 w-3.5 cursor-pointer rounded accent-antique-gold"
+                                            aria-label={`Select ${destination.title}`}
+                                        />
+                                    </td>
                                     <td className="px-5 py-3.5">
                                         <div className="relative h-10 w-14 rounded overflow-hidden bg-white/5 border border-white/10">
-                                            {dest.images && dest.images[0] ? (
+                                            {destination.images && destination.images[0] ? (
                                                 <Image
-                                                    src={dest.images[0]}
-                                                    alt={dest.title}
+                                                    src={destination.images[0]}
+                                                    alt={destination.title}
                                                     fill
                                                     className="object-cover"
                                                 />
                                             ) : (
-                                                <div className="flex items-center justify-center h-full text-[9px] uppercase tracking-wider text-white/20">No Img</div>
+                                                <div className="flex items-center justify-center h-full text-[9px] uppercase tracking-wider text-white/20">
+                                                    No Img
+                                                </div>
                                             )}
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <div className="flex flex-col">
-                                            <span className="font-medium text-white/85 text-xs">{dest.title}</span>
-                                            <span className="text-[10px] text-white/35 mt-0.5">/{dest.slug}</span>
+                                            <span className="font-medium text-white/85 text-xs">
+                                                {destination.title}
+                                            </span>
+                                            <span className="text-[10px] text-white/35 mt-0.5">
+                                                /{destination.slug}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5">
-                                        <span className="text-white/60 text-xs">{dest.location || '—'}</span>
+                                        <span className="text-white/60 text-xs">
+                                            {destination.location || '—'}
+                                        </span>
                                     </td>
                                     <td className="px-5 py-3.5">
-                                        <span className={`status-pill ${dest.isPublished ? 'status-pill-success' : 'status-pill-neutral'}`}>
-                                            {dest.isPublished ? 'Published' : 'Draft'}
+                                        <span
+                                            className={`status-pill ${
+                                                destination.isPublished
+                                                    ? 'status-pill-success'
+                                                    : 'status-pill-neutral'
+                                            }`}
+                                        >
+                                            {destination.isPublished ? 'Published' : 'Draft'}
                                         </span>
                                     </td>
                                     <td className="px-5 py-3.5 text-right">
@@ -114,16 +348,23 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
                                                 size="icon"
                                                 variant="ghost"
                                                 className="h-8 w-8 text-white/40 hover:text-white hover:bg-white/10 transition-colors"
-                                                onClick={() => togglePublish(dest)}
-                                                title={dest.isPublished ? "Unpublish" : "Publish"}
+                                                onClick={() => togglePublish(destination)}
+                                                title={destination.isPublished ? 'Unpublish' : 'Publish'}
+                                                disabled={loading}
                                             >
-                                                {dest.isPublished ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                                                {destination.isPublished ? (
+                                                    <Eye className="h-4 w-4" />
+                                                ) : (
+                                                    <EyeOff className="h-4 w-4" />
+                                                )}
                                             </Button>
                                             <Button
                                                 size="icon"
                                                 variant="ghost"
                                                 className="h-8 w-8 text-white/40 hover:text-antique-gold hover:bg-white/10 transition-colors"
-                                                onClick={() => router.push(`/dashboard/destinations/${dest._id}`)}
+                                                onClick={() =>
+                                                    router.push(`/dashboard/destinations/${destination._id}`)
+                                                }
                                             >
                                                 <Edit className="h-4 w-4" />
                                             </Button>
@@ -131,7 +372,8 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
                                                 size="icon"
                                                 variant="ghost"
                                                 className="h-8 w-8 text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-colors"
-                                                onClick={() => handleDelete(dest._id)}
+                                                onClick={() => handleDelete(destination._id)}
+                                                disabled={loading}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
@@ -141,7 +383,10 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="px-5 py-12 text-center text-white/40 text-sm">
+                                <td
+                                    colSpan={6}
+                                    className="px-5 py-12 text-center text-white/40 text-sm"
+                                >
                                     No destinations found.
                                 </td>
                             </tr>

@@ -37,6 +37,11 @@ export function useTableSort<T>(data: T[], defaultSort?: SortConfig) {
           ? aVal.localeCompare(bVal)
           : bVal.localeCompare(aVal);
       }
+      if (typeof aVal === 'boolean' && typeof bVal === 'boolean') {
+        return sortConfig.direction === 'asc'
+          ? Number(aVal) - Number(bVal)
+          : Number(bVal) - Number(aVal);
+      }
       if (typeof aVal === 'number' && typeof bVal === 'number') {
         return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
       }

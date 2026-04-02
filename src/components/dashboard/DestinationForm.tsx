@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { useDraftAutosave } from '@/hooks/useDraftAutosave';
 
 interface DestinationFormProps {
     initialData?: any;
@@ -18,7 +19,7 @@ export default function DestinationForm({ initialData, isEdit = false }: Destina
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
-    const [formData, setFormData] = useState({
+    const defaultFormData = {
         title: initialData?.title || '',
         slug: initialData?.slug || '',
         location: initialData?.location || '',
@@ -26,9 +27,30 @@ export default function DestinationForm({ initialData, isEdit = false }: Destina
         longDescription: initialData?.longDescription || '',
         images: initialData?.images || [],
         isPublished: initialData?.isPublished || false,
-    });
+    };
+
+    const [formData, setFormData] = useState(defaultFormData);
 
     const [imagesText, setImagesText] = useState(initialData?.images?.join('\n') || '');
+    const draftKey = isEdit ? `yatara:destination-form:${initialData?._id}` : 'yatara:destination-form:new';
+    const { hasStoredDraft, draftSavedAt, discardDraft } = useDraftAutosave({
+        storageKey: draftKey,
+        value: {
+            formData,
+            imagesText,
+        },
+        onRestore: (draft) => {
+            setFormData({
+                ...defaultFormData,
+                ...draft.formData,
+            });
+            setImagesText(draft.imagesText || '');
+        },
+    });
+
+    const draftStatusLabel = draftSavedAt
+        ? `Autosaved ${new Date(draftSavedAt).toLocaleTimeString()}`
+        : 'Draft ready';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,7 +63,7 @@ export default function DestinationForm({ initialData, isEdit = false }: Destina
 
         try {
             const url = isEdit ? `/api/destinations/${initialData._id}` : '/api/destinations';
-            const method = isEdit ? 'PUT' : 'POST';
+            const method = isEdit ? 'PATCH' : 'POST';
 
             const res = await fetch(url, {
                 method,
@@ -50,6 +72,7 @@ export default function DestinationForm({ initialData, isEdit = false }: Destina
             });
 
             if (res.ok) {
+                discardDraft();
                 router.push('/dashboard/destinations');
                 router.refresh();
             } else {
@@ -66,9 +89,23 @@ export default function DestinationForm({ initialData, isEdit = false }: Destina
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl liquid-glass-stat-dark p-8 rounded-2xl border border-white/[0.08] shadow-2xl text-white">
-            <div className="flex flex-col mb-4">
-                <h2 className="text-xl font-semibold text-white mb-2">Destination Details</h2>
-                <p className="text-white/40 text-sm">Information about the destination.</p>
+            <div className="flex flex-col gap-3 mb-4">
+                <div>
+                    <h2 className="text-xl font-semibold text-white mb-2">Destination Details</h2>
+                    <p className="text-white/40 text-sm">Information about the destination.</p>
+                </div>
+                {hasStoredDraft && (
+                    <div className="inline-flex items-center gap-3 self-start rounded-full border border-antique-gold/20 bg-antique-gold/10 px-3 py-1 text-[11px] text-antique-gold">
+                        <span>{draftStatusLabel}</span>
+                        <button
+                            type="button"
+                            onClick={discardDraft}
+                            className="text-white/60 transition-colors hover:text-white"
+                        >
+                            Discard draft
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6">
@@ -101,9 +138,9 @@ export default function DestinationForm({ initialData, isEdit = false }: Destina
             </div>
 
             <div className="flex justify-end gap-3 pt-6 border-t border-white/[0.06] mt-4">
-                <Button type="button" variant="outline" onClick={() => router.back()} className="border-antique-gold/40 text-antique-gold hover:bg-antique-gold/10 rounded-xl h-10 px-6 transition-all">Cancel</Button>
-                <Button type="submit" disabled={loading} className="bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_20px_rgba(212,175,55,0.2)] rounded-xl h-10 px-6 font-semibold transition-all">
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#020b08]/60" /> : null}
+                <Button type="button" variant="glass-outline" onClick={() => router.back()} className="text-white/60 hover:text-white">Cancel</Button>
+                <Button type="submit" variant="glass-outline" disabled={loading} className="font-semibold text-antique-gold">
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-antique-gold/60" /> : null}
                     {isEdit ? 'Update Destination' : 'Create Destination'}
                 </Button>
             </div>

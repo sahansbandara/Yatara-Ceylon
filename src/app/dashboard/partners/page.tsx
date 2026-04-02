@@ -55,7 +55,7 @@ export default async function PartnersPage() {
                 subtitle="Manage guides, hotels, drivers, and other service partners."
                 action={
                     <Link href="/dashboard/partners/new">
-                        <Button className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold">
+                        <Button variant="glass">
                             <Plus className="mr-2 h-4 w-4" /> Add Partner
                         </Button>
                     </Link>

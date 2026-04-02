@@ -252,9 +252,10 @@ export default function PartnerApplicationPage() {
 
                         <div className="pt-6">
                             <Button
+                                variant="glass-outline"
                                 type="submit"
                                 disabled={loading}
-                                className="w-full h-14 rounded-xl bg-antique-gold hover:bg-antique-gold/90 text-black font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all flex items-center justify-center gap-2"
+                                className="w-full h-14 rounded-xl text-antique-gold font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                                     <>

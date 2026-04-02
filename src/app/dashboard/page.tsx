@@ -1,4 +1,5 @@
 import connectDB from "@/lib/mongodb";
+import { formatLKR } from "@/lib/currency";
 import Booking from "@/models/Booking";
 import Package from "@/models/Package";
 import User from "@/models/User";
@@ -236,7 +237,7 @@ export default async function DashboardPage() {
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Revenue"
-          value={`LKR ${stats.totalRevenue.toLocaleString()}`}
+          value={formatLKR(stats.totalRevenue)}
           icon={DollarSign}
           accentColor="text-emerald-400"
         />
@@ -276,7 +277,7 @@ export default async function DashboardPage() {
         />
         <StatCard
           title="Balances"
-          value={`LKR ${stats.pendingBalances.toLocaleString()}`}
+          value={formatLKR(stats.pendingBalances)}
           icon={CreditCard}
           accentColor="text-orange-400"
         />
@@ -327,14 +328,14 @@ export default async function DashboardPage() {
         </GlassPanel>
 
         {/* Revenue by Status */}
-        <GlassPanel title="Revenue by Status" subtitle={`LKR ${totalStatusRevenue.toLocaleString()} total`}>
+        <GlassPanel title="Revenue by Status" subtitle={`${formatLKR(totalStatusRevenue)} total`}>
           <div className="space-y-3">
             {revenueSegments.length > 0 ? (
               revenueSegments.map((seg: any) => (
                 <div key={seg.status}>
                   <div className="flex justify-between items-center mb-1.5">
                     <span className="text-xs font-medium text-white/70">{seg.status?.replace(/_/g, ' ')}</span>
-                    <span className="text-xs font-bold text-white/90">LKR {(seg.revenue || 0).toLocaleString()}</span>
+                    <span className="text-xs font-bold text-white/90">{formatLKR(seg.revenue || 0)}</span>
                   </div>
                   <div className="h-6 rounded-lg bg-white/5 overflow-hidden border border-white/10">
                     <div
@@ -385,7 +386,7 @@ export default async function DashboardPage() {
                         <p className="text-xs text-white/50 truncate max-w-[140px]">{booking.packageId?.title || booking.type}</p>
                       </td>
                       <td className="px-5 py-3.5 text-right">
-                        <span className="text-xs font-bold text-white/90">LKR {(booking.totalCost || 0).toLocaleString()}</span>
+                        <span className="text-xs font-bold text-white/90">{formatLKR(booking.totalCost || 0)}</span>
                       </td>
                       <td className="px-5 py-3.5 text-center">
                         <span className={`status-pill ${STATUS_MAP[booking.status] || 'status-pill-neutral'}`}>
@@ -428,7 +429,7 @@ export default async function DashboardPage() {
               href="/dashboard/finance"
               icon={DollarSign}
               title="Finance Overview"
-              subtitle={`LKR ${stats.pendingBalances.toLocaleString()} pending`}
+              subtitle={`${formatLKR(stats.pendingBalances)} pending`}
               iconColor="text-emerald-400"
               iconBg="bg-emerald-500/10 border-emerald-500/20"
             />

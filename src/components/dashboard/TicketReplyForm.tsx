@@ -55,8 +55,8 @@ export default function TicketReplyForm({ ticketId }: TicketReplyFormProps) {
                     required
                 />
                 <div className="flex justify-end">
-                    <Button type="submit" disabled={loading} className="bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_20px_rgba(212,175,55,0.2)] rounded-xl h-10 px-6 font-semibold transition-all">
-                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#020b08]/60" /> : <Send className="mr-2 h-4 w-4" />}
+                    <Button type="submit" variant="glass-outline" disabled={loading} className="font-semibold text-antique-gold">
+                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-antique-gold/60" /> : <Send className="mr-2 h-4 w-4" />}
                         Send Reply
                     </Button>
                 </div>

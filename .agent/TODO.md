@@ -11,6 +11,29 @@ Production Readiness — final QA pass and polish before go-live
 
 - [x] Investigated why seeded test credentials failed locally and fixed the auth/demo account flow end-to-end (2026-04-01)
 - [x] Make all published demo credentials usable end-to-end across their role-specific dashboard destinations (2026-04-01)
+- [x] Run the rich dashboard seed against the production MongoDB configured in Vercel and verify completion (2026-04-01)
+
+## In Progress (2026-04-02)
+
+- [x] Nice-to-Have Polish verification + final pass
+  - [x] Expand the low-priority polish section into a detailed execution checklist
+  - [x] Implement bulk actions + CSV export on packages, destinations, and notifications
+  - [x] Extend sortable headers across the main operator tables
+  - [x] Add richer preset-driven date-range controls for analytics and finance
+  - [x] Surface invoice VOID state in finance summaries and add route-level regression coverage
+  - [x] Enrich the booking timeline with invoice/payment lifecycle events
+  - [x] Add protected booking/invoice attachment management with safe URL-backed documents
+  - [x] Add local draft autosave to package and destination editors
+  - [x] Add a live preview panel to the notification composer
+  - [x] Add operator-facing WhatsApp concierge shortcut + setup notes
+  - [x] Run `npm run build` and close any regressions from the polish wave
+  - [x] Run targeted regression test coverage for invoice transitions
+  - [x] Mark completed checklist items and leave a fresh handoff in `Last Session`
+- [x] Fix finance dashboard outstanding-balance prioritization after production smoke-test mismatch
+  - [x] Confirm the current query still sorts only by `remainingBalance DESC` with a hard `limit(10)`
+  - [x] Re-rank outstanding balances toward current actionable bookings so seeded active bookings are not displaced by stale higher-balance records
+  - [x] Add focused regression coverage for the new ranking rule
+  - [x] Re-run verification and refresh `Last Session`
 
 ---
 
@@ -24,15 +47,72 @@ Production Readiness — final QA pass and polish before go-live
 
 ## Nice-to-Have Polish (Low Priority)
 
-- [ ] Bulk actions on dashboard list pages (publish/unpublish, archive, export)
-- [ ] Column sorting on dashboard tables
-- [ ] Richer date-range controls on analytics and finance reports
-- [ ] Invoice-level VOID / cancellation state transition after FINAL
-- [ ] Booking activity timeline / change history view beyond audit log
-- [ ] File/document attachments (invoices, ID copies)
-- [ ] Form autosave (package editor, destination editor)
-- [ ] Notification composer with preview panel
-- [ ] WhatsApp bot integration
+### 1. Bulk actions on dashboard list pages (publish/unpublish, archive, export)
+- [x] Identify the list pages that already support row-by-row publish/archive actions (`packages`, `destinations`, `notifications`)
+- [x] Add row selection state, per-row checkboxes, and a select-all header control
+- [x] Add a bulk action toolbar that only appears when rows are selected
+- [x] Add bulk publish / unpublish actions where `isPublished` exists
+- [x] Add bulk archive action where soft-delete already exists
+- [x] Add export for selected rows in a portable format
+- [x] Verify selection reset, optimistic UI updates, and refresh behavior after each action
+
+### 2. Column sorting on dashboard tables
+- [x] Audit which dashboard tables already support sorting and which still use static headers
+- [x] Reuse the existing `useTableSort` / `SortableHeader` utilities instead of duplicating table sort logic
+- [x] Wire sortable headers into packages, destinations, notifications, users, partners, and vehicles where it improves operator workflows
+- [x] Ensure the sorted collection is the one actually rendered in each table
+- [x] Verify string, numeric, date, and status sorting behavior across representative tables
+
+### 3. Richer date-range controls on analytics and finance reports
+- [x] Review the current analytics and finance filters to see what presets already exist
+- [x] Add quick presets (today, last 7 days, last 30 days, month to date, quarter to date, year to date)
+- [x] Keep manual custom from/to controls for exact operator filtering
+- [x] Preserve filters in the URL so refresh/share/back navigation stays stable
+- [x] Show the active range clearly in the UI and make reset behavior explicit
+- [x] Verify charts, KPI cards, and report tables update consistently for each range
+
+### 4. Invoice-level VOID / cancellation state transition after FINAL
+- [x] Verify the API allows `FINAL -> VOID`
+- [x] Verify the booking detail UI exposes finalize + void controls
+- [x] Add regression verification so the TODO can be closed with confidence
+- [x] Confirm the finance dashboard surfaces VOID invoices correctly anywhere invoice status is summarized
+
+### 5. Booking activity timeline / change history view beyond audit log
+- [x] Verify the booking detail page already renders an activity timeline panel
+- [x] Extend the timeline feed beyond raw booking audit rows by merging invoice, payment, assignment, and status events
+- [x] Improve event copy so operators can understand what changed without opening raw JSON
+- [x] Keep newest activity first and ensure actor / timestamp context remains visible
+- [x] Verify the timeline still works for bookings with sparse or partial history
+
+### 6. File/document attachments (invoices, ID copies)
+- [x] Decide the storage approach that fits the current stack without introducing broken local-only uploads
+- [x] Add schema support for booking/invoice attachment metadata
+- [x] Add protected API handlers to create, list, and remove attachments
+- [x] Add dashboard UI to attach and review invoice / customer document links or uploaded files
+- [x] Show clear labels for attachment type, uploaded date, and who added it
+- [x] Verify access control so only authorized dashboard roles can manage internal documents
+
+### 7. Form autosave (package editor, destination editor)
+- [x] Add client-side draft persistence for package and destination forms
+- [x] Save incrementally with debounce so typing does not spam storage/network
+- [x] Restore drafts on reload with a clear prompt/state indicator
+- [x] Allow operators to discard stale drafts intentionally
+- [x] Clear autosave once a successful submit completes
+- [x] Verify create and edit flows both behave correctly without overwriting server data unexpectedly
+
+### 8. Notification composer with preview panel
+- [x] Add a live preview pane next to the notification form
+- [x] Mirror title, body, type, audience, and publish-state styling in the preview
+- [x] Handle long content, empty-state placeholders, and draft/published badges gracefully
+- [x] Keep the preview responsive so it remains useful on laptop and mobile breakpoints
+- [x] Verify the preview stays in sync while editing and does not affect submission payloads
+
+### 9. WhatsApp bot integration
+- [x] Audit current WhatsApp touchpoints (links, concierge CTAs, booking actions)
+- [x] Define the smallest production-safe integration that fits the existing stack and available env configuration
+- [x] Add the necessary backend scaffold or automation endpoint instead of hard-coding UI-only behavior
+- [x] Add operator-facing documentation or settings for the integration path
+- [x] Verify the flow degrades safely when credentials/config are missing
 
 ## All Core Features — VERIFIED COMPLETE (2026-04-01)
 
@@ -231,15 +311,20 @@ Production Readiness — final QA pass and polish before go-live
 - Fixed the hotel dashboard property card to render top-level partner contact fields and hardened the dashboard vehicle table against malformed legacy image URLs.
 - Reseeded locally and verified role-based access plus non-empty content for admin, hotel, fleet, and customer dashboard routes/APIs.
 - Verified the change set with a successful `npm run build`.
+- Linked the local checkout to `sithmi/yatara-ceylon`, replaced the production Vercel `MONGODB_URI` single-host direct connection with a writable Atlas SRV URI, and successfully seeded the live production database twice to verify the fix.
+- Triggered a production redeploy from the latest ready deployment and verified the new deployment reached `Ready` on `www.yataraceylon.me`.
+- Smoke-tested live sign-in for the hotel partner account and confirmed `/dashboard/hotel` shows seeded property, services, and availability-block data.
 
 **What to do next**:
-- If desired, expose the new richer demo entities in README/test-credential docs so collaborators know hotel/fleet dashboards now depend on rerunning `npm run seed`.
-- Continue the remaining manual QA matrix and broader mobile/cross-browser checks on real devices/browsers.
+- Run additional live smoke tests on fleet, finance, notifications, and customer booking dashboards using the seeded demo accounts.
 
 **Current state**:
 - Branch: `main`
-- Dev server: running on port 3000 during verification
-- Last verified local surfaces: `/dashboard`, `/dashboard/partners`, `/dashboard/vehicles`, `/dashboard/finance`, `/dashboard/support`, `/dashboard/notifications`, `/dashboard/hotel`, `/dashboard/fleet`, `/dashboard/my-bookings`, `/dashboard/my-plans`, `/api/partner-requests`, `/api/bookings`
+- Dev server: local dev server was previously running on port 3000; production verification in this session used Vercel env pulls + CLI seeding
+- Vercel project: `sithmi/yatara-ceylon` linked locally
+- Production MongoDB: `mongodb+srv://ac-dhyrkz5.lrmzamd.mongodb.net/...` with `retryWrites=true&w=majority`, no `directConnection`
+- Last verified production action: `npm run seed` completed successfully twice against the pulled production env
+- Current production deployment: `https://yatara-ceylon-afis0uxba-sithmi.vercel.app` (`Ready`) aliased to `https://www.yataraceylon.me`
 - Residual build noise: existing Tailwind ambiguous-class warnings (`duration-[...]`, `ease-[...]`) still appear during `npm run build`, but the build completes successfully
 
 **Files changed**:

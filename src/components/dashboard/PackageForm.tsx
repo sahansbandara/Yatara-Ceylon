@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Plus, Trash2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { useDraftAutosave } from '@/hooks/useDraftAutosave';
 
 interface PackageFormProps {
     initialData?: any;
@@ -20,7 +21,7 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('general');
 
-    const [formData, setFormData] = useState({
+    const defaultFormData = {
         title: initialData?.title || '',
         slug: initialData?.slug || '',
         summary: initialData?.summary || '',
@@ -34,7 +35,9 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
         itinerary: initialData?.itinerary || [{ day: 1, title: '', description: '', activity: '' }],
         isPublished: initialData?.isPublished || false,
         isFeatured: initialData?.isFeatured || false,
-    });
+    };
+
+    const [formData, setFormData] = useState(defaultFormData);
 
     // Text areas for array fields (one per line)
     const [highlightsText, setHighlightsText] = useState(initialData?.highlights?.join('\n') || '');
@@ -42,6 +45,38 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
     const [exclusionsText, setExclusionsText] = useState(initialData?.exclusions?.join('\n') || '');
     const [tagsText, setTagsText] = useState(initialData?.tags?.join('\n') || '');
     const [imagesText, setImagesText] = useState(initialData?.images?.join('\n') || '');
+    const draftKey = isEdit ? `yatara:package-form:${initialData?._id}` : 'yatara:package-form:new';
+    const { hasStoredDraft, draftSavedAt, discardDraft } = useDraftAutosave({
+        storageKey: draftKey,
+        value: {
+            activeTab,
+            formData,
+            highlightsText,
+            inclusionsText,
+            exclusionsText,
+            tagsText,
+            imagesText,
+        },
+        onRestore: (draft) => {
+            setActiveTab(draft.activeTab || 'general');
+            setFormData({
+                ...defaultFormData,
+                ...draft.formData,
+                itinerary: Array.isArray(draft.formData?.itinerary) && draft.formData.itinerary.length > 0
+                    ? draft.formData.itinerary
+                    : defaultFormData.itinerary,
+            });
+            setHighlightsText(draft.highlightsText || '');
+            setInclusionsText(draft.inclusionsText || '');
+            setExclusionsText(draft.exclusionsText || '');
+            setTagsText(draft.tagsText || '');
+            setImagesText(draft.imagesText || '');
+        },
+    });
+
+    const draftStatusLabel = draftSavedAt
+        ? `Autosaved ${new Date(draftSavedAt).toLocaleTimeString()}`
+        : 'Draft ready';
 
     const handleItineraryChange = (index: number, field: string, value: string) => {
         const newItinerary = [...formData.itinerary];
@@ -94,7 +129,7 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
 
         try {
             const url = isEdit ? `/api/packages/${initialData._id}` : '/api/packages';
-            const method = isEdit ? 'PUT' : 'POST';
+            const method = isEdit ? 'PATCH' : 'POST';
 
             const res = await fetch(url, {
                 method,
@@ -103,6 +138,7 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
             });
 
             if (res.ok) {
+                discardDraft();
                 router.push('/dashboard/packages');
                 router.refresh();
             } else {
@@ -120,7 +156,7 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
     return (
         <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl liquid-glass-stat-dark p-8 rounded-2xl border border-white/[0.08] shadow-2xl text-white">
             <div className="flex items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-3">
                     <label className="flex items-center gap-3 text-sm text-white/80 cursor-pointer">
                         <input
                             type="checkbox"
@@ -130,11 +166,23 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                         />
                         Published
                     </label>
+                    {hasStoredDraft && (
+                        <div className="inline-flex items-center gap-3 rounded-full border border-antique-gold/20 bg-antique-gold/10 px-3 py-1 text-[11px] text-antique-gold">
+                            <span>{draftStatusLabel}</span>
+                            <button
+                                type="button"
+                                onClick={discardDraft}
+                                className="text-white/60 transition-colors hover:text-white"
+                            >
+                                Discard draft
+                            </button>
+                        </div>
+                    )}
                 </div>
                 <div className="flex gap-3">
-                    <Button type="button" variant="outline" onClick={() => router.back()} className="border-antique-gold/40 text-antique-gold hover:bg-antique-gold/10 rounded-xl h-10 px-6 transition-all">Cancel</Button>
-                    <Button type="submit" disabled={loading} className="bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_20px_rgba(212,175,55,0.2)] rounded-xl h-10 px-6 font-semibold transition-all">
-                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#020b08]/60" /> : null}
+                    <Button type="button" variant="glass-outline" onClick={() => router.back()} className="text-white/60 hover:text-white">Cancel</Button>
+                    <Button type="submit" variant="glass-outline" disabled={loading} className="font-semibold text-antique-gold">
+                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-antique-gold/60" /> : null}
                         {isEdit ? 'Update Package' : 'Create Package'}
                     </Button>
                 </div>

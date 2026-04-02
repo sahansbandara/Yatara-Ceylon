@@ -13,7 +13,7 @@ interface GlassPanelProps {
 
 export function GlassPanel({ title, subtitle, actionLabel, actionHref, children, className = '', noPadding = false }: GlassPanelProps) {
     return (
-        <div className={`liquid-glass-stat-dark rounded-2xl ${noPadding ? '' : 'p-6'} ${className}`}>
+        <div className={`dashboard-entity-card ${noPadding ? '' : 'p-6'} ${className}`}>
             {title && (
                 <div className={`flex items-center justify-between border-b border-white/[0.06] ${noPadding ? 'px-6 pt-6' : ''} pb-4 mb-5`}>
                     <div>

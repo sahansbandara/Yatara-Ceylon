@@ -35,8 +35,8 @@ export default async function NotificationsPage() {
                 subtitle={`${totalNotifications} total notifications`}
                 action={
                     <Link href="/dashboard/notifications/new">
-                        <Button className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold tracking-wider text-xs rounded-lg">
-                            <Plus className="mr-2 h-4 w-4" /> Send Notification
+                        <Button variant="glass">
+                            <Plus className="mr-2 h-4 w-4" /> Compose
                         </Button>
                     </Link>
                 }

@@ -66,7 +66,7 @@ export default async function AdminVehicleCalendarPage() {
                 subtitle="Manage vehicles, availability, and pricing."
                 action={
                     <Link href="/dashboard/vehicles/new">
-                        <Button className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold">
+                        <Button variant="glass-outline" className="text-antique-gold font-semibold">
                             <Plus className="mr-2 h-4 w-4" /> Add Vehicle
                         </Button>
                     </Link>

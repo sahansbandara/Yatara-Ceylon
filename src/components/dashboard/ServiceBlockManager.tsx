@@ -76,67 +76,94 @@ export default function ServiceBlockManager({ serviceId, initialBlocks, hideTitl
     };
 
     return (
-        <div className={hideTitle ? "mt-2" : "liquid-glass-stat-dark rounded-2xl p-6 border border-white/[0.08] shadow-2xl mt-4 text-white"}>
+        <div className={hideTitle ? "mt-4" : "mt-4"}>
             {!hideTitle && (
                 <>
-                    <h2 className="text-lg font-semibold mb-2">Service Availability Blocks</h2>
+                    <h2 className="text-lg font-semibold mb-2 text-white">Service Availability Blocks</h2>
                     <p className="text-white/40 text-xs mb-4">Temporarily remove this service from bookings without deleting it.</p>
                 </>
             )}
 
-            <form onSubmit={handleAddBlock} className="flex flex-col md:flex-row gap-3 items-end mb-6 bg-white/[0.02] p-4 rounded-xl border border-white/[0.06]">
-                <div className="grid gap-1.5 flex-1 w-full">
-                    <Label htmlFor="from" className="text-white/70 text-xs">From Date</Label>
-                    <Input id="from" type="date" required value={from} onChange={e => setFrom(e.target.value)} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 [color-scheme:dark] rounded-xl h-10" />
-                </div>
-                <div className="grid gap-1.5 flex-1 w-full">
-                    <Label htmlFor="to" className="text-white/70 text-xs">To Date</Label>
-                    <Input id="to" type="date" required value={to} onChange={e => setTo(e.target.value)} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 [color-scheme:dark] rounded-xl h-10" />
-                </div>
-                <div className="grid gap-1.5 flex-1 w-full">
-                    <Label htmlFor="reason" className="text-white/70 text-xs">Reason</Label>
+            <div className="mb-4">
+                <p className="text-[11px] font-medium text-white/50 mb-2 uppercase tracking-wide">Blocking</p>
+                <form onSubmit={handleAddBlock} className="flex flex-col gap-3">
+                    {/* Date Row */}
+                    <div className="flex items-center gap-2">
+                        <div className="flex-1 relative">
+                           <Input 
+                             id="from" 
+                             type="date" 
+                             required 
+                             value={from} 
+                             onChange={e => setFrom(e.target.value)} 
+                             className="w-full bg-transparent border border-white/10 text-white/80 focus-visible:ring-1 focus-visible:ring-antique-gold/50 rounded-lg h-10 text-[13px] [color-scheme:dark] pl-9" 
+                           />
+                           <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/40"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                           </div>
+                        </div>
+                        <span className="text-white/20">-</span>
+                        <div className="flex-1 relative">
+                           <Input 
+                             id="to" 
+                             type="date" 
+                             required 
+                             value={to} 
+                             onChange={e => setTo(e.target.value)} 
+                             className="w-full bg-transparent border border-white/10 text-white/80 focus-visible:ring-1 focus-visible:ring-antique-gold/50 rounded-lg h-10 text-[13px] [color-scheme:dark] pl-9" 
+                           />
+                           <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/40"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                           </div>
+                        </div>
+                    </div>
+
+                    {/* Reason Row */}
                     <Select value={reason} onValueChange={setReason}>
-                        <SelectTrigger className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 h-10 rounded-xl">
-                            <SelectValue placeholder="Reason" />
+                        <SelectTrigger className="w-full bg-transparent border border-white/10 text-white/80 hover:bg-white/[0.02] focus-visible:ring-1 focus-visible:ring-antique-gold/50 h-10 rounded-lg text-[13px] transition-all">
+                            <SelectValue placeholder="Select your reason" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#020b08] border-white/[0.08] text-white">
+                        <SelectContent className="bg-[#1f2226] border-white/[0.08] text-white">
                             {Object.values(ServiceBlockReasons).map(r => (
-                                <SelectItem key={r} value={r} className="focus:bg-white/[0.06] focus:text-antique-gold cursor-pointer">{r}</SelectItem>
+                                <SelectItem key={r} value={r} className="focus:bg-white/[0.06] focus:text-antique-gold cursor-pointer text-[13px]">{r.replace('_', ' ')}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
-                </div>
-                <Button type="submit" disabled={loading} className="w-full md:w-[100px] h-10 rounded-xl bg-antique-gold hover:bg-antique-gold/90 text-[#020b08] shadow-[0_0_15px_rgba(212,175,55,0.15)] font-medium text-sm">
-                    {loading && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin text-[#020b08]/60" />}
-                    Block
-                </Button>
-            </form>
 
-            <div className="space-y-2">
+                    {/* Submit Button */}
+                    <Button type="submit" disabled={loading} className="w-full h-10 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] hover:brightness-110 text-[#08110d] shadow-[0_4px_15px_rgba(212,175,55,0.15)] font-semibold text-[13px] tracking-wide mt-1 transition-all">
+                        {loading && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin text-[#08110d]/60" />}
+                        Apply Block
+                    </Button>
+                </form>
+            </div>
+
+            <div className="space-y-2 max-h-[150px] overflow-y-auto pr-1 custom-scrollbar">
                 {blocks.length === 0 ? (
-                    <p className="text-xs text-white/30 italic text-center py-4">No active availability blocks.</p>
+                    null // No active blocks message removed to clean up UI as per image 
                 ) : (
                     blocks.map((block) => (
-                        <div key={block._id} className="flex items-center justify-between border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] p-3 rounded-xl transition-all">
-                            <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-start md:items-center">
-                                <div className="text-xs text-off-white font-medium flex items-center gap-1.5">
-                                    <span className="bg-white/5 py-1 px-2 rounded-lg border border-white/10">{format(new Date(block.from), 'MMM d')}</span>
-                                    <span className="text-white/30 text-[10px]">to</span>
-                                    <span className="bg-white/5 py-1 px-2 rounded-lg border border-white/10">{format(new Date(block.to), 'MMM d')}</span>
-                                </div>
-                                <span className={`text-[9px] tracking-wider uppercase px-2 py-0.5 rounded border font-semibold ${block.reason === 'BOOKING' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : block.reason === 'PERSONAL' ? 'bg-neutral-500/10 text-neutral-400 border-neutral-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                        <div key={block._id} className="flex flex-col gap-2 border border-white/5 bg-white/[0.01] p-3 rounded-lg transition-all relative group">
+                            <div className="flex items-center justify-between">
+                                <span className={`text-[10px] tracking-wider uppercase font-semibold ${block.reason === 'BOOKING' ? 'text-blue-400' : block.reason === 'PERSONAL' ? 'text-neutral-400' : 'text-red-400'}`}>
                                     {block.reason.replace('_', ' ')}
                                 </span>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-white/20 hover:text-red-400 hover:bg-transparent h-6 w-6 rounded-md p-0 absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() => handleDeleteBlock(block._id)}
+                                    disabled={loading}
+                                    title="Remove block"
+                                >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
                             </div>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-red-400 hover:text-red-300 hover:bg-red-400/10 h-7 w-7 rounded-lg p-0"
-                                onClick={() => handleDeleteBlock(block._id)}
-                                disabled={loading}
-                            >
-                                <Trash2 className="h-3.5 w-3.5" />
-                            </Button>
+                            <div className="flex items-center gap-1.5 text-xs text-white/60">
+                                <span>{format(new Date(block.from), 'MMM d, yyyy')}</span>
+                                <span className="text-white/20">-</span>
+                                <span>{format(new Date(block.to), 'MMM d, yyyy')}</span>
+                            </div>
                         </div>
                     ))
                 )}

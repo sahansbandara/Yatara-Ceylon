@@ -122,9 +122,10 @@ export default function AdminApplicationsPage() {
                 subtitle="Review incoming requests to join the Yatara network"
                 action={
                     <Button
+                        variant="glass-outline"
                         onClick={fetchApplications}
                         disabled={loading}
-                        className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold"
+                        className="font-semibold text-antique-gold"
                     >
                         <RefreshCcw className="mr-2 h-4 w-4" /> Refresh
                     </Button>

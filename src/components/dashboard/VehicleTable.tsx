@@ -15,6 +15,8 @@ import { Trash2, Edit, Car, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { VehicleStatus } from '@/lib/constants';
+import { useTableSort } from '@/hooks/useTableSort';
+import SortableHeader from './SortableHeader';
 
 interface Vehicle {
     _id: string;
@@ -64,6 +66,10 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { sortedData, sortConfig, requestSort } = useTableSort(vehicles, {
+        key: 'model',
+        direction: 'asc',
+    });
 
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this vehicle?')) return;
@@ -126,18 +132,54 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Model</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Plate No</TableHead>
-                        <TableHead>Capacity</TableHead>
-                        <TableHead>Rate per km</TableHead>
-                        <TableHead>Status</TableHead>
+                        <SortableHeader
+                            label="Model"
+                            sortKey="model"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Type"
+                            sortKey="type"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Plate No"
+                            sortKey="plateNumber"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Capacity"
+                            sortKey="seats"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Rate Per Km"
+                            sortKey="dailyRate"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
+                        <SortableHeader
+                            label="Status"
+                            sortKey="status"
+                            currentKey={sortConfig.key}
+                            direction={sortConfig.direction}
+                            onSort={requestSort}
+                        />
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {vehicles.length > 0 ? (
-                        vehicles.map((vehicle) => {
+                    {sortedData.length > 0 ? (
+                        sortedData.map((vehicle) => {
                             const primaryImage = vehicle.images?.[0];
                             const canRenderImage = isRenderableVehicleImage(primaryImage);
 

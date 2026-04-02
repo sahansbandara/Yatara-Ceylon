@@ -1,4 +1,5 @@
 import connectDB from "@/lib/mongodb";
+import { formatLKR } from "@/lib/currency";
 import Payment from "@/models/Payment";
 import Booking from "@/models/Booking";
 import Invoice from "@/models/Invoice";
@@ -8,6 +9,11 @@ import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
+import FinanceDateFilter from "@/components/dashboard/finance/FinanceDateFilter";
+import { buildMonthBuckets } from "@/lib/date-range";
+import { rankOutstandingBookings } from "@/lib/finance-dashboard";
+
+export const revalidate = 0;
 
 async function getFinanceData(dateFrom?: string, dateTo?: string) {
     try {
@@ -15,13 +21,29 @@ async function getFinanceData(dateFrom?: string, dateTo?: string) {
 
         // Build date filter for payments
         const paymentDateMatch: Record<string, unknown> = {};
-        if (dateFrom) paymentDateMatch.$gte = new Date(dateFrom);
-        if (dateTo) paymentDateMatch.$lte = new Date(dateTo + 'T23:59:59.999Z');
+        if (dateFrom) paymentDateMatch.$gte = new Date(`${dateFrom}T00:00:00.000Z`);
+        if (dateTo) paymentDateMatch.$lte = new Date(`${dateTo}T23:59:59.999Z`);
         const hasDateFilter = Object.keys(paymentDateMatch).length > 0;
         const paymentBaseMatch: Record<string, unknown> = { status: 'SUCCESS', type: 'PAYMENT', isDeleted: false };
         if (hasDateFilter) paymentBaseMatch.createdAt = paymentDateMatch;
         const allPaymentMatch: Record<string, unknown> = { isDeleted: false };
         if (hasDateFilter) allPaymentMatch.createdAt = paymentDateMatch;
+        const invoiceBaseMatch: Record<string, unknown> = { isDeleted: { $ne: true } };
+        if (hasDateFilter) invoiceBaseMatch.createdAt = paymentDateMatch;
+
+        const revenueByMonthPipeline: any[] = hasDateFilter
+            ? [
+                { $match: paymentBaseMatch },
+                { $group: { _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } }, total: { $sum: "$amount" }, count: { $sum: 1 } } },
+                { $sort: { _id: 1 } },
+            ]
+            : [
+                { $match: paymentBaseMatch },
+                { $group: { _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } }, total: { $sum: "$amount" }, count: { $sum: 1 } } },
+                { $sort: { _id: -1 } },
+                { $limit: 6 },
+                { $sort: { _id: 1 } },
+            ];
 
         const [
             totalRevenueAgg,
@@ -29,6 +51,7 @@ async function getFinanceData(dateFrom?: string, dateTo?: string) {
             advancePaidAgg,
             recentPayments,
             recentInvoices,
+            invoiceStatusSummary,
             bookingsWithBalance,
             revenueByMonth,
             agingBucketsData,
@@ -50,23 +73,20 @@ async function getFinanceData(dateFrom?: string, dateTo?: string) {
                 .limit(10)
                 .populate('bookingId', 'bookingNo customerName')
                 .lean(),
-            Invoice.find({ isDeleted: { $ne: true } })
+            Invoice.find(invoiceBaseMatch)
                 .sort({ createdAt: -1 })
                 .limit(5)
                 .populate('bookingId', 'bookingNo customerName')
                 .lean(),
+            Invoice.aggregate([
+                { $match: invoiceBaseMatch },
+                { $group: { _id: "$status", count: { $sum: 1 }, total: { $sum: "$total" } } },
+            ]),
             Booking.find({ isDeleted: false, remainingBalance: { $gt: 0 } })
-                .sort({ remainingBalance: -1 })
-                .limit(10)
-                .select('bookingNo customerName totalCost paidAmount remainingBalance status')
+                .select('bookingNo customerName totalCost paidAmount remainingBalance status dates createdAt')
                 .lean(),
             // Revenue by month (last 6 months)
-            Payment.aggregate([
-                { $match: { status: 'SUCCESS', type: 'PAYMENT', isDeleted: false } },
-                { $group: { _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } }, total: { $sum: "$amount" }, count: { $sum: 1 } } },
-                { $sort: { _id: -1 } },
-                { $limit: 6 }
-            ]),
+            Payment.aggregate(revenueByMonthPipeline),
             // Aging buckets
             Booking.aggregate([
                 { $match: { isDeleted: false, remainingBalance: { $gt: 0 } } },
@@ -81,6 +101,13 @@ async function getFinanceData(dateFrom?: string, dateTo?: string) {
         ]);
 
         const agingData = agingBucketsData[0] || {};
+        const invoiceSummaryMap = new Map(
+            invoiceStatusSummary.map((row: any) => [row._id, row])
+        );
+
+        const rankedOutstandingBalances = rankOutstandingBookings(
+            JSON.parse(JSON.stringify(bookingsWithBalance))
+        ).slice(0, 10);
 
         return {
             totalRevenue: totalRevenueAgg[0]?.total || 0,
@@ -90,7 +117,12 @@ async function getFinanceData(dateFrom?: string, dateTo?: string) {
             advanceCount: advancePaidAgg[0]?.count || 0,
             recentPayments: JSON.parse(JSON.stringify(recentPayments)),
             recentInvoices: JSON.parse(JSON.stringify(recentInvoices)),
-            bookingsWithBalance: JSON.parse(JSON.stringify(bookingsWithBalance)),
+            invoiceSummary: {
+                DRAFT: invoiceSummaryMap.get('DRAFT')?.count || 0,
+                FINAL: invoiceSummaryMap.get('FINAL')?.count || 0,
+                VOID: invoiceSummaryMap.get('VOID')?.count || 0,
+            },
+            bookingsWithBalance: rankedOutstandingBalances,
             revenueByMonth: JSON.parse(JSON.stringify(revenueByMonth)),
             aging: {
                 "0-7": agingData["0-7"]?.[0]?.count || 0,
@@ -104,19 +136,42 @@ async function getFinanceData(dateFrom?: string, dateTo?: string) {
         return {
             totalRevenue: 0, pendingBalances: 0, pendingCount: 0,
             advancePaid: 0, advanceCount: 0, recentPayments: [], recentInvoices: [], bookingsWithBalance: [],
+            invoiceSummary: { DRAFT: 0, FINAL: 0, VOID: 0 },
             revenueByMonth: [], aging: { "0-7": 0, "8-14": 0, "15-30": 0, "30+": 0 }
         };
     }
 }
 
-export default async function FinancePage() {
-    const data = await getFinanceData();
+export default async function FinancePage({
+    searchParams,
+}: {
+    searchParams: Promise<{ from?: string; to?: string; preset?: string }>;
+}) {
+    const params = await searchParams;
+    const data = await getFinanceData(params.from, params.to);
 
     const collectionRate = data.totalRevenue > 0 && data.pendingBalances > 0
         ? `${Math.round((data.totalRevenue / (data.totalRevenue + data.pendingBalances)) * 100)}%`
         : data.totalRevenue > 0 ? '100%' : '0%';
 
-    const maxRevenue = Math.max(...data.revenueByMonth.map((m: any) => m.total), 1);
+    const revenueChartData = params.from && params.to
+        ? buildMonthBuckets(params.from, params.to).map((bucket) => {
+            const bucketKey = `${bucket.year}-${String(bucket.month).padStart(2, '0')}`;
+            const record = data.revenueByMonth.find((month: any) => month._id === bucketKey);
+
+            return {
+                label: bucket.label,
+                total: record?.total || 0,
+                count: record?.count || 0,
+            };
+        })
+        : data.revenueByMonth.map((month: any) => ({
+            label: new Date(`${month._id}-01T00:00:00.000Z`).toLocaleString('default', { month: 'short' }),
+            total: month.total,
+            count: month.count,
+        }));
+
+    const maxRevenue = Math.max(...revenueChartData.map((month: any) => month.total), 1);
 
     const agingTotal = data.aging["0-7"] + data.aging["8-14"] + data.aging["15-30"] + data.aging["30+"];
 
@@ -127,24 +182,31 @@ export default async function FinancePage() {
                 subtitle={`Collection rate: ${collectionRate}`}
             />
 
+            {/* Date Range Filter */}
+            <FinanceDateFilter
+                currentFrom={params.from}
+                currentTo={params.to}
+                currentPreset={params.preset}
+            />
+
             {/* KPI Cards */}
             <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     title="Total Collected"
-                    value={`LKR ${data.totalRevenue.toLocaleString()}`}
+                    value={formatLKR(data.totalRevenue)}
                     icon={DollarSign}
                     accentColor="text-emerald-400"
                 />
                 <StatCard
                     title="Advances"
-                    value={`LKR ${data.advancePaid.toLocaleString()}`}
+                    value={formatLKR(data.advancePaid)}
                     icon={TrendingUp}
                     accentColor="text-blue-400"
                     trend={{ value: `${data.advanceCount} bookings`, positive: true }}
                 />
                 <StatCard
                     title="Pending"
-                    value={`LKR ${data.pendingBalances.toLocaleString()}`}
+                    value={formatLKR(data.pendingBalances)}
                     icon={AlertTriangle}
                     accentColor="text-amber-400"
                     trend={{ value: `${data.pendingCount} due`, positive: false }}
@@ -157,24 +219,41 @@ export default async function FinancePage() {
                 />
             </div>
 
+            <div className="grid gap-4 md:grid-cols-3">
+                <div className="liquid-glass-stat-dark rounded-2xl p-5 border border-white/[0.06]">
+                    <p className="text-[11px] font-medium text-white/50 tracking-wide uppercase">Draft Invoices</p>
+                    <p className="mt-2 text-2xl font-display font-bold text-amber-300">{data.invoiceSummary.DRAFT}</p>
+                    <p className="mt-1 text-xs text-white/35">Awaiting finance finalization</p>
+                </div>
+                <div className="liquid-glass-stat-dark rounded-2xl p-5 border border-emerald-500/15">
+                    <p className="text-[11px] font-medium text-white/50 tracking-wide uppercase">Final Invoices</p>
+                    <p className="mt-2 text-2xl font-display font-bold text-emerald-300">{data.invoiceSummary.FINAL}</p>
+                    <p className="mt-1 text-xs text-white/35">Actively billable documents</p>
+                </div>
+                <div className="liquid-glass-stat-dark rounded-2xl p-5 border border-red-500/15">
+                    <p className="text-[11px] font-medium text-white/50 tracking-wide uppercase">Void Invoices</p>
+                    <p className="mt-2 text-2xl font-display font-bold text-red-300">{data.invoiceSummary.VOID}</p>
+                    <p className="mt-1 text-xs text-white/35">Cancelled or superseded bills</p>
+                </div>
+            </div>
+
             {/* Revenue Visualization */}
-            <GlassPanel title="Revenue by Month (Last 6 Months)">
+            <GlassPanel title={params.from || params.to ? "Revenue by Month" : "Revenue by Month (Last 6 Months)"}>
                 <div className="flex items-end justify-between gap-3 h-48">
-                    {data.revenueByMonth.length > 0 ? (
-                        data.revenueByMonth.reverse().map((month: any, idx: number) => {
+                    {revenueChartData.length > 0 ? (
+                        revenueChartData.map((month: any, idx: number) => {
                             const height = (month.total / maxRevenue) * 100;
-                            const monthLabel = new Date(month._id + "-01").toLocaleString('default', { month: 'short' });
                             return (
                                 <div key={idx} className="flex-1 flex flex-col items-center gap-2">
                                     <div className="w-full flex items-end justify-center h-32">
                                         <div
                                             className="w-full bg-gradient-to-t from-antique-gold/40 to-antique-gold/20 rounded-t-lg border border-antique-gold/30 transition-all duration-300 hover:from-antique-gold/60 hover:to-antique-gold/40 hover:border-antique-gold/50"
                                             style={{ height: `${height}%`, minHeight: '8px' }}
-                                            title={`LKR ${month.total.toLocaleString()}`}
+                                            title={formatLKR(month.total)}
                                         />
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-[10px] font-semibold text-white/60">{monthLabel}</p>
+                                        <p className="text-[10px] font-semibold text-white/60">{month.label}</p>
                                         <p className="text-[9px] text-white/40">{month.count} txns</p>
                                     </div>
                                 </div>
@@ -241,7 +320,7 @@ export default async function FinancePage() {
                                         <p className="text-[10px] text-white/25 mt-0.5">{new Date(p.createdAt).toLocaleString()}</p>
                                     </div>
                                     <div className="text-right flex-shrink-0 ml-3">
-                                        <p className="text-sm font-bold text-white/85">LKR {(p.amount || 0).toLocaleString()}</p>
+                                        <p className="text-sm font-bold text-white/85">{formatLKR(p.amount || 0)}</p>
                                         <span className={`status-pill mt-1 ${p.status === 'SUCCESS' ? 'status-pill-success' : p.status === 'PENDING' ? 'status-pill-warning' : 'status-pill-danger'}`}>
                                             {p.status} · {p.provider}
                                         </span>
@@ -259,7 +338,10 @@ export default async function FinancePage() {
                 </GlassPanel>
 
                 {/* Outstanding Balances */}
-                <GlassPanel title="Outstanding Balances">
+                <GlassPanel
+                    title="Outstanding Balances"
+                    subtitle="Current bookings needing finance follow-up appear first."
+                >
                     {data.bookingsWithBalance.length > 0 ? (
                         <div className="space-y-2">
                             {data.bookingsWithBalance.map((b: any) => (
@@ -271,11 +353,15 @@ export default async function FinancePage() {
                                     <div className="min-w-0">
                                         <p className="text-xs font-mono font-medium text-white/80">{b.bookingNo}</p>
                                         <p className="text-[10px] text-white/40 mt-0.5">{b.customerName}</p>
+                                        <p className="text-[10px] text-white/25 mt-0.5">
+                                            {b.status}
+                                            {b.dates?.from ? ` · departs ${new Date(b.dates.from).toLocaleDateString()}` : ''}
+                                        </p>
                                     </div>
                                     <div className="flex items-center gap-3 flex-shrink-0 ml-3">
                                         <div className="text-right">
-                                            <p className="text-[10px] text-white/35">Paid: LKR {(b.paidAmount || 0).toLocaleString()}</p>
-                                            <p className="text-sm font-bold text-amber-400">Due: LKR {(b.remainingBalance || 0).toLocaleString()}</p>
+                                            <p className="text-[10px] text-white/35">Paid: {formatLKR(b.paidAmount || 0)}</p>
+                                            <p className="text-sm font-bold text-amber-400">Due: {formatLKR(b.remainingBalance || 0)}</p>
                                         </div>
                                         <ArrowUpRight className="h-4 w-4 text-white/20 group-hover:text-antique-gold transition-colors" />
                                     </div>
@@ -309,7 +395,7 @@ export default async function FinancePage() {
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className="text-right">
-                                        <p className="text-sm font-bold text-white/85">LKR {(invoice.total || 0).toLocaleString()}</p>
+                                        <p className="text-sm font-bold text-white/85">{formatLKR(invoice.total || 0)}</p>
                                         <span className={`status-pill mt-1 ${invoice.status === 'FINAL' ? 'status-pill-success' : invoice.status === 'VOID' ? 'status-pill-danger' : 'status-pill-warning'}`}>
                                             {invoice.status}
                                         </span>

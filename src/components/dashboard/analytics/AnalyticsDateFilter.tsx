@@ -1,45 +1,129 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
-
-const RANGE_OPTIONS = [
-    { label: '3M', value: 3 },
-    { label: '6M', value: 6 },
-    { label: '12M', value: 12 },
-    { label: '24M', value: 24 },
-];
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { CalendarClock, X } from 'lucide-react';
+import {
+    DATE_RANGE_PRESET_OPTIONS,
+    DateRangePreset,
+    getDateRangeLabel,
+    resolveDateRangePreset,
+} from '@/lib/date-range';
 
 interface AnalyticsDateFilterProps {
-    currentMonths: number;
+    currentFrom: string;
+    currentTo: string;
+    currentPreset?: string;
 }
 
-export default function AnalyticsDateFilter({ currentMonths }: AnalyticsDateFilterProps) {
+export default function AnalyticsDateFilter({
+    currentFrom,
+    currentTo,
+    currentPreset,
+}: AnalyticsDateFilterProps) {
     const router = useRouter();
     const pathname = usePathname();
+    const [from, setFrom] = useState(currentFrom);
+    const [to, setTo] = useState(currentTo);
 
-    const handleChange = (months: number) => {
+    useEffect(() => {
+        setFrom(currentFrom);
+        setTo(currentTo);
+    }, [currentFrom, currentTo]);
+
+    const pushRange = (nextFrom?: string, nextTo?: string, nextPreset?: string) => {
         const params = new URLSearchParams();
-        if (months !== 6) params.set('months', String(months));
+        if (nextFrom) params.set('from', nextFrom);
+        if (nextTo) params.set('to', nextTo);
+        if (nextPreset) params.set('preset', nextPreset);
         const query = params.toString();
         router.push(query ? `${pathname}?${query}` : pathname);
     };
 
+    const applyPreset = (preset: DateRangePreset) => {
+        const range = resolveDateRangePreset(preset);
+        setFrom(range.from);
+        setTo(range.to);
+        pushRange(range.from, range.to, preset);
+    };
+
+    const applyCustom = () => {
+        if (from && to && from > to) {
+            alert('The start date must be before the end date.');
+            return;
+        }
+
+        pushRange(from || undefined, to || undefined);
+    };
+
+    const clearFilter = () => {
+        const range = resolveDateRangePreset('last30');
+        setFrom(range.from);
+        setTo(range.to);
+        pushRange(range.from, range.to, 'last30');
+    };
+
     return (
-        <div className="flex items-center gap-2">
-            <span className="text-xs text-white/40 mr-1">Range:</span>
-            {RANGE_OPTIONS.map(opt => (
+        <div className="liquid-glass-stat-dark rounded-2xl p-4 space-y-4">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex items-center gap-2 text-white/40">
+                    <CalendarClock className="h-4 w-4" />
+                    <span className="text-xs font-medium uppercase tracking-[0.18em]">
+                        Analytics Range
+                    </span>
+                    <span className="text-[11px] text-white/25">
+                        {getDateRangeLabel(currentFrom, currentTo, currentPreset)}
+                    </span>
+                </div>
                 <button
-                    key={opt.value}
-                    onClick={() => handleChange(opt.value)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                        currentMonths === opt.value
-                            ? 'bg-antique-gold/20 text-antique-gold border border-antique-gold/30'
-                            : 'bg-white/[0.04] text-white/40 border border-white/[0.08] hover:bg-white/[0.08] hover:text-white/60'
-                    }`}
+                    onClick={clearFilter}
+                    className="inline-flex items-center gap-1 text-xs text-white/45 transition-colors hover:text-white/70"
                 >
-                    {opt.label}
+                    <X className="h-3 w-3" />
+                    Reset to 30D
                 </button>
-            ))}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+                {DATE_RANGE_PRESET_OPTIONS.map((option) => (
+                    <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => applyPreset(option.value)}
+                        className={`h-8 rounded-xl border px-3 text-[11px] font-medium transition-colors ${
+                            currentPreset === option.value
+                                ? 'border-antique-gold/30 bg-antique-gold/15 text-antique-gold'
+                                : 'border-white/[0.08] bg-white/[0.04] text-white/55 hover:bg-white/[0.08] hover:text-white/75'
+                        }`}
+                    >
+                        {option.label}
+                    </button>
+                ))}
+            </div>
+
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
+                <div className="flex flex-wrap items-center gap-2">
+                    <input
+                        type="date"
+                        value={from}
+                        onChange={(event) => setFrom(event.target.value)}
+                        className="h-9 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white focus:border-antique-gold/30 focus:outline-none focus:ring-2 focus:ring-antique-gold/20"
+                    />
+                    <span className="text-xs text-white/25">to</span>
+                    <input
+                        type="date"
+                        value={to}
+                        onChange={(event) => setTo(event.target.value)}
+                        className="h-9 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white focus:border-antique-gold/30 focus:outline-none focus:ring-2 focus:ring-antique-gold/20"
+                    />
+                </div>
+                <button
+                    onClick={applyCustom}
+                    className="h-9 rounded-xl border border-antique-gold/30 bg-antique-gold/20 px-4 text-xs font-medium text-antique-gold transition-colors hover:bg-antique-gold/30"
+                >
+                    Apply custom range
+                </button>
+            </div>
         </div>
     );
 }

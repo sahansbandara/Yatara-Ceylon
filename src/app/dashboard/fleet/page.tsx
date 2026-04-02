@@ -55,9 +55,9 @@ export default async function FleetDashboardPage() {
 
     const addVehicleBtn = (
         <Link href="/dashboard/fleet/new">
-            <Button className="bg-antique-gold hover:bg-antique-gold/90 text-[#0a1f15] font-semibold tracking-wider text-xs gap-1.5">
-                <Plus className="h-3.5 w-3.5" />
-                Add Vehicle
+            <Button variant="glass">
+              <Plus className="h-4 w-4 mr-1" />
+              Add Fleet
             </Button>
         </Link>
     );

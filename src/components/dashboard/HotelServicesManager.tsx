@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { DollarSign, Loader2, Pencil, Save, Tag, Trash2, X } from 'lucide-react';
+import { Loader2, Pencil, Save, Tag, Trash2, X } from 'lucide-react';
+import { formatLKR } from '@/lib/currency';
 import ServiceBlockManager from '@/components/dashboard/ServiceBlockManager';
 
 interface ServiceRecord {
@@ -121,14 +122,14 @@ export default function HotelServicesManager({
     };
 
     return (
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {services.map((service) => {
                 const serviceName = service.serviceName || service.name || 'Service';
                 const serviceBlocks = blockMap[service._id] || [];
                 const isEditing = editingId === service._id;
 
                 return (
-                    <div key={service._id} className="px-4 py-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300">
+                    <div key={service._id} className="px-5 py-6 rounded-2xl liquid-glass-card-dark h-full flex flex-col focus-within:ring-1 focus-within:ring-antique-gold/30">
                         {isEditing ? (
                             <div className="space-y-3">
                                 <input
@@ -170,11 +171,11 @@ export default function HotelServicesManager({
                                     <option value="true" className="bg-[#08110d]">Active</option>
                                     <option value="false" className="bg-[#08110d]">Inactive</option>
                                 </select>
-                                <div className="flex items-center justify-end gap-2">
+                                <div className="flex items-center justify-end gap-2 mt-4">
                                     <button
                                         type="button"
                                         onClick={() => setEditingId(null)}
-                                        className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/55 hover:text-white/75 transition-all"
+                                        className="flex-1 inline-flex justify-center items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/60 hover:text-white hover:bg-white/5 transition-all"
                                     >
                                         <X className="h-3.5 w-3.5" />
                                         Cancel
@@ -183,7 +184,7 @@ export default function HotelServicesManager({
                                         type="button"
                                         onClick={() => handleSave(service._id)}
                                         disabled={saving}
-                                        className="inline-flex items-center gap-1 rounded-lg border border-antique-gold/25 bg-antique-gold/10 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-antique-gold hover:bg-antique-gold/15 transition-all disabled:opacity-60"
+                                        className="flex-1 inline-flex justify-center items-center gap-1 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] px-3 py-2 text-[11px] uppercase font-bold tracking-[0.18em] text-[#08110d] hover:brightness-110 shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all disabled:opacity-60"
                                     >
                                         {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                                         Save
@@ -191,53 +192,54 @@ export default function HotelServicesManager({
                                 </div>
                             </div>
                         ) : (
-                            <>
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-2">
-                                        <Tag className="h-3.5 w-3.5 text-white/30" />
-                                        <p className="text-sm font-medium text-white/85">{serviceName}</p>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center gap-1 bg-antique-gold/10 px-2.5 py-1 rounded-lg border border-antique-gold/20">
-                                            <DollarSign className="h-3 w-3 text-antique-gold" />
-                                            <span className="text-sm font-bold text-antique-gold">{service.rate}</span>
+                            <div className="flex flex-col h-full">
+                                <div className="flex items-start justify-between mb-4">
+                                    <div>
+                                        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">{serviceName}</h3>
+                                        <div className="flex items-baseline gap-1">
+                                            <span className="text-lg font-bold text-antique-gold">{formatLKR(service.rate)}</span>
+                                            <span className="text-[10px] text-white/50 uppercase tracking-widest">/{service.unit.replace('PER_', '')}</span>
                                         </div>
-                                        <span className={`status-pill ${service.isActive === false ? 'status-pill-warning' : 'status-pill-success'}`}>
+                                    </div>
+                                    <div className="flex-shrink-0">
+                                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[10px] font-bold uppercase tracking-widest ${service.isActive === false ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${service.isActive === false ? 'bg-amber-500' : 'bg-emerald-400'}`}></span>
                                             {service.isActive === false ? 'Inactive' : 'Active'}
-                                        </span>
+                                        </div>
                                     </div>
                                 </div>
-                                <p className="text-[11px] text-white/40 mb-2">
-                                    {service.unit} · {(service.partnerId as { name?: string })?.name || 'Partner'}
+                                
+                                <p className="text-[11px] text-white/40 mb-2 uppercase tracking-wide font-medium">
+                                    {(service.partnerId as { name?: string })?.name || 'Hotel Partner'}
                                 </p>
-                                {service.description ? (
-                                    <p className="text-xs text-white/50 mb-4">{service.description}</p>
-                                ) : null}
+                                {service.description && (
+                                    <p className="text-[13px] text-white/60 mb-5 line-clamp-2 min-h-[39px]">{service.description}</p>
+                                )}
 
-                                <div className="mb-4 flex items-center justify-end gap-2">
+                                <div className="flex gap-3 w-full mb-6 mt-auto">
                                     <button
                                         type="button"
                                         onClick={() => startEditing(service)}
-                                        className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/60 hover:text-antique-gold transition-all"
+                                        className="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg border border-white/20 text-white/80 hover:text-white hover:bg-white/5 hover:border-white/40 h-9 transition-all text-[11px] font-medium uppercase tracking-widest"
                                     >
-                                        <Pencil className="h-3.5 w-3.5" />
-                                        Edit
+                                        <Pencil className="h-3 w-3" />
+                                        Edit Details
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => handleDelete(service._id)}
                                         disabled={deletingId === service._id}
-                                        className="inline-flex items-center gap-1 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-red-300 hover:bg-red-500/15 transition-all disabled:opacity-60"
+                                        className="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 hover:border-red-500/30 h-9 text-[11px] font-medium text-red-400 hover:text-red-300 transition-all uppercase tracking-widest disabled:opacity-60"
                                     >
-                                        {deletingId === service._id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                                        Delete
+                                        {deletingId === service._id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
+                                        Remove 
                                     </button>
                                 </div>
 
-                                <div className="pt-4 border-t border-white/[0.06]">
+                                <div className="pt-5 border-t border-white/[0.06] mt-auto">
                                     <ServiceBlockManager serviceId={service._id} initialBlocks={serviceBlocks as any} hideTitle={true} />
                                 </div>
-                            </>
+                            </div>
                         )}
                     </div>
                 );

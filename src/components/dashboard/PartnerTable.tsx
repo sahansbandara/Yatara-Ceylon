@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Trash2, Edit, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PartnerStatus } from '@/lib/constants';
+import { useTableSort } from '@/hooks/useTableSort';
+import SortableHeader from './SortableHeader';
 
 interface Partner {
     _id: string;
@@ -23,6 +25,10 @@ interface PartnerTableProps {
 export default function PartnerTable({ initialPartners }: PartnerTableProps) {
     const [partners, setPartners] = useState<Partner[]>(initialPartners);
     const router = useRouter();
+    const { sortedData, sortConfig, requestSort } = useTableSort(partners, {
+        key: 'name',
+        direction: 'asc',
+    });
 
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this partner?')) return;
@@ -87,17 +93,47 @@ export default function PartnerTable({ initialPartners }: PartnerTableProps) {
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="bg-white/[0.03] border-b border-white/[0.06]">
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Name</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Type</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Contact</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Phone</th>
-                            <th className="text-left px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Status</th>
+                            <SortableHeader
+                                label="Name"
+                                sortKey="name"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Type"
+                                sortKey="type"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Contact"
+                                sortKey="contactPerson"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Phone"
+                                sortKey="phone"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Status"
+                                sortKey="status"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
                             <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {partners.length > 0 ? (
-                            partners.map((partner) => (
+                        {sortedData.length > 0 ? (
+                            sortedData.map((partner) => (
                                 <tr key={partner._id} className="border-b border-white/[0.04] last:border-b-0 hover:bg-antique-gold/[0.03] transition-colors">
                                     <td className="px-5 py-3.5 font-medium">
                                         <div className="flex flex-col">

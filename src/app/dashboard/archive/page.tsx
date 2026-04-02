@@ -141,9 +141,9 @@ export default function ArchiveCenterPage() {
                                     
                                     <div className="flex items-center gap-2 w-full sm:w-auto">
                                         <Button 
-                                            variant="outline" 
+                                            variant="glass-outline" 
                                             size="sm"
-                                            className="border-antique-gold/30 text-antique-gold hover:bg-antique-gold/10 flex-1 sm:flex-none"
+                                            className="text-antique-gold flex-1 sm:flex-none"
                                             onClick={() => handleAction(item._id, item.collectionName, 'restore')}
                                             disabled={processingId === item._id}
                                         >

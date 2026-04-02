@@ -1,4 +1,5 @@
 import connectDB from "@/lib/mongodb";
+import { formatLKR } from '@/lib/currency';
 import Booking from "@/models/Booking";
 import Payment from "@/models/Payment";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
@@ -7,27 +8,28 @@ import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { CalendarCheck, DollarSign, PackageIcon, TrendingUp } from "lucide-react";
 import Package from "@/models/Package";
 import AnalyticsDateFilter from "@/components/dashboard/analytics/AnalyticsDateFilter";
+import {
+  buildMonthBuckets,
+  formatDateInput,
+  isDateRangePreset,
+  resolveDateRangePreset,
+} from "@/lib/date-range";
 
 export const revalidate = 0; // Disable static rendering for this page
 
-async function getAnalyticsData(months: number = 6) {
+async function getAnalyticsData(dateFrom: string, dateTo: string) {
   try {
     await connectDB();
 
-    // Custom range calculation
-    const currentDate = new Date();
-    const startDate = new Date();
-    startDate.setMonth(currentDate.getMonth() - (months - 1));
-    startDate.setDate(1);
-    startDate.setHours(0, 0, 0, 0);
-    const sixMonthsAgo = startDate;
+    const rangeStart = new Date(`${dateFrom}T00:00:00.000Z`);
+    const rangeEnd = new Date(`${dateTo}T23:59:59.999Z`);
 
     // Fetch Monthly Bookings Volume
     const bookingsByMonth = await Booking.aggregate([
       { 
         $match: { 
           isDeleted: false,
-          createdAt: { $gte: sixMonthsAgo } 
+          createdAt: { $gte: rangeStart, $lte: rangeEnd } 
         } 
       },
       {
@@ -50,7 +52,7 @@ async function getAnalyticsData(months: number = 6) {
           status: 'SUCCESS', 
           type: 'PAYMENT',
           isDeleted: false,
-          createdAt: { $gte: sixMonthsAgo } 
+          createdAt: { $gte: rangeStart, $lte: rangeEnd } 
         } 
       },
       {
@@ -69,8 +71,9 @@ async function getAnalyticsData(months: number = 6) {
     const topPackages = await Booking.aggregate([
       { 
         $match: { 
-          isDeleted: false, 
-          packageId: { $exists: true, $ne: null } 
+          isDeleted: false,
+          packageId: { $exists: true, $ne: null },
+          createdAt: { $gte: rangeStart, $lte: rangeEnd }
         } 
       },
       {
@@ -109,43 +112,60 @@ async function getAnalyticsData(months: number = 6) {
 }
 
 // Helper to fill empty months
-function buildFilledMonthsData(rawData: any[], field: string, months: number = 6, defaultValue: number = 0) {
-  const monthsData = [];
-  const now = new Date();
+function buildFilledMonthsData(
+  rawData: any[],
+  field: string,
+  monthBuckets: Array<{ year: number; month: number; label: string }>,
+  defaultValue: number = 0
+) {
+  return monthBuckets.map((bucket) => {
+    const record = rawData.find(
+      (row) => row._id?.month === bucket.month && row._id?.year === bucket.year
+    );
 
-  for (let i = months - 1; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const m = d.getMonth() + 1; // 1-12
-    const y = d.getFullYear();
-
-    const record = rawData.find(r => r._id?.month === m && r._id?.year === y);
-
-    monthsData.push({
-      label: d.toLocaleDateString('en-US', { month: 'short' }),
-      value: record ? record[field] || defaultValue : defaultValue
-    });
-  }
-  return monthsData;
+    return {
+      label: bucket.label,
+      value: record ? record[field] || defaultValue : defaultValue,
+    };
+  });
 }
 
-export default async function AnalyticsPage({ searchParams }: { searchParams: Promise<{ months?: string }> }) {
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ months?: string; from?: string; to?: string; preset?: string }>;
+}) {
   const params = await searchParams;
   const months = Math.min(Math.max(parseInt(params.months || '6'), 3), 24);
-  const data = await getAnalyticsData(months);
+  const fallbackEnd = new Date();
+  const fallbackStart = new Date();
+  fallbackStart.setMonth(fallbackStart.getMonth() - (months - 1));
+  fallbackStart.setDate(1);
+  fallbackStart.setHours(0, 0, 0, 0);
+
+  const presetRange = isDateRangePreset(params.preset)
+    ? resolveDateRangePreset(params.preset)
+    : null;
+
+  const activeFrom = params.from || presetRange?.from || formatDateInput(fallbackStart);
+  const activeTo = params.to || presetRange?.to || formatDateInput(fallbackEnd);
+
+  const data = await getAnalyticsData(activeFrom, activeTo);
+  const monthBuckets = buildMonthBuckets(activeFrom, activeTo);
 
   // Format for charts
-  const bookingsChartData = buildFilledMonthsData(data.monthlyBookings, 'count', months);
+  const bookingsChartData = buildFilledMonthsData(data.monthlyBookings, 'count', monthBuckets);
   const maxBookings = Math.max(...bookingsChartData.map(d => d.value), 1); // Avoid div by 0
 
-  const revenueChartData = buildFilledMonthsData(data.monthlyRevenue, 'revenue', months);
+  const revenueChartData = buildFilledMonthsData(data.monthlyRevenue, 'revenue', monthBuckets);
   const maxRevenue = Math.max(...revenueChartData.map(d => d.value), 1000); // Avoid div by 0
 
   // Quick Stats
-  const thisMonthBookings = bookingsChartData[ bookingsChartData.length - 1 ].value;
-  const lastMonthBookings = bookingsChartData[ bookingsChartData.length - 2 ].value;
+  const thisMonthBookings = bookingsChartData[bookingsChartData.length - 1]?.value || 0;
+  const lastMonthBookings = bookingsChartData[bookingsChartData.length - 2]?.value || 0;
   
-  const thisMonthRevenue = revenueChartData[ revenueChartData.length - 1 ].value;
-  const lastMonthRevenue = revenueChartData[ revenueChartData.length - 2 ].value;
+  const thisMonthRevenue = revenueChartData[revenueChartData.length - 1]?.value || 0;
+  const lastMonthRevenue = revenueChartData[revenueChartData.length - 2]?.value || 0;
 
   const getGrowth = (current: number, previous: number) => {
     if (previous === 0) return current > 0 ? "Infinite" : "0%";
@@ -168,7 +188,11 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
       />
 
       {/* Date Range Selector */}
-      <AnalyticsDateFilter currentMonths={months} />
+      <AnalyticsDateFilter
+        currentFrom={activeFrom}
+        currentTo={activeTo}
+        currentPreset={isDateRangePreset(params.preset) ? params.preset : undefined}
+      />
 
       {/* High-Level Month over Month Stats */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
@@ -192,8 +216,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
             <div>
               <p className="text-xs text-white/50 uppercase tracking-widest font-semibold mb-1">M-O-M Revenue</p>
               <h3 className="text-3xl font-bold text-white mb-2 ml-[-0.2rem]">
-                <span className="text-lg text-white/40 mr-1">LKR</span>
-                {thisMonthRevenue.toLocaleString()}
+                {formatLKR(thisMonthRevenue)}
               </h3>
               <p className={`text-xs font-semibold ${getGrowthColor(thisMonthRevenue, lastMonthRevenue)}`}>
                 {getGrowth(thisMonthRevenue, lastMonthRevenue)} vs last month
@@ -256,7 +279,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
                   <div className="w-full relative flex justify-center">
                     {/* Tooltip */}
                     <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-[#0f172a] border border-white/10 text-xs px-2 py-1 rounded-md text-white whitespace-nowrap shadow-xl z-20">
-                      LKR {d.value.toLocaleString()}
+                      {formatLKR(d.value)}
                     </div>
                     {/* Bar */}
                     <div 
@@ -290,7 +313,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
                   </div>
                   <div className="md:text-right">
                     <p className="text-[10px] text-white/40 uppercase tracking-wider mb-1">Gross Booking Value</p>
-                    <p className="text-sm font-bold text-white/90">LKR {(pkg.totalRevenue || 0).toLocaleString()}</p>
+                    <p className="text-sm font-bold text-white/90">{formatLKR(pkg.totalRevenue || 0)}</p>
                   </div>
                 </div>
 

@@ -34,7 +34,7 @@ export default async function UsersPage() {
                 subtitle={`${totalUsers} total users`}
                 action={
                     <Link href="/dashboard/users/new">
-                        <Button className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold tracking-wider text-xs rounded-lg">
+                        <Button variant="glass">
                             <Plus className="mr-2 h-4 w-4" /> Add User
                         </Button>
                     </Link>

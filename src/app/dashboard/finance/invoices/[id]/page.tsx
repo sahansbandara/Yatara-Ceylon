@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import { formatLKR } from '@/lib/currency';
 import { notFound } from 'next/navigation';
 import connectDB from '@/lib/mongodb';
 import Invoice from '@/models/Invoice';
 import Payment from '@/models/Payment';
 import { ArrowLeft, Receipt, Wallet } from 'lucide-react';
+import BookingAttachmentsPanel from '@/components/dashboard/bookings/BookingAttachmentsPanel';
 
 async function getInvoiceDetail(id: string) {
     await connectDB();
@@ -60,11 +62,11 @@ export default async function InvoiceDetailPage({
             <div className="grid gap-4 md:grid-cols-3">
                 <div className="liquid-glass-stat rounded-2xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Invoice Total</p>
-                    <p className="mt-2 text-lg font-semibold text-white">LKR {(invoice.total || 0).toLocaleString()}</p>
+                    <p className="mt-2 text-lg font-semibold text-white">{formatLKR(invoice.total || 0)}</p>
                 </div>
                 <div className="liquid-glass-stat rounded-2xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Advance Required</p>
-                    <p className="mt-2 text-lg font-semibold text-white">LKR {(invoice.advanceRequired || 0).toLocaleString()}</p>
+                    <p className="mt-2 text-lg font-semibold text-white">{formatLKR(invoice.advanceRequired || 0)}</p>
                 </div>
                 <div className="liquid-glass-stat rounded-2xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Created</p>
@@ -83,9 +85,9 @@ export default async function InvoiceDetailPage({
                             <div key={`${item.label}-${index}`} className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] px-4 py-3">
                                 <div>
                                     <p className="text-sm text-white/85">{item.label}</p>
-                                    <p className="text-xs text-white/35">Qty {item.qty} × LKR {(item.unitPrice || 0).toLocaleString()}</p>
+                                    <p className="text-xs text-white/35">Qty {item.qty} × {formatLKR(item.unitPrice || 0)}</p>
                                 </div>
-                                <p className="text-sm font-semibold text-antique-gold">LKR {(item.qty * item.unitPrice).toLocaleString()}</p>
+                                <p className="text-sm font-semibold text-antique-gold">{formatLKR(item.qty * item.unitPrice)}</p>
                             </div>
                         ))}
                     </div>
@@ -111,7 +113,7 @@ export default async function InvoiceDetailPage({
                                         {payment.status}
                                     </span>
                                 </div>
-                                <p className="mt-2 text-sm font-semibold text-antique-gold">LKR {(payment.amount || 0).toLocaleString()}</p>
+                                <p className="mt-2 text-sm font-semibold text-antique-gold">{formatLKR(payment.amount || 0)}</p>
                                 <p className="mt-1 text-xs text-white/35">{new Date(payment.createdAt).toLocaleString()}</p>
                             </div>
                         )) : (
@@ -119,6 +121,21 @@ export default async function InvoiceDetailPage({
                         )}
                     </div>
                 </div>
+            </div>
+
+            <div className="liquid-glass-panel rounded-2xl p-6 text-white">
+                <BookingAttachmentsPanel
+                    bookingId={String((invoice.bookingId as any)?._id)}
+                    invoiceId={String(invoice._id)}
+                    invoiceOptions={[
+                        {
+                            _id: String(invoice._id),
+                            invoiceNo: invoice.invoiceNo,
+                            status: invoice.status,
+                        },
+                    ]}
+                    canManage={true}
+                />
             </div>
         </div>
     );

@@ -8,6 +8,10 @@
 
 > Format: `[DATE]` What went wrong → Root cause → What to do instead
 
+- [2026-04-02] Package and destination dashboard forms/toggles still sent `PUT` requests while `/api/packages/[id]` and `/api/destinations/[id]` only expose `PATCH` for updates → publish toggles and edit submits silently fail or 405 even though the backend exists → Before wiring any polish on dashboard CRUD tables/forms, verify the real route methods and align every client action to them.
+- [2026-04-02] The root Next.js build picked up files from the separate Expo app under `mobile/Yatara-Ceylon` because `tsconfig.json` included every `**/*.ts(x)` file in the repo → `npm run build` failed on mobile-only path aliases unrelated to the web app → Exclude nested projects from the root TypeScript config so the web build only validates the intended app.
+- [2026-04-02] Jest scanned the generated `.claude/worktrees/.../package.json` files and threw a haste-map naming collision before route tests even ran → targeted API regression tests became unreliable despite the code being valid → Ignore `.claude/worktrees/` in `jest.config.ts` so local worktrees do not contaminate the repo test graph.
+- [2026-04-01] Vercel `MONGODB_URI` was set to a single Atlas shard host (`ac-...-shard-00-00...`) with `directConnection=true` → writes from the seed failed in production with `MongoServerError: not primary` / `NotWritablePrimary` even though reads and env loading looked fine → On Atlas-backed production deployments, use the cluster SRV URI (`mongodb+srv://...@ac-....mongodb.net/...`) or a full replica-set connection string, never a single-host direct connection for app traffic.
 - [2026-04-01] Hotel dashboard property cards read `p.contact?.email` / `p.contact?.phone`, but the `Partner` model stores `email` and `phone` at the top level → hotel partner fixtures existed yet rendered as blank contact info, making the dashboard look unseeded → When wiring dashboard demo data, verify the render layer matches the real schema fields instead of assuming nested contact objects.
 - [2026-04-01] `/dashboard/vehicles` could hard-crash during render because legacy vehicle records contained invalid `images[0]` values like `sdfghjkl;` and the table passed them straight into `next/image` → one malformed DB value blanked the whole fleet management page even though the rest of the data was valid → Validate dashboard image URLs before rendering `next/image`, and fall back to the icon placeholder for malformed or non-whitelisted hosts.
 - [2026-04-01] Demo/test accounts created by `src/lib/seed.ts` were left with the model default `emailVerified: false` → `/api/auth/login` correctly rejected them with "Please verify your email before signing in", so the published test credentials were unusable even though the password hashes were valid → Seeded demo accounts must be explicitly marked `emailVerified: true` and refreshed on re-seed so existing local databases are repaired.
@@ -41,6 +45,7 @@
 
 ## Recent Findings
 
+- [2026-04-02] Production smoke testing showed the finance dashboard's "Outstanding Balances" panel is still ranked purely by `remainingBalance DESC`, which hides nearer operational demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` behind older high-balance records. For operator follow-up panels, prioritize actionable current bookings over raw historical debt size.
 - [2026-04-01] Local DB check confirmed `admin@yataraceylon.me` exists, bcrypt validation succeeds for `Admin@123`, and the account still has `emailVerified: false`. The test-credential failure is in seeded account state, not password hashing or JWT generation.
 - [2026-04-01] `npm run seed` currently ignores `.env.local`; when run from the repo root it attempts localhost Mongo unless the shell already exported `MONGODB_URI`. That makes the README instruction inaccurate until the seed script loads env files itself.
 - [2026-04-01] MapViewport.client.tsx already uses dynamic import with ssr: false in BuildTourShell.client.tsx. CSS imports are correct (leaflet.css, MarkerCluster.css). Loading state shows "Loading map..." with animated spinner on dark bg. Districts and places data load correctly via fetch GeoJSON and curated places JSON. No fixes needed for map rendering.
@@ -116,6 +121,17 @@
 ## Project Knowledge
 
 - MongoDB connection: src/lib/mongodb.ts with global caching
+- Root web-app TypeScript config now excludes the nested Expo app at `mobile/Yatara-Ceylon` so `next build` only checks the web project
+- Low-priority polish wave (2026-04-02): packages/destinations/notifications now support bulk toolbar actions and CSV export, and the remaining operator tables reuse `useTableSort` + `SortableHeader`
+- Dashboard date-range presets now live in `src/lib/date-range.ts` and power both analytics and finance pages via `from` / `to` / `preset` URL params
+- Finance dashboard outstanding balances now use `rankOutstandingBookings()` from `src/lib/finance-dashboard.ts`, prioritizing upcoming non-settled bookings by status + departure date before falling back to highest stale balances
+- Booking activity timeline now merges booking audit rows with invoice and payment lifecycle events from `/api/bookings/[id]/timeline`
+- Finance dashboard now includes explicit draft/final/void invoice status counts in addition to recent invoice rows
+- Attachment management uses the `Attachment` model plus `/api/bookings/[id]/attachments` routes for URL-backed document records; avoid server-local uploads on this Vercel-hosted app
+- Package and destination dashboard editors now autosave client-side drafts to localStorage (`yatara:package-form:*`, `yatara:destination-form:*`) and clear them on successful submit
+- Staff/admin WhatsApp dispatch shortcut is exposed through `GET /api/bookings/[id]/whatsapp`; if no WhatsApp env is set, the dashboard card shows a safe setup message instead of a broken link
+- Production Atlas fix: derive the writable cluster root from `ac-dhyrkz5-shard-00-00.lrmzamd.mongodb.net` to `ac-dhyrkz5.lrmzamd.mongodb.net` and use an SRV URI with retryable writes instead of `directConnection=true`
+- Local Vercel CLI bootstrap for this repo: `vercel link --yes --project yatara-ceylon --scope sithmi` before using `vercel env` commands from a fresh checkout
 - Transfer categories: airport-executive, wilderness-safari, capital-by-night, intercity-executive, chauffeur-reserve, signature-fleet
 - Vehicle tiers: Executive (2 guests), Prestige (4 guests), Grand (7 guests)
 - Package model type field: 'journey' | 'transfer' — packages page should only show 'journey'
@@ -180,29 +196,37 @@
 
 ## Last Session
 
-**Date**: 2026-04-01
-**Agent**: Claude Code
-**Task**: Build Tour Map Verification & 404 Page Creation
+**Date**: 2026-04-02
+**Agent**: Codex
+**Task**: Fix the production finance smoke-test mismatch where the Outstanding Balances panel hid seeded actionable bookings, then verify and prepare the repo for push
 
 **What was done**:
-1. Verified MapViewport.client.tsx and BuildTourShell.client.tsx — both already correctly implement dynamic import with ssr: false.
-2. Confirmed Leaflet CSS imports are in place, loading state shows spinner on dark background.
-3. District and place data load correctly from GeoJSON and curated JSON — no fixes required.
-4. Created custom 404 page (/src/app/not-found.tsx) with full Yatara Ceylon luxury design: deep emerald + antique gold colors, off-white background, serif typography, responsive CTA buttons, secondary navigation.
+1. Confirmed the production mismatch came from `src/app/dashboard/finance/page.tsx` still sorting the Outstanding Balances panel by `remainingBalance DESC` with `limit(10)`, which pushed `YC-DEMO-1005` and `YC-DEMO-1006` off the panel behind older higher-balance records.
+2. Added `src/lib/finance-dashboard.ts` with `rankOutstandingBookings()` so upcoming non-settled bookings are prioritized by status and departure date, with raw highest-balance ordering used only for stale fallback records.
+3. Updated the finance dashboard query/render path to use the ranking helper, include departure/status context in the panel rows, and clarify the panel subtitle.
+4. Added a focused regression test in `src/lib/__tests__/finance-dashboard.test.ts` covering the reported smoke-test shape.
+5. Updated `docs/finance-management.md` so the documented panel behavior matches the new operational ranking.
+6. Verified the change with a passing targeted Jest run, a passing existing invoice regression run, and a successful production build.
 
 **Files created**:
-- `/src/app/not-found.tsx`
+- `/src/lib/finance-dashboard.ts`
+- `/src/lib/__tests__/finance-dashboard.test.ts`
 
 **Files modified**:
 - `.agent/TODO.md`
 - `.agent/MEMORY.md`
+- `src/app/dashboard/finance/page.tsx`
+- `docs/finance-management.md`
+
+**Verification**:
+- `npx jest --runTestsByPath './src/lib/__tests__/finance-dashboard.test.ts' --runInBand`
+- `npx jest --runTestsByPath './src/app/api/invoices/[id]/route.test.ts' --runInBand`
+- `npm run build`
 
 **Current state**:
-- Build tour map rendering already optimized and functional.
-- Custom 404 page matches brand identity and is production-ready.
-- Ready for testing and further analytics implementation.
+- The finance dashboard now ranks outstanding balances toward current actionable bookings, which should surface seeded active demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` ahead of stale historical debtors.
+- Verification is green locally (`finance-dashboard` test, invoice route test, and full build).
+- The worktree still contains a large pre-existing set of unrelated changes outside this finance fix, so the push step must choose a deliberate commit scope rather than assuming a clean tree.
 
 **What to do next**:
-- Implement Analytics/Stats on Dashboard
-- Mobile QA for 404 page on smaller screens
-- Test 404 routing across invalid paths
+- Move on to the remaining manual/non-automatable items at the top of `.agent/TODO.md` (manual QA matrix, mobile QA, cross-browser smoke testing, and production env credential setup).

@@ -10,7 +10,7 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon: Icon, trend, accentColor = 'text-antique-gold' }: StatCardProps) {
     return (
-        <div className="liquid-glass-stat-dark p-5 group cursor-default">
+        <div className="dashboard-kpi-card p-5 group cursor-default">
             <div className="flex items-center justify-between mb-3">
                 <p className="text-[11px] font-medium text-white/50 tracking-wide uppercase">{title}</p>
                 <div className={`w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.08] group-hover:border-antique-gold/20 transition-all duration-500`}>

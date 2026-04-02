@@ -190,15 +190,24 @@ function SidebarContent({ userRole, userName, isLoading }: { userRole: string; u
             </div>
 
             {/* User Info */}
-            <div className="px-5 py-3 border-b border-white/[0.04]">
-                <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
+            <div className="px-5 py-3 border-b border-white/[0.04] flex items-center gap-3">
                 {isLoading ? (
-                    <div className="h-4 w-32 bg-white/10 rounded mt-1 animate-pulse" />
+                    <div className="h-10 w-10 bg-white/10 rounded-full animate-pulse flex-shrink-0" />
                 ) : (
-                    <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">
-                        {userName || 'User'} <span className="text-off-white/50 font-normal ml-1 text-[10px]">({ROLE_LABELS[userRole] || 'Customer'})</span>
-                    </p>
+                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-antique-gold/20 border border-antique-gold/30 flex items-center justify-center text-antique-gold font-bold text-sm liquid-glass-card-dark">
+                        {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                    </div>
                 )}
+                <div className="min-w-0">
+                    <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
+                    {isLoading ? (
+                        <div className="h-4 w-24 bg-white/10 rounded mt-1 animate-pulse" />
+                    ) : (
+                        <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">
+                            {userName || 'User'} <span className="text-off-white/50 font-normal text-[10px] block">({ROLE_LABELS[userRole] || 'Customer'})</span>
+                        </p>
+                    )}
+                </div>
             </div>
 
             {/* Navigation Groups */}
@@ -222,18 +231,18 @@ function SidebarContent({ userRole, userName, isLoading }: { userRole: string; u
                                         className={cn(
                                             'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 overflow-hidden',
                                             isActive
-                                                ? 'bg-antique-gold/20 border border-antique-gold/30 text-antique-gold shadow-[0_0_15px_rgba(212,175,55,0.15)]'
+                                                ? 'bg-antique-gold/15 border border-antique-gold/20 text-antique-gold'
                                                 : 'text-off-white/50 hover:text-off-white/80 hover:bg-white/[0.04] border border-transparent'
                                         )}
                                     >
                                         {isActive && (
-                                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-antique-gold shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
+                                            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-antique-gold" />
                                         )}
                                         <Icon className={cn(
                                             "h-4 w-4 flex-shrink-0 transition-all duration-300",
-                                            isActive ? "text-antique-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" : "text-off-white/30 group-hover:text-off-white/50"
+                                            isActive ? "text-antique-gold" : "text-off-white/30 group-hover:text-off-white/50"
                                         )} />
-                                        <span className={cn(isActive && "drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]")}>{link.label}</span>
+                                        <span>{link.label}</span>
                                     </Link>
                                 );
                             })}

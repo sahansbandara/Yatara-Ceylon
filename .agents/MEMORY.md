@@ -24,8 +24,15 @@
 - Summary KPIs calculated client-side from the fetched bookings array (totalRevenue, pendingBalance, avgValue)
 - Status tabs act as toggleable filters—clicking active tab deselects it, clicking new tab filters to that status
 - WhatsApp links constructed from phone numbers with regex to strip non-digits
-- Date filters not yet wired to API (placeholders for future use)
-- "Has balance due" filter not yet wired to API (placeholder)
+- Date filters (dateFrom/dateTo) now wired to API with `dates.from` range query
+- "Has balance due" filter wired: sends `hasBalanceDue=true` → API filters `remainingBalance: { $gt: 0 }`
+- Column sorting via `sortBy` + `sortOrder` query params; allowed fields whitelist in API
+- Bulk status updates use `/api/bookings/bulk` PATCH endpoint, capped at 50 per operation
+- Duplicate booking detection is a warning (not blocking) — returns `warning` field in create response
+- Invoice state machine: DRAFT → FINAL → VOID (each transition is its own code path in PATCH handler)
+- Booking timeline fetches from AuditLog by entity+entityId, enriched with User names
+- Analytics date range uses URL searchParams (`?months=12`), server component re-fetches on navigation
+- Finance date filter uses URL searchParams (`?from=...&to=...`), server component re-fetches
 
 ## Project Knowledge
 - Booking model has: bookingNo, customerName, phone, email, type, packageId, totalCost, paidAmount, remainingBalance, status, dates, etc.

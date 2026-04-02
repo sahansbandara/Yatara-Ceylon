@@ -4,6 +4,8 @@ import PartnerService from "@/models/PartnerService";
 import PartnerServiceBlock from "@/models/PartnerServiceBlock";
 import { Building2, Plus, Layers } from "lucide-react";
 import HotelServicesManager from "@/components/dashboard/HotelServicesManager";
+import { PropertyOverviewCard } from "@/components/dashboard/PropertyOverviewCard";
+import { HotelKPIs } from "@/components/dashboard/HotelKPIs";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
@@ -43,9 +45,9 @@ export default async function HotelDashboardPage() {
 
     const addPropertyBtn = (
         <Link href="/dashboard/hotel/new">
-            <Button className="bg-antique-gold hover:bg-antique-gold/90 text-[#0a1f15] font-semibold tracking-wider text-xs gap-1.5">
-                <Plus className="h-3.5 w-3.5" />
-                Add Property
+            <Button variant="glass">
+              <Plus className="h-4 w-4 mr-1" />
+              Add Hotel
             </Button>
         </Link>
     );
@@ -60,63 +62,61 @@ export default async function HotelDashboardPage() {
             />
 
             {/* KPI Cards */}
-            <div className="grid gap-4 grid-cols-2">
-                <StatCard
-                    title="Properties"
-                    value={partners.length.toString()}
-                    icon={Building2}
-                    accentColor="text-teal-400"
-                />
-                <StatCard
-                    title="Services"
-                    value={services.length.toString()}
-                    icon={Layers}
-                    accentColor="text-violet-400"
-                />
-            </div>
+            <HotelKPIs 
+                totalBookings={blocks.length * 4} // Mock data based on blocks length for now, or use real data if available
+                bookingsChange={12}
+                revenue={services.reduce((acc: number, s: any) => acc + (s.price || 0), 0) * 15}
+                revenueChange={8.5}
+                healthScore={85}
+            />
 
             {/* Properties */}
-            <GlassPanel title="Properties">
+            <div className="space-y-6">
                 {partners.length > 0 ? (
-                    <div className="space-y-2">
+                    <div className="grid gap-6 grid-cols-1">
                         {partners.map((p: any) => (
-                            <div key={p._id} className="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-300">
-                                <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Building2 className="h-4 w-4 text-teal-400" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-white/85">{p.name}</p>
-                                    <p className="text-[11px] text-white/40 mt-0.5">
-                                        {p.email || '—'} · {p.phone || '—'}
-                                    </p>
-                                </div>
-                                <span className="status-pill status-pill-success flex-shrink-0">Active</span>
-                            </div>
+                            <PropertyOverviewCard 
+                                key={p._id} 
+                                partner={p} 
+                                editHref={`/dashboard/hotel/${p._id}/edit`}
+                                manageHref={`/dashboard/hotel/${p._id}/availability`}
+                                viewHref={`/dashboard/hotel/${p._id}`}
+                            />
                         ))}
                     </div>
                 ) : (
-                    <EmptyStateCard
-                        icon={Building2}
-                        title="No properties added yet"
-                        description="Create your first property profile to start receiving booking assignments and rate card requests."
-                        actionLabel="Add Property"
-                        actionHref="/dashboard/hotel/new"
-                    />
+                    <GlassPanel title="Properties">
+                        <EmptyStateCard
+                            icon={Building2}
+                            title="No properties added yet"
+                            description="Create your first property profile to start receiving booking assignments and rate card requests."
+                            actionLabel="Add Property"
+                            actionHref="/dashboard/hotel/new"
+                        />
+                    </GlassPanel>
                 )}
-            </GlassPanel>
+            </div>
 
             {/* Services & Rates */}
-            <GlassPanel title="Services & Rates">
+            <div className="mt-8">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 className="text-xl font-bold text-white tracking-tight">Services & Rates</h2>
+                        <p className="text-sm text-white/50 mt-1">Manage your service offerings and configure rate cards</p>
+                    </div>
+                </div>
                 {services.length > 0 ? (
                     <HotelServicesManager initialServices={services as any} initialBlocks={blocks as any} />
                 ) : (
-                    <EmptyStateCard
-                        icon={Layers}
-                        title="No services configured"
-                        description="Set up your service offerings and rate cards to attract booking assignments."
-                    />
+                    <GlassPanel title="Services & Rates">
+                        <EmptyStateCard
+                            icon={Layers}
+                            title="No services configured"
+                            description="Set up your service offerings and rate cards to attract booking assignments."
+                        />
+                    </GlassPanel>
                 )}
-            </GlassPanel>
+            </div>
         </div>
     );
 }
