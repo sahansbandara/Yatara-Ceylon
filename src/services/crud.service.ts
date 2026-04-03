@@ -159,13 +159,23 @@ export const AuditLogService = {
 
 // ── My Bookings (customer-facing) ────────────────
 export const MyBookingsService = {
-    async getCustomerBookings(userEmail: string) {
+    async getCustomerBookings(userEmail: string, userId?: string) {
         try {
             await connectDB();
-            const bookings = await Booking.find({
-                email: userEmail,
-                isDeleted: false,
-            })
+
+            const filter: any = { isDeleted: false };
+
+            if (userId && userEmail) {
+                filter.$or = [{ email: userEmail }, { customerId: userId }];
+            } else if (userId) {
+                filter.customerId = userId;
+            } else if (userEmail) {
+                filter.email = userEmail;
+            } else {
+                return [];
+            }
+
+            const bookings = await Booking.find(filter)
                 .sort({ createdAt: -1 })
                 .populate('packageId', 'title')
                 .lean();

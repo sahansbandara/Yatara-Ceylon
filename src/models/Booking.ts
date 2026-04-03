@@ -8,6 +8,7 @@ import VehicleBlock from './VehicleBlock'; // Import VehicleBlock model
 
 export interface IBooking extends Document {
     bookingNo: string;
+    customerId?: Types.ObjectId;
     customerName: string;
     phone: string;
     email?: string;
@@ -35,6 +36,7 @@ export interface IBooking extends Document {
 const BookingSchema = new Schema<IBooking>(
     {
         bookingNo: { type: String },
+        customerId: { type: Schema.Types.ObjectId, ref: 'User' },
         customerName: { type: String, required: true, trim: true },
         phone: { type: String, required: true, trim: true },
         email: { type: String, lowercase: true, trim: true },

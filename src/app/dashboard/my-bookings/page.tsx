@@ -8,8 +8,9 @@ export default async function MyBookingsPage() {
     const token = cookieStore.get('toms_token')?.value;
     const payload = token ? await verifyToken(token) : null;
     const userEmail = payload?.email || '';
+    const userId = payload?.userId || '';
 
-    const bookings = await MyBookingsService.getCustomerBookings(userEmail);
+    const bookings = await MyBookingsService.getCustomerBookings(userEmail, userId);
 
     return <MyBookingsClient bookings={bookings} />;
 }

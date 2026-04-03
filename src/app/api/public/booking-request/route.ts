@@ -8,6 +8,8 @@ import { createBookingSchema } from '@/lib/validations';
 import { rateLimit } from '@/lib/rate-limit';
 import { enforceCsrf } from '@/lib/csrf';
 import { verifyTurnstileToken } from '@/lib/turnstile';
+import { verifyToken } from '@/lib/auth';
+import { cookies } from 'next/headers';
 
 // Public booking request – no auth required
 export async function POST(request: NextRequest) {
@@ -44,6 +46,20 @@ export async function POST(request: NextRequest) {
         if (!payload.vehicleId) delete payload.vehicleId;
         if (!payload.customPlanId) delete payload.customPlanId;
         if (!payload.email) delete payload.email;
+
+        // Try to attach user ID if logged in
+        try {
+            const cookieStore = await cookies();
+            const token = cookieStore.get('toms_token')?.value;
+            if (token) {
+                const decoded = await verifyToken(token);
+                if (decoded?.userId) {
+                    payload.customerId = decoded.userId;
+                }
+            }
+        } catch (e) {
+            // Ignore auth errors on public route
+        }
 
         const booking = await Booking.create({
             ...payload,
