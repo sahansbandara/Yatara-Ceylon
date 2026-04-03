@@ -294,7 +294,7 @@ export function DashboardSidebar() {
     return (
         <>
             {/* Desktop Sidebar */}
-            <aside className="hidden md:block min-h-screen dashboard-sidebar-dark">
+            <aside className="hidden md:block h-screen dashboard-sidebar-dark">
                 <SidebarContent userRole={userRole} userName={userName} isLoading={isLoading} />
             </aside>
 

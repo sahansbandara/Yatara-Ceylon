@@ -35,7 +35,7 @@ export default async function TicketDetailsPage({ params }: { params: Params }) 
         <div className="flex flex-col gap-6 p-6">
             <div className="flex items-center gap-4">
                 <Link href="/dashboard/support">
-                    <Button variant="ghost" size="icon" className="text-white/60 hover:text-white hover:bg-white/10">
+                    <Button variant="ghost" size="icon" className="text-white/60 hover:text-white hover:bg-white/[0.05]">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
                 </Link>
@@ -54,7 +54,7 @@ export default async function TicketDetailsPage({ params }: { params: Params }) 
                 {/* Conversation Thread */}
                 <div className="lg:col-span-2 space-y-4">
                     {/* Original Message */}
-                    <div className="liquid-glass-stat rounded-2xl p-6">
+                    <div className="liquid-glass-stat-dark border border-white/[0.08] rounded-2xl p-6">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="h-10 w-10 rounded-full bg-blue-500/15 flex items-center justify-center text-blue-400">
                                 <UserIcon className="h-5 w-5" />
@@ -71,7 +71,7 @@ export default async function TicketDetailsPage({ params }: { params: Params }) 
 
                     {/* Replies */}
                     {ticket.replies?.map((reply: any, index: number) => (
-                        <div key={reply._id || index} className={`liquid-glass-stat rounded-2xl p-6 ${reply.byUserId ? 'border-l-4 border-l-antique-gold/50' : ''}`}>
+                        <div key={reply._id || index} className={`liquid-glass-stat-dark border border-white/[0.08] rounded-2xl p-6 ${reply.byUserId ? 'border-l-4 border-l-antique-gold/50' : ''}`}>
                             <div className="flex items-center gap-3 mb-4">
                                 <div className={`h-10 w-10 rounded-full flex items-center justify-center ${reply.byUserId ? 'bg-antique-gold/15 text-antique-gold' : 'bg-white/10 text-white/50'}`}>
                                     <MessageSquare className="h-5 w-5" />

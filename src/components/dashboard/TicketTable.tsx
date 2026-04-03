@@ -73,7 +73,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                                     <Button
                                         size="icon"
                                         variant="ghost"
-                                        className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-white/10"
+                                        className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10"
                                         onClick={() => router.push(`/dashboard/support/${ticket._id}`)}
                                     >
                                         <Eye className="h-4 w-4" />

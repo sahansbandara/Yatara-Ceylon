@@ -7,31 +7,28 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
-## Just Completed (2026-04-03 / 04)
+## Just Completed (2026-04-04)
 
-### Booking Flow & Account Synchronization
-- [x] Implemented logic to auto-link all bookings (via `customerId`) to the authenticated user’s account, bypassing lost bookings due to misspelled or varying contact emails.
-- [x] Pre-filled the booking request form automatically using server-passed JWT auth tokens so the user's name, email, and phone naturally populate on load without React hydration lags.
-- [x] Restructured the `MyBookingsService` fetch queries to look up bookings by either `email` or `customerId`, safely linking all historical and future bookings instantly.
-- [x] Wrote and executed a script to re-associate Sahan's broken test bookings to his correct active user object ID.
+### Admin Dashboard UI/UX Polish
+- [x] Fixed sidebar scrolling: changed layout to `h-screen` with independent overflow for sidebar and main content, eliminating ugly empty space.
+- [x] Replaced harsh white hover effects on VehicleTable rows and action buttons with subtle dark-theme glass-morphism hover states.
+- [x] Fixed TicketTable and support detail page hover effects to use softer, themed blue/gold backgrounds.
+- [x] Changed ticket detail view (messages + reply form) from light `liquid-glass-stat` to dark `liquid-glass-stat-dark` backgrounds.
+- [x] Fixed TicketReplyForm: corrected API endpoint from `POST /api/tickets/[id]/reply` to `PATCH /api/tickets/[id]` matching the actual backend.
+- [x] Added `--turbopack` flag to dev script for faster local development.
 
-### Dashboard UX & Aesthetics
-- [x] Eliminated slow dashboard tab navigations (which happened due to Next.js server-side blocking) by implementing a global luxury `loading.tsx` skeleton for the `/dashboard` folder.
-- [x] Pulled package `coverImage` data down into the booking query and radically redesigned `MyBookingsClient.tsx` into a high-end, image-backed, glassmorphic layout.
-- [x] Redesigned Admin Dashboard tables and sidebars to follow the "liquid glass" premium paradigm.
+### Package Form Validation
+- [x] Blocked non-numeric characters (`e`, `E`, `+`, `-`) from duration and price inputs via `onKeyDown` handlers.
+- [x] Changed default price values from `0` to empty string so fields start blank, preventing prices from starting with `0`.
 
-### Payment Return & Webhook Polling Fixes
-- [x] Fixed issue where receipts rendered before PayHere webhook confirmed the payment by implementing server-side + client-side polling.
-- [x] Added `PaymentConfirmingClient` with a premium liquid-glass loading UI to handle the asynchronous delay between `return_url` redirect and `notify_url` webhook execution.
-- [x] Fixed a bug where PayHere appended duplicate `order_id` query parameters causing Next.js to parse it as an array.
-- [x] Created direct PayHere API request fallbacks to circumvent sandbox webhook flakiness, guaranteeing validation even when ngrok/webhooks fail.
+### Admin Destinations Redesign
+- [x] Completely replaced the admin Destinations data table with a responsive card grid matching the public page's luxury aesthetic.
+- [x] Each card features: full background image, gradient overlay, glassmorphism info panel, status badge, selection checkbox, and hover-reveal admin actions (Publish/Edit/Archive).
+- [x] Added "Select All" checkbox in the search toolbar for bulk operations.
 
-### Admin UX & Search (2026-04-04)
-- [x] Implemented global client-side search across Admin Dashboard, recent bookings, Packages, and Destinations.
-- [x] Fixed layout clipping bug by removing `overflow: hidden` on DashboardHero glass container and adding horizontal scrolling to nested search chips.
-- [x] Refactored malformed image rendering in table grids to use resilient native `<img>` tags, gracefully recovering from legacy broken DB entries.
-- [x] Automagically synchronized 'Days'/'Nights' validation calculations on Package forms guaranteeing valid UI states.
-- [x] Adjusted MongoDB query scope for soft-deletes (`isDeleted: { $ne: true }`) correctly catching items without the boolean field explicitly set.
+### Destination Data Sync
+- [x] Created `src/scripts/seed-destinations.ts` to upsert all 25 static destinations from `src/data/destinations.ts` into MongoDB.
+- [x] Ran seed locally: 17 new destinations created, 8 updated — admin dashboard now matches public page destination count.
 
 ## All Core Features — VERIFIED COMPLETE (2026-04-01)
 
@@ -60,6 +57,7 @@ Production Readiness — final QA pass and polish before go-live
 
 ## Remaining Work (Manual / Non-Automatable)
 
+- [ ] Run the destination seed script against the **production MongoDB** to sync all 25 destinations on the hosted site
 - [ ] Execute the documented manual QA matrix end-to-end (`docs/qa/manual-test-matrix.md`) — all 30 test cases are "Not run"
 - [ ] Broader mobile dashboard QA on real devices (tables, forms, Build Tour map on mobile Safari/Chrome)
 - [ ] Cross-browser smoke test of the public site (Safari, Firefox, Chrome)
@@ -70,32 +68,30 @@ Production Readiness — final QA pass and polish before go-live
 
 **Date**: 2026-04-04
 **What was done**:
-- Upgraded the PayHere validation logic natively capturing the webhook, polling, and direct PayHere requests in a single robust loop.
-- Automatically associated `customerId` alongside `userEmail` in newly generated bookings and retrospectively tied old booking tests back to their respective users.
-- Hydrated contact details directly onto public booking requests so names, phones, and emails pre-fill flawlessly for authenticated users.
-- Rebuilt `/dashboard` routing to inject a glassmorphism suspense skeleton, radically enhancing perceived speed between tabs.
-- Elevated the My Bookings package cards to feature premium `coverImage` arrays, glassy hover zooms, and real-time status chips.
-- Resolved a 500 Save Error in `build-tour` by aligning the `CustomPlan` backend schema (`places` array to String IDs).
-- Built real-time, client-side search indexing across the admin `PackageTable`, `DestinationTable`, and the overarching `DashboardSearch` command center.
-- Mitigated fatal internal server 500 crashes rendering dashboard components by abandoning Next.js `<Image>` tags in favor of native <img> when dealing with malformed legacy database image entries.
-- Added smart cross-locking validation calculating corresponding 'Days' / 'Nights' dynamically within the Package Form editor.
-- Identified and patched MongoDB schema queries globally converting `{ isDeleted: false }` strictly to `{ isDeleted: { $ne: true } }` fully restoring visually lost packages to UI components.
+- Fixed 4 admin dashboard UI bugs: sidebar scroll gap, white hover effects on tables, ugly hover on ticket view icon, and numeric input validation on package form.
+- Replaced the entire admin Destinations table with a luxury card grid matching the public destinations page aesthetic.
+- Fixed broken ticket reply form by correcting the API endpoint and HTTP method.
+- Enabled Turbopack for faster local development.
+- Created and ran a destination seed script to sync all 25 static destinations into MongoDB.
 
 **What to do next**:
-- Check dashboard data fidelity with new items, potentially writing a cleanup script to sanitize legacy table URLs.
-- Continue deploying and validating via Vercel staging. 
+- Run `MONGODB_URI="<production-uri>" npx tsx src/scripts/seed-destinations.ts` against production DB to sync destinations on the hosted site.
+- Continue monitoring Vercel deployment for build errors.
 
 **Current state**:
 - Branch: `main`
 - Dev server: Verified OK
-- All recent fixes successfully integrated to Vercel production
+- All changes pushed to GitHub for Vercel auto-deploy
 
-**Files changed (Recent)**:
-- `src/components/public/BookingRequestClient.tsx`
-- `src/app/(public)/booking-request/page.tsx`
-- `src/services/crud.service.ts`
-- `src/components/dashboard/MyBookingsClient.tsx`
-- `src/app/dashboard/loading.tsx`
-- `src/models/Booking.ts`
-- `src/app/api/public/booking-request/route.ts`
-- `src/app/api/payhere/status/route.ts`
+**Files changed (This Session)**:
+- `package.json` — added `--turbopack` to dev script
+- `src/app/dashboard/layout.tsx` — fixed `h-screen` for independent scrolling
+- `src/app/dashboard/support/[id]/page.tsx` — dark theme for ticket detail view
+- `src/components/dashboard/DestinationTable.tsx` — replaced table with card grid
+- `src/components/dashboard/PackageForm.tsx` — numeric validation + empty defaults
+- `src/components/dashboard/TicketReplyForm.tsx` — fixed API endpoint + dark theme
+- `src/components/dashboard/TicketTable.tsx` — fixed hover effects
+- `src/components/dashboard/VehicleTable.tsx` — fixed hover effects
+- `src/components/layout/DashboardSidebar.tsx` — fixed `h-screen` scrolling
+- `src/scripts/seed-destinations.ts` — new destination seeder script
+

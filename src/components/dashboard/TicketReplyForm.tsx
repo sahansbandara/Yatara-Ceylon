@@ -22,8 +22,8 @@ export default function TicketReplyForm({ ticketId }: TicketReplyFormProps) {
 
         setLoading(true);
         try {
-            const res = await fetch(`/api/tickets/${ticketId}/reply`, {
-                method: 'POST',
+            const res = await fetch(`/api/tickets/${ticketId}`, {
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ body: body.trim(), byName: 'Staff' }),
             });
@@ -44,7 +44,7 @@ export default function TicketReplyForm({ ticketId }: TicketReplyFormProps) {
     };
 
     return (
-        <div className="liquid-glass-stat rounded-2xl p-6 mt-4">
+        <div className="liquid-glass-stat-dark border border-white/[0.08] rounded-2xl p-6 mt-4">
             <h3 className="text-sm font-semibold text-off-white uppercase tracking-wider mb-4">Reply to Ticket</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Textarea

@@ -26,8 +26,8 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
         slug: initialData?.slug || '',
         summary: initialData?.summary || '',
         fullDescription: initialData?.fullDescription || '',
-        priceMin: initialData?.priceMin || 0,
-        priceMax: initialData?.priceMax || 0,
+        priceMin: initialData?.priceMin ?? '',
+        priceMax: initialData?.priceMax ?? '',
         duration: initialData?.duration || '',
         durationDays: initialData?.durationDays || '',
         days: initialData?.durationDays ? initialData.durationDays : '',
@@ -243,18 +243,24 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                             <div className="grid grid-cols-3 gap-5">
                                 <div className="grid gap-2">
                                     <Label htmlFor="priceMin" className="text-white/70">Price Min (LKR)</Label>
-                                    <Input id="priceMin" type="number" required value={formData.priceMin} onChange={(e) => setFormData({ ...formData, priceMin: Number(e.target.value) })} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 h-11 rounded-xl" />
+                                    <Input id="priceMin" type="number" required value={formData.priceMin}
+                                        onKeyDown={(e) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
+                                        onChange={(e) => setFormData({ ...formData, priceMin: e.target.value === '' ? '' : Number(e.target.value) })} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 h-11 rounded-xl" />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="priceMax" className="text-white/70">Price Max (LKR)</Label>
-                                    <Input id="priceMax" type="number" required value={formData.priceMax} onChange={(e) => setFormData({ ...formData, priceMax: Number(e.target.value) })} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 h-11 rounded-xl" />
+                                    <Input id="priceMax" type="number" required value={formData.priceMax}
+                                        onKeyDown={(e) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
+                                        onChange={(e) => setFormData({ ...formData, priceMax: e.target.value === '' ? '' : Number(e.target.value) })} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 h-11 rounded-xl" />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="days" className="text-white/70">Duration (Days)</Label>
-                                    <Input id="days" type="number" required placeholder="e.g. 10" value={formData.days} min={1} onChange={(e) => {
-                                        const d = parseInt(e.target.value) || 0;
-                                        setFormData({ ...formData, days: e.target.value, nights: d > 0 ? (d - 1).toString() : '' });
-                                    }} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
+                                    <Input id="days" type="number" required placeholder="e.g. 10" value={formData.days} min={1}
+                                        onKeyDown={(e) => ['e', 'E', '+', '-', '.'].includes(e.key) && e.preventDefault()}
+                                        onChange={(e) => {
+                                            const d = parseInt(e.target.value) || 0;
+                                            setFormData({ ...formData, days: e.target.value, nights: d > 0 ? (d - 1).toString() : '' });
+                                        }} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
                                 </div>
                             </div>
 
@@ -295,10 +301,12 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="nights" className="text-white/70">Duration (Nights)</Label>
-                                    <Input id="nights" type="number" required min={0} placeholder="e.g. 9" value={formData.nights} onChange={(e) => {
-                                        const n = parseInt(e.target.value) || 0;
-                                        setFormData({ ...formData, nights: e.target.value, days: (n + 1).toString() });
-                                    }} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
+                                    <Input id="nights" type="number" required min={0} placeholder="e.g. 9" value={formData.nights}
+                                        onKeyDown={(e) => ['e', 'E', '+', '-', '.'].includes(e.key) && e.preventDefault()}
+                                        onChange={(e) => {
+                                            const n = parseInt(e.target.value) || 0;
+                                            setFormData({ ...formData, nights: e.target.value, days: (n + 1).toString() });
+                                        }} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
                                 </div>
                             </div>
 

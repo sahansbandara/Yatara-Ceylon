@@ -184,7 +184,7 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
                             const canRenderImage = isRenderableVehicleImage(primaryImage);
 
                             return (
-                                <TableRow key={vehicle._id}>
+                                <TableRow key={vehicle._id} className="border-white/5 hover:bg-white/[0.02] transition-colors text-white/70">
                                     <TableCell>
                                         <div className="relative h-10 w-16 rounded overflow-hidden bg-white/5 flex items-center justify-center text-white/30">
                                             {canRenderImage ? (
@@ -230,7 +230,7 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
                                             <Button
                                                 size="icon"
                                                 variant="ghost"
-                                                className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-white/10"
+                                                className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10"
                                                 onClick={() => router.push(`/dashboard/vehicles/${vehicle._id}`)}
                                             >
                                                 <Edit className="h-4 w-4" />
@@ -238,7 +238,7 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
                                             <Button
                                                 size="icon"
                                                 variant="ghost"
-                                                className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-white/10"
+                                                className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-400/10"
                                                 onClick={() => handleDelete(vehicle._id)}
                                             >
                                                 <Trash2 className="h-4 w-4" />

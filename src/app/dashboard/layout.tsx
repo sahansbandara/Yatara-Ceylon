@@ -8,7 +8,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="relative grid min-h-screen w-full md:grid-cols-[260px_1fr] lg:grid-cols-[280px_1fr] overflow-hidden text-white bg-[#060d0b]">
+        <div className="relative grid h-screen w-full md:grid-cols-[260px_1fr] lg:grid-cols-[280px_1fr] overflow-hidden text-white bg-[#060d0b]">
             {/* Mesh gradient background — subtle depth without fog */}
             <div className="absolute inset-0 z-0 select-none overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_10%_20%,rgba(4,57,39,0.25)_0%,transparent_60%)]" />
