@@ -34,7 +34,7 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                     {bookings.map((booking: any) => {
                         const statusNode = STATUS_CONFIG[booking.status] || STATUS_CONFIG.NEW;
                         const StatusIcon = statusNode.icon;
-                        const hasImage = booking.packageId?.coverImage;
+                        const hasImage = booking.packageId?.images?.[0];
 
                         return (
                             <div
@@ -42,26 +42,26 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                                 className="group relative liquid-glass-panel rounded-2xl overflow-hidden hover:shadow-[0_8px_32px_rgba(212,175,55,0.05)] transition-all duration-500 border border-white/[0.05] hover:border-antique-gold/20 flex flex-col"
                             >
                                 {/* Top Image/Status Area */}
-                                <div className="relative h-40 w-full bg-[#0a110e] flex-shrink-0 overflow-hidden">
+                                <div className="relative h-56 w-full bg-[#0a110e] flex-shrink-0 overflow-hidden">
                                     {hasImage ? (
                                         <>
                                             <Image
-                                                src={booking.packageId.coverImage}
-                                                alt={booking.packageId.title}
+                                                src={hasImage}
+                                                alt={booking.packageId?.title || 'Tour'}
                                                 fill
-                                                className="object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+                                                className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-[1.03] transition-transform duration-1000 ease-out"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-[#061a15] via-[#061a15]/40 to-transparent" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-[#061a15] via-[#061a15]/30 to-transparent" />
                                         </>
                                     ) : (
-                                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/20 to-[#061a15] flex items-center justify-center">
-                                            <CalendarCheck className="h-10 w-10 text-white/10" />
+                                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 to-[#061a15] flex items-center justify-center">
+                                            <CalendarCheck className="h-12 w-12 text-white/20" />
                                         </div>
                                     )}
 
                                     {/* Status Badge */}
                                     <div className="absolute top-4 right-4 z-10">
-                                        <div className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full border bg-gradient-to-r backdrop-blur-md shadow-lg ${statusNode.color}`}>
+                                        <div className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full border bg-black/40 backdrop-blur-md shadow-lg ${statusNode.color}`}>
                                             <StatusIcon className="h-3.5 w-3.5" />
                                             <span className="text-xs font-semibold tracking-wide uppercase">{statusNode.label}</span>
                                         </div>
@@ -69,25 +69,25 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
 
                                     {/* Type Badge */}
                                     <div className="absolute top-4 left-4 z-10">
-                                        <span className="px-2.5 py-1 bg-black/40 backdrop-blur-md border border-white/10 text-white/80 text-[10px] uppercase tracking-widest rounded-md font-medium">
+                                        <span className="px-2.5 py-1 bg-black/50 backdrop-blur-md border border-white/20 text-white/90 text-[10px] uppercase tracking-widest rounded-md font-medium">
                                             {booking.type}
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Content Area */}
-                                <div className="p-6 flex-1 flex flex-col relative z-20">
-                                    <div className="flex justify-between items-start gap-4 mb-4">
-                                        <div>
-                                            <p className="text-[11px] text-antique-gold/70 font-mono tracking-wider mb-1">REF: {booking.bookingNo}</p>
-                                            <h3 className="text-lg font-display font-semibold text-white group-hover:text-antique-gold transition-colors leading-tight">
+                                <div className="p-6 flex-1 flex flex-col relative z-20 -mt-8">
+                                    <div className="flex justify-between items-end gap-4 mb-5">
+                                        <div className="relative z-10 bg-[#061a15]/90 backdrop-blur-md p-3 rounded-xl border border-white/[0.03] shadow-lg w-full">
+                                            <p className="text-[10px] text-antique-gold/80 font-mono tracking-wider mb-1">REF: {booking.bookingNo}</p>
+                                            <h3 className="text-xl font-display font-semibold text-white group-hover:text-antique-gold transition-colors leading-tight">
                                                 {booking.packageId?.title || 'Custom Booking Plan'}
                                             </h3>
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4 mb-6">
-                                        <div className="bg-white/[0.02] border border-white/[0.03] rounded-xl p-3">
+                                        <div className="bg-white/[0.02] border border-white/[0.03] rounded-xl p-4 flex flex-col items-start justify-center group-hover:bg-white/[0.04] transition-colors">
                                             <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Travel Dates</p>
                                             <p className="text-sm font-medium text-off-white">
                                                 {new Date(booking.dates?.from).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
@@ -95,7 +95,7 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                                                 {new Date(booking.dates?.to).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                             </p>
                                         </div>
-                                        <div className="bg-white/[0.02] border border-white/[0.03] rounded-xl p-3">
+                                        <div className="bg-white/[0.02] border border-white/[0.03] rounded-xl p-4 flex flex-col items-start justify-center group-hover:bg-white/[0.04] transition-colors">
                                             <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Guests</p>
                                             <p className="text-sm font-medium text-off-white">
                                                 {booking.pax} Passenger{booking.pax !== 1 ? 's' : ''}
@@ -103,7 +103,7 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                                         </div>
                                     </div>
 
-                                    <div className="mt-auto pt-4 border-t border-white/[0.06] flex items-center justify-between">
+                                    <div className="mt-auto pt-5 border-t border-white/[0.06] flex items-center justify-between">
                                         <div>
                                             <p className="text-[10px] text-white/40 uppercase tracking-widest mb-0.5">Total Value</p>
                                             <p className="text-xl font-bold text-white tracking-tight">{formatPrice(booking.totalCost || 0, currency, convertRate)}</p>
@@ -111,12 +111,12 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
 
                                         <div className="text-right">
                                             {booking.paidAmount > 0 && (
-                                                <p className="text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20 inline-block mb-1">
+                                                <p className="text-[11px] font-semibold text-emerald-300 bg-emerald-400/10 px-2 py-0.5 rounded shadow-inner border border-emerald-400/20 inline-block mb-1">
                                                     PAID: {formatPrice(booking.paidAmount || 0, currency, convertRate)}
                                                 </p>
                                             )}
                                             {booking.remainingBalance > 0 && (
-                                                <p className="text-xs font-medium text-orange-300">
+                                                <p className="text-xs font-medium text-amber-200">
                                                     DUE: {formatPrice(booking.remainingBalance || 0, currency, convertRate)}
                                                 </p>
                                             )}

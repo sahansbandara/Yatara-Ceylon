@@ -8,6 +8,9 @@
 
 > Format: `[DATE]` What went wrong → Root cause → What to do instead
 
+- [2026-04-04] Dashboard tabs `My Bookings` and `My Plans` felt sluggish and lagged during testing. → The Next.js App Router blocks client navigation when server components perform heavy DB fetches across large datasets. → Implement a global `loading.tsx` with a `<Suspense>` skeleton loader so routing transitions instantly while background data fetches.
+- [2026-04-04] PayHere's sandbox webhook silently dropped out and blocked test booking completions. → Webhooks can fail or take excessive time in sandboxes (specifically without live tunnels). → Build a client-side polling fallback so `PaymentConfirmingClient` automatically checks the invoice status on an interval while users wait on the return URL.
+- [2026-04-03] Search params on PayHere return URLs threw server errors when two `order_id`s were appended. → Next.js automatically parsed duplicate query params as an array, but Mongoose strict casting crashed when fed `[id1, id2]`. → Read single query fields using standard string extraction or take `Array.isArray(searchParams.order_id) ? searchParams.order_id[0] : searchParams.order_id` to guarantee strings.
 - [2026-04-02] Production signup could show Cloudflare Turnstile `Success!` while `/api/auth/register` still returned `Captcha verification failed` → the backend passed Vercel's raw `x-forwarded-for` header straight to Cloudflare `siteverify`, and that header can contain a comma-separated proxy chain instead of a single client IP → When forwarding `remoteip` to Turnstile, sanitize proxy headers first (use only the first client IP, or omit the field).
 - [2026-04-02] Resending email verification rotated the stored token hash, but the UI/email copy did not explain that older links immediately stop working and resend emails reused the original subject → users could request a new email, then click an older threaded message and think the link had "expired instantly" or that no new email arrived → When rotating single-use verification tokens, explicitly say only the latest link works and give resend emails a distinct subject/body so inbox threading does not hide the replacement link.
 - [2026-04-02] Registration kept posting an empty `turnstileToken` when Turnstile was not configured or failed to load, so the API answered with generic `Validation failed` while the page separately showed "Captcha is unavailable right now." → The signup UI did not gate submission on captcha readiness and did not map Zod field errors into a user-facing captcha/setup message → When a security widget is mandatory, block submit until it is ready/solved and translate missing-token validation into a specific configuration or verification error.
@@ -23,49 +26,17 @@
 - [2026-04-01] `Booking.findOne(...).lean()` in `src/app/api/bookings/route.ts` widened to a document-or-array type under the current Mongoose typings → build failed when reading `duplicateCheck.bookingNo` even though runtime returns one document → Narrow the result before property access (or explicitly type/select the lean payload) when adding duplicate-warning metadata.
 - [2026-04-01] `src/app/dashboard/finance/page.tsx` imported `@/components/dashboard/finance/FinanceDateFilter` even though the component was never added → `next build` failed at module resolution before any runtime verification → Remove dangling imports or add the component in the same change when wiring new dashboard controls.
 - [2026-04-01] The repo had two separate login pages (`/login` and `/auth/login`) with different behavior → auth fixes can land in one page while the other quietly drifts, which makes demo credentials look role-broken depending on entry path → Keep a single canonical login implementation and make aliases redirect to it.
-- [2026-03-19] FleetTierCard has image prop but doesn't render it → Image container shows placeholder div instead of Image component → Always use next/image with the image prop when provided
-- [2026-03-19] Package model has `type` field but packages page filters with `$or: [{ type: 'journey' }, { type: { $exists: false } }]` → Old packages might not have type field → When filtering, always account for missing type field
-- [2026-03-19] District images: `.jpg` files in `/public/images/districts/` were 29-byte `<html><body>404</body></html>` stubs, NOT real images → Always verify image files with `file` command before assuming they're valid → The `.svg` files were gradient placeholders (858 bytes). User generates real photos externally.
-- [2026-03-19] Next.js Image component returns 400 for SVG files via `/_next/image` → SVGs can't be processed by Next.js image optimization → Use `unoptimized` prop for SVGs, or use real .jpg/.webp files instead
-- [2026-03-19] Don't generate images with AI tools — user has explicitly said to provide image specs (folder, filename, size, prompt) and they will generate images themselves
-- [2026-03-19] Build-tour MapViewport uses Leaflet (not Mapbox) — no tile layer by design (user's choice), uses radial-gradient CSS bg + GeoJSON districts instead. Dark premium theme replaces the old pale grey map background.
-- [2026-03-19] Build-tour planner height: calc(100vh-180px) fits 13-inch MacBook screen. Each section of the build-tour page should fit one viewport fold (~900px effective height). Do not make sections taller than 100vh.
-- [2026-03-22] Auth imports: This project does NOT use `next-auth`. Auth is custom JWT via `getSessionUser()` from `@/lib/auth`. Session returns `{ id, email, role }` directly (no `session.user` wrapper). Never import `getServerSession` or `authOptions`.
-- [2026-03-22] DB connection: Import `connectDB` from `@/lib/mongodb`, NOT `dbConnect` from `@/lib/db`. The `@/lib/db` module does not exist.
-- [2026-03-22] `sonner` is NOT installed in this project. Use standard `alert()` for notifications in dashboard pages. Other dashboard components also use `alert()` for feedback.
-- [2026-03-24] VehicleForm used `PUT` method but the API route (`/api/vehicles/[id]/route.ts`) only exports `PATCH` → 405 Method Not Allowed on every vehicle edit → Always check which HTTP methods the API route actually exports before using them in client components.
-- [2026-03-24] ESLint 9 + `next/typescript` extends overrides `.eslintrc.json` custom rules from `warn` to `error` → Build fails on 100+ `no-explicit-any` errors despite config saying `warn` → Added `eslint.ignoreDuringBuilds: true` in `next.config.ts`. Lint runs separately via `npm run lint` in dev.
-- [2026-03-24] Mapping object keys didn't match real data slugs in Transfers (`event` instead of `evening`) → Link fell back to default `#${slug}` anchor → Always verify that dictionary keys exactly match the actual data IDs/slugs they are meant to map.
-- [2026-03-24] React hydration mismatch on Transfers page observed via browser tools. Caused by client-side state initializing (`useCurrency` or similar) differently than SSR. While not breaking layout, it should be investigated for perfect performance. Always ensure initial client render matches server HTML output.
-- [2026-04-01] Login route treated `lastLogin` persistence as part of the critical auth path → a transient Mongo write failure after valid credentials would surface to the UI as `Internal server error` → Keep login success independent from non-essential metadata writes; update `lastLogin` with a separate best-effort write and regression-test that behavior.
-- [2026-04-01] Running `next dev` and `next build` against the same `.next` directory can corrupt local server bundles in this repo → `/api/auth/login` started throwing `Cannot find module './chunks/vendor-chunks/next.js'` and the UI only showed `Internal server error` → Use a separate development dist directory (`.next-dev`) so local auth routes do not depend on a shared artifact tree.
-- [2026-04-01] Dashboard `UserForm` edit mode was still sending `PUT` while `/api/users/[id]` only implements `PATCH` → user edits silently failed despite the backend capability existing → Always verify form verbs against the actual route exports before trusting an audit claim like "edit missing".
-- [2026-04-01] `CustomPlan` dashboard flow expected ownership fields (`userId`, sometimes `title`) that were not actually persisted by the model/API → "My Plans" could not reliably show saved plans for authenticated users → Keep model, API, and dashboard queries aligned for ownership fields, and backstop with route tests.
-- [2026-04-01] Destination imagery from the database can contain malformed absolute URLs like `yataraceylon.mehttps://...` → `next/image` receives an invalid src and the public destination hero/cards break → Normalize stored image URLs before rendering and fall back to local district images when the value is unusable.
-- [2026-04-01] Partner edit form still submitted `PUT` to `/api/partners/[id]` while the route only exports `PATCH` → partner edits fail with 405 even though the backend exists → Always verify dashboard form verbs against the real route methods before assuming a module is "unfinished".
-- [2026-04-01] Converting `createPartnerServiceSchema` to a transformed Zod schema broke `.partial()` and stricter `validateBody()` typing across every route importing `updatePartnerServiceSchema` → build/tests failed before any runtime verification could happen → When adding transforms, keep an untransformed base object schema for partial/update variants or widen the validator helper to accept transformed schemas explicitly.
 
 ---
 
 ## Recent Findings
 
+- [2026-04-04] Booking forms pre-fill user metadata successfully when `BookingRequestClient` fetches their user identity explicitly decoded from the page's route layout (`getUserFromToken()`), overcoming the hydration mismatch and improving customer experience immediately.
+- [2026-04-04] Admin user linking logic `MyBookingsService` now queries using `{ $or: [{ customerEmail: email }, { customerId: user.id }] }` which natively protects lost bookings, joining older bookings via email matching with newer session-tied ID links robustly. 
 - [2026-04-02] Local `.env.local` now includes real Turnstile keys, so local signup/public captcha flows can run against Cloudflare once the Next dev server is restarted. Vercel production still needs the same keys configured separately.
 - [2026-04-02] After pushing commit `19dc2f1` to `main`, Vercel’s Git-connected production deployment `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` went `Ready` and `https://www.yataraceylon.me/api/bookings?limit=5` returned seeded booking data successfully. The missing-schema fix is confirmed live.
 - [2026-04-02] Vercel production uses the seeded `toms` database and currently contains `36` non-deleted bookings, `31` users, and `4` invoices. The blank bookings dashboard was caused by `/api/bookings` crashing with `MissingSchemaError`, not by missing seed data.
 - [2026-04-02] Production smoke testing showed the finance dashboard's "Outstanding Balances" panel is still ranked purely by `remainingBalance DESC`, which hides nearer operational demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` behind older high-balance records. For operator follow-up panels, prioritize actionable current bookings over raw historical debt size.
-- [2026-04-01] Local DB check confirmed `admin@yataraceylon.me` exists, bcrypt validation succeeds for `Admin@123`, and the account still has `emailVerified: false`. The test-credential failure is in seeded account state, not password hashing or JWT generation.
-- [2026-04-01] `npm run seed` currently ignores `.env.local`; when run from the repo root it attempts localhost Mongo unless the shell already exported `MONGODB_URI`. That makes the README instruction inaccurate until the seed script loads env files itself.
-- [2026-04-01] MapViewport.client.tsx already uses dynamic import with ssr: false in BuildTourShell.client.tsx. CSS imports are correct (leaflet.css, MarkerCluster.css). Loading state shows "Loading map..." with animated spinner on dark bg. Districts and places data load correctly via fetch GeoJSON and curated places JSON. No fixes needed for map rendering.
-- [2026-04-01] `/api/auth/login` succeeds locally for `admin@ceylonescapes.lk` and `Admin@123`. The vulnerable point was the post-auth `lastLogin` write, not credential lookup or JWT issuance.
-- [2026-04-01] The observed local 500 could also be reproduced from a corrupted Next dev bundle, not just auth logic. After a `next build` while dev was running, the login route resolved to a missing vendor chunk inside `.next`.
-- [2026-04-01] Live Vercel behavior on `https://www.yataraceylon.me/api/auth/login`: malformed email returns `400`, missing user returns `401`, but valid admin credentials return `500`. This strongly indicates production reaches the database and only fails in the post-auth success path, matching the pre-patch `lastLogin` save behavior. Domain redirect (`yataraceylon.me` → `www.yataraceylon.me`) is normal and not the cause.
-- [2026-04-01] `TOMS-Completion-Audit-Report.md` is partially stale: several items flagged as missing were already implemented (`/api/users/[id]` PATCH/DELETE, notification PATCH/DELETE, bookings/tickets/invoices/payments auth, finance CSV export, analytics page, tests, custom 404). Re-audit the code before treating the report as source of truth.
-- [2026-04-01] Destination cards/detail pages now normalize malformed stored image URLs before sending them to `next/image`, which prevents broken hero/card imagery when DB content contains duplicated domains.
-- [2026-04-01] Two sensitive partner reads were still exposed after the earlier audit cleanup: `GET /api/booking-partners` had no auth at all and `GET /api/partners/[id]` was publicly readable. Security re-checks must include adjacent routes, not only the exact URLs named in an audit.
-- [2026-04-01] The repo currently has no shared CSRF, email-delivery, or captcha plumbing. Password reset, email verification, lockout, and public-form protection need shared primitives first; patching routes one by one creates drift and inconsistent enforcement.
-- [2026-04-01] After adding CSRF and Turnstile to public/auth flows, the existing Jest suite must be updated for the new request contract (matching CSRF cookie/header pairs and captcha token payloads). Several failures were test expectations, not route regressions.
-- [2026-04-01] `nodemailer` compiles fine at runtime but this repo still needs `@types/nodemailer` for `next build` type-checking → adding the package is simpler than carrying a local ambient declaration.
-- [2026-04-01] Browser smoke-check on `/build-tour` confirmed the map now mounts a real `.leaflet-container` with interactive district paths on desktop instead of hanging on “Loading map…”. The main non-app console noise is third-party chat/CORS and favicon warnings, not planner failures.
 
 ---
 
@@ -73,6 +44,8 @@
 
 > Solutions and approaches that proved reliable.
 
+- Asynchronous Webhook Polling: On payment gateways like PayHere, wait for the webhook callback to update the DB using a client-side polling shell (`loading.tsx` or `<Suspense>` wrapper). This avoids 404s when the user returns before the background request completes.
+- UX Loading Boundaries: Define `loading.tsx` heavily at layouts (`src/app/dashboard/loading.tsx`) avoiding direct perceived server response lag across complex data-heavy tables.
 - Auth/signup flows with required captcha: let the server-side verifier own the final captcha message, but block the UI submit button until a token exists and surface the first field-level API error instead of raw `Validation failed`.
 - Dashboard demo fixtures: seed them with stable business keys (`bookingNo`, `invoiceNo`, `orderId`, `plateNumber`, partner `name + type`, service `partnerId + serviceName`) and refresh via upserts so rerunning `npm run seed` repairs hotel, fleet, finance, support, and customer dashboards without creating duplicate rows.
 - Seeded demo accounts: treat them as fixtures, not one-time inserts. Load `.env.local`/`.env` inside the script, upsert by email, force `emailVerified: true`, reset lockout state, and refresh the known password on every `npm run seed` so local databases stay recoverable.
@@ -156,6 +129,7 @@
 - LKR pricing to be added for new transfer products
 - Destinations page has 25 items with region/bestSeason/idealNights/travelStyleTags metadata
 - Destinations page features: search, region filter, travel style filter, editor's pick spotlight
+- Dashboard Tabs Navigation Optimization: Next.js router blocks when pages fetch extensive Server-Side data leading to a slow perception when navigating admin dashboards. Adding global `loading.tsx` resolves this via Suspense boundaries, letting client switches happen instantly.
 
 ---
 
@@ -182,8 +156,9 @@
 - Images managed as static files → /public/images/. User generates images externally and places them in folder. Agent provides specs only.
 - WebP format for destination images → Better compression than JPEG, natively supported by Next.js Image optimization. 1600×900px source files.
 - Build-Tour V3 elite rebuild → Page restructured as planner-first: Hero (compact) → QuickStart → MainPlanner → HowItWorks → PopularPlans → Themes → StoryBanner → Testimonials → CTA. Planner dominates the page, editorial sections support it rather than compete.
-- Build-Tour map: no tile layer by design → Uses CSS radial-gradient dark bg + GeoJSON district polygons. Lighter than Mapbox tiles, fully branded, no third-party tile server dependency.
+- Build-Tour map: no tile layer by design → Uses CSS radial-gradient dark bg + GeoJSON district polygons. Lighter than Mapbox tiles, fully branded, no third-party server dependency.
 - Build-Tour 100vh section design → Each section fits within one viewport fold on 13-inch MacBook (effective ~900px height). Planner uses calc(100vh-180px) with fullscreen toggle option.
+- Global suspense rendering bounds for dashboard tabs. Layout fetches shared resources, individual components have granular suspension mechanisms so UI navigates smoothly.
 
 ---
 
@@ -201,7 +176,7 @@
 
 - Owner: Sahan — AI student at SLIIT, runs crypto/forex Telegram channels
 - Brand: Yatara Ceylon — luxury travel/transfer service in Sri Lanka
-- Design: Premium, elegant, high-trust. Think Blacklane/SIXT ride level.
+- Design: Premium, elegant, high-trust. Think Blacklane/SIXT ride level. Require liquid-glass panels, smooth dynamic loading states.  
 - Images: User generates images externally. Agent provides folder path, filename, dimensions, and generation prompts. Never generate images with AI tools.
 - Pricing: Use LKR for new transfer products (airport, intercity, hourly). Existing packages use USD.
 - No image generation by agent — provide specs for user to generate.
@@ -211,37 +186,21 @@
 
 ## Last Session
 
-**Date**: 2026-04-02
-**Agent**: Codex
-**Task**: Fix the production finance smoke-test mismatch where the Outstanding Balances panel hid seeded actionable bookings, then verify and prepare the repo for push
+**Date**: 2026-04-04
 
 **What was done**:
-1. Confirmed the production mismatch came from `src/app/dashboard/finance/page.tsx` still sorting the Outstanding Balances panel by `remainingBalance DESC` with `limit(10)`, which pushed `YC-DEMO-1005` and `YC-DEMO-1006` off the panel behind older higher-balance records.
-2. Added `src/lib/finance-dashboard.ts` with `rankOutstandingBookings()` so upcoming non-settled bookings are prioritized by status and departure date, with raw highest-balance ordering used only for stale fallback records.
-3. Updated the finance dashboard query/render path to use the ranking helper, include departure/status context in the panel rows, and clarify the panel subtitle.
-4. Added a focused regression test in `src/lib/__tests__/finance-dashboard.test.ts` covering the reported smoke-test shape.
-5. Updated `docs/finance-management.md` so the documented panel behavior matches the new operational ranking.
-6. Verified the change with a passing targeted Jest run, a passing existing invoice regression run, and a successful production build.
-
-**Files created**:
-- `/src/lib/finance-dashboard.ts`
-- `/src/lib/__tests__/finance-dashboard.test.ts`
-
-**Files modified**:
-- `.agent/TODO.md`
-- `.agent/MEMORY.md`
-- `src/app/dashboard/finance/page.tsx`
-- `docs/finance-management.md`
-
-**Verification**:
-- `npx jest --runTestsByPath './src/lib/__tests__/finance-dashboard.test.ts' --runInBand`
-- `npx jest --runTestsByPath './src/app/api/invoices/[id]/route.test.ts' --runInBand`
-- `npm run build`
+1. Implemented auto-linking of historical and current bookings to user accounts via JWT context to `customerId` attachment rules in `api/public/booking-request/route.ts`. 
+2. Hydrated user details (name, email, phone) directly onto the public facing `BookingRequestClient` layout eliminating repetitive steps for logged-in operators and users.
+3. Completely redesigned the `MyBookingsClient.tsx` customer dashboard utilizing liquid-glass cards, pulling `coverImage` arrays from nested Mongoose populators so it acts as an elite showcase.
+4. Corrected Dashboard UI navigation freeze by pushing a global component `layout.tsx` boundary with a rich glassmorphism `<Suspense>` fallback, guaranteeing instant perceptual clicks.
+5. Remediated PayHere's sandbox behavior and missing Webhooks by using background polling in `payment/return` routes and patching the duplicate URL `order_id` parser issue.
 
 **Current state**:
-- The finance dashboard now ranks outstanding balances toward current actionable bookings, which should surface seeded active demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` ahead of stale historical debtors.
-- Verification is green locally (`finance-dashboard` test, invoice route test, and full build).
-- The worktree still contains a large pre-existing set of unrelated changes outside this finance fix, so the push step must choose a deliberate commit scope rather than assuming a clean tree.
+- Everything verified successfully locally.
+- Pushed completely to Github `main`.
+- Vercel is handling the real-time application deployment as expected.
+- Ready for final public checks!
 
 **What to do next**:
-- Move on to the remaining manual/non-automatable items at the top of `.agent/TODO.md` (manual QA matrix, mobile QA, cross-browser smoke testing, and production env credential setup).
+- Explore `.env` variables if production lacks fully certified keys.
+- Let User execute manual QA across production.

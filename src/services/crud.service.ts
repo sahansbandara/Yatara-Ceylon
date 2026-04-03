@@ -177,7 +177,7 @@ export const MyBookingsService = {
 
             const bookings = await Booking.find(filter)
                 .sort({ createdAt: -1 })
-                .populate('packageId', 'title coverImage')
+                .populate('packageId', 'title images')
                 .lean();
             return JSON.parse(JSON.stringify(bookings));
         } catch {
