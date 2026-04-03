@@ -12,7 +12,7 @@
 
 ---
 
-*A full-stack Tourism Operations Management System (TOMS) built for **Yatara Ceylon**, a luxury inbound tourism operator in Sri Lanka. The platform manages the complete lifecycle — from public-facing package discovery to booking, 20% advance payment via PayHere, role-based dashboards, fleet & partner coordination, and real-time financial tracking.*
+A full-stack **Tourism Operations Management System (TOMS)** built for **Yatara Ceylon**, a luxury inbound tourism operator in Sri Lanka. The platform manages the complete lifecycle — from public-facing package discovery to booking, 20% advance payment via PayHere, role-based dashboards, fleet & partner coordination, and real-time financial tracking.
 
 </div>
 
@@ -20,31 +20,54 @@
 
 ## 📑 Table of Contents
 
+- [What is Yatara Ceylon?](#-what-is-yatara-ceylon)
 - [System Architecture](#-system-architecture)
-- [Use Case Diagram](#-use-case-diagram)
-- [Activity Diagram](#-activity-diagram)
-- [Data Flow Diagram (DFD)](#-data-flow-diagram-dfd)
-- [ER Diagram](#-core-database-schema-er-diagram)
-- [High-Level Flow](#-high-level-flow)
 - [Tech Stack](#-tech-stack)
-- [Management Modules](#-management-modules)
-- [Role-Based Dashboards](#-role-based-dashboards)
-- [Payment Integration](#-payment-integration)
-- [Test Credentials](#-test-credentials)
+- [Features at a Glance](#-features-at-a-glance)
+- [User Roles & Permissions](#-user-roles--permissions)
+- [Booking & Payment Flow](#-booking--payment-flow)
+- [Database Schema (ER Diagram)](#-database-schema-er-diagram)
 - [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Module Documentation](#-module-documentation)
+- [Getting Started (Step-by-Step)](#-getting-started-step-by-step)
+- [Test Credentials](#-test-credentials)
+- [Management Modules](#-management-modules)
 - [API Reference](#-api-reference)
 - [Security](#-security)
+- [Diagrams & Documentation](#-diagrams--documentation)
 - [License](#-license)
+
+---
+
+## 🌏 What is Yatara Ceylon?
+
+**Yatara Ceylon** is a Sri Lankan luxury tourism company that organises inbound tours, vehicle transfers, and bespoke travel experiences across the island. This software platform — the **Tourism Operations Management System (TOMS)** — is the digital backbone that powers their entire operation.
+
+### The Problem
+
+Before this system, Yatara Ceylon managed bookings through spreadsheets, WhatsApp messages, and manual bank transfers. This caused:
+
+- Lost bookings and double-booked vehicles
+- No visibility into payment status or outstanding balances
+- Partners (hotels, drivers) had no self-service portal
+- Customers had no way to track their tour status online
+
+### The Solution
+
+TOMS provides a **single platform** where:
+
+| Who | What they can do |
+|-----|-----------------|
+| **Customers** | Browse tour packages, book online, pay 20% advance via PayHere, build custom tours, track booking status |
+| **Admin** | Manage all bookings, assign vehicles and staff, handle invoices, track revenue, manage users |
+| **Concierge Staff** | Process bookings, update statuses, manage packages and destinations |
+| **Fleet Partners** | View assigned trips, manage vehicle availability and blocks |
+| **Hotel Partners** | Manage property services, room availability, and rate cards |
 
 ---
 
 ## 🏗 System Architecture
 
-The system follows a **layered architecture** separating the public tourism website, authentication layer, role-based portals, and backend operations.
-
-> 📐 **[View Full System Architecture Diagram →](docs/diagrams/system_architecture.html)** *(Open in browser for interactive SVG)*
+The application follows a **layered architecture** with clear separation between the public website, authentication, role-based dashboards, and a centralised service layer for all database operations.
 
 ```mermaid
 graph TB
@@ -70,157 +93,158 @@ graph TB
         HD["Hotel Partner Dashboard"]
     end
 
-    subgraph Backend["⚙️ Operations Backend"]
-        BK["Booking Engine"]
-        PM["Payment Processor"]
-        FM["Finance Manager"]
-        VM["Vehicle Fleet Manager"]
-        SM["Supplier/Partner Manager"]
+    subgraph Backend["⚙️ Service Layer"]
+        SVC["src/services/ — Centralised DB Operations"]
+        API["src/app/api/ — REST Endpoints"]
     end
 
     subgraph Data["🗄️ Data Layer"]
         DB[(MongoDB Atlas)]
         PH[PayHere Gateway]
+        MDL["src/models/ — Mongoose Schemas"]
     end
 
     LP --> PKG
-    PKG -->|Book Now| BK
-    BT -->|Submit Plan| BK
-    VH -->|Book Transfer| BK
-    BK --> PM
-    PM --> PH
-    PH -->|Webhook| PM
+    PKG -->|Book Now| API
+    BT -->|Submit Plan| API
+    VH -->|Book Transfer| API
+    API --> SVC
+    SVC --> MDL --> DB
+    API --> PH
 
     LOGIN --> JWT --> RBAC --> MW
     MW --> AD & SD & CD & FD & HD
 
-    AD --> BK & FM & VM & SM
-    SD --> BK & VM
-    CD --> BK
-    FD --> VM
-    HD --> SM
-
-    BK & PM & FM & VM & SM --> DB
+    AD & SD & CD & FD & HD --> SVC
 ```
+
+### Key Architecture Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| **Next.js 15 App Router** | Server Components for fast initial loads, Server Actions for mutations, built-in API routes |
+| **Service Layer Pattern** | All DB queries centralised in `src/services/` — pages never import `connectDB` or Mongoose models directly |
+| **JWT in HttpOnly Cookies** | Secure auth without exposing tokens to JavaScript, works with SSR |
+| **PayHere Integration** | Sri Lanka's leading payment gateway with sandbox testing support |
+
+> 📐 **[View Interactive System Architecture Diagram →](docs/diagrams/system_architecture.html)** *(Open in browser for full SVG)*
 
 ---
 
-## 👤 Use Case Diagram
+## 🛠 Tech Stack
 
-The Use Case Diagram illustrates the interactions between different user roles (actors) and the core functionalities of the TOMS platform.
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Framework** | Next.js 15 (App Router) | Full-stack React framework with server components |
+| **Language** | TypeScript 5.x | Type-safe development across frontend and backend |
+| **Database** | MongoDB + Mongoose | Document database with schema validation |
+| **Auth** | JWT + bcryptjs + HttpOnly Cookies | Secure stateless authentication |
+| **Payments** | PayHere (Sandbox + Production) | Sri Lankan payment gateway for LKR transactions |
+| **Validation** | Zod | Runtime schema validation for all API inputs |
+| **Styling** | Tailwind CSS | Utility-first CSS with custom design tokens |
+| **UI Library** | shadcn/ui + Radix Primitives | Accessible, composable component library |
+| **Icons** | Lucide React | Modern icon library |
+| **Maps** | Leaflet (OpenStreetMap) | Interactive maps for destinations and tour routes |
+| **Rate Limiting** | Custom in-memory limiter | API abuse prevention |
+| **Audit Trail** | Custom logging system | Tracks all admin/staff actions |
+
+---
+
+## ✨ Features at a Glance
+
+### Public Website
+- 🏖️ **Tour Package Catalog** — Browse curated Sri Lankan tour packages with pricing, itineraries, and photo galleries
+- 🗺️ **Interactive Destination Explorer** — Explore destinations on an interactive map
+- ✏️ **Build Your Own Tour** — Drag-and-drop custom itinerary builder with day-by-day planning
+- 🚐 **Vehicle Transfer Booking** — Book airport/city transfers with vehicle selection
+- 💳 **Online Payment** — Pay 20% advance securely via PayHere with automatic booking confirmation
+- 📱 **Responsive Design** — Fully mobile-optimised with a luxury glassmorphism aesthetic
+
+### Admin & Staff Dashboard
+- 📊 **Real-Time KPIs** — Revenue, bookings, conversion rates updated live from the database
+- 📋 **Booking Pipeline** — Visual status pipeline from NEW → CONTACTED → CONFIRMED → ASSIGNED → IN_PROGRESS → COMPLETED
+- 🚗 **Fleet Calendar** — Gantt-style vehicle availability with drag-to-block
+- 💰 **Finance Dashboard** — Revenue tracking, invoice management, payment aging reports
+- 👥 **User Management** — Create/edit users, assign roles, manage permissions
+- 🤝 **Partner Management** — Onboard hotels, guides, restaurants with rate cards
+- 📝 **Support Tickets** — Customer support with threaded replies
+- 📜 **Audit Logging** — Every admin action tracked with timestamp and actor
+
+### Customer Portal
+- 📦 **My Bookings** — Track all bookings with real-time status updates
+- 🗓️ **My Plans** — View and reopen saved custom tour plans
+- 👤 **Profile Management** — Update personal details and preferences
+
+### Partner Portals
+- 🚗 **Fleet Dashboard** — View assigned trips, manage vehicle availability blocks, track fleet utilisation
+- 🏨 **Hotel Dashboard** — Manage property services, block room availability, view booking assignments
+
+---
+
+## 👥 User Roles & Permissions
+
+The system supports **5 distinct user roles**, each with tailored dashboard access and permissions enforced at both middleware and API levels.
 
 ```mermaid
-flowchart LR
-    %% Actors
-    C(("👤 Customer"))
-    S(("👨‍💼 Concierge Staff"))
-    A(("🔑 Admin"))
-    F(("🚗 Fleet Partner"))
-    H(("🏨 Hotel Partner"))
-
-    %% System
-    subgraph TOMS["Yatara Ceylon TOMS"]
-        direction TB
-        UC1(["Browse & Book Packages"])
-        UC2(["Build Custom Tour"])
-        UC3(["Process Payments"])
-        UC4(["Manage Bookings & Assignments"])
-        UC5(["Manage Fleet Availability"])
-        UC6(["Manage Hotel Availability"])
-        UC7(["Finance & Reports"])
-        UC8(["User Management"])
-        UC9(["Content & Package Management"])
+graph LR
+    subgraph Roles["User Roles"]
+        ADMIN["🔑 Admin"]
+        STAFF["👨‍💼 Concierge Staff"]
+        USER["🧑 Customer"]
+        VEHICLE["🚗 Fleet Partner"]
+        HOTEL["🏨 Hotel Partner"]
     end
 
-    C --> UC1
-    C --> UC2
-    C --> UC3
-    
-    S --> UC4
-    S --> UC9
-    
-    A --> UC4
-    A --> UC7
-    A --> UC8
-    A --> UC9
-    A --> UC5
-    A --> UC6
-    
-    F --> UC5
-    H --> UC6
-    
-    UC4 -. "Vehicle/Hotel<br>Assignments" .-> F & H
+    subgraph Pages["Dashboard Pages"]
+        OV["Overview + Stats"]
+        BK["Bookings"]
+        PKG["Packages"]
+        DST["Destinations"]
+        VEH["Vehicles"]
+        SUP["Support"]
+        FIN["Finance"]
+        PTR["Partners"]
+        USR["Users"]
+        MB["My Bookings"]
+        MP["My Plans"]
+        FL["Fleet Dashboard"]
+        HT["Hotel Dashboard"]
+        PR["Profile"]
+    end
+
+    ADMIN --> OV & BK & PKG & DST & VEH & SUP & FIN & PTR & USR
+    STAFF --> OV & BK & PKG & DST & VEH & SUP & PTR
+    USER --> MB & MP & PR
+    VEHICLE --> FL & PR
+    HOTEL --> HT & PR
 ```
 
-> 📐 **[View Full Use Case Diagram →](docs/diagrams/use_case_diagram.html)** *(Open in browser for detailed SVG diagram)*
+### Permission Matrix
+
+| Feature | Admin | Staff | Customer | Fleet Partner | Hotel Partner |
+|---------|:-----:|:-----:|:--------:|:-----:|:-----:|
+| Dashboard overview with KPIs | ✅ | ✅ | — | — | — |
+| Manage all bookings | ✅ | ✅ (restricted) | — | — | — |
+| View own bookings | — | — | ✅ | — | — |
+| Manage packages & destinations | ✅ | ✅ | — | — | — |
+| Manage vehicles | ✅ | View only | — | — | — |
+| Fleet partner dashboard | — | — | — | ✅ | — |
+| Hotel partner dashboard | — | — | — | — | ✅ |
+| Finance & invoices | ✅ | — | — | — | — |
+| Manage partners | ✅ | ✅ | — | — | — |
+| Manage users | ✅ | — | — | — | — |
+| Support tickets | ✅ | ✅ | — | — | — |
+| Assign vehicles/staff to bookings | ✅ | ✅ | — | — | — |
+| Build custom tour plans | — | — | ✅ | — | — |
+| Profile management | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+> 📐 **[View Full Use Case Diagram →](docs/diagrams/use_case_diagram.html)**
 
 ---
 
-## 🔄 Activity Diagram
+## 💳 Booking & Payment Flow
 
-The Activity Diagram illustrates the end-to-end **Booking & Payment Flow** using swimlanes across Customer, Website, API Server, PayHere Gateway, and Admin roles.
-
-> 📐 **[View Full Activity Diagram →](docs/diagrams/activity_diagram.html)** *(Open in browser for detailed SVG diagram with swimlanes)*
-
----
-
-## 🌊 Data Flow Diagram (DFD)
-
-The Level 1 Data Flow Diagram maps the flow of information between external entities, system processes, and core data stores.
-
-```mermaid
-flowchart TD
-    %% External Entities
-    Cust["👤 Customer"]
-    Admin["👨‍💼 Admin/Staff"]
-    PH["💳 PayHere Gateway"]
-    Part["🤝 Partners (Fleet/Hotel)"]
-
-    %% Processes (Circles)
-    P1(("1.0<br>Booking<br>Management"))
-    P2(("2.0<br>Payment<br>Processing"))
-    P3(("3.0<br>Resource<br>Assignment"))
-    P4(("4.0<br>Content<br>Management"))
-
-    %% Data Stores
-    D1[(D1: Users & Roles)]
-    D2[(D2: Packages & Destinations)]
-    D3[(D3: Bookings)]
-    D4[(D4: Payments & Finances)]
-    D5[(D5: Vehicles & Partners)]
-
-    %% Data Flows
-    Cust -- "Browses Tours" --> P4
-    P4 -- "Package Info" --> Cust
-    P4 -- "Reads/Updates" --> D2
-    D2 -- "Data" --> P4
-
-    Cust -- "Submits Booking" --> P1
-    P1 -- "Stores Booking" --> D3
-    P1 -- "Booking Details" --> P2
-
-    P2 -- "Payment Request" --> PH
-    PH -- "Payment Status (Webhook)" --> P2
-    P2 -- "Records Payment" --> D4
-    P2 -- "Updates Status" --> P1
-    P2 -. "Receipt" .-> Cust
-
-    Admin -- "Manages Bookings" --> P1
-    Admin -- "Assigns Resources" --> P3
-    P3 -- "Updates Assignment" --> D3
-    P3 -- "Reads/Updates" --> D5
-    D5 -- "Availability" --> P3
-    
-    Part -- "Updates Availability" --> P3
-    P3 -- "Notifies Assignment" --> Part
-    Admin -- "Manages Users" --> D1
-```
-
----
-
-## 🔄 High-Level Flow
-
-The end-to-end user journey from package discovery to booking completion:
+This is the complete user journey from browsing a package to completing a booking with payment.
 
 ```mermaid
 sequenceDiagram
@@ -269,307 +293,7 @@ sequenceDiagram
     A->>W: Assign Vehicle + Staff
 ```
 
----
-
-## 🛠 Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Framework** | Next.js 15 (App Router, Server Components) |
-| **Language** | TypeScript 5.x |
-| **Database** | MongoDB with Mongoose ODM |
-| **Auth** | JWT + bcryptjs + HttpOnly Cookies |
-| **Payments** | PayHere (Sri Lankan Gateway, Sandbox + Production) |
-| **Validation** | Zod schemas for all API inputs |
-| **Styling** | Tailwind CSS + Custom Design System (Glassmorphism) |
-| **UI Components** | shadcn/ui + Radix Primitives |
-| **Icons** | Lucide React |
-| **Maps** | Leaflet (OpenStreetMap) |
-| **Rate Limiting** | In-memory rate limiter |
-| **Audit** | Custom audit logging system |
-
----
-
-## 🗄️ Core Database Schema (ER Diagram)
-
-This entity-relationship diagram maps out how the primary collections in the MongoDB database interact to form the complete tourism management system.
-
-> 📐 **[View Full ER Diagram →](docs/diagrams/er_diagram.html)** *(Open in browser for detailed SVG entity-relationship diagram)*
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px', 'fontFamily': 'Helvetica'}}}%%
-flowchart TB
-    %% ===== ENTITIES =====
-    U["  USER  "]
-    B["  BOOKING  "]
-    PKG["  PACKAGE  "]
-    DEST["  DESTINATION  "]
-    V["  VEHICLE  "]
-    P["  PARTNER  "]
-    INV["  INVOICE  "]
-    PAY["  PAYMENT  "]
-    CP["  CUSTOM PLAN  "]
-    VB["  VEHICLE BLOCK  "]
-    NT["  NOTIFICATION  "]
-    ST["  SUPPORT TICKET  "]
-    AL["  AUDIT LOG  "]
-    BPA["  BOOKING PARTNER  "]
-
-    %% ===== RELATIONSHIPS =====
-    R1{" makes "}
-    R2{" owns "}
-    R3{" owns "}
-    R4{" booked_in "}
-    R5{" includes "}
-    R6{" assigned_to "}
-    R7{" assigned_to "}
-    R8{" generates "}
-    R9{" creates "}
-    R10{" used_in "}
-    R11{" has_block "}
-    R12{" partners_with "}
-
-    %% ===== CONNECTIONS =====
-    U -- 1 ---- R1
-    R1 ---- M --> B
-
-    U -- 1 ---- R2
-    R2 ---- M --> V
-
-    U -- 1 ---- R3
-    R3 ---- M --> P
-
-    PKG -- 1 ---- R4
-    R4 ---- M --> B
-
-    PKG -- M ---- R5
-    R5 ---- N --> DEST
-
-    V -- 1 ---- R6
-    R6 ---- M --> B
-
-    P -- 1 ---- R7
-    R7 ---- M --> BPA
-
-    B -- 1 ---- R8
-    R8 ---- M --> INV
-
-    B -- 1 ---- R9
-    R9 ---- M --> PAY
-
-    CP -- 1 ---- R10
-    R10 ---- 1 --> B
-
-    V -- 1 ---- R11
-    R11 ---- M --> VB
-
-    B -- 1 ---- R12
-    R12 ---- M --> BPA
-
-    U -..- NT
-    U -..- ST
-    U -..- AL
-    U -..- CP
-
-    %% ===== USER ATTRIBUTES =====
-    U1(["  email  "])
-    U2(["  name  "])
-    U3(["  role  "])
-    U4(["  phone  "])
-    U5(["  status  "])
-    U -.- U1
-    U -.- U2
-    U -.- U3
-    U -.- U4
-    U -.- U5
-
-    %% ===== BOOKING ATTRIBUTES =====
-    B1(["  bookingNo  "])
-    B2(["  status  "])
-    B3(["  totalCost  "])
-    B4(["  paidAmount  "])
-    B5(["  dates  "])
-    B6(["  pax  "])
-    B -.- B1
-    B -.- B2
-    B -.- B3
-    B -.- B4
-    B -.- B5
-    B -.- B6
-
-    %% ===== PACKAGE ATTRIBUTES =====
-    PK1(["  title  "])
-    PK2(["  type  "])
-    PK3(["  price  "])
-    PK4(["  duration  "])
-    PKG -.- PK1
-    PKG -.- PK2
-    PKG -.- PK3
-    PKG -.- PK4
-
-    %% ===== VEHICLE ATTRIBUTES =====
-    V1(["  type  "])
-    V2(["  status  "])
-    V3(["  plate  "])
-    V4(["  capacity  "])
-    V -.- V1
-    V -.- V2
-    V -.- V3
-    V -.- V4
-
-    %% ===== PARTNER ATTRIBUTES =====
-    P1(["  type  "])
-    P2(["  name  "])
-    P3(["  contact  "])
-    P4(["  status  "])
-    P -.- P1
-    P -.- P2
-    P -.- P3
-    P -.- P4
-
-    %% ===== PAYMENT ATTRIBUTES =====
-    PA1(["  amount  "])
-    PA2(["  method  "])
-    PA3(["  status  "])
-    PA4(["  currency  "])
-    PAY -.- PA1
-    PAY -.- PA2
-    PAY -.- PA3
-    PAY -.- PA4
-
-    %% ===== INVOICE ATTRIBUTES =====
-    IN1(["  invoiceNo  "])
-    IN2(["  status  "])
-    IN3(["  total  "])
-    IN4(["  dueDate  "])
-    INV -.- IN1
-    INV -.- IN2
-    INV -.- IN3
-    INV -.- IN4
-
-    %% ===== DESTINATION ATTRIBUTES =====
-    D1(["  name  "])
-    D2(["  location  "])
-    DEST -.- D1
-    DEST -.- D2
-
-    %% ===== STYLES =====
-    classDef entity fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,font-weight:bolder
-    classDef relationship fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000000,font-weight:bolder
-    classDef attribute fill:#f8f9fa,stroke:#555555,stroke-width:1px,color:#000000
-
-    class U,B,PKG,DEST,V,P,INV,PAY,CP,VB,NT,ST,AL,BPA entity
-    class R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12 relationship
-    class U1,U2,U3,U4,U5,B1,B2,B3,B4,B5,B6,PK1,PK2,PK3,PK4,V1,V2,V3,V4,P1,P2,P3,P4,PA1,PA2,PA3,PA4,IN1,IN2,IN3,IN4,D1,D2 attribute
-```
-
-**Key Relationships Explained:**
-- **Users:** Control the system based on their `role` (Admin, Staff, Customer, etc.). Customers generate Bookings. Fleet/Hotel roles manage Vehicles and Partner properties respectively.
-- **Packages & Destinations:** The public catalog. Packages are standard tours built out of multiple Destinations. Bookings are attached to a specific Package choice.
-- **Bookings:** The core operational entity. Everything revolves around the Booking document.
-- **Finance (Payment & Invoice):** Track the lifecycle of money. Payments register inbound cash (via PayHere gateway or manual cash). Invoices are generated by staff against Bookings.
-- **Resources (Vehicle & Partner):** Staff assigns available Vehicles (from Fleet module) and Partners (Hotels, Guides, Restaurants) to confirmed Bookings to fulfill the trip requirements.
-
----
-
-## 📦 Management Modules
-
-The system is organized into **6 core management modules**, each documented separately in the [`/docs`](./docs/) folder:
-
-| # | Module | Scope | Docs |
-|---|--------|-------|------|
-| 1 | **Account Management** | User registration, auth, RBAC, 5 roles | [📄 Read →](./docs/account-management.md) |
-| 2 | **Products & Content Management** | Packages, destinations, FAQs, gallery, testimonials | [📄 Read →](./docs/products-content-management.md) |
-| 3 | **Vehicle Fleet Management** | Vehicles, availability blocking, booking assignments | [📄 Read →](./docs/vehicle-fleet-management.md) |
-| 4 | **Booking & Reservation Management** | Booking lifecycle, custom plans, status pipeline | [📄 Read →](./docs/booking-reservation-management.md) |
-| 5 | **Finance Management** | Payments, invoices, advance tracking, receipts | [📄 Read →](./docs/finance-management.md) |
-| 6 | **Supplier/Partner Management** | Partners, services, rate cards, assignments | [📄 Read →](./docs/supplier-partner-management.md) |
-
----
-
-## 🖥 Role-Based Dashboards
-
-Each user role sees a **different dashboard** with permissions enforced at both middleware and API levels. The dashboards utilize a custom *liquid glass* design system.
-
-### Admin Dashboard
-<div align="center">
-  <img src="docs/images/admin-dashboard.webp" alt="Admin Dashboard" width="800" style="border-radius: 8px;">
-</div>
-
-### Customer Dashboard
-<div align="center">
-  <img src="docs/images/customer-dashboard.webp" alt="Customer Dashboard" width="800" style="border-radius: 8px;">
-</div>
-
-### Fleet Partner Dashboard
-<div align="center">
-  <img src="docs/images/fleet-dashboard.webp" alt="Fleet Dashboard" width="800" style="border-radius: 8px;">
-</div>
-
-```mermaid
-graph LR
-    subgraph Roles["User Roles"]
-        ADMIN["🔑 Admin"]
-        STAFF["👨‍💼 Concierge Staff"]
-        USER["🧑 Customer"]
-        VEHICLE["🚗 Fleet Partner"]
-        HOTEL["🏨 Hotel Partner"]
-    end
-
-    subgraph Pages["Dashboard Pages"]
-        OV["Overview + Stats"]
-        BK["Bookings"]
-        PKG["Packages"]
-        DST["Destinations"]
-        VEH["Vehicles"]
-        SUP["Support"]
-        FIN["Finance"]
-        PTR["Partners"]
-        USR["Users"]
-        MB["My Bookings"]
-        MP["My Plans"]
-        FL["Fleet Dashboard"]
-        HT["Hotel Dashboard"]
-        PR["Profile"]
-    end
-
-    ADMIN --> OV & BK & PKG & DST & VEH & SUP & FIN & PTR & USR
-    STAFF --> OV & BK & PKG & DST & VEH & SUP & PTR
-    USER --> MB & MP & PR
-    VEHICLE --> FL & PR
-    HOTEL --> HT & PR
-```
-
-### Dashboard Features by Role
-
-| Feature | Admin | Staff | Customer | Fleet | Hotel |
-|---------|:-----:|:-----:|:--------:|:-----:|:-----:|
-| Overview with stat cards | ✅ | ✅ | — | — | — |
-| Manage all bookings | ✅ | ✅ (restricted) | — | — | — |
-| View my bookings | — | — | ✅ | — | — |
-| Manage packages | ✅ | ✅ | — | — | — |
-| Manage destinations | ✅ | ✅ | — | — | — |
-| Manage vehicles | ✅ | View only | — | — | — |
-| Fleet dashboard | — | — | — | ✅ | — |
-| Hotel dashboard | — | — | — | — | ✅ |
-| Finance overview | ✅ | — | — | — | — |
-| Manage partners | ✅ | ✅ | — | — | — |
-| Manage users | ✅ | — | — | — | — |
-| Support tickets | ✅ | ✅ | — | — | — |
-| Update booking status | ✅ | ✅ | — | — | — |
-| Assign vehicles/staff | ✅ | ✅ | — | — | — |
-| Custom plan builder | — | — | ✅ | — | — |
-| Profile management | ✅ | ✅ | ✅ | ✅ | ✅ |
-
----
-
-## 💳 Payment Integration
-
-The system integrates **PayHere**, Sri Lanka's leading payment gateway, for secure 20% advance collection.
-
-<div align="center">
-  <img src="docs/images/finance-overview.webp" alt="Finance Dashboard" width="800" style="border-radius: 8px;">
-</div>
+### Booking Status Pipeline
 
 ```mermaid
 stateDiagram-v2
@@ -598,34 +322,79 @@ stateDiagram-v2
     PaymentPending --> Cancelled: Timeout/Cancel
 ```
 
-### Payment Flow Details
+### Payment Step-by-Step
 
-| Step | Action | Status Change |
-|------|--------|--------------|
-| 1 | Customer fills booking form | Booking: `PAYMENT_PENDING` |
-| 2 | System calculates 20% advance | `advanceAmount = totalCost × 0.20` |
-| 3 | PayHere popup opens | Payment: `INITIATED` |
-| 4 | Customer completes payment | Payment: `SUCCESS` |
-| 5 | PayHere sends webhook | Booking: `ADVANCE_PAID` |
-| 6 | System updates `paidAmount` | `remainingBalance = totalCost - paidAmount` |
-| 7 | Admin sees payment in dashboard | Financial summary updated |
+| Step | What Happens | Status Change |
+|------|-------------|--------------|
+| 1 | Customer fills the booking form with dates, passengers, and package | — |
+| 2 | System calculates total cost and 20% advance amount | Booking: `PAYMENT_PENDING` |
+| 3 | PayHere payment popup opens in the browser | Payment: `INITIATED` |
+| 4 | Customer enters card details and completes payment | Payment: `SUCCESS` |
+| 5 | PayHere sends a webhook notification to our server | Booking: `ADVANCE_PAID` |
+| 6 | System records the paid amount and calculates remaining balance | `remainingBalance = totalCost - paidAmount` |
+| 7 | Admin sees the confirmed booking in their dashboard | Ready for vehicle/staff assignment |
+
+> 📐 **[View Full Activity Diagram →](docs/diagrams/activity_diagram.html)** *(Swimlane diagram showing all actors)*
 
 ---
 
-## 🔑 Test Credentials
+## 🗄️ Database Schema (ER Diagram)
 
-After running `npm run seed`, these demo accounts are available:
+The system uses **MongoDB** with **14 collections**. Here's how they relate:
 
-| Role | Email | Password | Dashboard |
-|------|-------|----------|-----------|
-| **Administrator** | `admin@yataraceylon.me` | `Admin@123` | `/dashboard` (full access) |
-| **Concierge Staff** | `concierge@yataraceylon.me` | `Concierge@123` | `/dashboard` (no Finance/Users) |
-| **Hotel Partner** | `hotel.partner@yataraceylon.me` | `Hotel@123` | `/dashboard/hotel` |
-| **Fleet Partner** | `fleet.partner@yataraceylon.me` | `Fleet@123` | `/dashboard/fleet` |
-| **Customer** | `customer1@yataraceylon.me` | `Customer@123` | `/dashboard/my-bookings` |
-| **Legacy Admin** | `admin@ceylonescapes.lk` | `Admin@123` | `/dashboard` |
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px', 'fontFamily': 'Helvetica'}}}%%
+flowchart TB
+    U["  USER  "]
+    B["  BOOKING  "]
+    PKG["  PACKAGE  "]
+    DEST["  DESTINATION  "]
+    V["  VEHICLE  "]
+    P["  PARTNER  "]
+    INV["  INVOICE  "]
+    PAY["  PAYMENT  "]
+    CP["  CUSTOM PLAN  "]
+    VB["  VEHICLE BLOCK  "]
+    NT["  NOTIFICATION  "]
+    ST["  SUPPORT TICKET  "]
+    AL["  AUDIT LOG  "]
+    BPA["  BOOKING PARTNER  "]
 
-> **PayHere Sandbox**: Use test card `4916217501611292` with any future expiry and CVV `123`.
+    U -- "1 makes M" --> B
+    U -- "1 owns M" --> V
+    U -- "1 owns M" --> P
+    PKG -- "1 booked_in M" --> B
+    PKG -- "M includes N" --> DEST
+    V -- "1 assigned_to M" --> B
+    B -- "1 generates M" --> INV
+    B -- "1 creates M" --> PAY
+    CP -- "1 used_in 1" --> B
+    V -- "1 has_block M" --> VB
+    P -- "1 assigned M" --> BPA
+    B -- "1 partners M" --> BPA
+    U -..- NT
+    U -..- ST
+    U -..- AL
+    U -..- CP
+
+    classDef entity fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,font-weight:bolder
+    class U,B,PKG,DEST,V,P,INV,PAY,CP,VB,NT,ST,AL,BPA entity
+```
+
+### Key Relationships
+
+| Relationship | Description |
+|-------------|-------------|
+| **User → Booking** | Customers create bookings. Admins/staff manage them |
+| **Package → Booking** | Each booking references a tour package |
+| **Booking → Payment** | Multiple payments can exist per booking (advance + balance) |
+| **Booking → Invoice** | Staff generate invoices against bookings |
+| **Vehicle → Booking** | Admin assigns an available vehicle to confirmed bookings |
+| **Partner → Booking Partner** | Hotels/guides/restaurants are linked to bookings via assignment |
+| **Vehicle → Vehicle Block** | Fleet partners can block dates when vehicle is unavailable |
+| **User → Custom Plan** | Customers save custom-built tour itineraries |
+
+> 📐 **[View Full ER Diagram →](docs/diagrams/er_diagram.html)** *(Interactive SVG with all attributes)*
 
 ---
 
@@ -633,199 +402,322 @@ After running `npm run seed`, these demo accounts are available:
 
 ```
 Yatara-Ceylon/
-├── docs/                          # Module documentation
-│   ├── account-management.md
-│   ├── products-content-management.md
-│   ├── vehicle-fleet-management.md
+├── docs/                           # 📚 Project documentation
+│   ├── diagrams/                   #    Interactive HTML diagrams (architecture, ER, use case, activity)
+│   ├── account-management.md       #    Auth & RBAC docs
 │   ├── booking-reservation-management.md
 │   ├── finance-management.md
-│   └── supplier-partner-management.md
-├── public/                        # Static assets & images
+│   ├── products-content-management.md
+│   ├── supplier-partner-management.md
+│   └── vehicle-fleet-management.md
+│
+├── scripts/                        # 🔧 Utility & seed scripts
+│
 ├── src/
 │   ├── app/
-│   │   ├── (public)/              # Public-facing pages
-│   │   │   ├── packages/          # Package listing & detail
-│   │   │   ├── destinations/      # Destination pages
-│   │   │   ├── booking-request/   # Booking form + payment
-│   │   │   ├── payment/           # Payment return/cancel
-│   │   │   ├── build-tour/        # Custom tour builder
-│   │   │   ├── transfers/         # Vehicle transfer pages
-│   │   │   └── ...
-│   │   ├── auth/
-│   │   │   └── login/             # Unified login page (all roles)
-│   │   ├── dashboard/
-│   │   │   ├── page.tsx           # Admin overview (real DB stats)
-│   │   │   ├── bookings/          # Booking list + detail
-│   │   │   ├── packages/          # Package CRUD
-│   │   │   ├── destinations/      # Destination CRUD
-│   │   │   ├── vehicles/          # Vehicle CRUD
-│   │   │   ├── finance/           # Finance overview
-│   │   │   ├── partners/          # Partner management
-│   │   │   ├── users/             # User management (admin only)
-│   │   │   ├── support/           # Support tickets
-│   │   │   ├── fleet/             # Fleet partner dashboard
-│   │   │   ├── hotel/             # Hotel partner dashboard
-│   │   │   ├── my-bookings/       # Customer bookings
-│   │   │   ├── my-plans/          # Customer saved plans
-│   │   │   └── profile/           # Shared profile page
-│   │   └── api/
-│   │       ├── auth/              # Login, register, logout, me
-│   │       ├── bookings/          # Booking CRUD + status
-│   │       ├── packages/          # Package CRUD
-│   │       ├── payhere/           # PayHere create + notify
-│   │       ├── payments/          # Payment management
-│   │       ├── public/            # Public booking + tickets
-│   │       └── ...
-│   ├── components/
-│   │   ├── layout/                # DashboardSidebar, Navbar
-│   │   ├── public/                # BookingRequestClient, etc.
-│   │   └── ui/                    # shadcn/ui primitives
-│   ├── lib/
-│   │   ├── auth.ts                # JWT signing, hashing
-│   │   ├── rbac.ts                # Role-based access helpers
-│   │   ├── constants.ts           # Enums & status constants
-│   │   ├── validations.ts         # Zod schemas
-│   │   ├── seed.ts                # Database seeder
-│   │   ├── payhere/               # PayHere config + hash
-│   │   └── ...
-│   ├── models/                    # Mongoose models
-│   │   ├── User.ts
-│   │   ├── Booking.ts
-│   │   ├── Payment.ts
-│   │   ├── Invoice.ts
-│   │   ├── Package.ts
-│   │   ├── Vehicle.ts
-│   │   ├── Partner.ts
-│   │   └── ...
-│   └── middleware.ts              # Route protection
-├── .env.local                     # Environment variables
-├── package.json
-└── README.md
+│   │   ├── (public)/               # 🌐 Public-facing pages
+│   │   │   ├── packages/           #    Package listing & detail
+│   │   │   ├── destinations/       #    Destination pages
+│   │   │   ├── booking-request/    #    Booking form + payment
+│   │   │   ├── payment/            #    Payment return/cancel pages
+│   │   │   ├── build-tour/         #    Custom tour builder
+│   │   │   └── transfers/          #    Vehicle transfer pages
+│   │   │
+│   │   ├── auth/login/             # 🔐 Unified login page (all roles)
+│   │   │
+│   │   ├── dashboard/              # 📊 Role-based dashboard pages
+│   │   │   ├── page.tsx            #    Admin overview (KPIs)
+│   │   │   ├── bookings/           #    Booking list + [id] detail
+│   │   │   ├── packages/           #    Package CRUD
+│   │   │   ├── destinations/       #    Destination CRUD
+│   │   │   ├── vehicles/           #    Vehicle CRUD + calendar view
+│   │   │   ├── finance/            #    Finance overview + invoices
+│   │   │   ├── partners/           #    Partner management
+│   │   │   ├── users/              #    User management (admin only)
+│   │   │   ├── support/            #    Support tickets
+│   │   │   ├── fleet/              #    Fleet partner dashboard
+│   │   │   ├── hotel/              #    Hotel partner dashboard
+│   │   │   ├── my-bookings/        #    Customer booking list
+│   │   │   ├── my-plans/           #    Customer saved plans
+│   │   │   └── profile/            #    Shared profile page
+│   │   │
+│   │   └── api/                    # ⚙️ REST API endpoints
+│   │       ├── auth/               #    Login, register, logout, me
+│   │       ├── bookings/           #    Booking CRUD + status updates
+│   │       ├── packages/           #    Package CRUD
+│   │       ├── payhere/            #    PayHere create + webhook notify
+│   │       ├── payments/           #    Payment management
+│   │       └── public/             #    Public booking + support tickets
+│   │
+│   ├── services/                   # 🗄️ Centralised database operations
+│   │   ├── package.service.ts      #    Package queries (list, featured, signature)
+│   │   ├── user.service.ts         #    User management queries
+│   │   ├── fleet.service.ts        #    Fleet dashboard aggregations
+│   │   ├── finance.service.ts      #    Revenue, invoices, aging queries
+│   │   ├── analytics.service.ts    #    Monthly stats, top packages
+│   │   ├── hotel.service.ts        #    Hotel partner queries
+│   │   ├── dashboard.service.ts    #    Main dashboard KPIs
+│   │   └── crud.service.ts         #    All remaining CRUD + detail lookups
+│   │
+│   ├── models/                     # 📋 Mongoose schemas (14 models)
+│   │   ├── User.ts, Booking.ts, Payment.ts, Invoice.ts
+│   │   ├── Package.ts, Vehicle.ts, Partner.ts, Destination.ts
+│   │   └── CustomPlan.ts, VehicleBlock.ts, Notification.ts, etc.
+│   │
+│   ├── components/                 # 🎨 React UI components
+│   │   ├── dashboard/              #    Dashboard-specific components
+│   │   ├── public/                 #    Public page components
+│   │   ├── layout/                 #    Sidebar, Navbar, Footer
+│   │   └── ui/                     #    shadcn/ui primitives
+│   │
+│   ├── lib/                        # 🔧 Shared utilities
+│   │   ├── auth.ts                 #    JWT signing, password hashing
+│   │   ├── rbac.ts                 #    Role-based access helpers
+│   │   ├── mongodb.ts              #    Database connection
+│   │   ├── currency.ts             #    LKR formatting utility
+│   │   ├── constants.ts            #    Enums & status constants
+│   │   ├── validations.ts          #    Zod schemas
+│   │   └── payhere/                #    PayHere config & hash generation
+│   │
+│   └── middleware.ts               # 🛡️ Route protection middleware
+│
+├── .env.example                    # Template for environment variables
+├── package.json                    # Dependencies and scripts
+├── tailwind.config.ts              # Tailwind CSS configuration
+├── tsconfig.json                   # TypeScript configuration
+└── README.md                       # You are here!
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Step-by-Step)
 
-### Prerequisites
+This section walks you through setting up the project from scratch, even if you've never used Next.js before.
 
-- **Node.js** 20+ (or 25.x LTS)
-- **MongoDB** Atlas cluster or local instance
-- **PayHere** sandbox merchant account
+### Step 1: Prerequisites
 
-### Installation
+Make sure you have these installed on your computer:
+
+| Tool | Version | How to Install |
+|------|---------|---------------|
+| **Node.js** | 20 or higher | Download from [nodejs.org](https://nodejs.org/) or use `nvm install 20` |
+| **npm** | Comes with Node.js | Included when you install Node.js |
+| **Git** | Any recent version | Download from [git-scm.com](https://git-scm.com/) |
+| **MongoDB** | Atlas (cloud) or local | Free tier at [mongodb.com/atlas](https://www.mongodb.com/atlas) |
+
+To verify your setup, open a terminal and run:
 
 ```bash
-# Clone the repository
+node --version    # Should show v20.x.x or higher
+npm --version     # Should show 10.x.x or higher
+git --version     # Should show git version 2.x.x
+```
+
+### Step 2: Clone the Repository
+
+```bash
 git clone https://github.com/sahansbandara/Yatara-Ceylon.git
 cd Yatara-Ceylon
+```
 
-# Install dependencies
+### Step 3: Install Dependencies
+
+```bash
 npm install
+```
 
-# Set up environment variables
+This will install all required packages (takes 1–2 minutes).
+
+### Step 4: Set Up Environment Variables
+
+```bash
 cp .env.example .env.local
 ```
 
-### Environment Variables
+Now open `.env.local` in your code editor and fill in the values:
 
 ```env
-MONGODB_URI=mongodb+srv://...
-JWT_SECRET=your-secret-key-here
+# ── Database ──────────────────────────────────────
+# Get this from MongoDB Atlas → Connect → Drivers
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/yatara-ceylon
+
+# ── Authentication ────────────────────────────────
+# Any random string — used to sign JWT tokens
+JWT_SECRET=my-super-secret-key-change-this-in-production
 JWT_EXPIRES_IN=1d
-PAYHERE_MODE=sandbox
-PAYHERE_MERCHANT_ID=your-merchant-id
-PAYHERE_MERCHANT_SECRET=your-merchant-secret
-PAYHERE_CURRENCY=LKR
+
+# ── App URL ───────────────────────────────────────
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# ── PayHere Payment Gateway ──────────────────────
+# Get these from payhere.lk → Settings → API
+PAYHERE_MODE=sandbox
+PAYHERE_MERCHANT_ID=your_merchant_id
+PAYHERE_MERCHANT_SECRET=your_merchant_secret
+PAYHERE_CURRENCY=LKR
+
+# ── Optional: WhatsApp ────────────────────────────
+NEXT_PUBLIC_WHATSAPP_NUMBER=94704239802
+
+# ── Optional: Cloudflare Turnstile (captcha) ─────
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
 ```
 
-### Run
+> **💡 Tip:** If you don't have a PayHere account yet, the app still works — the payment popup just won't open. You can set `PAYHERE_MODE=sandbox` and use PayHere's test credentials.
+
+### Step 5: Seed the Database
+
+This creates demo users, packages, destinations, vehicles, and sample bookings:
 
 ```bash
-# Seed demo data (users, packages, destinations, vehicles)
 npm run seed
+```
 
-# Start development server
+You should see output confirming the data was created.
+
+### Step 6: Start the Development Server
+
+```bash
 npm run dev
+```
 
+Open your browser and go to **[http://localhost:3000](http://localhost:3000)** 🎉
+
+### Step 7: Log In
+
+Visit **[http://localhost:3000/auth/login](http://localhost:3000/auth/login)** and use any of the [test credentials](#-test-credentials) below.
+
+### Other Commands
+
+```bash
 # Build for production
 npm run build
 
+# Start production server
+npm start
+
 # Run tests
 npm test
+
+# Lint code
+npm run lint
 ```
 
 ---
 
-## 📚 Module Documentation
+## 🔑 Test Credentials
 
-Detailed documentation for each management module with flow diagrams, entity schemas, and API endpoints:
+After running `npm run seed`, these demo accounts are available:
 
-| Document | Description |
-|----------|-------------|
-| [📄 Account Management](./docs/account-management.md) | User roles, authentication flow, JWT lifecycle, RBAC enforcement |
-| [📄 Products & Content](./docs/products-content-management.md) | Package CRUD, destination management, SEO, content publishing |
-| [📄 Vehicle Fleet](./docs/vehicle-fleet-management.md) | Vehicle registry, availability blocking, booking assignments |
-| [📄 Booking & Reservation](./docs/booking-reservation-management.md) | Full booking lifecycle, status pipeline, custom plans |
-| [📄 Finance](./docs/finance-management.md) | Payment processing, invoice system, advance tracking, receipts |
-| [📄 Supplier/Partner](./docs/supplier-partner-management.md) | Partner registry, service rates, booking partner assignments |
+| Role | Email | Password | What they see |
+|------|-------|----------|--------------|
+| **Administrator** | `admin@yataraceylon.me` | `Admin@123` | Full dashboard — bookings, finance, users, vehicles, partners |
+| **Concierge Staff** | `concierge@yataraceylon.me` | `Concierge@123` | Dashboard without Finance or User Management |
+| **Hotel Partner** | `hotel.partner@yataraceylon.me` | `Hotel@123` | Hotel dashboard — manage property, services, availability |
+| **Fleet Partner** | `fleet.partner@yataraceylon.me` | `Fleet@123` | Fleet dashboard — manage vehicles, view assigned trips |
+| **Customer** | `customer1@yataraceylon.me` | `Customer@123` | My Bookings, My Plans, Profile |
+
+### PayHere Sandbox Test Card
+
+| Field | Value |
+|-------|-------|
+| Card Number | `4916217501611292` |
+| Expiry | Any future date |
+| CVV | `123` |
+
+---
+
+## 📦 Management Modules
+
+The system is organised into **6 core modules**, each with detailed documentation:
+
+| # | Module | What it does | Documentation |
+|---|--------|-------------|--------------|
+| 1 | **Account Management** | User registration, login, JWT auth, 5 roles, RBAC | [📄 Read →](./docs/account-management.md) |
+| 2 | **Products & Content** | Tour packages, destinations, FAQs, gallery, testimonials | [📄 Read →](./docs/products-content-management.md) |
+| 3 | **Vehicle Fleet** | Vehicle registry, availability blocking, fleet calendar, booking assignments | [📄 Read →](./docs/vehicle-fleet-management.md) |
+| 4 | **Booking & Reservation** | Full booking lifecycle, custom tour plans, status pipeline | [📄 Read →](./docs/booking-reservation-management.md) |
+| 5 | **Finance** | PayHere payments, manual payments, invoices, aging reports, advance tracking | [📄 Read →](./docs/finance-management.md) |
+| 6 | **Supplier/Partner** | Hotels, guides, restaurants — onboarding, rate cards, booking assignments | [📄 Read →](./docs/supplier-partner-management.md) |
 
 ---
 
 ## 🔌 API Reference
 
+All API endpoints are under `/api/`. Authentication is via JWT tokens stored in HttpOnly cookies.
+
 ### Authentication
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `POST` | `/api/auth/login` | — | Login with email/password |
-| `POST` | `/api/auth/register` | — | Register new user |
-| `POST` | `/api/auth/logout` | — | Clear auth cookie |
-| `GET` | `/api/auth/me` | JWT | Get current user profile |
+| Method | Endpoint | Auth Required | Description |
+|--------|----------|:---:|-------------|
+| `POST` | `/api/auth/login` | — | Login with email and password, returns JWT cookie |
+| `POST` | `/api/auth/register` | — | Register a new customer account |
+| `POST` | `/api/auth/logout` | — | Clear the auth cookie |
+| `GET` | `/api/auth/me` | ✅ | Get the currently logged-in user's profile |
 
 ### Bookings
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/api/bookings` | Staff+ | List bookings (filter, search, paginate) |
-| `POST` | `/api/bookings` | Staff+ | Create booking (staff-initiated) |
-| `GET` | `/api/bookings/:id` | Staff+ | Get booking detail |
-| `PATCH` | `/api/bookings/:id` | Staff+ | Update booking status |
-| `POST` | `/api/public/booking-request` | — | Public booking + 20% advance |
+| Method | Endpoint | Auth Required | Description |
+|--------|----------|:---:|-------------|
+| `GET` | `/api/bookings` | Staff+ | List all bookings (supports filter, search, pagination) |
+| `POST` | `/api/bookings` | Staff+ | Create a booking (staff-initiated) |
+| `GET` | `/api/bookings/:id` | Staff+ | Get full booking detail with payments and invoices |
+| `PATCH` | `/api/bookings/:id` | Staff+ | Update booking status or assign vehicle/staff |
+| `POST` | `/api/public/booking-request` | — | Public booking form submission (creates booking + payment) |
 
 ### Payments
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `POST` | `/api/payhere/create` | — | Create PayHere payment session |
-| `POST` | `/api/payhere/notify` | — | PayHere webhook (signature verified) |
-| `GET` | `/api/payments` | Admin | List payment records |
-| `POST` | `/api/payments` | Staff+ | Record manual payment |
+| Method | Endpoint | Auth Required | Description |
+|--------|----------|:---:|-------------|
+| `POST` | `/api/payhere/create` | — | Create a PayHere checkout session |
+| `POST` | `/api/payhere/notify` | — | PayHere webhook (MD5 signature verified) |
+| `GET` | `/api/payments` | Admin | List all payment records |
+| `POST` | `/api/payments` | Staff+ | Record a manual cash/bank payment |
 
-### Packages, Vehicles, Partners
+### Resources
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET/POST` | `/api/packages` | Staff+ | Package CRUD |
-| `GET/POST` | `/api/vehicles` | Staff+ | Vehicle CRUD |
-| `GET/POST` | `/api/partners` | Staff+ | Partner CRUD |
+| Method | Endpoint | Auth Required | Description |
+|--------|----------|:---:|-------------|
+| `GET/POST` | `/api/packages` | Staff+ | List or create tour packages |
+| `GET/PATCH/DELETE` | `/api/packages/:id` | Staff+ | Read, update, or soft-delete a package |
+| `GET/POST` | `/api/vehicles` | Staff+ | List or add vehicles |
+| `GET/POST` | `/api/partners` | Staff+ | List or add partners |
+| `GET/POST` | `/api/destinations` | Staff+ | List or add destinations |
 
 ---
 
 ## 🔒 Security
 
-| Feature | Implementation |
-|---------|---------------|
-| **Password hashing** | bcryptjs with 12 salt rounds |
-| **JWT tokens** | Signed with `HS256`, stored in HttpOnly cookies |
-| **Cookie security** | `SameSite=Strict`, `Secure` in production |
-| **RBAC middleware** | Every `/dashboard` route enforces role-based access |
-| **Rate limiting** | Login and public APIs rate-limited per IP |
-| **Input validation** | Zod schemas on all POST/PATCH endpoints |
-| **PayHere verification** | MD5 signature verification on webhooks |
-| **Security headers** | `X-Frame-Options`, `X-Content-Type-Options`, `X-XSS-Protection` |
-| **Audit logging** | All admin/staff actions logged with actor ID |
+| Feature | How it works |
+|---------|-------------|
+| **Password Hashing** | bcryptjs with 12 salt rounds — passwords are never stored in plain text |
+| **JWT Tokens** | Signed with HS256 algorithm, stored in HttpOnly cookies (not accessible via JavaScript) |
+| **Cookie Security** | `SameSite=Strict` and `Secure` flag in production to prevent CSRF |
+| **RBAC Middleware** | Every `/dashboard` route checks the user's role before rendering |
+| **Rate Limiting** | Login and public API endpoints are rate-limited per IP address |
+| **Input Validation** | All POST/PATCH endpoints validate input with Zod schemas |
+| **PayHere Verification** | Webhook notifications verified using MD5 signature with merchant secret |
+| **Security Headers** | `X-Frame-Options`, `X-Content-Type-Options`, `X-XSS-Protection` set on all responses |
+| **Audit Logging** | Every admin/staff action (create, update, delete) is logged with actor ID and timestamp |
+| **Soft Deletes** | Records are never permanently deleted — `isDeleted: true` flag preserves data integrity |
+
+---
+
+## 📐 Diagrams & Documentation
+
+All detailed diagrams are available as interactive HTML files in the [`docs/diagrams/`](./docs/diagrams/) folder:
+
+| Diagram | Description | File |
+|---------|-------------|------|
+| **System Architecture** | Full layered architecture with all components | [📐 View →](./docs/diagrams/system_architecture.html) |
+| **ER Diagram** | Entity-relationship diagram with all 14 collections | [📐 View →](./docs/diagrams/er_diagram.html) |
+| **Use Case Diagram** | Actor-system interactions for all 5 roles | [📐 View →](./docs/diagrams/use_case_diagram.html) |
+| **Activity Diagram** | End-to-end booking flow with swimlanes | [📐 View →](./docs/diagrams/activity_diagram.html) |
+
+> **How to view:** Download or clone the repo, then open the `.html` files in any web browser.
+
+Additional module documentation is available in the [`docs/`](./docs/) folder — see [Management Modules](#-management-modules) above.
 
 ---
 
