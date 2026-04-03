@@ -14,7 +14,10 @@ Production Readiness — final QA pass and polish before go-live
 - [x] Replaced harsh white hover effects on VehicleTable rows and action buttons with subtle dark-theme glass-morphism hover states.
 - [x] Fixed TicketTable and support detail page hover effects to use softer, themed blue/gold backgrounds.
 - [x] Changed ticket detail view (messages + reply form) from light `liquid-glass-stat` to dark `liquid-glass-stat-dark` backgrounds.
-- [x] Fixed TicketReplyForm: corrected API endpoint from `POST /api/tickets/[id]/reply` to `PATCH /api/tickets/[id]` matching the actual backend.
+- [x] Admin Packages Redesign
+    - [x] Converted the outdated data table into a responsive, luxury CSS Grid of interactive cards, mirroring the Destinations section.
+    - [x] Preserved selection checkboxes and hover-reveal CRUD controls.
+- [x] **Bug Fix:** Fixed ticket reply API call to use `PATCH` on `/api/tickets/[id]` instead of `POST`ing to an invalid endpoint.
 - [x] Added `--turbopack` flag to dev script for faster local development.
 
 ### Package Form Validation
