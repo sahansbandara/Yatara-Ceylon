@@ -37,6 +37,7 @@
   ],
   "exclude": [
     "node_modules",
-    "mobile/Yatara-Ceylon"
+    "mobile/Yatara-Ceylon",
+    "scripts"
   ]
 }
