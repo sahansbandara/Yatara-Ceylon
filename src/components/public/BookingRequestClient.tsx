@@ -198,123 +198,137 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
 
     return (
         <>
-            {/* Package/Vehicle Summary Card */}
-            {(pkg || vehicle) && amounts.hasPayment && (
-                <div className="mb-6 p-5 rounded-xl bg-gradient-to-r from-deep-emerald/5 to-antique-gold/5 border border-antique-gold/20">
-                    <h3 className="text-sm font-display font-semibold text-deep-emerald mb-3">
-                        {pkg ? pkg.title : `${vehicle.model} Transfer`}
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                        <div>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Total</p>
-                            <p className="text-lg font-bold text-deep-emerald">{formatPrice(amounts.total, currency, convertRate)}</p>
-                        </div>
-                        <div className="border-x border-gray-200/60">
-                            <p className="text-[10px] text-antique-gold uppercase tracking-wider mb-1 font-medium">20% Advance</p>
-                            <p className="text-lg font-bold text-antique-gold">{formatPrice(amounts.advance, currency, convertRate)}</p>
-                        </div>
-                        <div>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Remaining</p>
-                            <p className="text-lg font-bold text-gray-600">{formatPrice(amounts.remaining, currency, convertRate)}</p>
-                        </div>
+            {user && user.role !== 'USER' ? (
+                <div className="flex flex-col items-center justify-center py-12 px-4 text-center bg-amber-50/50 rounded-xl border border-amber-100">
+                    <div className="h-16 w-16 rounded-full bg-amber-100 flex items-center justify-center mb-6">
+                        <AlertCircle className="w-8 h-8 text-amber-600" />
                     </div>
-                    <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
-                        <AlertCircle className="h-3 w-3 text-antique-gold" />
-                        <span>Pay 20% advance now to confirm your booking. Remaining balance due before departure.</span>
-                    </div>
+                    <h3 className="text-2xl font-serif text-gray-900 mb-3">Booking Restricted</h3>
+                    <p className="text-sm font-light text-gray-600 max-w-md mx-auto leading-relaxed">
+                        Your current account type (<strong className="font-medium text-gray-800">{user.role}</strong>) cannot make vehicle or package bookings. Please sign out and log in with a standard customer account to proceed.
+                    </p>
+                </div>
+            ) : (
+                <div className="space-y-6">
+                    {/* Package/Vehicle Summary Card */}
+                    {(pkg || vehicle) && amounts.hasPayment && (
+                        <div className="mb-6 p-5 rounded-xl bg-gradient-to-r from-deep-emerald/5 to-antique-gold/5 border border-antique-gold/20">
+                            <h3 className="text-sm font-display font-semibold text-deep-emerald mb-3">
+                                {pkg ? pkg.title : `${vehicle.model} Transfer`}
+                            </h3>
+                            <div className="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Total</p>
+                                    <p className="text-lg font-bold text-deep-emerald">{formatPrice(amounts.total, currency, convertRate)}</p>
+                                </div>
+                                <div className="border-x border-gray-200/60">
+                                    <p className="text-[10px] text-antique-gold uppercase tracking-wider mb-1 font-medium">20% Advance</p>
+                                    <p className="text-lg font-bold text-antique-gold">{formatPrice(amounts.advance, currency, convertRate)}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Remaining</p>
+                                    <p className="text-lg font-bold text-gray-600">{formatPrice(amounts.remaining, currency, convertRate)}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
+                                <AlertCircle className="h-3 w-3 text-antique-gold" />
+                                <span>Pay 20% advance now to confirm your booking. Remaining balance due before departure.</span>
+                            </div>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleCreateBookingAndPay} className="space-y-6">
+                        {status && (
+                            <div className={`p-4 rounded-md ${status.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+                                {status.message}
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="customerName">Full Name</Label>
+                                <Input id="customerName" required value={form.customerName} onChange={e => setForm({ ...form, customerName: e.target.value })} placeholder="John Doe" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email address</Label>
+                                <Input id="email" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="john@example.com" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="phone">Phone Number</Label>
+                                <Input id="phone" type="tel" required value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="+94 77 123 4567" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="pax">Number of Passengers</Label>
+                                <Input id="pax" type="number" required min={1} value={form.pax} onChange={e => setForm({ ...form, pax: Number(e.target.value) })} />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="address">Address (Required for Payments)</Label>
+                            <Input id="address" required value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="123 Colombo Road" />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="city">City</Label>
+                                <Input id="city" required value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} placeholder="Colombo" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="country">Country</Label>
+                                <Input id="country" required value={form.country} onChange={e => setForm({ ...form, country: e.target.value })} />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="dateFrom">Date From</Label>
+                                <Input id="dateFrom" type="date" required min={new Date().toISOString().split('T')[0]} value={form.dates.from} onChange={e => setForm({ ...form, dates: { ...form.dates, from: e.target.value } })} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="dateTo">Date To</Label>
+                                <Input id="dateTo" type="date" required min={form.dates.from || new Date().toISOString().split('T')[0]} value={form.dates.to} onChange={e => setForm({ ...form, dates: { ...form.dates, to: e.target.value } })} />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="pickupLocation">Pickup Location</Label>
+                            <Input id="pickupLocation" required value={form.pickupLocation} onChange={e => setForm({ ...form, pickupLocation: e.target.value })} placeholder="e.g. Airport, Hotel" />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="notes">Special Notes (Optional)</Label>
+                            <textarea
+                                id="notes"
+                                value={form.notes}
+                                onChange={e => setForm({ ...form, notes: e.target.value })}
+                                placeholder="Any special requirements or notes..."
+                                className="w-full min-h-[80px] px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-antique-gold/30 focus:border-antique-gold"
+                            />
+                        </div>
+
+                        <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
+
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold font-serif tracking-widest uppercase rounded-none h-14 text-sm font-semibold shadow-[0_0_15px_rgba(212,175,55,0.2)] border border-transparent hover:border-antique-gold inline-flex items-center justify-center transition-all duration-300"
+                        >
+                            {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin text-antique-gold" />}
+                            {amounts.hasPayment ? (
+                                <>
+                                    <CreditCard className="mr-2 h-4 w-4" />
+                                    Pay 20% Advance ({formatPrice(amounts.advance, currency, convertRate)}) & Confirm
+                                </>
+                            ) : (
+                                'Submit Booking Request'
+                            )}
+                        </Button>
+                    </form>
                 </div>
             )}
-
-            <form onSubmit={handleCreateBookingAndPay} className="space-y-6">
-                {status && (
-                    <div className={`p-4 rounded-md ${status.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-                        {status.message}
-                    </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="customerName">Full Name</Label>
-                        <Input id="customerName" required value={form.customerName} onChange={e => setForm({ ...form, customerName: e.target.value })} placeholder="John Doe" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email address</Label>
-                        <Input id="email" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="john@example.com" />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" type="tel" required value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="+94 77 123 4567" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="pax">Number of Passengers</Label>
-                        <Input id="pax" type="number" required min={1} value={form.pax} onChange={e => setForm({ ...form, pax: Number(e.target.value) })} />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="address">Address (Required for Payments)</Label>
-                    <Input id="address" required value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="123 Colombo Road" />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="city">City</Label>
-                        <Input id="city" required value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} placeholder="Colombo" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="country">Country</Label>
-                        <Input id="country" required value={form.country} onChange={e => setForm({ ...form, country: e.target.value })} />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="dateFrom">Date From</Label>
-                        <Input id="dateFrom" type="date" required min={new Date().toISOString().split('T')[0]} value={form.dates.from} onChange={e => setForm({ ...form, dates: { ...form.dates, from: e.target.value } })} />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="dateTo">Date To</Label>
-                        <Input id="dateTo" type="date" required min={form.dates.from || new Date().toISOString().split('T')[0]} value={form.dates.to} onChange={e => setForm({ ...form, dates: { ...form.dates, to: e.target.value } })} />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="pickupLocation">Pickup Location</Label>
-                    <Input id="pickupLocation" required value={form.pickupLocation} onChange={e => setForm({ ...form, pickupLocation: e.target.value })} placeholder="e.g. Airport, Hotel" />
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="notes">Special Notes (Optional)</Label>
-                    <textarea
-                        id="notes"
-                        value={form.notes}
-                        onChange={e => setForm({ ...form, notes: e.target.value })}
-                        placeholder="Any special requirements or notes..."
-                        className="w-full min-h-[80px] px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-antique-gold/30 focus:border-antique-gold"
-                    />
-                </div>
-
-                <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
-
-                <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold font-serif tracking-widest uppercase rounded-none h-14 text-sm font-semibold shadow-[0_0_15px_rgba(212,175,55,0.2)] border border-transparent hover:border-antique-gold inline-flex items-center justify-center transition-all duration-300"
-                >
-                    {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin text-antique-gold" />}
-                    {amounts.hasPayment ? (
-                        <>
-                            <CreditCard className="mr-2 h-4 w-4" />
-                            Pay 20% Advance ({formatPrice(amounts.advance, currency, convertRate)}) & Confirm
-                        </>
-                    ) : (
-                        'Submit Booking Request'
-                    )}
-                </Button>
-            </form>
         </>
     );
 }

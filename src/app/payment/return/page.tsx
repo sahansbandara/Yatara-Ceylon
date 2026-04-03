@@ -6,17 +6,26 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, ChevronLeft } from 'lucide-react';
 import ReceiptClient, { PrintButton } from './ReceiptClient';
+import PaymentConfirmingClient from './PaymentConfirmingClient';
 
 export const metadata: Metadata = {
-    title: 'Payment Successful | Yatara Ceylon',
+    title: 'Payment Return | Yatara Ceylon',
 };
 
 async function getPaymentDetails(orderId: string) {
     await connectDB();
 
     // Find the payment
-    const payment = await Payment.findOne({ orderId }).lean();
-    if (!payment) return null;
+    const payment = await Payment.findOne({ orderId }).lean() as any;
+    if (!payment) return { type: 'NOT_FOUND', payload: null };
+
+    if (payment.status === 'INITIATED' || payment.status === 'PENDING') {
+        return { type: 'PENDING', payload: null };
+    }
+
+    if (payment.status !== 'SUCCESS') {
+        return { type: 'FAILED', payload: null };
+    }
 
     // Find the associated booking
     const booking = await Booking.findById((payment as any).bookingId)
@@ -24,18 +33,22 @@ async function getPaymentDetails(orderId: string) {
         .populate('vehicleId')
         .lean();
 
-    if (!booking) return null;
+    if (!booking) return { type: 'NOT_FOUND', payload: null };
 
     // Build receipt payload
     return {
-        payment: JSON.parse(JSON.stringify(payment)),
-        booking: JSON.parse(JSON.stringify(booking))
+        type: 'SUCCESS',
+        payload: {
+            payment: JSON.parse(JSON.stringify(payment)),
+            booking: JSON.parse(JSON.stringify(booking))
+        }
     };
 }
 
-export default async function PaymentReturnPage({ searchParams }: { searchParams: Promise<{ order_id?: string }> }) {
+export default async function PaymentReturnPage({ searchParams }: { searchParams: Promise<{ order_id?: string | string[] }> }) {
     const params = await searchParams;
-    const orderId = params.order_id;
+    const rawOrderId = params.order_id;
+    const orderId = Array.isArray(rawOrderId) ? rawOrderId[0] : rawOrderId;
 
     if (!orderId) {
         return (
@@ -51,9 +64,27 @@ export default async function PaymentReturnPage({ searchParams }: { searchParams
         );
     }
 
-    const data = await getPaymentDetails(orderId);
+    const { type, payload: data } = await getPaymentDetails(orderId);
 
-    if (!data) {
+    if (type === 'PENDING') {
+        return <PaymentConfirmingClient orderId={orderId} />;
+    }
+
+    if (type === 'FAILED') {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md w-full">
+                    <h1 className="text-2xl font-bold text-red-600 mb-2">Payment Failed</h1>
+                    <p className="text-gray-600 mb-6">This payment transaction was not successful or was canceled.</p>
+                    <Link href="/dashboard/my-bookings">
+                        <Button className="w-full">Go to My Bookings</Button>
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (type === 'NOT_FOUND' || !data) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
                 <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md w-full">

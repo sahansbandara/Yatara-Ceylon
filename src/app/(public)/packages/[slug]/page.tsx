@@ -8,7 +8,8 @@ import connectDB from '@/lib/mongodb';
 import Package from '@/models/Package';
 import PackagePriceDisplay from '@/components/public/PackagePriceDisplay';
 import { JsonLd, buildTourPackage, buildBreadcrumb } from '@/lib/jsonLd';
-
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth';
 export const dynamic = 'force-dynamic';
 
 async function getPackage(slug: string) {
@@ -59,6 +60,10 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
     if (!pkg) {
         notFound();
     }
+
+    const cookieStore = await cookies();
+    const token = cookieStore.get('toms_token')?.value;
+    const user = token ? await verifyToken(token) : null;
 
     const relatedPackages = await getRelatedPackages(slug, pkg.tags);
 
@@ -285,21 +290,27 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                                             <Users className="h-4 w-4 text-antique-gold/60" /> Style
                                         </span>
                                         <span className="text-deep-emerald font-medium text-[13px]">
-                                            {pkg.style === 'adventure' ? 'Private Adventure Tour' : 
-                                             pkg.style === 'cultural' ? 'Private Cultural Tour' : 
-                                             pkg.style === 'wildlife' ? 'Private Wildlife Tour' : 
-                                             pkg.style === 'wellness' ? 'Private Wellness Tour' :
-                                             'Private Tour'}
+                                            {pkg.style === 'adventure' ? 'Private Adventure Tour' :
+                                                pkg.style === 'cultural' ? 'Private Cultural Tour' :
+                                                    pkg.style === 'wildlife' ? 'Private Wildlife Tour' :
+                                                        pkg.style === 'wellness' ? 'Private Wellness Tour' :
+                                                            'Private Tour'}
                                         </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-3">
-                                    <Link href={`/booking-request?packageId=${pkg._id}`} className="block">
-                                        <Button className="w-full h-12 text-[12px] tracking-[0.15em] uppercase font-semibold bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold border border-antique-gold/20 rounded-xl shadow-lg transition-all duration-300">
-                                            Book Now & Pay 20% Advance
+                                    {(!user || user.role === 'USER') ? (
+                                        <Link href={`/booking-request?packageId=${pkg._id}`} className="block">
+                                            <Button className="w-full h-12 text-[12px] tracking-[0.15em] uppercase font-semibold bg-deep-emerald hover:bg-deep-emerald/90 text-antique-gold border border-antique-gold/20 rounded-xl shadow-lg transition-all duration-300">
+                                                Book Now & Pay 20% Advance
+                                            </Button>
+                                        </Link>
+                                    ) : (
+                                        <Button disabled className="w-full h-12 text-[10px] tracking-[0.1em] uppercase font-semibold bg-gray-100 text-gray-500 rounded-xl shadow-inner border border-gray-200">
+                                            Booking available for User accounts only
                                         </Button>
-                                    </Link>
+                                    )}
                                     <Link href={`/contact?journey=${pkg.slug}`} className="block">
                                         <Button variant="outline" className="w-full h-11 text-[11px] tracking-[0.15em] uppercase text-deep-emerald border-deep-emerald/15 hover:bg-off-white rounded-xl transition-all duration-300">
                                             Inquire Without Payment

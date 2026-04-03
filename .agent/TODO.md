@@ -361,15 +361,18 @@ Production Readiness — final QA pass and polish before go-live
 - [x] [2026-03-29] Featured Journeys aesthetic refinement
 - [x] [2026-04-01] Login stability fix, TOMS audit remediation, security hardening, account recovery, manual QA matrix
 
----
+## Just Completed (2026-04-03)
 
-## In Progress (2026-04-03)
+### Payment Return & Webhook Polling Fixes
+- [x] Fixed issue where receipts rendered before PayHere webhook confirmed the payment by implementing server-side + client-side polling.
+- [x] Added `PaymentConfirmingClient` with a premium liquid-glass loading UI to handle the asynchronous delay between `return_url` redirect and `notify_url` webhook execution.
+- [x] Fixed a bug where PayHere appended duplicate `order_id` query parameters causing Next.js to parse it as an array and fail the Mongoose lookup.
+- [x] Added a "Simulate Webhook Success" local development bypass button on the confirming screen. This allows local testing of the PayHere sandbox without needing `ngrok` to expose `localhost` to the internet.
 
-- [x] Fixed 500 Internal Server Error on `/payment/return?order_id=...` caused by React Error #130 (2026-04-03)
-  - [x] Diagnosed root cause: `ReceiptClient.PrintButton` static-property pattern resolves to `undefined` in Next.js RSC context
-  - [x] Converted static property to a named export `PrintButton` in `ReceiptClient.tsx`
-  - [x] Updated `page.tsx` to import and use `<PrintButton />` as a proper named export
-  - [x] Removed unused `Download` icon import from `page.tsx`
+### Role-Based Booking Restrictions
+- [x] Implemented role-based access control preventing `ADMIN`, `STAFF`, `HOTEL_OWNER`, and `VEHICLE_OWNER` from submitting booking requests.
+- [x] Hid the "Book Now" buttons on `packages/[slug]` for restricted roles and displayed an informational alert instead.
+- [x] Enforced secondary validation inside `BookingRequestClient` to block non-`USER` roles from completing the payment form.
 
 ---
 
@@ -377,21 +380,25 @@ Production Readiness — final QA pass and polish before go-live
 
 **Date**: 2026-04-03
 **What was done**:
-- Diagnosed and fixed a 500 Internal Server Error on `/payment/return?order_id=...` page.
-- Root cause was React Error #130 (element type undefined): `page.tsx` was using `<ReceiptClient.PrintButton />`, a static-property component attached to a client component's default export. In Next.js App Router, the server renders this before client component modules are initialized, making the `.PrintButton` property `undefined`.
-- Fixed by converting `ReceiptClient.PrintButton = function(){}` into `export function PrintButton(){}` (named export) in `ReceiptClient.tsx`, and updating the import + usage in `page.tsx`.
-- Removed the unused `Download` icon import from `page.tsx` that was only needed by the old static property.
+- Implemented asynchronous payment confirmation polling on the `/payment/return` route.
+- Added a local dev bypass to simulate PayHere webhooks, resolving the issue where local testing timed out on "Still Confirming...".
+- Fixed duplicate `order_id` parsing issues on the return URL.
+- Restricted the booking flow so that only standard `USER` accounts can book vehicles and packages, enforcing the rule both in the UI (hiding buttons) and the form component.
 
 **What to do next**:
-- Verify the payment return page renders correctly end-to-end in production after this deploy.
-- Continue with remaining manual QA matrix test cases.
+- Deploy the updated code to `yataraceylon.me`.
+- Update the live production `.env` with the Live PayHere credentials and set `NEXT_PUBLIC_APP_URL` to the production domain.
+- Proceed with final end-to-end testing in the production environment.
 
 **Current state**:
 - Branch: `main`
 - Dev server: running
-- Payment return page fix deployed to GitHub
+- Polling, RBAC, and Webhook simulation fixes ready for deployment
 
 **Files changed**:
-- `.agent/TODO.md`
-- `src/app/payment/return/ReceiptClient.tsx`
+- `src/components/public/BookingRequestClient.tsx`
+- `src/app/(public)/packages/[slug]/page.tsx`
 - `src/app/payment/return/page.tsx`
+- `src/app/payment/return/PaymentConfirmingClient.tsx`
+- `src/app/api/payhere/simulate-webhook/route.ts`
+
