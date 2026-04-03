@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IPlanDay {
     dayNo: number;
-    places: Types.ObjectId[];
+    places: string[];
     notes?: string;
 }
 
@@ -25,7 +25,7 @@ export interface ICustomPlan extends Document {
 const PlanDaySchema = new Schema<IPlanDay>(
     {
         dayNo: { type: Number, required: true },
-        places: [{ type: Schema.Types.ObjectId, ref: 'DistrictPlace' }],
+        places: [{ type: String }],
         notes: String,
     },
     { _id: false }
