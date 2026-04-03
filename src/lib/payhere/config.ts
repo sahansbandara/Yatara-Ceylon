@@ -4,7 +4,7 @@ export const PAYHERE_CURRENCY = process.env.PAYHERE_CURRENCY || 'LKR';
 export const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
 // Two merchant secrets — one per domain registered in PayHere
-const PAYHERE_SECRET_NOWWW = process.env.PAYHERE_MERCHANT_SECRET || '';
+const PAYHERE_SECRET_NOWWW = process.env.PAYHERE_MERCHANT_SECRET || process.env.PAYHERE_MERCHANT_SECRET_PROD || '';
 const PAYHERE_SECRET_WWW = process.env.PAYHERE_MERCHANT_SECRET_WWW || '';
 
 /** Auto-select the correct Merchant Secret based on APP_BASE_URL */

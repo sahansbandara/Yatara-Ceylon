@@ -4,7 +4,7 @@ import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
 import Payment from '@/models/Payment';
 import { generatePayhereHash } from '@/lib/payhere/hash';
-import { getPayhereCheckoutUrl, PAYHERE_MERCHANT_ID, PAYHERE_MERCHANT_SECRET, PAYHERE_CURRENCY, APP_BASE_URL } from '@/lib/payhere/config';
+import { getPayhereCheckoutUrl, PAYHERE_MERCHANT_ID, PAYHERE_MERCHANT_SECRET, PAYHERE_CURRENCY, APP_BASE_URL, getMerchantSecret } from '@/lib/payhere/config';
 import crypto from 'crypto';
 import { enforceCsrf } from '@/lib/csrf';
 
@@ -29,8 +29,10 @@ export async function POST(request: Request) {
         // Generate a unique order ID
         const orderId = `CE-${crypto.randomBytes(4).toString('hex').toUpperCase()}-${Date.now()}`;
 
+        const activeMerchantSecret = getMerchantSecret();
+
         // Check if using dummy/development credentials
-        if (!PAYHERE_MERCHANT_ID || PAYHERE_MERCHANT_ID === '12345' || !PAYHERE_MERCHANT_SECRET || PAYHERE_MERCHANT_SECRET === 'your_merchant_secret') {
+        if (!PAYHERE_MERCHANT_ID || PAYHERE_MERCHANT_ID === '12345' || !activeMerchantSecret || activeMerchantSecret === 'your_merchant_secret') {
             // Dev Mode Bypass: Automatically simulate success
             await Payment.create({
                 bookingId: booking._id,
