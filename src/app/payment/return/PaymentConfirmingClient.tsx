@@ -8,12 +8,13 @@ import { Loader2, XCircle, Clock } from 'lucide-react';
 
 interface Props {
     orderId: string;
+    isSandbox?: boolean;
 }
 
 const POLL_INTERVAL_MS = 2500;
 const MAX_POLLS = 16; // ~40 seconds total
 
-export default function PaymentConfirmingClient({ orderId }: Props) {
+export default function PaymentConfirmingClient({ orderId, isSandbox }: Props) {
     const router = useRouter();
     const [polls, setPolls] = useState(0);
     const [failed, setFailed] = useState(false);
@@ -107,13 +108,12 @@ export default function PaymentConfirmingClient({ orderId }: Props) {
                                 Your payment is taking longer than expected. Please check your bookings in a moment — if payment was successful, your booking will be automatically updated.
                             </p>
 
-                            {/* Localhost Dev Bypass Instructions */}
-                            {typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (
+                            {/* Localhost / Sandbox Dev Bypass Instructions */}
+                            {(isSandbox || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))) && (
                                 <div className="mb-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-left">
-                                    <h4 className="text-sm font-semibold text-blue-400 mb-2">Local Development Note</h4>
+                                    <h4 className="text-sm font-semibold text-blue-400 mb-2">Sandbox Mode Warning</h4>
                                     <p className="text-xs text-blue-200/80 mb-3 leading-relaxed">
-                                        PayHere webhooks cannot reach <code className="bg-black/50 px-1 py-0.5 rounded">localhost</code>.
-                                        To test full flows locally, use tools like Ngrok to expose your port, or manually simulate the webhook.
+                                        The PayHere sandbox webhook did not respond in time. Since you are in test mode, you can manually simulate a successful webhook trigger to finish the flow.
                                     </p>
                                     <Button
                                         onClick={async () => {

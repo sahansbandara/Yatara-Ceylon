@@ -67,7 +67,8 @@ export default async function PaymentReturnPage({ searchParams }: { searchParams
     const { type, payload: data } = await getPaymentDetails(orderId);
 
     if (type === 'PENDING') {
-        return <PaymentConfirmingClient orderId={orderId} />;
+        const isSandbox = process.env.PAYHERE_MODE === 'sandbox';
+        return <PaymentConfirmingClient orderId={orderId} isSandbox={isSandbox} />;
     }
 
     if (type === 'FAILED') {

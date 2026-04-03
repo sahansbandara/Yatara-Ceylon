@@ -6,8 +6,12 @@ import Booking from '@/models/Booking';
 import { BookingStatus } from '@/lib/constants';
 
 export async function POST(request: Request) {
-    if (process.env.NODE_ENV !== 'development') {
-        return NextResponse.json({ error: 'Only allowed in development' }, { status: 403 });
+    // Allow in development OR when PAYHERE_MODE is sandbox
+    const isSandbox = process.env.PAYHERE_MODE === 'sandbox';
+    const isDev = process.env.NODE_ENV === 'development';
+
+    if (!isDev && !isSandbox) {
+        return NextResponse.json({ error: 'Only allowed in sandbox/development mode' }, { status: 403 });
     }
 
     try {
@@ -22,6 +26,11 @@ export async function POST(request: Request) {
 
         if (!payment) {
             return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
+        }
+
+        // Don't re-process already successful payments
+        if (payment.status === 'SUCCESS') {
+            return NextResponse.json({ success: true, alreadyProcessed: true });
         }
 
         payment.status = 'SUCCESS';
