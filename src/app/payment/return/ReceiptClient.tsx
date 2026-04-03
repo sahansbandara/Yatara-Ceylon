@@ -82,8 +82,8 @@ export default function ReceiptClient({ data }: { data: any }) {
     );
 }
 
-// Attach a static print button component so we don't have to drill props
-ReceiptClient.PrintButton = function PrintButton() {
+// Named export so server components can import it as a standalone React element
+export function PrintButton() {
     return (
         <Button
             className="w-full sm:w-auto gap-2 bg-deep-emerald hover:bg-deep-emerald/90 text-white"
@@ -92,4 +92,4 @@ ReceiptClient.PrintButton = function PrintButton() {
             <Download className="h-4 w-4" /> Download / Print Receipt
         </Button>
     );
-};
+}

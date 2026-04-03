@@ -4,8 +4,8 @@ import Payment from '@/models/Payment';
 import Booking from '@/models/Booking';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Download, ChevronLeft } from 'lucide-react';
-import ReceiptClient from './ReceiptClient';
+import { CheckCircle2, ChevronLeft } from 'lucide-react';
+import ReceiptClient, { PrintButton } from './ReceiptClient';
 
 export const metadata: Metadata = {
     title: 'Payment Successful | Yatara Ceylon',
@@ -94,7 +94,7 @@ export default async function PaymentReturnPage({ searchParams }: { searchParams
                             <ChevronLeft className="h-4 w-4" /> Go to My Bookings
                         </Button>
                     </Link>
-                    <ReceiptClient.PrintButton />
+                    <PrintButton />
                 </div>
 
             </div>

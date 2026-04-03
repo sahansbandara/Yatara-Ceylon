@@ -363,35 +363,35 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
+## In Progress (2026-04-03)
+
+- [x] Fixed 500 Internal Server Error on `/payment/return?order_id=...` caused by React Error #130 (2026-04-03)
+  - [x] Diagnosed root cause: `ReceiptClient.PrintButton` static-property pattern resolves to `undefined` in Next.js RSC context
+  - [x] Converted static property to a named export `PrintButton` in `ReceiptClient.tsx`
+  - [x] Updated `page.tsx` to import and use `<PrintButton />` as a proper named export
+  - [x] Removed unused `Download` icon import from `page.tsx`
+
+---
+
 ## Last Session
 
-**Date**: 2026-04-02
+**Date**: 2026-04-03
 **What was done**:
-- Traced the production verification-email lifecycle across `register`, `resend-verification`, and `verify-email` and confirmed the token TTL is still 24 hours; the issue was not an instantly expiring token.
-- Checked live Vercel production logs and confirmed a resend request completed at `16:19:44`, then another verify-link click happened at `16:20:32`, which is consistent with the user clicking an older email after the token had already been replaced.
-- Identified the real UX bug: resending email verification rotates the stored token hash immediately, but the app previously said only "a new verification email has been sent" and resend emails reused the original subject, making newer emails easy to miss in threaded inboxes like Gmail.
-- Updated `src/lib/email.ts` so resend emails use the subject `Your new Yatara Ceylon verification link` and explicitly say they replace previous verification links.
-- Updated `src/app/api/auth/resend-verification/route.ts` to return a success message that tells the client only the latest verification link will work.
-- Updated `src/app/auth/login/page.tsx` so `verified=invalid` explains that the link may have been replaced by a newer email, not just "expired".
-- Added `src/app/api/auth/resend-verification/route.test.ts` covering token rotation + resend-specific email invocation.
-- Attempted focused Jest verification and a full `npm run build`, but both stalled after the usual workspace-root/startup warnings in this session and never produced a clean pass/fail result.
+- Diagnosed and fixed a 500 Internal Server Error on `/payment/return?order_id=...` page.
+- Root cause was React Error #130 (element type undefined): `page.tsx` was using `<ReceiptClient.PrintButton />`, a static-property component attached to a client component's default export. In Next.js App Router, the server renders this before client component modules are initialized, making the `.PrintButton` property `undefined`.
+- Fixed by converting `ReceiptClient.PrintButton = function(){}` into `export function PrintButton(){}` (named export) in `ReceiptClient.tsx`, and updating the import + usage in `page.tsx`.
+- Removed the unused `Download` icon import from `page.tsx` that was only needed by the old static property.
 
 **What to do next**:
-- Deploy the resend-verification UX change to production, then trigger `Resend verification` again and confirm the inbox shows a new email with the new subject line.
-- Instruct testers to use only the most recent verification email; any previous verification links become invalid as soon as resend is requested.
-- If users still report "no new email", inspect the inbox thread/spam folder first, because the old and new messages may still be grouped by the provider despite the subject change.
+- Verify the payment return page renders correctly end-to-end in production after this deploy.
+- Continue with remaining manual QA matrix test cases.
 
 **Current state**:
 - Branch: `main`
-- Dev server: not started in this session
-- Verification: focused Jest for auth resend/register and `npm run build` both stalled after the standard Next.js workspace-root warning in this session; no fresh green verification result yet
-- Env state: local `.env.local` has both Turnstile and Zoho SMTP configured; production SMTP is now functional because verification emails are being sent
-- Current live auth bug status: the remaining confusion is resend-token invalidation / inbox visibility, not a short TTL
-- Residual build noise: existing Next.js workspace-root warning still appears on both test/build startup
+- Dev server: running
+- Payment return page fix deployed to GitHub
 
 **Files changed**:
 - `.agent/TODO.md`
-- `src/app/api/auth/resend-verification/route.test.ts`
-- `src/app/api/auth/resend-verification/route.ts`
-- `src/app/auth/login/page.tsx`
-- `src/lib/email.ts`
+- `src/app/payment/return/ReceiptClient.tsx`
+- `src/app/payment/return/page.tsx`
