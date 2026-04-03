@@ -38,7 +38,11 @@ export default async function MyPlanDetailPage({
                         Back to My Plans
                     </Link>
                     <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white drop-shadow-sm">
-                        {plan.title || 'Custom Sri Lanka Itinerary'}
+                        {plan.districtsUsed?.length > 1
+                            ? `${plan.districtsUsed[0]} to ${plan.districtsUsed[plan.districtsUsed.length - 1]} Odyssey`
+                            : plan.districtsUsed?.length === 1
+                                ? `${plan.districtsUsed[0]} Explorer`
+                                : plan.title || 'Custom Sri Lanka Odyssey'}
                     </h1>
                     <p className="mt-1.5 text-sm text-white/40 font-light flex items-center gap-2">
                         <Compass className="h-3.5 w-3.5 text-antique-gold/60" />

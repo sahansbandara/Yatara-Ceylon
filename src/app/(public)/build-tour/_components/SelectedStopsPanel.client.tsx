@@ -44,7 +44,7 @@ function SortableStopItem({
             className={`group relative flex items-center gap-2.5 py-3 px-3.5 rounded-xl transition-all duration-300 border ${isDragging
                 ? 'bg-antique-gold/10 border-antique-gold/25 shadow-lg shadow-antique-gold/10'
                 : 'border-transparent hover:bg-white/[0.03] hover:border-white/[0.06]'
-            }`}
+                }`}
         >
             {/* Drag handle */}
             <button
@@ -149,10 +149,15 @@ export default function SelectedStopsPanel({
         setSaveMessage(null);
 
         try {
+            const districtList = Array.from(uniqueDistricts);
+            const title = districtList.length > 1
+                ? `${districtList[0]} to ${districtList[districtList.length - 1]} Odyssey`
+                : districtList.length === 1
+                    ? `${districtList[0]} Explorer`
+                    : 'Custom Sri Lanka Odyssey';
+
             const payload = {
-                title: uniqueDistricts.size > 0
-                    ? `${Array.from(uniqueDistricts).join(' • ')} itinerary`
-                    : 'Custom Sri Lanka itinerary',
+                title,
                 days: [
                     {
                         dayNo: 1,

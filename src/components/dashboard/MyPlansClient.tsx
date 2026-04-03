@@ -74,7 +74,11 @@ export default function MyPlansClient({ initialPlans }: { initialPlans: any[] })
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-display font-semibold text-white group-hover:text-antique-gold transition-colors leading-tight">
-                                        {plan.title || 'Custom Sri Lanka Itinerary'}
+                                        {plan.districtsUsed?.length > 1
+                                            ? `${plan.districtsUsed[0]} to ${plan.districtsUsed[plan.districtsUsed.length - 1]} Odyssey`
+                                            : plan.districtsUsed?.length === 1
+                                                ? `${plan.districtsUsed[0]} Explorer`
+                                                : plan.title || 'Custom Sri Lanka Odyssey'}
                                     </h3>
                                     <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1.5 flex items-center gap-1.5">
                                         <CalendarDays className="h-3 w-3" />
