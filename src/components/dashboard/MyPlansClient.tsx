@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { ArrowRight, Eye, MapPin, Pencil, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Eye, MapPin, Pencil, Trash2, CalendarDays, Compass, X } from 'lucide-react';
 
 export default function MyPlansClient({ initialPlans }: { initialPlans: any[] }) {
     const [plans, setPlans] = useState(initialPlans);
@@ -36,68 +36,105 @@ export default function MyPlansClient({ initialPlans }: { initialPlans: any[] })
 
     if (plans.length === 0) {
         return (
-            <div className="liquid-glass-panel rounded-2xl p-12 text-center text-white">
-                <MapPin className="h-12 w-12 text-white/20 mx-auto mb-4" />
-                <h3 className="text-lg font-display font-semibold text-off-white mb-2">No Saved Plans</h3>
-                <p className="text-sm text-white/40 mb-6">Design your dream Sri Lanka itinerary with our tour builder.</p>
+            <div className="liquid-glass-panel border-antique-gold/10 rounded-3xl p-12 text-center text-white relative overflow-hidden animate-in fade-in duration-500">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-antique-gold/5 via-transparent to-transparent opacity-50" />
+                <Compass className="h-16 w-16 text-antique-gold/40 mx-auto mb-6 relative z-10" />
+                <h3 className="text-2xl font-display font-semibold mb-3 text-white relative z-10">No Saved Plans</h3>
+                <p className="text-sm text-gray-400 mb-8 max-w-md mx-auto relative z-10">Design your dream Sri Lanka itinerary with our bespoke tour builder.</p>
                 <Link
                     href="/build-tour"
-                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-deep-emerald font-medium text-sm rounded-lg shadow-lg hover:shadow-xl transition-all"
+                    className="relative z-10 inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-antique-gold to-[#c59b27] hover:from-[#c59b27] hover:to-[#b0891e] text-[#061a15] font-semibold text-sm rounded-xl shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] transition-all duration-300 transform hover:-translate-y-0.5"
                 >
-                    Build Your Tour <ArrowRight className="h-4 w-4" />
+                    Build Your Tour <ArrowUpRight className="h-4 w-4" />
                 </Link>
             </div>
         );
     }
 
     return (
-        <div className="grid gap-4 md:grid-cols-2">
-            {plans.map((plan: any) => (
-                <div key={plan._id} className="liquid-glass-stat rounded-2xl p-6">
-                    <div className="flex items-start gap-3 mb-3">
-                        <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
-                            <MapPin className="h-4 w-4 text-amber-400" />
+        <div className="flex flex-col gap-8 animate-in fade-in duration-500">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                {plans.map((plan: any) => (
+                    <div
+                        key={plan._id}
+                        className="group relative liquid-glass-panel rounded-2xl overflow-hidden hover:shadow-[0_8px_32px_rgba(212,175,55,0.05)] transition-all duration-500 border border-white/[0.05] hover:border-antique-gold/20 flex flex-col bg-[#061a15]/40"
+                    >
+                        {/* Status Badge */}
+                        <div className="absolute top-4 right-4 z-10">
+                            <span className="px-2.5 py-1 bg-black/50 backdrop-blur-md border border-antique-gold/30 text-antique-gold drop-shadow-sm text-[10px] uppercase tracking-widest rounded-md font-semibold">
+                                {plan.status}
+                            </span>
                         </div>
-                        <div className="min-w-0">
-                            <p className="text-sm font-semibold text-off-white truncate">{plan.title || 'Custom Plan'}</p>
-                            <p className="text-[10px] text-white/40 uppercase tracking-wider">{plan.status}</p>
+
+                        {/* Content Area */}
+                        <div className="p-6 flex-1 flex flex-col relative z-20">
+                            <div className="flex items-start gap-4 mb-6 pr-20">
+                                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-antique-gold/20 to-antique-gold/5 border border-antique-gold/30 flex items-center justify-center text-antique-gold shadow-[0_0_15px_rgba(212,175,55,0.15)] flex-shrink-0">
+                                    <MapPin className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-display font-semibold text-white group-hover:text-antique-gold transition-colors leading-tight">
+                                        {plan.title || 'Custom Sri Lanka Itinerary'}
+                                    </h3>
+                                    <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1.5 flex items-center gap-1.5">
+                                        <CalendarDays className="h-3 w-3" />
+                                        Created {new Date(plan.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Districts List */}
+                            <div className="bg-white/[0.02] border border-white/[0.03] rounded-xl p-4 mb-6 group-hover:bg-white/[0.04] transition-colors">
+                                <p className="text-[10px] text-white/40 uppercase tracking-widest mb-2 flex items-center gap-1">
+                                    <Compass className="h-3 w-3" />
+                                    {plan.districtsUsed?.length || 0} Districts Selected
+                                </p>
+                                {plan.districtsUsed?.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2">
+                                        {plan.districtsUsed.map((district: string) => (
+                                            <span
+                                                key={district}
+                                                className="inline-flex items-center px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-xs text-white/80 font-medium"
+                                            >
+                                                {district}
+                                            </span>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm font-medium text-white/30 italic">No districts assigned.</p>
+                                )}
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="mt-auto flex items-center gap-3">
+                                <Link
+                                    href={`/dashboard/my-plans/${plan._id}`}
+                                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70 hover:text-white hover:border-white/30 hover:bg-white/10 transition-all duration-300"
+                                >
+                                    <Eye className="h-3.5 w-3.5" />
+                                    View
+                                </Link>
+                                <Link
+                                    href={`/build-tour?planId=${plan._id}`}
+                                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-antique-gold/25 bg-antique-gold/10 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-antique-gold hover:bg-antique-gold/20 hover:shadow-[0_0_15px_rgba(212,175,55,0.15)] transition-all duration-300"
+                                >
+                                    <Pencil className="h-3.5 w-3.5" />
+                                    Reopen
+                                </Link>
+                                <button
+                                    type="button"
+                                    disabled={deletingId === plan._id}
+                                    onClick={() => handleDelete(plan._id)}
+                                    className="inline-flex items-center justify-center p-3 rounded-xl border border-red-400/20 bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-all duration-300 disabled:opacity-50"
+                                    title="Delete Plan"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    {plan.districtsUsed?.length > 0 && (
-                        <p className="text-xs text-white/50">{plan.districtsUsed.length} districts selected</p>
-                    )}
-                    <p className="text-[10px] text-white/30 mt-2">
-                        Created {new Date(plan.createdAt).toLocaleDateString()}
-                    </p>
-
-                    <div className="mt-5 grid gap-2 sm:grid-cols-3">
-                        <Link
-                            href={`/dashboard/my-plans/${plan._id}`}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/70 hover:text-antique-gold hover:border-antique-gold/30 transition-all"
-                        >
-                            <Eye className="h-3.5 w-3.5" />
-                            View
-                        </Link>
-                        <Link
-                            href={`/build-tour?planId=${plan._id}`}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-antique-gold/25 bg-antique-gold/10 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-antique-gold hover:bg-antique-gold/15 transition-all"
-                        >
-                            <Pencil className="h-3.5 w-3.5" />
-                            Reopen
-                        </Link>
-                        <button
-                            type="button"
-                            disabled={deletingId === plan._id}
-                            onClick={() => handleDelete(plan._id)}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-red-300 hover:bg-red-500/15 transition-all disabled:opacity-50"
-                        >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            {deletingId === plan._id ? 'Deleting' : 'Delete'}
-                        </button>
-                    </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 }
