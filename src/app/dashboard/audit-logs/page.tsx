@@ -2,8 +2,7 @@ import { Metadata } from 'next';
 import { adminOnly } from '@/lib/rbac';
 import { redirect } from 'next/navigation';
 import AuditLogTable from '@/components/dashboard/AuditLogTable';
-import connectDB from '@/lib/mongodb';
-import AuditLog from '@/models/AuditLog';
+import { AuditLogService } from '@/services/crud.service';
 
 export const metadata: Metadata = {
     title: 'Audit Logs | Yatara Admin',
@@ -11,26 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AuditLogsPage() {
-    await connectDB();
-    
-    // Server-side check is handled by layout/middleware, but we can't use adminOnly on server UI components directly because adminOnly expects NextRequest.
-    // However, if we're in /dashboard, the middleware should enforce session if we strictly only allow ADMIN in dashboard.
-    // Yet to be safe, we can just fetch. 
-    
-    const page = 1;
-    const limit = 50;
-    
-    const [logs, total] = await Promise.all([
-        AuditLog.find({}).sort({ at: -1 }).skip((page - 1) * limit).limit(limit).lean(),
-        AuditLog.countDocuments({}),
-    ]);
-
-    const initialData = {
-        logs: JSON.parse(JSON.stringify(logs)),
-        total,
-        page,
-        totalPages: Math.ceil(total / limit),
-    };
+    const initialData = await AuditLogService.getAuditLogs(1, 50);
 
     return (
         <div className="space-y-8">

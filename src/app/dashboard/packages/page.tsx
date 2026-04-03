@@ -1,26 +1,14 @@
 import { Button } from '@/components/ui/button';
 import PackageTable from '@/components/dashboard/PackageTable';
-import connectDB from '@/lib/mongodb';
-import Package from '@/models/Package';
+import { PackageService } from '@/services/package.service';
 import { Plus, Package as PackageIcon, Eye, FileText, Star, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { GlassPanel } from '@/components/dashboard/GlassPanel';
 
-async function getPackages() {
-    try {
-        await connectDB();
-        const packages = await Package.find({ isDeleted: false }).sort({ createdAt: -1 }).lean();
-        return JSON.parse(JSON.stringify(packages));
-    } catch (error) {
-        console.error("Failed to fetch packages:", error);
-        return [];
-    }
-}
-
 export default async function PackagesPage() {
-    const packages = await getPackages();
+    const packages = await PackageService.getDashboardPackages();
 
     const totalPackages = packages.length;
     const publishedCount = packages.filter((p: any) => p.isPublished).length;

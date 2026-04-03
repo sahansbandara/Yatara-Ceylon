@@ -2,51 +2,13 @@ import PartnerTable from '@/components/dashboard/PartnerTable';
 import { Button } from '@/components/ui/button';
 import { Plus, Handshake, UserCheck, Building2, Users } from 'lucide-react';
 import Link from 'next/link';
-import connectDB from '@/lib/mongodb';
-import Partner from '@/models/Partner';
+import { PartnerService } from '@/services/crud.service';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { GlassPanel } from '@/components/dashboard/GlassPanel';
-import { PartnerStatus, PartnerTypes } from '@/lib/constants';
-
-async function getPartnerStats() {
-    try {
-        await connectDB();
-        const partners = await Partner.find({ isDeleted: false }).sort({ createdAt: -1 }).lean();
-        const serialized = JSON.parse(JSON.stringify(partners));
-
-        // Count by type
-        const typeCounts = Object.keys(PartnerTypes).reduce((acc: any, type: string) => {
-            acc[type] = serialized.filter((p: any) => p.type === type).length;
-            return acc;
-        }, {});
-
-        // Find the top type
-        const topType = Object.entries(typeCounts).reduce((max: any, [type, count]: any) =>
-            count > (max[1] || 0) ? [type, count] : max
-        , ['OTHER', 0])[0];
-
-        return {
-            partners: serialized,
-            stats: {
-                total: serialized.length,
-                active: serialized.filter((p: any) => p.status === PartnerStatus.ACTIVE).length,
-                topType: topType,
-                topTypeCount: typeCounts[topType as keyof typeof PartnerTypes] || 0,
-                pendingReview: serialized.filter((p: any) => p.status !== PartnerStatus.ACTIVE).length,
-            }
-        };
-    } catch (error) {
-        console.error("Failed to fetch partners:", error);
-        return {
-            partners: [],
-            stats: { total: 0, active: 0, topType: 'OTHER', topTypeCount: 0, pendingReview: 0 }
-        };
-    }
-}
 
 export default async function PartnersPage() {
-    const { partners, stats } = await getPartnerStats();
+    const { partners, stats } = await PartnerService.getPartnerStats();
 
     return (
         <div className="flex flex-col gap-6 p-6">

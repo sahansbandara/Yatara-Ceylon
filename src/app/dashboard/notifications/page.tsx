@@ -1,6 +1,5 @@
 import NotificationTable from '@/components/dashboard/NotificationTable';
-import connectDB from '@/lib/mongodb';
-import Notification from '@/models/Notification';
+import { NotificationService } from '@/services/crud.service';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { GlassPanel } from '@/components/dashboard/GlassPanel';
@@ -10,19 +9,8 @@ import Link from 'next/link';
 
 export const metadata = { title: 'Notifications | Dashboard' };
 
-async function getNotifications() {
-    try {
-        await connectDB();
-        const notifications = await Notification.find({ isDeleted: false }).sort({ createdAt: -1 }).lean();
-        return JSON.parse(JSON.stringify(notifications));
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
-}
-
 export default async function NotificationsPage() {
-    const notifications = await getNotifications();
+    const notifications = await NotificationService.getNotifications();
 
     const totalNotifications = notifications.length;
     const alertCount = notifications.filter((n: any) => n.type === 'ALERT').length;

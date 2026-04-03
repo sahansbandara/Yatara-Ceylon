@@ -2,8 +2,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Mail, Phone, User as UserIcon, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import connectDB from '@/lib/mongodb';
-import SupportTicket from '@/models/SupportTicket';
+import { SupportDetailService } from '@/services/crud.service';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Metadata } from 'next';
@@ -13,24 +12,11 @@ export const metadata: Metadata = {
     title: 'Ticket Details | Dashboard',
 };
 
-async function getTicket(id: string) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) return null;
-    try {
-        await connectDB();
-        const ticket = await SupportTicket.findById(id).lean();
-        if (!ticket) return null;
-        return JSON.parse(JSON.stringify(ticket));
-    } catch (error) {
-        console.error("Failed to fetch ticket:", error);
-        return null;
-    }
-}
-
 type Params = Promise<{ id: string }>;
 
 export default async function TicketDetailsPage({ params }: { params: Params }) {
     const { id } = await params;
-    const ticket = await getTicket(id);
+    const ticket = await SupportDetailService.getTicketById(id);
 
     if (!ticket) {
         notFound();

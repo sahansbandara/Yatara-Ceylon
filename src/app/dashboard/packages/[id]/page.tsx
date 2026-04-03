@@ -3,33 +3,19 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import connectDB from '@/lib/mongodb';
-import Package from '@/models/Package';
+import { PackageDetailService } from '@/services/crud.service';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'Edit Package | Dashboard',
 };
 
-async function getPackage(id: string) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) return null;
-    try {
-        await connectDB();
-        const pkg = await Package.findById(id).lean();
-        if (!pkg) return null;
-        return JSON.parse(JSON.stringify(pkg));
-    } catch (error) {
-        console.error("Failed to fetch package:", error);
-        return null;
-    }
-}
-
 // Params type definition for Next.js 15+
 type Params = Promise<{ id: string }>;
 
 export default async function EditPackagePage({ params }: { params: Params }) {
     const { id } = await params;
-    const pkg = await getPackage(id);
+    const pkg = await PackageDetailService.getPackageById(id);
 
     if (!pkg) {
         notFound();

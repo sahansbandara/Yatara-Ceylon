@@ -3,32 +3,18 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import connectDB from '@/lib/mongodb';
-import Partner from '@/models/Partner';
+import { PartnerDetailService } from '@/services/crud.service';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'Edit Partner | Dashboard',
 };
 
-async function getPartner(id: string) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) return null;
-    try {
-        await connectDB();
-        const partner = await Partner.findById(id).lean();
-        if (!partner) return null;
-        return JSON.parse(JSON.stringify(partner));
-    } catch (error) {
-        console.error("Failed to fetch partner:", error);
-        return null;
-    }
-}
-
 type Params = Promise<{ id: string }>;
 
 export default async function EditPartnerPage({ params }: { params: Params }) {
     const { id } = await params;
-    const partner = await getPartner(id);
+    const partner = await PartnerDetailService.getPartnerById(id);
 
     if (!partner) {
         notFound();

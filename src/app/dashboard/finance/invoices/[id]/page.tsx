@@ -1,31 +1,9 @@
 import Link from 'next/link';
 import { formatLKR } from '@/lib/currency';
 import { notFound } from 'next/navigation';
-import connectDB from '@/lib/mongodb';
-import Invoice from '@/models/Invoice';
-import Payment from '@/models/Payment';
+import { InvoiceDetailService } from '@/services/crud.service';
 import { ArrowLeft, Receipt, Wallet } from 'lucide-react';
 import BookingAttachmentsPanel from '@/components/dashboard/bookings/BookingAttachmentsPanel';
-
-async function getInvoiceDetail(id: string) {
-    await connectDB();
-
-    const invoice = await Invoice.findOne({ _id: id, isDeleted: { $ne: true } })
-        .populate('bookingId', 'bookingNo customerName email phone totalCost paidAmount remainingBalance')
-        .lean();
-
-    if (!invoice) return null;
-
-    const payments = await Payment.find({
-        invoiceId: id,
-        isDeleted: false,
-    }).sort({ createdAt: -1 }).lean();
-
-    return {
-        invoice: JSON.parse(JSON.stringify(invoice)),
-        payments: JSON.parse(JSON.stringify(payments)),
-    };
-}
 
 export default async function InvoiceDetailPage({
     params,
@@ -33,7 +11,7 @@ export default async function InvoiceDetailPage({
     params: Promise<{ id: string }>;
 }) {
     const { id } = await params;
-    const data = await getInvoiceDetail(id);
+    const data = await InvoiceDetailService.getInvoiceDetail(id);
 
     if (!data) {
         notFound();

@@ -1,26 +1,14 @@
 import { Button } from '@/components/ui/button';
 import DestinationTable from '@/components/dashboard/DestinationTable';
-import connectDB from '@/lib/mongodb';
-import Destination from '@/models/Destination';
+import { DestinationService } from '@/services/crud.service';
 import { Plus, MapPin, Eye, ImageOff, Globe, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { GlassPanel } from '@/components/dashboard/GlassPanel';
 
-async function getDestinations() {
-    try {
-        await connectDB();
-        const destinations = await Destination.find({ isDeleted: false }).sort({ title: 1 }).lean();
-        return JSON.parse(JSON.stringify(destinations));
-    } catch (error) {
-        console.error("Failed to fetch destinations:", error);
-        return [];
-    }
-}
-
 export default async function DestinationsPage() {
-    const destinations = await getDestinations();
+    const destinations = await DestinationService.getDestinations();
 
     const totalDestinations = destinations.length;
     const publishedCount = destinations.filter((d: any) => d.isPublished).length;

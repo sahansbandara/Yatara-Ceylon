@@ -3,33 +3,19 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserDetailService } from '@/services/crud.service';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'Edit User | Dashboard',
 };
 
-async function getUser(id: string) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) return null;
-    try {
-        await connectDB();
-        const user = await User.findById(id).lean();
-        if (!user) return null;
-        return JSON.parse(JSON.stringify(user));
-    } catch (error) {
-        console.error("Failed to fetch user:", error);
-        return null; // Return null to trigger notFound or handle gracefully
-    }
-}
-
 // Params type definition for Next.js 15+
 type Params = Promise<{ id: string }>;
 
 export default async function EditUserPage({ params }: { params: Params }) {
     const { id } = await params;
-    const user = await getUser(id);
+    const user = await UserDetailService.getUserById(id);
 
     if (!user) {
         notFound();

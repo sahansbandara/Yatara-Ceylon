@@ -1,9 +1,5 @@
-import connectDB from "@/lib/mongodb";
+import { BookingDetailService } from '@/services/crud.service';
 import { formatLKR } from '@/lib/currency';
-import Booking from "@/models/Booking";
-import Payment from "@/models/Payment";
-import Invoice from "@/models/Invoice";
-import Vehicle from "@/models/Vehicle";
 import RecordPaymentModal from "@/components/dashboard/finance/RecordPaymentModal";
 import CreateInvoiceModal from "@/components/dashboard/finance/CreateInvoiceModal";
 import FinalizeInvoiceButton from "@/components/dashboard/finance/FinalizeInvoiceButton";
@@ -31,40 +27,9 @@ const STATUS_COLORS: Record<string, string> = {
     CONTACTED: 'bg-sky-500/15 text-sky-300',
 };
 
-async function getBookingDetail(id: string) {
-    try {
-        await connectDB();
-        const booking = await Booking.findById(id)
-            .populate('packageId', 'title slug priceMin priceMax')
-            .populate('assignedStaffId', 'name email')
-            .populate('assignedVehicleId', 'model type seats dailyRate')
-            .lean();
-        if (!booking || (booking as any).isDeleted) return null;
-
-        const payments = await Payment.find({ bookingId: id, isDeleted: false })
-            .sort({ createdAt: -1 })
-            .lean();
-
-        const invoices = await Invoice.find({ bookingId: id, isDeleted: false })
-            .sort({ createdAt: -1 })
-            .lean();
-
-        const vehicles = await Vehicle.find({ status: 'AVAILABLE' }).select('model type seats dailyRate').lean();
-
-        return {
-            booking: JSON.parse(JSON.stringify(booking)),
-            payments: JSON.parse(JSON.stringify(payments)),
-            invoices: JSON.parse(JSON.stringify(invoices)),
-            vehicles: JSON.parse(JSON.stringify(vehicles)),
-        };
-    } catch {
-        return null;
-    }
-}
-
 export default async function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const data = await getBookingDetail(id);
+    const data = await BookingDetailService.getBookingDetail(id);
     if (!data) notFound();
 
     const session = await getSessionUser();
@@ -251,10 +216,10 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                             <p className="text-sm text-gray-400 italic">No vehicle assigned yet.</p>
                         )}
                         {(userRole === 'ADMIN' || userRole === 'VEHICLE_OWNER' || userRole === 'STAFF') && (
-                            <AssignVehicleModal 
-                                bookingId={booking._id} 
+                            <AssignVehicleModal
+                                bookingId={booking._id}
                                 currentVehicleId={booking.assignedVehicleId?._id}
-                                vehicles={vehicles} 
+                                vehicles={vehicles}
                             />
                         )}
                     </div>

@@ -10,8 +10,10 @@ import TransfersTeaser from '@/components/public/TransfersTeaser';
 import PremiumStory from '@/components/public/PremiumStory';
 import RealExperiencesSection from '@/components/public/RealExperiencesSection';
 import FinalCTA from '@/components/public/FinalCTA';
+import { PackageService } from '@/services/package.service';
 
 export default async function HomePage() {
+    const featuredJourneys = await PackageService.getFeaturedJourneys();
     return (
         <main className="min-h-screen bg-off-white flex flex-col">
             {/* 1. Hero */}
@@ -24,7 +26,7 @@ export default async function HomePage() {
             <TourCategoriesCarousel />
 
             {/* 4. Featured Journeys */}
-            <FeaturedJourneys />
+            <FeaturedJourneys packages={featuredJourneys} />
 
             {/* 4.5 Authority — editorial who-we-are */}
             <AuthoritySection />

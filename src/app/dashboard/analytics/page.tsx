@@ -1,12 +1,9 @@
-import connectDB from "@/lib/mongodb";
+import { AnalyticsService } from '@/services/analytics.service';
 import { formatLKR } from '@/lib/currency';
-import Booking from "@/models/Booking";
-import Payment from "@/models/Payment";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { CalendarCheck, DollarSign, PackageIcon, TrendingUp } from "lucide-react";
-import Package from "@/models/Package";
 import AnalyticsDateFilter from "@/components/dashboard/analytics/AnalyticsDateFilter";
 import {
   buildMonthBuckets,
@@ -16,100 +13,6 @@ import {
 } from "@/lib/date-range";
 
 export const revalidate = 0; // Disable static rendering for this page
-
-async function getAnalyticsData(dateFrom: string, dateTo: string) {
-  try {
-    await connectDB();
-
-    const rangeStart = new Date(`${dateFrom}T00:00:00.000Z`);
-    const rangeEnd = new Date(`${dateTo}T23:59:59.999Z`);
-
-    // Fetch Monthly Bookings Volume
-    const bookingsByMonth = await Booking.aggregate([
-      { 
-        $match: { 
-          isDeleted: false,
-          createdAt: { $gte: rangeStart, $lte: rangeEnd } 
-        } 
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" }
-          },
-          count: { $sum: 1 },
-          gbv: { $sum: "$totalCost" }
-        }
-      },
-      { $sort: { "_id.year": 1, "_id.month": 1 } }
-    ]);
-
-    // Fetch Monthly Actual Revenue (Payments)
-    const revenueByMonth = await Payment.aggregate([
-      { 
-        $match: { 
-          status: 'SUCCESS', 
-          type: 'PAYMENT',
-          isDeleted: false,
-          createdAt: { $gte: rangeStart, $lte: rangeEnd } 
-        } 
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" }
-          },
-          revenue: { $sum: "$amount" }
-        }
-      },
-      { $sort: { "_id.year": 1, "_id.month": 1 } }
-    ]);
-
-    // Fetch Top Packages by Request/Booking Volume
-    const topPackages = await Booking.aggregate([
-      { 
-        $match: { 
-          isDeleted: false,
-          packageId: { $exists: true, $ne: null },
-          createdAt: { $gte: rangeStart, $lte: rangeEnd }
-        } 
-      },
-      {
-        $group: {
-          _id: "$packageId",
-          bookingsCount: { $sum: 1 },
-          totalRevenue: { $sum: "$totalCost" }
-        }
-      },
-      { $sort: { bookingsCount: -1 } },
-      { $limit: 5 },
-      {
-        $lookup: {
-          from: "packages",
-          localField: "_id",
-          foreignField: "_id",
-          as: "packageDetails"
-        }
-      },
-      { $unwind: { path: "$packageDetails", preserveNullAndEmptyArrays: true } }
-    ]);
-
-    return {
-      monthlyBookings: bookingsByMonth,
-      monthlyRevenue: revenueByMonth,
-      topPackages: topPackages
-    };
-  } catch (error) {
-    console.error("Failed to fetch analytics:", error);
-    return {
-      monthlyBookings: [],
-      monthlyRevenue: [],
-      topPackages: []
-    };
-  }
-}
 
 // Helper to fill empty months
 function buildFilledMonthsData(
@@ -150,7 +53,7 @@ export default async function AnalyticsPage({
   const activeFrom = params.from || presetRange?.from || formatDateInput(fallbackStart);
   const activeTo = params.to || presetRange?.to || formatDateInput(fallbackEnd);
 
-  const data = await getAnalyticsData(activeFrom, activeTo);
+  const data = await AnalyticsService.getAnalyticsData(activeFrom, activeTo);
   const monthBuckets = buildMonthBuckets(activeFrom, activeTo);
 
   // Format for charts
@@ -163,7 +66,7 @@ export default async function AnalyticsPage({
   // Quick Stats
   const thisMonthBookings = bookingsChartData[bookingsChartData.length - 1]?.value || 0;
   const lastMonthBookings = bookingsChartData[bookingsChartData.length - 2]?.value || 0;
-  
+
   const thisMonthRevenue = revenueChartData[revenueChartData.length - 1]?.value || 0;
   const lastMonthRevenue = revenueChartData[revenueChartData.length - 2]?.value || 0;
 
@@ -239,7 +142,7 @@ export default async function AnalyticsPage({
                 <div key={tier} className="border-b border-white/[0.03] w-full h-[1px]"></div>
               ))}
             </div>
-            
+
             {bookingsChartData.map((d, i) => {
               const heightPct = (d.value / maxBookings) * 100;
               return (
@@ -250,8 +153,8 @@ export default async function AnalyticsPage({
                       {d.value} bookings
                     </div>
                     {/* Bar */}
-                    <div 
-                      className="w-full max-w-[48px] bg-gradient-to-t from-blue-500/20 to-blue-400/80 rounded-t-md transition-all duration-500 group-hover:to-blue-300" 
+                    <div
+                      className="w-full max-w-[48px] bg-gradient-to-t from-blue-500/20 to-blue-400/80 rounded-t-md transition-all duration-500 group-hover:to-blue-300"
                       style={{ height: `${Math.max(heightPct, 4)}%` }} // Minimum height to be visible
                     />
                   </div>
@@ -265,8 +168,8 @@ export default async function AnalyticsPage({
         {/* Revenue Volume Chart */}
         <GlassPanel title="Revenue Performance" subtitle="Actual received payments (LKR)">
           <div className="h-64 flex items-end gap-2 md:gap-4 mt-6 border-b border-white/10 pb-2 relative">
-             {/* Y Axis Guide */}
-             <div className="absolute left-0 top-0 bottom-0 w-full flex flex-col justify-between z-0 pointer-events-none">
+            {/* Y Axis Guide */}
+            <div className="absolute left-0 top-0 bottom-0 w-full flex flex-col justify-between z-0 pointer-events-none">
               {[1, 0.75, 0.5, 0.25, 0].map(tier => (
                 <div key={tier} className="border-b border-white/[0.03] w-full h-[1px]"></div>
               ))}
@@ -282,8 +185,8 @@ export default async function AnalyticsPage({
                       {formatLKR(d.value)}
                     </div>
                     {/* Bar */}
-                    <div 
-                      className="w-full max-w-[48px] bg-gradient-to-t from-emerald-500/20 to-emerald-400/80 rounded-t-md transition-all duration-500 group-hover:to-emerald-300" 
+                    <div
+                      className="w-full max-w-[48px] bg-gradient-to-t from-emerald-500/20 to-emerald-400/80 rounded-t-md transition-all duration-500 group-hover:to-emerald-300"
                       style={{ height: `${Math.max(heightPct, 4)}%` }} // Minimum height to be visible
                     />
                   </div>

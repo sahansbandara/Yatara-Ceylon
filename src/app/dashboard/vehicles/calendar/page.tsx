@@ -1,63 +1,13 @@
-import connectDB from "@/lib/mongodb";
-import Vehicle from "@/models/Vehicle";
-import VehicleBlock from "@/models/VehicleBlock";
-import Booking from "@/models/Booking";
+import { FleetCalendarService } from '@/services/crud.service';
 import { Car, CheckCircle, Clock, AlertTriangle, LayoutGrid, CalendarDays, Plus } from "lucide-react";
 import Link from "next/link";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { StatCard } from "@/components/dashboard/StatCard";
 import FleetCalendar from "@/components/dashboard/fleet/FleetCalendar";
-import { VehicleStatus } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 
-async function getAdminFleetData() {
-    try {
-        await connectDB();
-        
-        // Match what vehicles/page.tsx gets for stats
-        const vehicles = await Vehicle.find({ isDeleted: false }).lean();
-        
-        // Find blocks and bookings for these active vehicles
-        const vehicleIds = vehicles.map(v => v._id);
-
-        const [blocks, assignedBookings] = await Promise.all([
-            VehicleBlock.find({
-                vehicleId: { $in: vehicleIds },
-                to: { $gte: new Date() },
-            }).lean(),
-            Booking.find({
-                assignedVehicleId: { $in: vehicleIds },
-                isDeleted: false,
-                status: { $in: ['CONFIRMED', 'ASSIGNED', 'IN_PROGRESS'] },
-            }).select('bookingNo customerName dates assignedVehicleId status').lean(),
-        ]);
-
-        const serializedVehicles = JSON.parse(JSON.stringify(vehicles));
-
-        return {
-            vehicles: serializedVehicles,
-            blocks: JSON.parse(JSON.stringify(blocks)),
-            assignedBookings: JSON.parse(JSON.stringify(assignedBookings)),
-            stats: {
-                total: serializedVehicles.length,
-                available: serializedVehicles.filter((v: any) => v.status === VehicleStatus.AVAILABLE).length,
-                unavailable: serializedVehicles.filter((v: any) => v.status !== VehicleStatus.AVAILABLE && v.status !== VehicleStatus.PENDING_APPROVAL).length,
-                pendingApproval: serializedVehicles.filter((v: any) => v.status === VehicleStatus.PENDING_APPROVAL).length,
-            }
-        };
-    } catch (error) {
-        console.error("Failed to fetch admin fleet data:", error);
-        return { 
-            vehicles: [], 
-            blocks: [], 
-            assignedBookings: [],
-            stats: { total: 0, available: 0, unavailable: 0, pendingApproval: 0 }
-        };
-    }
-}
-
 export default async function AdminVehicleCalendarPage() {
-    const { vehicles, blocks, assignedBookings, stats } = await getAdminFleetData();
+    const { vehicles, blocks, assignedBookings, stats } = await FleetCalendarService.getAdminFleetData();
 
     return (
         <div className="flex flex-col gap-6 p-6">

@@ -2,39 +2,13 @@ import VehicleTable from '@/components/dashboard/VehicleTable';
 import { Button } from '@/components/ui/button';
 import { Plus, Car, CheckCircle, Clock, AlertTriangle, LayoutGrid, CalendarDays } from 'lucide-react';
 import Link from 'next/link';
-import connectDB from '@/lib/mongodb';
-import Vehicle from '@/models/Vehicle';
+import { VehicleService } from '@/services/crud.service';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { GlassPanel } from '@/components/dashboard/GlassPanel';
-import { VehicleStatus } from '@/lib/constants';
-
-async function getVehicleStats() {
-    try {
-        await connectDB();
-        const vehicles = await Vehicle.find({ isDeleted: false }).lean();
-        const serialized = JSON.parse(JSON.stringify(vehicles));
-
-        return {
-            vehicles: serialized,
-            stats: {
-                total: serialized.length,
-                available: serialized.filter((v: any) => v.status === VehicleStatus.AVAILABLE).length,
-                unavailable: serialized.filter((v: any) => v.status !== VehicleStatus.AVAILABLE && v.status !== VehicleStatus.PENDING_APPROVAL).length,
-                pendingApproval: serialized.filter((v: any) => v.status === VehicleStatus.PENDING_APPROVAL).length,
-            }
-        };
-    } catch (error) {
-        console.error("Failed to fetch vehicles:", error);
-        return {
-            vehicles: [],
-            stats: { total: 0, available: 0, unavailable: 0, pendingApproval: 0 }
-        };
-    }
-}
 
 export default async function VehiclesPage() {
-    const { vehicles, stats } = await getVehicleStats();
+    const { vehicles, stats } = await VehicleService.getVehicleStats();
 
     return (
         <div className="flex flex-col gap-6 p-6">

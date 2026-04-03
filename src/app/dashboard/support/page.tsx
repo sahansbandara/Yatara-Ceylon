@@ -1,26 +1,12 @@
 import TicketTable from '@/components/dashboard/TicketTable';
-import connectDB from '@/lib/mongodb';
-import SupportTicket from '@/models/SupportTicket';
+import { SupportService } from '@/services/crud.service';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { GlassPanel } from '@/components/dashboard/GlassPanel';
 import { Headphones, MessageSquare, AlertTriangle, CheckCircle } from 'lucide-react';
 
-async function getTickets() {
-    try {
-        await connectDB();
-        const tickets = await SupportTicket.find({ isDeleted: false })
-            .sort({ updatedAt: -1 })
-            .lean();
-        return JSON.parse(JSON.stringify(tickets));
-    } catch (error) {
-        console.error("Failed to fetch tickets:", error);
-        return [];
-    }
-}
-
 export default async function SupportPage() {
-    const tickets = await getTickets();
+    const tickets = await SupportService.getTickets();
 
     const totalTickets = tickets.length;
     const openTickets = tickets.filter((t: any) => t.status !== 'CLOSED' && t.status !== 'RESOLVED').length;

@@ -1,26 +1,14 @@
 import { Button } from '@/components/ui/button';
 import UserTable from '@/components/dashboard/UserTable';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserService } from '@/services/user.service';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { GlassPanel } from '@/components/dashboard/GlassPanel';
 import { Plus, Users, Shield, UserCog, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 
-async function getUsers() {
-    try {
-        await connectDB();
-        const users = await User.find({ isDeleted: false }).sort({ createdAt: -1 }).lean();
-        return JSON.parse(JSON.stringify(users));
-    } catch (error) {
-        console.error("Failed to fetch users:", error);
-        return [];
-    }
-}
-
 export default async function UsersPage() {
-    const users = await getUsers();
+    const users = await UserService.getDashboardUsers();
 
     const totalUsers = users.length;
     const adminCount = users.filter((u: any) => u.role === 'ADMIN').length;

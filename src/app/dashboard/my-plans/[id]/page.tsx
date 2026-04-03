@@ -1,31 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
-import connectDB from '@/lib/mongodb';
-import CustomPlan from '@/models/CustomPlan';
+import { MyPlanDetailService } from '@/services/crud.service';
 import { verifyToken } from '@/lib/auth';
 import { ArrowLeft, CalendarDays, MapPin, Pencil } from 'lucide-react';
 import curatedPlaces from '@/data/places/sri-lanka.curated.json';
-
-async function getPlan(id: string, userId: string, email?: string) {
-    await connectDB();
-
-    const filter: Record<string, unknown> = {
-        _id: id,
-        isDeleted: { $ne: true },
-    };
-
-    if (userId && email) {
-        filter.$or = [{ userId }, { customerEmail: email }];
-    } else if (userId) {
-        filter.userId = userId;
-    } else if (email) {
-        filter.customerEmail = email;
-    }
-
-    const plan = await CustomPlan.findOne(filter).lean();
-    return plan ? JSON.parse(JSON.stringify(plan)) : null;
-}
 
 export default async function MyPlanDetailPage({
     params,
@@ -41,7 +20,7 @@ export default async function MyPlanDetailPage({
         notFound();
     }
 
-    const plan = await getPlan(id, payload.userId, payload.email);
+    const plan = await MyPlanDetailService.getPlanById(id, payload.userId, payload.email);
     if (!plan) {
         notFound();
     }

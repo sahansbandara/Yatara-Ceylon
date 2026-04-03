@@ -19,12 +19,12 @@
 .DS_Store
 *.pem
 *.swp
-.claude/worktrees/
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+next.log
 
 # local env files
 .env*.local
@@ -36,5 +36,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-toolbox
+
+# AI tool / IDE config directories
+.claude/
+.codebuddy/
+.codex/
+.continue/
+.cursor/
+.gemini/
+.kiro/
+.opencode/
+.qoder/
+.roo/
+.trae/
+.windsurf/
+.agent/
+.agents/
+
+# build artifacts
 build_output.log
+toolbox

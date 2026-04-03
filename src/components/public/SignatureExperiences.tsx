@@ -2,25 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Clock } from 'lucide-react';
 import SectionHeading from './SectionHeading';
-import connectDB from '@/lib/mongodb';
-import Package from '@/models/Package';
-
-async function getFeaturedPackages() {
-    try {
-        await connectDB();
-        const packages = await Package.find({
-            isPublished: true,
-            isDeleted: false,
-            isFeaturedHome: true,
-        })
-            .sort({ homeRank: 1 })
-            .limit(9)
-            .lean();
-        return JSON.parse(JSON.stringify(packages));
-    } catch {
-        return [];
-    }
-}
+// DB Query moved to parent page via PackageService
 
 // Theme label mapping: first tag → display label
 function getThemeLabel(tags: string[]): string {
@@ -47,8 +29,7 @@ function getThemeLabel(tags: string[]): string {
     return 'CURATED JOURNEY';
 }
 
-export default async function SignatureExperiences() {
-    const packages = await getFeaturedPackages();
+export default function SignatureExperiences({ packages }: { packages: any[] }) {
 
     if (packages.length === 0) return null;
 

@@ -1,7 +1,4 @@
-import connectDB from "@/lib/mongodb";
-import Vehicle from "@/models/Vehicle";
-import VehicleBlock from "@/models/VehicleBlock";
-import Booking from "@/models/Booking";
+import { FleetService } from '@/services/fleet.service';
 import { Car, Calendar, AlertTriangle, CheckCircle, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,6 +8,7 @@ import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
 import FleetCalendar from "@/components/dashboard/fleet/FleetCalendar";
 import VehicleBlockManager from "@/components/dashboard/VehicleBlockManager";
+import { getSessionUser } from "@/lib/auth";
 
 const STATUS_COLORS: Record<string, { pill: string; label: string }> = {
     AVAILABLE: { pill: 'status-pill-success', label: 'Available' },
@@ -18,46 +16,18 @@ const STATUS_COLORS: Record<string, { pill: string; label: string }> = {
     UNAVAILABLE: { pill: 'status-pill-danger', label: 'Unavailable' },
 };
 
-import { getSessionUser } from "@/lib/auth";
-
-async function getFleetData(userId: string) {
-    try {
-        await connectDB();
-        const vehicles = await Vehicle.find({ ownerId: userId, isDeleted: false }).lean();
-        const vehicleIds = vehicles.map(v => v._id);
-
-        const [blocks, assignedBookings] = await Promise.all([
-            VehicleBlock.find({
-                vehicleId: { $in: vehicleIds },
-                to: { $gte: new Date() },
-            }).lean(),
-            Booking.find({
-                assignedVehicleId: { $in: vehicleIds },
-                isDeleted: false,
-                status: { $in: ['CONFIRMED', 'ASSIGNED', 'IN_PROGRESS'] },
-            }).select('bookingNo customerName dates assignedVehicleId status').lean(),
-        ]);
-        return {
-            vehicles: JSON.parse(JSON.stringify(vehicles)),
-            blocks: JSON.parse(JSON.stringify(blocks)),
-            assignedBookings: JSON.parse(JSON.stringify(assignedBookings)),
-        };
-    } catch {
-        return { vehicles: [], blocks: [], assignedBookings: [] };
-    }
-}
 
 export default async function FleetDashboardPage() {
     const session = await getSessionUser();
     if (!session?.userId) return null;
 
-    const { vehicles, blocks, assignedBookings } = await getFleetData(session.userId);
+    const { vehicles, blocks, assignedBookings } = await FleetService.getFleetData(session.userId);
 
     const addVehicleBtn = (
         <Link href="/dashboard/fleet/new">
             <Button variant="glass">
-              <Plus className="h-4 w-4 mr-1" />
-              Add Fleet
+                <Plus className="h-4 w-4 mr-1" />
+                Add Fleet
             </Button>
         </Link>
     );
