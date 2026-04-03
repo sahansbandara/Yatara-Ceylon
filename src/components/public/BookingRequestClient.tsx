@@ -28,9 +28,9 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
     const [turnstileToken, setTurnstileToken] = useState('');
 
     const [form, setForm] = useState({
-        customerName: '',
-        email: '',
-        phone: '',
+        customerName: user?.name || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
         address: '',
         city: '',
         country: 'Sri Lanka',
