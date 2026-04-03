@@ -4,6 +4,7 @@ import SectionHeading from '@/components/public/SectionHeading';
 import connectDB from '@/lib/mongodb';
 import Vehicle from '@/models/Vehicle';
 import Package from '@/models/Package';
+import User from '@/models/User';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth';
@@ -36,7 +37,24 @@ export default async function BookingRequestPage({ searchParams }: { searchParam
 
     const cookieStore = await cookies();
     const token = cookieStore.get('toms_token')?.value;
-    const user = token ? await verifyToken(token) : null;
+    const jwtPayload = token ? await verifyToken(token) : null;
+
+    let user = null;
+    if (jwtPayload?.userId) {
+        await connectDB();
+        const dbUser = await User.findById(jwtPayload.userId).lean();
+        if (dbUser) {
+            user = {
+                ...jwtPayload,
+                name: (dbUser as any).name,
+                phone: (dbUser as any).phone,
+            };
+        } else {
+            user = jwtPayload;
+        }
+    } else {
+        user = jwtPayload;
+    }
 
     const vehicle = await getVehicle(vehicleId);
     const pkg = await getPackage(packageId);
