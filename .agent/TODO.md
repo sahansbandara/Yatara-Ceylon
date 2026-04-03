@@ -26,6 +26,13 @@ Production Readiness — final QA pass and polish before go-live
 - [x] Fixed a bug where PayHere appended duplicate `order_id` query parameters causing Next.js to parse it as an array.
 - [x] Created direct PayHere API request fallbacks to circumvent sandbox webhook flakiness, guaranteeing validation even when ngrok/webhooks fail.
 
+### Admin UX & Search (2026-04-04)
+- [x] Implemented global client-side search across Admin Dashboard, recent bookings, Packages, and Destinations.
+- [x] Fixed layout clipping bug by removing `overflow: hidden` on DashboardHero glass container and adding horizontal scrolling to nested search chips.
+- [x] Refactored malformed image rendering in table grids to use resilient native `<img>` tags, gracefully recovering from legacy broken DB entries.
+- [x] Automagically synchronized 'Days'/'Nights' validation calculations on Package forms guaranteeing valid UI states.
+- [x] Adjusted MongoDB query scope for soft-deletes (`isDeleted: { $ne: true }`) correctly catching items without the boolean field explicitly set.
+
 ## All Core Features — VERIFIED COMPLETE (2026-04-01)
 
 ### Security & Auth
@@ -64,16 +71,19 @@ Production Readiness — final QA pass and polish before go-live
 **Date**: 2026-04-04
 **What was done**:
 - Upgraded the PayHere validation logic natively capturing the webhook, polling, and direct PayHere requests in a single robust loop.
-- Automatically associated `customerId` alongside `userEmail` in newly generated bookings and retrospectively tied old booking tests back to their respective users. 
+- Automatically associated `customerId` alongside `userEmail` in newly generated bookings and retrospectively tied old booking tests back to their respective users.
 - Hydrated contact details directly onto public booking requests so names, phones, and emails pre-fill flawlessly for authenticated users.
 - Rebuilt `/dashboard` routing to inject a glassmorphism suspense skeleton, radically enhancing perceived speed between tabs.
 - Elevated the My Bookings package cards to feature premium `coverImage` arrays, glassy hover zooms, and real-time status chips.
+- Resolved a 500 Save Error in `build-tour` by aligning the `CustomPlan` backend schema (`places` array to String IDs).
+- Built real-time, client-side search indexing across the admin `PackageTable`, `DestinationTable`, and the overarching `DashboardSearch` command center.
+- Mitigated fatal internal server 500 crashes rendering dashboard components by abandoning Next.js `<Image>` tags in favor of native <img> when dealing with malformed legacy database image entries.
+- Added smart cross-locking validation calculating corresponding 'Days' / 'Nights' dynamically within the Package Form editor.
+- Identified and patched MongoDB schema queries globally converting `{ isDeleted: false }` strictly to `{ isDeleted: { $ne: true } }` fully restoring visually lost packages to UI components.
 
 **What to do next**:
-- Keep pushing live to `yataraceylon.me` to confirm production data reacts properly to new UI updates.
-- Wait for user feedback on the dashboard's new premium liquid glass feel and the routing speed fixes.
-- Determine if any other public-facing components still feel blocky or require glass-level polish.
-- Finalize production secrets if user prepares for live deployment (SMTP + Cloudflare).
+- Check dashboard data fidelity with new items, potentially writing a cleanup script to sanitize legacy table URLs.
+- Continue deploying and validating via Vercel staging. 
 
 **Current state**:
 - Branch: `main`

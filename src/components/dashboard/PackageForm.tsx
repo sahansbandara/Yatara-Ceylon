@@ -30,6 +30,8 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
         priceMax: initialData?.priceMax || 0,
         duration: initialData?.duration || '',
         durationDays: initialData?.durationDays || '',
+        days: initialData?.durationDays ? initialData.durationDays : '',
+        nights: initialData?.durationDays ? Math.max(initialData.durationDays - 1, 0) : '',
         type: initialData?.type || 'journey',
         style: initialData?.style || '',
         itinerary: initialData?.itinerary || [{ day: 1, title: '', description: '', activity: '' }],
@@ -99,7 +101,29 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate priceMin < priceMax
+        if (formData.priceMin >= formData.priceMax) {
+            alert('Minimum price must be less than maximum price');
+            return;
+        }
+
+        // Validate media
+        const parsedImages = imagesText.split('\n').filter((s: string) => s.trim());
+        if (parsedImages.length === 0) {
+            alert('At least one media image URL is required');
+            return;
+        }
+
+        // Validate duration
+        if (!formData.days || !formData.nights) {
+            alert('Please fill both Days and Nights for the duration');
+            return;
+        }
+
         setLoading(true);
+
+        const computedDuration = `${formData.days} Days / ${formData.nights} Nights`;
 
         const payload: Record<string, any> = {
             title: formData.title,
@@ -108,8 +132,8 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
             fullDescription: formData.fullDescription,
             priceMin: formData.priceMin,
             priceMax: formData.priceMax,
-            duration: formData.duration,
-            durationDays: formData.durationDays ? Number(formData.durationDays) : undefined,
+            duration: computedDuration,
+            durationDays: Number(formData.days) || undefined,
             type: formData.type,
             style: formData.style || undefined,
             itinerary: formData.itinerary.map((item: any) => ({
@@ -122,7 +146,7 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
             inclusions: inclusionsText.split('\n').filter((s: string) => s.trim()),
             exclusions: exclusionsText.split('\n').filter((s: string) => s.trim()),
             tags: tagsText.split('\n').filter((s: string) => s.trim()),
-            images: imagesText.split('\n').filter((s: string) => s.trim()),
+            images: parsedImages,
             isPublished: formData.isPublished,
             isFeatured: formData.isFeatured,
         };
@@ -226,12 +250,15 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                                     <Input id="priceMax" type="number" required value={formData.priceMax} onChange={(e) => setFormData({ ...formData, priceMax: Number(e.target.value) })} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 h-11 rounded-xl" />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="duration" className="text-white/70">Duration (display)</Label>
-                                    <Input id="duration" required placeholder="e.g. 10 Days / 9 Nights" value={formData.duration} onChange={(e) => setFormData({ ...formData, duration: e.target.value })} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
+                                    <Label htmlFor="days" className="text-white/70">Duration (Days)</Label>
+                                    <Input id="days" type="number" required placeholder="e.g. 10" value={formData.days} min={1} onChange={(e) => {
+                                        const d = parseInt(e.target.value) || 0;
+                                        setFormData({ ...formData, days: e.target.value, nights: d > 0 ? (d - 1).toString() : '' });
+                                    }} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
                                 </div>
                             </div>
 
-                            {/* Type / Style / Duration Days */}
+                            {/* Type / Style / Duration Nights */}
                             <div className="grid grid-cols-3 gap-5">
                                 <div className="grid gap-2">
                                     <Label htmlFor="type" className="text-white/70">Type</Label>
@@ -267,8 +294,11 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                                     </select>
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="durationDays" className="text-white/70">Duration (days number)</Label>
-                                    <Input id="durationDays" type="number" min={1} placeholder="e.g. 10" value={formData.durationDays} onChange={(e) => setFormData({ ...formData, durationDays: e.target.value })} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
+                                    <Label htmlFor="nights" className="text-white/70">Duration (Nights)</Label>
+                                    <Input id="nights" type="number" required min={0} placeholder="e.g. 9" value={formData.nights} onChange={(e) => {
+                                        const n = parseInt(e.target.value) || 0;
+                                        setFormData({ ...formData, nights: e.target.value, days: (n + 1).toString() });
+                                    }} className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
                                 </div>
                             </div>
 
@@ -295,20 +325,20 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                         <div className="grid gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="fullDescription" className="text-white/70">Full Description</Label>
-                                <Textarea id="fullDescription" className="min-h-[200px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={formData.fullDescription} onChange={(e) => setFormData({ ...formData, fullDescription: e.target.value })} placeholder="Editorial description of this journey..." />
+                                <Textarea id="fullDescription" required className="min-h-[200px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={formData.fullDescription} onChange={(e) => setFormData({ ...formData, fullDescription: e.target.value })} placeholder="Editorial description of this journey..." />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="highlights" className="text-white/70">Highlights / Signature Moments (One per line)</Label>
-                                <Textarea id="highlights" className="min-h-[150px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={highlightsText} onChange={(e) => setHighlightsText(e.target.value)} placeholder="Private Cultural Triangle day with sunrise option&#10;Tea estate afternoon + tasting experience&#10;Scenic train segment (reserved seats)" />
+                                <Textarea id="highlights" required className="min-h-[150px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={highlightsText} onChange={(e) => setHighlightsText(e.target.value)} placeholder="Private Cultural Triangle day with sunrise option&#10;Tea estate afternoon + tasting experience&#10;Scenic train segment (reserved seats)" />
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="grid gap-2">
                                     <Label htmlFor="inclusions" className="text-white/70">Inclusions (One per line)</Label>
-                                    <Textarea id="inclusions" className="min-h-[150px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={inclusionsText} onChange={(e) => setInclusionsText(e.target.value)} placeholder="Private air-conditioned vehicle + driver&#10;Curated hotel collection (4–5 star)&#10;Daily breakfast" />
+                                    <Textarea id="inclusions" required className="min-h-[150px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={inclusionsText} onChange={(e) => setInclusionsText(e.target.value)} placeholder="Private air-conditioned vehicle + driver&#10;Curated hotel collection (4–5 star)&#10;Daily breakfast" />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="exclusions" className="text-white/70">Exclusions (One per line)</Label>
-                                    <Textarea id="exclusions" className="min-h-[150px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={exclusionsText} onChange={(e) => setExclusionsText(e.target.value)} placeholder="International flights&#10;Visa fees&#10;Lunch & dinner (unless stated)" />
+                                    <Textarea id="exclusions" required className="min-h-[150px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={exclusionsText} onChange={(e) => setExclusionsText(e.target.value)} placeholder="International flights&#10;Visa fees&#10;Lunch & dinner (unless stated)" />
                                 </div>
                             </div>
                         </div>
@@ -335,11 +365,11 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                                     <div className="flex-1 space-y-4">
                                         <div className="grid gap-2">
                                             <Label className="text-white/70">Title</Label>
-                                            <Input value={item.title} onChange={(e) => handleItineraryChange(index, 'title', e.target.value)} placeholder="Arrival in Colombo" className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
+                                            <Input required value={item.title} onChange={(e) => handleItineraryChange(index, 'title', e.target.value)} placeholder="Arrival in Colombo" className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 h-11 rounded-xl" />
                                         </div>
                                         <div className="grid gap-2">
                                             <Label className="text-white/70">Description</Label>
-                                            <Textarea value={item.description} onChange={(e) => handleItineraryChange(index, 'description', e.target.value)} placeholder="Activities for the day..." className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 min-h-[100px] rounded-xl" />
+                                            <Textarea required value={item.description} onChange={(e) => handleItineraryChange(index, 'description', e.target.value)} placeholder="Activities for the day..." className="bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 min-h-[100px] rounded-xl" />
                                         </div>
                                         <div className="grid gap-2">
                                             <Label className="text-white/70">Highlight Activity (optional)</Label>
@@ -364,7 +394,7 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                         <div className="space-y-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="images" className="text-white/70">Image URLs (One per line, first = hero)</Label>
-                                <Textarea id="images" className="min-h-[150px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={imagesText} onChange={(e) => setImagesText(e.target.value)} placeholder="/images/home/signature-heritage.png&#10;/images/home/pkg_ramayana_1772119639135.png" />
+                                <Textarea id="images" required className="min-h-[150px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={imagesText} onChange={(e) => setImagesText(e.target.value)} placeholder="/images/home/signature-heritage.png&#10;/images/home/pkg_ramayana_1772119639135.png" />
                             </div>
                             {imagesText.split('\n').filter((s: string) => s.trim()).length > 0 && (
                                 <div className="grid grid-cols-3 gap-4">
@@ -389,7 +419,7 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                         <div className="grid gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="tags" className="text-white/70">Tags (One per line)</Label>
-                                <Textarea id="tags" className="min-h-[120px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="Luxury&#10;First-Time&#10;Couples&#10;Private Guide&#10;Boutique Stays" />
+                                <Textarea id="tags" required className="min-h-[120px] bg-white/[0.04] border-white/[0.08] text-white focus-visible:ring-antique-gold/20 placeholder:text-white/20 rounded-xl" value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="Luxury&#10;First-Time&#10;Couples&#10;Private Guide&#10;Boutique Stays" />
                             </div>
                             {tagsText.split('\n').filter((s: string) => s.trim()).length > 0 && (
                                 <div className="flex flex-wrap gap-2">

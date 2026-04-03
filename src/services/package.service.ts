@@ -7,7 +7,7 @@ export const PackageService = {
             await connectDB();
             const packages = await Package.find({
                 isPublished: true,
-                isDeleted: false,
+                isDeleted: { $ne: true },
                 isFeaturedHome: true,
             })
                 .sort({ homeRank: 1 })
@@ -32,7 +32,7 @@ export const PackageService = {
                 console.log('[PackageService] DB connected, finding packages...');
                 const packages = await Package.find({
                     isPublished: true,
-                    isDeleted: false,
+                    isDeleted: { $ne: true },
                 })
                     .sort({ homeRank: -1, createdAt: -1 })
                     .limit(9)
@@ -51,7 +51,7 @@ export const PackageService = {
     async getDashboardPackages() {
         try {
             await connectDB();
-            const packages = await Package.find({ isDeleted: false }).sort({ createdAt: -1 }).lean();
+            const packages = await Package.find({ isDeleted: { $ne: true } }).sort({ createdAt: -1 }).lean();
             return JSON.parse(JSON.stringify(packages));
         } catch (error) {
             console.error("[PackageService] Failed to fetch dashboard packages:", error);

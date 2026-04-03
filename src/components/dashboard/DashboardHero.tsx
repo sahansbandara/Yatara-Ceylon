@@ -10,7 +10,7 @@ interface DashboardHeroProps {
 
 export function DashboardHero({ title, subtitle, badge, action }: DashboardHeroProps) {
     return (
-        <div className="dashboard-hero-glass px-6 py-5 md:px-8 md:py-6">
+        <div className="dashboard-hero-glass px-6 py-5 md:px-8 md:py-6 overflow-visible relative z-50">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
                 <div>
                     <div className="flex items-center gap-3 mb-1">

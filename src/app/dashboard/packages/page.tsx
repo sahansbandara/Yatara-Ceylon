@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { Button } from '@/components/ui/button';
 import PackageTable from '@/components/dashboard/PackageTable';
 import { PackageService } from '@/services/package.service';

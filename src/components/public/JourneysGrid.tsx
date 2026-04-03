@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+// Using native <img> instead of next/image to handle potentially invalid URLs from DB
 import { ArrowRight, SlidersHorizontal } from 'lucide-react';
 import PackagePriceDisplay from './PackagePriceDisplay';
 
@@ -108,21 +108,21 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
 
     const featuredJourneys = useMemo(() => {
         if (filtered.length === 0) return [];
-        
+
         // Find most popular (fallback to featured or first item)
-        const popular = filtered.find(p => p.slug === 'curated-kingdoms') || 
-                        filtered.find(p => p.isFeatured) || 
-                        filtered[0];
-                        
+        const popular = filtered.find(p => p.slug === 'curated-kingdoms') ||
+            filtered.find(p => p.isFeatured) ||
+            filtered[0];
+
         // Find most affordable
         const affordable = [...filtered]
             .filter(p => p._id !== popular._id && p.priceMin > 0)
-            .sort((a,b) => a.priceMin - b.priceMin)[0];
-            
+            .sort((a, b) => a.priceMin - b.priceMin)[0];
+
         // Find most luxury
         const luxury = [...filtered]
             .filter(p => p._id !== popular._id && p._id !== affordable?._id)
-            .sort((a,b) => b.priceMin - a.priceMin)[0];
+            .sort((a, b) => b.priceMin - a.priceMin)[0];
 
         return [popular, affordable, luxury].filter(Boolean);
     }, [filtered]);
@@ -208,14 +208,13 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                         {/* Most Popular (2x2) */}
                         {featuredJourneys[0] && (
                             <Link href={`/packages/${featuredJourneys[0].slug}`} className="group relative block rounded-2xl overflow-hidden lg:col-span-2 lg:row-span-2 h-[400px] lg:h-full">
-                                <Image
+                                <img
                                     src={featuredJourneys[0].images?.[0] || '/images/home/curated-kingdoms.png'}
                                     alt={featuredJourneys[0].title}
-                                    fill
-                                    className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                                
+
                                 <div className="absolute top-6 left-6">
                                     <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
                                         Most Popular
@@ -255,20 +254,19 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                         {/* Most Affordable (1x1) */}
                         {featuredJourneys[1] && (
                             <Link href={`/packages/${featuredJourneys[1].slug}`} className="group relative block rounded-2xl overflow-hidden lg:col-span-1 lg:row-span-1 h-[320px] lg:h-full">
-                                <Image
+                                <img
                                     src={featuredJourneys[1].images?.[0] || '/images/home/curated-kingdoms.png'}
                                     alt={featuredJourneys[1].title}
-                                    fill
-                                    className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                                
+
                                 <div className="absolute top-5 left-5">
                                     <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
                                         Most Affordable
                                     </span>
                                 </div>
-                                
+
                                 <div className="absolute bottom-0 left-0 right-0 p-6">
                                     <h3 className="text-xl font-display text-white mb-2 group-hover:text-antique-gold transition-colors duration-500 line-clamp-1">
                                         {featuredJourneys[1].title}
@@ -290,14 +288,13 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                         {/* Most Luxury (1x1) */}
                         {featuredJourneys[2] && (
                             <Link href={`/packages/${featuredJourneys[2].slug}`} className="group relative block rounded-2xl overflow-hidden lg:col-span-1 lg:row-span-1 h-[320px] lg:h-full">
-                                <Image
+                                <img
                                     src={featuredJourneys[2].images?.[0] || '/images/home/curated-kingdoms.png'}
                                     alt={featuredJourneys[2].title}
-                                    fill
-                                    className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                                
+
                                 <div className="absolute top-5 left-5">
                                     <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
                                         Most Luxury
@@ -333,11 +330,10 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                             <article className="rounded-2xl overflow-hidden bg-white border border-gray-100/80 flex flex-col h-full hover:shadow-lg hover:shadow-black/[0.04] transition-all duration-500">
                                 {/* Image — 4:3 ratio */}
                                 <div className="relative aspect-[4/3] overflow-hidden">
-                                    <Image
+                                    <img
                                         src={pkg.images?.[0] || '/images/home/curated-kingdoms.png'}
                                         alt={pkg.title}
-                                        fill
-                                        className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1000ms] ease-out"
+                                        className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-[1000ms] ease-out"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 

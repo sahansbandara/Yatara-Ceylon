@@ -21,6 +21,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
+import DashboardSearch from "@/components/dashboard/DashboardSearch";
 
 const STATUS_MAP: Record<string, string> = {
   NEW: 'status-pill-info',
@@ -99,6 +100,7 @@ export default async function DashboardPage() {
         title="Command Center"
         subtitle={`${formatTodayDate()} — Overview & operations hub`}
         badge="Admin"
+        action={<DashboardSearch bookings={stats.recentBookings} />}
       />
 
       {/* KPI Grid — Row 1 */}

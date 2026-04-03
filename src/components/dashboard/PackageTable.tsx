@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Edit, Eye, EyeOff, Star, Trash2, X } from 'lucide-react';
+import { Download, Edit, Eye, EyeOff, Search, Star, Trash2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useTableSort } from '@/hooks/useTableSort';
@@ -32,13 +32,22 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
     const [packages, setPackages] = useState<Package[]>(initialPackages);
     const [loading, setLoading] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [searchQuery, setSearchQuery] = useState('');
     const router = useRouter();
     const { sortedData, sortConfig, requestSort } = useTableSort(packages, {
         key: 'title',
         direction: 'asc',
     });
 
-    const visiblePackages = sortedData;
+    const visiblePackages = sortedData.filter((pkg) => {
+        if (!searchQuery.trim()) return true;
+        const q = searchQuery.toLowerCase();
+        return (
+            pkg.title.toLowerCase().includes(q) ||
+            pkg.slug.toLowerCase().includes(q) ||
+            (pkg.duration || '').toLowerCase().includes(q)
+        );
+    });
     const allVisibleSelected =
         visiblePackages.length > 0 &&
         visiblePackages.every((pkg) => selectedIds.has(pkg._id));
@@ -184,6 +193,19 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
 
     return (
         <div className="dashboard-table-glass overflow-hidden rounded-2xl w-full">
+            {/* Search Bar */}
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+                <div className="relative max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <input
+                        type="text"
+                        placeholder="Search packages by name..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full h-10 pl-10 pr-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-antique-gold/20 transition-all"
+                    />
+                </div>
+            </div>
             {selectedIds.size > 0 && (
                 <div className="flex flex-col gap-3 border-b border-white/[0.06] bg-antique-gold/[0.05] px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex items-center gap-3">
@@ -299,9 +321,8 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                             visiblePackages.map((pkg) => (
                                 <tr
                                     key={pkg._id}
-                                    className={`border-b border-white/[0.04] last:border-b-0 transition-colors hover:bg-antique-gold/[0.03] ${
-                                        selectedIds.has(pkg._id) ? 'bg-antique-gold/[0.04]' : ''
-                                    }`}
+                                    className={`border-b border-white/[0.04] last:border-b-0 transition-colors hover:bg-antique-gold/[0.03] ${selectedIds.has(pkg._id) ? 'bg-antique-gold/[0.04]' : ''
+                                        }`}
                                 >
                                     <td className="px-3 py-3.5">
                                         <input
@@ -314,12 +335,11 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <div className="relative h-10 w-14 rounded overflow-hidden bg-white/5 border border-white/10">
-                                            {pkg.images && pkg.images.length > 0 ? (
-                                                <Image
+                                            {pkg.images && pkg.images.length > 0 && pkg.images[0]?.trim() ? (
+                                                <img
                                                     src={pkg.images[0]}
                                                     alt={pkg.title}
-                                                    fill
-                                                    className="object-cover"
+                                                    className="object-cover w-full h-full absolute inset-0"
                                                 />
                                             ) : (
                                                 <div className="flex items-center justify-center h-full text-[9px] uppercase tracking-wider text-white/20">
@@ -347,11 +367,10 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                                     <td className="px-5 py-3.5">
                                         <div className="flex gap-2 items-center">
                                             <span
-                                                className={`status-pill ${
-                                                    pkg.isPublished
-                                                        ? 'status-pill-success'
-                                                        : 'status-pill-neutral'
-                                                }`}
+                                                className={`status-pill ${pkg.isPublished
+                                                    ? 'status-pill-success'
+                                                    : 'status-pill-neutral'
+                                                    }`}
                                             >
                                                 {pkg.isPublished ? 'Published' : 'Draft'}
                                             </span>
@@ -406,7 +425,10 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                                     colSpan={7}
                                     className="px-5 py-12 text-center text-white/40 text-sm"
                                 >
-                                    No packages found.
+                                    {searchQuery.trim()
+                                        ? <div><span className="text-white/60 font-medium">No packages found</span><br /><span className="text-white/30 text-xs">Try a different search term</span></div>
+                                        : 'No packages found.'
+                                    }
                                 </td>
                             </tr>
                         )}

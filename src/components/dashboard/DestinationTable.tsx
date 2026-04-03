@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Edit, Eye, EyeOff, Trash2, X } from 'lucide-react';
+import { Download, Edit, Eye, EyeOff, Search, Trash2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+// Using native <img> instead of next/image to handle potentially invalid URLs from DB
 import { useTableSort } from '@/hooks/useTableSort';
 import SortableHeader from './SortableHeader';
 import { downloadCsv } from '@/lib/export-utils';
@@ -28,13 +28,22 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
     const [destinations, setDestinations] = useState<Destination[]>(initialDestinations);
     const [loading, setLoading] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [searchQuery, setSearchQuery] = useState('');
     const router = useRouter();
     const { sortedData, sortConfig, requestSort } = useTableSort(destinations, {
         key: 'title',
         direction: 'asc',
     });
 
-    const visibleDestinations = sortedData;
+    const visibleDestinations = sortedData.filter((dest) => {
+        if (!searchQuery.trim()) return true;
+        const q = searchQuery.toLowerCase();
+        return (
+            dest.title.toLowerCase().includes(q) ||
+            dest.slug.toLowerCase().includes(q) ||
+            (dest.location || '').toLowerCase().includes(q)
+        );
+    });
     const allVisibleSelected =
         visibleDestinations.length > 0 &&
         visibleDestinations.every((destination) => selectedIds.has(destination._id));
@@ -177,6 +186,19 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
 
     return (
         <div className="dashboard-table-glass overflow-hidden rounded-2xl w-full">
+            {/* Search Bar */}
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+                <div className="relative max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <input
+                        type="text"
+                        placeholder="Search destinations by name..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full h-10 pl-10 pr-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-antique-gold/20 transition-all"
+                    />
+                </div>
+            </div>
             {selectedIds.size > 0 && (
                 <div className="flex flex-col gap-3 border-b border-white/[0.06] bg-antique-gold/[0.05] px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex items-center gap-3">
@@ -285,11 +307,10 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
                             visibleDestinations.map((destination) => (
                                 <tr
                                     key={destination._id}
-                                    className={`border-b border-white/[0.04] last:border-b-0 transition-colors hover:bg-antique-gold/[0.03] ${
-                                        selectedIds.has(destination._id)
+                                    className={`border-b border-white/[0.04] last:border-b-0 transition-colors hover:bg-antique-gold/[0.03] ${selectedIds.has(destination._id)
                                             ? 'bg-antique-gold/[0.04]'
                                             : ''
-                                    }`}
+                                        }`}
                                 >
                                     <td className="px-3 py-3.5">
                                         <input
@@ -302,12 +323,11 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <div className="relative h-10 w-14 rounded overflow-hidden bg-white/5 border border-white/10">
-                                            {destination.images && destination.images[0] ? (
-                                                <Image
+                                            {destination.images && destination.images[0]?.trim() ? (
+                                                <img
                                                     src={destination.images[0]}
                                                     alt={destination.title}
-                                                    fill
-                                                    className="object-cover"
+                                                    className="object-cover w-full h-full absolute inset-0"
                                                 />
                                             ) : (
                                                 <div className="flex items-center justify-center h-full text-[9px] uppercase tracking-wider text-white/20">
@@ -333,11 +353,10 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <span
-                                            className={`status-pill ${
-                                                destination.isPublished
+                                            className={`status-pill ${destination.isPublished
                                                     ? 'status-pill-success'
                                                     : 'status-pill-neutral'
-                                            }`}
+                                                }`}
                                         >
                                             {destination.isPublished ? 'Published' : 'Draft'}
                                         </span>
@@ -387,7 +406,10 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
                                     colSpan={6}
                                     className="px-5 py-12 text-center text-white/40 text-sm"
                                 >
-                                    No destinations found.
+                                    {searchQuery.trim()
+                                        ? <div><span className="text-white/60 font-medium">No destinations found</span><br /><span className="text-white/30 text-xs">Try a different search term</span></div>
+                                        : 'No destinations found.'
+                                    }
                                 </td>
                             </tr>
                         )}

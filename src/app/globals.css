@@ -473,7 +473,6 @@
   border-radius: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
-  overflow: hidden;
 }
 
 .dashboard-hero-glass::before {
@@ -2154,9 +2153,17 @@
 
 /* Gold pulse ring animation */
 @keyframes goldPulseRing {
-  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-  70% { box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 12px rgba(212, 175, 55, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+  }
 }
 
 .gold-pulse-ring {

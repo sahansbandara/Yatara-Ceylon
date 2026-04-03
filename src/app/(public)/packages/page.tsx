@@ -17,7 +17,7 @@ async function getJourneys() {
         await connectDB();
         const packages = await Package.find({
             isPublished: true,
-            isDeleted: false,
+            isDeleted: { $ne: true },
             type: { $ne: 'transfer' },
             $or: [{ type: 'journey' }, { type: { $exists: false } }],
         })
