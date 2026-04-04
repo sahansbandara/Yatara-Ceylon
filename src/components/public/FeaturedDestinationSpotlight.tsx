@@ -18,9 +18,11 @@ interface FeaturedDestinationSpotlightProps {
         idealNights?: string;
         travelStyleTags?: string[];
     };
+    badgeLabel?: string;
+    reverse?: boolean;
 }
 
-export default function FeaturedDestinationSpotlight({ destination }: FeaturedDestinationSpotlightProps) {
+export default function FeaturedDestinationSpotlight({ destination, badgeLabel = "Editor's Pick", reverse = false }: FeaturedDestinationSpotlightProps) {
     const heroImage = normalizeImageUrl(destination.images?.[0], `/images/districts/${destination.slug}.jpg`);
 
     return (
@@ -29,102 +31,107 @@ export default function FeaturedDestinationSpotlight({ destination }: FeaturedDe
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="relative"
+            className="relative w-full"
         >
-            {/* Section header */}
-            <div className="flex items-center gap-3 mb-8">
-                <Sparkles className="h-5 w-5 text-antique-gold" />
-                <h2 className="text-sm tracking-[0.3em] uppercase text-deep-emerald/60 font-sans font-medium">
-                    Editor&apos;s Pick
+            {/* Section badge/header placed elegantly above the block */}
+            <div className={`flex items-center gap-3 mb-8 ${reverse ? 'md:flex-row-reverse' : ''}`}>
+                <Sparkles className="h-4 w-4 text-antique-gold animate-pulse" />
+                <h2 className="text-[11px] sm:text-xs tracking-[0.3em] uppercase text-deep-emerald/80 font-sans font-medium">
+                    {badgeLabel}
                 </h2>
-                <div className="flex-1 h-px bg-gradient-to-r from-antique-gold/30 to-transparent" />
+                <div className={`flex-1 h-px bg-gradient-to-r ${reverse ? 'from-transparent to-antique-gold/30' : 'from-antique-gold/30 to-transparent'}`} />
             </div>
 
-            {/* Split card */}
             <Link
                 href={`/destinations/${destination.slug}`}
-                className="group block"
+                className="group block relative"
             >
-                <div className="liquid-glass-card rounded-3xl overflow-hidden">
-                    <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[420px]">
-                        {/* Image side — 3/5 */}
-                        <div className="relative lg:col-span-3 h-[280px] sm:h-[320px] lg:h-auto overflow-hidden">
+                <div className="relative z-10 w-full rounded-[2rem] overflow-hidden group-hover:shadow-2xl transition-all duration-[1000ms] shadow-lg shadow-black/5">
+                    <div className={`flex flex-col ${reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-stretch`}>
+                        {/* Image side */}
+                        <div className="relative w-full flex-1 h-[340px] sm:h-[400px] lg:h-auto min-h-[480px] overflow-hidden">
                             <Image
                                 src={heroImage}
                                 alt={`${destination.title} — featured luxury destination in Sri Lanka`}
                                 fill
-                                className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1400ms] ease-out"
+                                className="object-cover transform group-hover:scale-105 group-hover:-rotate-1 transition-all duration-[2000ms] ease-out"
                                 sizes="(max-width: 1024px) 100vw, 60vw"
                                 priority
                             />
-                            {/* Gradient fade into content */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/60 hidden lg:block" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent lg:hidden" />
+                            {/* Cinematic gradients */}
+                            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-1000" />
 
-                            {/* Region badge */}
+                            {/* Floating region pill */}
                             {destination.region && (
-                                <div className="absolute top-5 left-5 z-10">
-                                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[10px] tracking-[0.2em] uppercase font-medium text-white bg-deep-emerald/70 backdrop-blur-md border border-white/15 rounded-full">
-                                        <MapPin className="h-3 w-3" />
+                                <div className="absolute top-6 left-6 z-20">
+                                    <span className="inline-flex items-center gap-1.5 px-4 py-2 text-[10px] tracking-[0.2em] uppercase font-medium text-white bg-black/20 backdrop-blur-md border border-white/20 rounded-full shadow-lg">
+                                        <MapPin className="h-3.5 w-3.5" />
                                         {destination.region}
                                     </span>
                                 </div>
                             )}
                         </div>
 
-                        {/* Content side — 2/5 */}
-                        <div className="lg:col-span-2 flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-                            {/* Luxury micro-label */}
-                            {destination.luxuryLabel && (
-                                <p className="text-[10px] tracking-[0.25em] text-antique-gold font-medium uppercase mb-3">
-                                    {destination.luxuryLabel}
-                                </p>
-                            )}
-
-                            {/* Title */}
-                            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display text-deep-emerald leading-tight mb-4 group-hover:text-antique-gold/80 transition-colors duration-500">
-                                {destination.title}
-                            </h3>
-
-                            {/* Description */}
-                            <p className="text-sm text-deep-emerald/60 leading-relaxed mb-6 line-clamp-3">
-                                {destination.description}
-                            </p>
-
-                            {/* Meta row */}
-                            <div className="flex items-center gap-4 text-[11px] tracking-[0.12em] text-deep-emerald/45 uppercase mb-6">
-                                {destination.bestSeason && (
-                                    <span className="flex items-center gap-1.5">
-                                        <Calendar className="h-3.5 w-3.5" />
-                                        {destination.bestSeason}
-                                    </span>
-                                )}
-                                {destination.idealNights && (
-                                    <span className="flex items-center gap-1.5">
-                                        <Moon className="h-3.5 w-3.5" />
-                                        {destination.idealNights} nights
-                                    </span>
-                                )}
+                        {/* Content side — overlapping the image slightly visually via offset or just elegant padding */}
+                        <div className={`w-full lg:w-[38%] bg-off-white relative flex flex-col justify-center p-8 sm:p-10 lg:p-12 ${reverse ? 'lg:-ml-8' : 'lg:-mr-8'} z-10 transform ${reverse ? 'lg:translate-x-8' : 'lg:-translate-x-8'} rounded-[2rem] border border-deep-emerald/5 shadow-2xl shadow-deep-emerald/5 my-0 lg:my-8 group-hover:border-antique-gold/20 transition-colors duration-700`}>
+                            {/* Watermark in background */}
+                            <div className="absolute top-4 right-6 text-7xl font-display text-deep-emerald/[0.02] pointer-events-none select-none z-0">
+                                {destination.title.substring(0, 2).toUpperCase()}
                             </div>
 
-                            {/* Travel style tags */}
-                            {destination.travelStyleTags && destination.travelStyleTags.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mb-8">
-                                    {destination.travelStyleTags.slice(0, 4).map((tag) => (
-                                        <span
-                                            key={tag}
-                                            className="px-3 py-1 text-[10px] tracking-[0.15em] uppercase text-deep-emerald/50 bg-deep-emerald/[0.04] border border-deep-emerald/10 rounded-full"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
+                            <div className="relative z-10">
+                                {/* Luxury micro-label */}
+                                {destination.luxuryLabel && (
+                                    <p className="text-[10px] tracking-[0.3em] text-antique-gold font-medium uppercase mb-4">
+                                        {destination.luxuryLabel}
+                                    </p>
+                                )}
 
-                            {/* CTA */}
-                            <div className="flex items-center gap-2 text-sm font-medium text-antique-gold group-hover:gap-3 transition-all duration-500">
-                                <span>Explore destination</span>
-                                <ArrowRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-500" />
+                                {/* Title */}
+                                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display text-deep-emerald leading-[1.1] mb-5 group-hover:text-antique-gold transition-colors duration-700">
+                                    {destination.title}
+                                </h3>
+
+                                {/* Meta row */}
+                                <div className="flex items-center gap-5 text-[11px] tracking-[0.15em] text-deep-emerald/60 uppercase mb-6 font-medium">
+                                    {destination.bestSeason && (
+                                        <span className="flex items-center gap-2">
+                                            <Calendar className="h-3.5 w-3.5 text-antique-gold/70" />
+                                            {destination.bestSeason}
+                                        </span>
+                                    )}
+                                    {destination.idealNights && (
+                                        <span className="flex items-center gap-2">
+                                            <Moon className="h-3.5 w-3.5 text-antique-gold/70" />
+                                            {destination.idealNights} nights
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Description */}
+                                <p className="text-[13px] text-deep-emerald/70 leading-relaxed mb-8 max-w-md font-light">
+                                    {destination.description}
+                                </p>
+
+                                {/* Travel style tags */}
+                                {destination.travelStyleTags && destination.travelStyleTags.length > 0 && (
+                                    <div className="flex flex-wrap gap-2.5 mb-10">
+                                        {destination.travelStyleTags.slice(0, 3).map((tag) => (
+                                            <span
+                                                key={tag}
+                                                className="px-3.5 py-1.5 text-[9px] tracking-[0.15em] uppercase text-deep-emerald/60 bg-transparent border border-deep-emerald/15 rounded-full"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* CTA */}
+                                <div className="inline-flex items-center gap-3 px-6 py-3 bg-deep-emerald text-white text-[10px] tracking-[0.2em] font-medium uppercase rounded-full hover:bg-antique-gold transition-all duration-500 shadow-lg shadow-deep-emerald/20 hover:shadow-antique-gold/30 hover:gap-4">
+                                    <span>Discover More</span>
+                                    <ArrowRight className="h-3.5 w-3.5" />
+                                </div>
                             </div>
                         </div>
                     </div>
