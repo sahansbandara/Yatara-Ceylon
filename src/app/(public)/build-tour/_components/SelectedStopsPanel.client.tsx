@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import {
     GripVertical, X, Sparkles, MapPin, Trash2, Wand2, Send, Clock, Save, Loader2,
 } from 'lucide-react';
@@ -43,14 +43,14 @@ function SortableStopItem({
             style={style}
             className={`group relative flex items-center gap-2.5 py-3 px-3.5 rounded-xl transition-all duration-300 border ${isDragging
                 ? 'bg-antique-gold/10 border-antique-gold/25 shadow-lg shadow-antique-gold/10'
-                : 'border-transparent hover:bg-white/[0.03] hover:border-white/[0.06]'
+                : 'border-transparent hover:bg-deep-emerald/[0.03] hover:border-deep-emerald/[0.06]'
                 }`}
         >
             {/* Drag handle */}
             <button
                 {...attributes}
                 {...listeners}
-                className="p-0.5 cursor-grab active:cursor-grabbing text-white/15 hover:text-antique-gold/50 transition-colors flex-shrink-0"
+                className="p-0.5 cursor-grab active:cursor-grabbing text-deep-emerald/20 hover:text-antique-gold/50 transition-colors flex-shrink-0"
             >
                 <GripVertical className="w-3.5 h-3.5" />
             </button>
@@ -62,7 +62,7 @@ function SortableStopItem({
 
             {/* Info */}
             <div className="flex-1 min-w-0">
-                <p className="font-serif text-[12px] text-white/85 truncate">{stop.place.name}</p>
+                <p className="font-serif text-[12px] text-deep-emerald/85 truncate">{stop.place.name}</p>
                 <div className="flex items-center gap-2 mt-0.5">
                     <span
                         className="text-[7px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded"
@@ -70,8 +70,8 @@ function SortableStopItem({
                     >
                         {CATEGORY_LABELS[stop.place.category as PlaceCategory] || stop.place.category}
                     </span>
-                    <span className="text-white/15 text-[8px]">{stop.place.district}</span>
-                    <div className="flex items-center gap-0.5 text-white/15">
+                    <span className="text-deep-emerald/60 text-[8px]">{stop.place.district}</span>
+                    <div className="flex items-center gap-0.5 text-deep-emerald/60">
                         <Clock className="w-2 h-2" />
                         <span className="text-[7px]">
                             {stop.place.estimatedVisitMinutes < 60
@@ -86,7 +86,7 @@ function SortableStopItem({
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                 <button
                     onClick={(e) => { e.stopPropagation(); onRemove(stop.stopId); }}
-                    className="p-1.5 text-white/15 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+                    className="p-1.5 text-deep-emerald/20 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
                 >
                     <X className="w-3 h-3" />
                 </button>
@@ -117,6 +117,18 @@ export default function SelectedStopsPanel({
     const getTripEstimate = useBuildTourStore((s) => s.getTripEstimate);
     const [savingPlan, setSavingPlan] = useState(false);
     const [saveMessage, setSaveMessage] = useState<string | null>(null);
+    const [user, setUser] = useState<{ role: string } | null>(null);
+
+    useEffect(() => {
+        fetch('/api/auth/me')
+            .then(res => res.json())
+            .then(data => {
+                if (data.user) {
+                    setUser({ role: data.user.role });
+                }
+            })
+            .catch(() => { });
+    }, []);
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -201,11 +213,11 @@ export default function SelectedStopsPanel({
                 <div className="w-14 h-14 rounded-2xl bg-antique-gold/5 border border-antique-gold/10 flex items-center justify-center mb-4">
                     <MapPin className="w-6 h-6 text-antique-gold/25" strokeWidth={1.2} />
                 </div>
-                <h3 className="font-serif text-white/55 text-sm tracking-wide mb-2">
+                <h3 className="font-serif text-deep-emerald/90 text-sm tracking-wide mb-2">
                     No stops yet
                 </h3>
-                <p className="text-white/20 text-[10px] font-light leading-relaxed max-w-[200px]">
-                    Switch to <span className="text-antique-gold/50">Explore</span> tab and add places to build your trip.
+                <p className="text-deep-emerald/60 text-[10px] font-light leading-relaxed max-w-[200px]">
+                    Switch to <span className="text-antique-gold/60">Explore</span> tab and add places to build your trip.
                 </p>
             </div>
         );
@@ -214,10 +226,10 @@ export default function SelectedStopsPanel({
     return (
         <div className="h-full flex flex-col">
             {/* Header with actions */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-deep-emerald/[0.06]">
                 <div className="flex items-center gap-2">
                     <Sparkles className="w-3.5 h-3.5 text-antique-gold/50" />
-                    <span className="text-[10px] text-white/35 uppercase tracking-[0.2em] font-nav">
+                    <span className="text-[10px] text-deep-emerald/80 uppercase tracking-[0.2em] font-nav">
                         {stops.length} Stops · {uniqueDistricts.size} Districts
                     </span>
                 </div>
@@ -233,7 +245,7 @@ export default function SelectedStopsPanel({
                     )}
                     <button
                         onClick={clearStops}
-                        className="flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-red-500/10 text-white/15 hover:text-red-400 transition-all text-[9px] uppercase tracking-wider font-nav"
+                        className="flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-red-500/10 text-deep-emerald/60 hover:text-red-500 transition-all text-[9px] uppercase tracking-wider font-nav"
                     >
                         <Trash2 className="w-2.5 h-2.5" />
                         Clear
@@ -243,21 +255,21 @@ export default function SelectedStopsPanel({
 
             {/* Trip estimate — glass mini bar */}
             {tripEstimate && (
-                <div className="px-4 py-2.5 border-b border-white/5 bg-antique-gold/[0.02]">
+                <div className="px-4 py-2.5 border-b border-deep-emerald/[0.06] bg-antique-gold/[0.03]">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1.5">
-                            <span className="text-white/15 text-[8px] uppercase tracking-wider font-nav">Distance</span>
-                            <span className="text-white/55 text-[11px] font-serif">~{tripEstimate.totalKm} km</span>
+                            <span className="text-deep-emerald/60 text-[8px] uppercase tracking-wider font-nav">Distance</span>
+                            <span className="text-deep-emerald/90 text-[11px] font-serif">~{tripEstimate.totalKm} km</span>
                         </div>
-                        <div className="w-px h-3 bg-white/8" />
+                        <div className="w-px h-3 bg-deep-emerald/8" />
                         <div className="flex items-center gap-1.5">
-                            <span className="text-white/15 text-[8px] uppercase tracking-wider font-nav">Time</span>
-                            <span className="text-white/55 text-[11px] font-serif">~{tripEstimate.totalHours} hrs</span>
+                            <span className="text-deep-emerald/60 text-[8px] uppercase tracking-wider font-nav">Time</span>
+                            <span className="text-deep-emerald/90 text-[11px] font-serif">~{tripEstimate.totalHours} hrs</span>
                         </div>
-                        <div className="w-px h-3 bg-white/8" />
+                        <div className="w-px h-3 bg-deep-emerald/8" />
                         <div className="flex items-center gap-1.5">
-                            <span className="text-white/15 text-[8px] uppercase tracking-wider font-nav">Pace</span>
-                            <span className={`text-[11px] font-serif ${stops.length <= 3 ? 'text-emerald-400/60' : stops.length <= 6 ? 'text-antique-gold/60' : 'text-amber-400/60'}`}>
+                            <span className="text-deep-emerald/60 text-[8px] uppercase tracking-wider font-nav">Pace</span>
+                            <span className={`text-[11px] font-serif ${stops.length <= 3 ? 'text-emerald-600/60' : stops.length <= 6 ? 'text-antique-gold/70' : 'text-amber-600/60'}`}>
                                 {stops.length <= 3 ? 'Relaxed' : stops.length <= 6 ? 'Balanced' : 'Dense'}
                             </span>
                         </div>
@@ -284,18 +296,20 @@ export default function SelectedStopsPanel({
                 </DndContext>
             </div>
 
-            {/* Send to concierge — glass CTA */}
+            {/* Send to concierge — CTA */}
             {stops.length >= 2 && (
-                <div className="p-3 border-t border-white/5 bg-antique-gold/[0.02]">
+                <div className="p-3 border-t border-deep-emerald/[0.06] bg-antique-gold/[0.03]">
                     <div className="grid gap-2">
-                        <button
-                            onClick={handleSavePlan}
-                            disabled={savingPlan}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/5 border border-white/10 text-white font-serif text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-antique-gold/40 hover:text-antique-gold transition-all disabled:opacity-60"
-                        >
-                            {savingPlan ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                            {saveLabel}
-                        </button>
+                        {user?.role === 'USER' && (
+                            <button
+                                onClick={handleSavePlan}
+                                disabled={savingPlan}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-deep-emerald/[0.04] border border-deep-emerald/10 text-deep-emerald font-serif text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-antique-gold/40 hover:text-antique-gold transition-all disabled:opacity-60"
+                            >
+                                {savingPlan ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                                {saveLabel}
+                            </button>
+                        )}
                         <button
                             onClick={() => {
                                 const itinerary = stops.map((s) => s.place.name).join(', ');
@@ -310,9 +324,9 @@ export default function SelectedStopsPanel({
                         </button>
                     </div>
                     {saveMessage ? (
-                        <p className="text-center text-white/35 text-[10px] font-light mt-2">{saveMessage}</p>
+                        <p className="text-center text-deep-emerald/80 text-[10px] font-light mt-2">{saveMessage}</p>
                     ) : null}
-                    <p className="text-center text-white/10 text-[8px] font-light mt-2">
+                    <p className="text-center text-deep-emerald/20 text-[8px] font-light mt-2">
                         Your concierge will refine routing, transfers, and luxury details.
                     </p>
                 </div>

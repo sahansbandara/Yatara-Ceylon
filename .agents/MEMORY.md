@@ -12,6 +12,9 @@
 - Row hover effects use `hover:bg-white/[0.02]` for subtlety
 - Pagination with page number buttons provides better UX than just prev/next
 - Font choices: `font-display` for titles, `font-sans` for body text
+- Full-image background cards with gradient overlays (`from-black/90 via-black/20 to-transparent`) for premium look
+- Text on dark images: use `text-white` with `drop-shadow-md` for headability
+- Role-based UI: fetch `/api/auth/me` in `useEffect` and conditionally render buttons based on `user.role`
 
 ## Dependencies & Versions
 - Next.js 15 with 'use client' components
@@ -33,6 +36,9 @@
 - Booking timeline fetches from AuditLog by entity+entityId, enriched with User names
 - Analytics date range uses URL searchParams (`?months=12`), server component re-fetches on navigation
 - Finance date filter uses URL searchParams (`?from=...&to=...`), server component re-fetches
+- Save Plan restricted to USER role — `POST /api/plans` uses `withAuth` + role check, returns 403 for non-USER
+- Bespoke Tour planner uses Zustand store (`useBuildTourStore`) for trip state management
+- Light theme uses `bg-off-white` with `deep-emerald` text and `antique-gold` accents
 
 ## Project Knowledge
 - Booking model has: bookingNo, customerName, phone, email, type, packageId, totalCost, paidAmount, remainingBalance, status, dates, etc.
@@ -44,3 +50,8 @@
 - CSV export for finance reports uses format=csv query param; returns text/csv with proper headers
 - Phone validation regex: `^\+?[\d\s\-\(\)]{7,}$` (supports international format, min 7 chars)
 - Password requirements: min 8 chars, 1 uppercase, 1 lowercase, 1 number
+- UserRole type: `'ADMIN' | 'STAFF' | 'USER' | 'VEHICLE_OWNER' | 'HOTEL_OWNER'` (from `src/lib/auth.ts`)
+- Bespoke Tour planner components live in `src/app/(public)/build-tour/_components/`
+- CustomPlan model stores user-built itineraries (`src/models/CustomPlan.ts`)
+- Auth cookie name: `toms_token`; verify via `getTokenFromRequest()` or `getSessionUser()`
+- Design system: `liquid-glass` = `bg-white/60 backdrop-blur-xl`; dark variant = `bg-white/[0.03]`

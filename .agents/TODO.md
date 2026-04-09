@@ -14,6 +14,14 @@
 - [x] Date-range filters on finance reporting dashboard (from/to with Apply/Clear) (2026-04-02)
 - [x] Booking activity timeline (audit log stream per booking with actor names) (2026-04-02)
 - [x] Bulk status updates for bookings (checkbox select + batch status change, max 50) (2026-04-02)
+- [x] Bespoke Tour page dark→light UI redesign (all 9 components) (2026-04-04)
+- [x] Full-image background cards for PopularTours + ThemeCarousel (2026-04-04)
+- [x] Text legibility fixes across planner panels (opacity 25%→60-90%) (2026-04-04)
+- [x] Role-based Save Plan — frontend hide + backend 403 for non-USER (2026-04-04)
+- [x] Admin dashboard packages view → luxury card grid (2026-04-03)
+- [x] Destinations page "liquid glass" filter toolbar (2026-04-04)
+- [x] Service layer refactoring — all DB queries moved to `src/services/` (2026-04-03)
+- [x] README.md rewrite with architecture diagrams (2026-04-03)
 
 ## In Progress
 (none)
@@ -92,22 +100,27 @@
 - Created bulk status update API (PATCH /api/bookings/bulk, max 50 per op)
 - Added checkbox selection + bulk action bar to bookings table
 
-**What to do next**: Column sorting on remaining tables (users, vehicles, partners, packages), mobile QA
+**What to do next**: Packages public page refinement, mobile QA pass
+
+## Last Session
+**Date**: 2026-04-04
+**What was done**:
+- Redesigned Bespoke Tour page from dark to light premium theme (all 9 components)
+- Fixed text legibility across planner panels (SelectedStopsPanel, RouteSummaryBar, ConciergePanel)
+- Converted PopularTours + ThemeCarousel to full-image background card layout
+- Implemented role-based Save Plan: button hidden for non-USER roles, API returns 403
+- Secured POST `/api/plans` with `withAuth` wrapper + USER role enforcement
+
+**What to do next**: Packages public page redesign, mobile responsiveness QA
 
 **Current state**:
-- All 9 Tier 1+2 nice-to-have features implemented and type-checked
-- No new TS errors introduced (verified via tsc --noEmit)
+- Dev server running on localhost:3000
+- All bespoke tour components updated and type-checked
+- Save Plan restricted to USER role on both frontend and backend
 
 **Files changed**:
-- `/src/app/api/bookings/route.ts` (dateFrom, dateTo, hasBalanceDue, sortBy, sortOrder params + duplicate detection)
-- `/src/app/api/bookings/bulk/route.ts` (created — bulk PATCH)
-- `/src/app/api/bookings/[id]/timeline/route.ts` (created — audit timeline)
-- `/src/app/api/invoices/[id]/route.ts` (added FINAL → VOID transition)
-- `/src/app/dashboard/bookings/page.tsx` (sorting, bulk select, filter wiring)
-- `/src/app/dashboard/bookings/[id]/page.tsx` (VoidInvoiceButton, BookingTimeline)
-- `/src/app/dashboard/analytics/page.tsx` (custom months range, AnalyticsDateFilter)
-- `/src/app/dashboard/finance/page.tsx` (date filter params, FinanceDateFilter)
-- `/src/components/dashboard/finance/VoidInvoiceButton.tsx` (created)
-- `/src/components/dashboard/finance/FinanceDateFilter.tsx` (created)
-- `/src/components/dashboard/analytics/AnalyticsDateFilter.tsx` (created)
-- `/src/components/dashboard/bookings/BookingTimeline.tsx` (created)
+- `src/app/(public)/build-tour/_components/PopularTours.tsx` (full-image cards)
+- `src/app/(public)/build-tour/_components/ThemeCarousel.tsx` (full-image cards)
+- `src/app/(public)/build-tour/_components/SelectedStopsPanel.client.tsx` (role-based save)
+- `src/app/(public)/build-tour/_components/RouteSummaryBar.client.tsx` (text opacity fix)
+- `src/app/api/plans/route.ts` (withAuth + USER role enforcement)

@@ -52,29 +52,7 @@ export default async function PartnersPage() {
                 />
             </div>
 
-            {/* Partner Type Tabs */}
-            <div className="flex flex-wrap gap-2">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-antique-gold/10 border border-antique-gold/20 text-antique-gold font-medium text-sm hover:bg-antique-gold/20 transition-colors">
-                    All Partners
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/70 font-medium text-sm hover:bg-white/10 transition-colors cursor-not-allowed opacity-50">
-                    Guides
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/70 font-medium text-sm hover:bg-white/10 transition-colors cursor-not-allowed opacity-50">
-                    Hotels
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/70 font-medium text-sm hover:bg-white/10 transition-colors cursor-not-allowed opacity-50">
-                    Drivers
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/70 font-medium text-sm hover:bg-white/10 transition-colors cursor-not-allowed opacity-50">
-                    Restaurants
-                </button>
-            </div>
-
-            {/* Table */}
-            <GlassPanel>
-                <PartnerTable initialPartners={partners} />
-            </GlassPanel>
+            <PartnerTable initialPartners={partners} />
         </div>
     );
 }

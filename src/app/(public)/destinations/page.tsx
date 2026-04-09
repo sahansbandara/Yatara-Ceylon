@@ -140,8 +140,8 @@ export default function DestinationsPage() {
 
                 {/* Gradient overlays for text contrast */}
                 <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/30 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-off-white via-off-white/60 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-off-white to-transparent pointer-events-none" />
 
                 {/* Content */}
                 <motion.div
@@ -164,10 +164,10 @@ export default function DestinationsPage() {
                             initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
                             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                             transition={{ delay: 0.4, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                            className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] font-display text-white leading-[1.05] mb-8 drop-shadow-2xl"
+                            className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] font-display text-white leading-[1.05] mb-8 drop-shadow-[0_4px_32px_rgba(0,0,0,0.8)] font-medium"
                         >
                             Discover Sri Lanka&apos;s
-                            <span className="block text-antique-gold font-serif italic font-light mt-2 drop-shadow-2xl">Hidden Treasures</span>
+                            <span className="block text-antique-gold font-serif italic mt-2 drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)] font-semibold">Hidden Treasures</span>
                         </motion.h1>
 
                         {/* Sub-headline */}
@@ -175,7 +175,7 @@ export default function DestinationsPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6, duration: 0.7 }}
-                            className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto leading-relaxed font-normal mb-12 drop-shadow-lg"
+                            className="text-base sm:text-lg text-white max-w-2xl mx-auto leading-relaxed mb-12 drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)] font-medium"
                         >
                             From mist-covered highlands to golden coastal sanctuaries — each destination
                             handpicked for the discerning traveller.

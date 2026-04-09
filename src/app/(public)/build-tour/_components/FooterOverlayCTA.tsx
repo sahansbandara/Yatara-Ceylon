@@ -1,59 +1,53 @@
-import { Send, Phone } from 'lucide-react';
+import { Send, Phone, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 export default function FooterOverlayCTA() {
     return (
-        <section className="relative py-32 overflow-hidden border-t border-white/10">
-            {/* Bright Image Background */}
-            <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: 'url(/images/footer/footer-bg.webp)' }}
-            />
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-8">
+            <div className="relative overflow-hidden rounded-3xl liquid-glass-gold">
+                {/* Decorative gradient orbs */}
+                <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-antique-gold/[0.06] blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-deep-emerald/[0.04] blur-3xl pointer-events-none" />
 
-            {/* Liquid Glass overlay - light/bright but ensuring text readability */}
-            <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f0d] via-[#0a0f0d]/50 to-transparent" />
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 p-8 sm:p-12 lg:p-16">
+                    <div className="max-w-lg">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Sparkles className="w-4 h-4 text-antique-gold" />
+                            <p className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-medium">
+                                Your Journey Awaits
+                            </p>
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display text-deep-emerald leading-tight mb-4">
+                            Ready to Turn Your Dream Into Reality?
+                        </h2>
+                        <p className="text-sm text-deep-emerald/50 leading-relaxed">
+                            Share your plan with our concierge team. We&apos;ll refine the route,
+                            arrange luxury transfers, and craft a journey uniquely yours.
+                        </p>
 
-            <div className="section-container relative z-10 text-center">
-                {/* Eyebrow */}
-                <div className="flex items-center justify-center gap-3 mb-6">
-                    <div className="h-px w-10 bg-antique-gold" />
-                    <span className="text-antique-gold drop-shadow-md text-[10px] tracking-[0.3em] uppercase font-serif font-bold">
-                        Your Journey Awaits
-                    </span>
-                    <div className="h-px w-10 bg-antique-gold" />
+                        {/* Trust line */}
+                        <p className="text-deep-emerald/30 text-[10px] uppercase tracking-[0.2em] mt-6 font-serif">
+                            500+ bespoke journeys crafted · Fixed pricing · No hidden fees
+                        </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <Link
+                            href="/inquire?source=build-tour-footer"
+                            className="group inline-flex items-center gap-3 px-8 py-4 bg-deep-emerald text-white text-xs tracking-[0.2em] font-medium uppercase rounded-full hover:bg-antique-gold transition-all duration-500 shadow-lg shadow-deep-emerald/20 hover:shadow-xl hover:shadow-antique-gold/30 hover:-translate-y-1"
+                        >
+                            <Send className="h-4 w-4" />
+                            <span>Request a Bespoke Proposal</span>
+                        </Link>
+                        <Link
+                            href="/contact"
+                            className="group inline-flex items-center gap-3 px-8 py-4 border border-deep-emerald/15 text-deep-emerald/60 text-xs tracking-[0.2em] font-medium uppercase rounded-full hover:bg-deep-emerald/5 hover:border-deep-emerald/25 transition-all duration-300"
+                        >
+                            <Phone className="h-3.5 w-3.5" />
+                            <span>Talk to a Curator</span>
+                        </Link>
+                    </div>
                 </div>
-
-                {/* Headline */}
-                <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-5 max-w-3xl mx-auto drop-shadow-xl saturate-150">
-                    Ready to Turn Your Dream Into Reality?
-                </h2>
-
-                <p className="text-white/90 text-sm sm:text-base font-light max-w-xl mx-auto mb-10 leading-relaxed drop-shadow-md">
-                    Share your plan with our concierge team. We&apos;ll refine the route, arrange luxury transfers, and craft a journey uniquely yours.
-                </p>
-
-                {/* CTAs */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a
-                        href="/inquire?source=build-tour-footer"
-                        className="flex items-center gap-2.5 px-8 py-4 bg-antique-gold text-deep-emerald font-serif text-xs uppercase tracking-[0.2em] rounded-lg hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-[1.05] transition-all duration-300 font-bold"
-                    >
-                        <Send className="w-4 h-4" />
-                        Request a Bespoke Proposal
-                    </a>
-                    <a
-                        href="/contact"
-                        className="flex items-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white font-serif text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-white/20 hover:border-antique-gold/50 transition-all duration-300 shadow-xl"
-                    >
-                        <Phone className="w-3.5 h-3.5" />
-                        Talk to a Curator
-                    </a>
-                </div>
-
-                {/* Subtle trust line */}
-                <p className="text-white/60 text-[10px] uppercase tracking-[0.3em] mt-12 font-serif font-medium drop-shadow">
-                    500+ bespoke journeys crafted · Fixed pricing · No hidden fees
-                </p>
             </div>
         </section>
     );

@@ -1,11 +1,10 @@
 import { Metadata } from 'next';
 import BuildTourHero from './_components/BuildTourHero';
 import QuickStartModes from './_components/QuickStartModes';
-import BuildTourShell from './_components/BuildTourShell.client';
+import BuildTourClient from './_components/BuildTourClient';
 import HowItWorks from './_components/HowItWorks';
 import PopularTours from './_components/PopularTours';
 import ThemeCarousel from './_components/ThemeCarousel';
-import BuildTourParallax from './_components/BuildTourParallax';
 import Testimonials from './_components/Testimonials';
 import FooterOverlayCTA from './_components/FooterOverlayCTA';
 
@@ -22,7 +21,7 @@ export default async function BuildTourPage({
     const { planId } = await searchParams;
 
     return (
-        <main className="bg-[#0a0f0d] min-h-screen">
+        <main className="bg-off-white min-h-screen">
             {/* 1. Hero — compact, product-led framing */}
             <BuildTourHero />
 
@@ -30,8 +29,8 @@ export default async function BuildTourPage({
             <QuickStartModes />
 
             {/* 3. Main planner — the star of the page */}
-            <div id="planner">
-                <BuildTourShell initialPlanId={planId} />
+            <div id="planner" className="w-full">
+                <BuildTourClient />
             </div>
 
             {/* 4. How it works — 3-step strip */}
@@ -47,10 +46,7 @@ export default async function BuildTourPage({
                 <ThemeCarousel />
             </div>
 
-            {/* 7. Story banner — emotional reinforcement (lower, not interrupting) */}
-            <BuildTourParallax />
-
-            {/* 8. Testimonials — dark theme, connected to planner value */}
+            {/* 7. Testimonials */}
             <Testimonials />
 
             {/* 9. Concierge CTA */}

@@ -357,7 +357,7 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
         updateMarkers();
     }, [updateMarkers]);
 
-    // Route polyline — gold luxury line
+    // Route polyline — gold luxury line (road-following only, no straight-line fallback)
     useEffect(() => {
         if (!L || !mapRef.current) return;
 
@@ -366,22 +366,15 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
             routeLayerRef.current = null;
         }
 
+        // Only render road-following geometry from OSRM — never straight lines
         if (route?.geometry && route.geometry.length > 0) {
             routeLayerRef.current = L.polyline(route.geometry, {
                 color: '#D4AF37',
-                weight: 3,
-                opacity: 0.8,
-                dashArray: '10, 6',
+                weight: 3.5,
+                opacity: 0.85,
                 smoothFactor: 1.5,
-            }).addTo(mapRef.current);
-        } else if (stops.length >= 2) {
-            const positions = stops.map((s) => [s.place.lat, s.place.lng] as [number, number]);
-            routeLayerRef.current = L.polyline(positions, {
-                color: '#D4AF37',
-                weight: 2.5,
-                opacity: 0.6,
-                dashArray: '8, 8',
-                smoothFactor: 1.5,
+                lineCap: 'round',
+                lineJoin: 'round',
             }).addTo(mapRef.current);
         }
     }, [L, route, stops]);

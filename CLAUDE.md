@@ -38,10 +38,12 @@ export default async function Page() {
 ```
 src/app/api/          → API route handlers (backend)
 src/app/(public)/     → Public pages
+src/app/(public)/build-tour/_components/ → Bespoke Tour planner components
 src/app/dashboard/    → Admin dashboard pages
 src/models/           → Mongoose schemas (backend only)
 src/services/         → Centralized DB query layer
 src/lib/              → Utilities (auth, db connection, currency, rbac)
+src/lib/trip/         → Tour planner store, types, and utilities
 src/components/       → React UI components
 scripts/              → Seed scripts and utilities
 docs/                 → Project documentation
@@ -52,3 +54,7 @@ docs/                 → Project documentation
 - Serialization: Services use `JSON.parse(JSON.stringify(data))` for plain objects
 - Auth: `getSessionUser()` from `src/lib/auth.ts` for session data
 - RBAC: `adminOnly()` / `staffOnly()` from `src/lib/rbac.ts`
+- Design: Light theme uses `bg-off-white`, `deep-emerald` text, `antique-gold` accents
+- Glass effect: `bg-white/60 backdrop-blur-xl border border-deep-emerald/10`
+- Role check (client): fetch `/api/auth/me` → `data.user.role`
+- Roles: `ADMIN | STAFF | USER | VEHICLE_OWNER | HOTEL_OWNER`

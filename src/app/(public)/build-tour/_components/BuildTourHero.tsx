@@ -1,8 +1,19 @@
 'use client';
 
+import { useRef } from 'react';
+import Image from 'next/image';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { MapPin, Sparkles, Map, Route, Users } from 'lucide-react';
 
 export default function BuildTourHero() {
+    const heroRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: heroRef,
+        offset: ['start start', 'end start'],
+    });
+    const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+    const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
     const scrollToBuilder = () => {
         document.getElementById('trip-builder')?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -12,91 +23,110 @@ export default function BuildTourHero() {
     };
 
     return (
-        <section className="relative w-full h-[38vh] min-h-[300px] max-h-[380px] overflow-hidden">
-            {/* Background Image */}
-            <div className="absolute inset-0">
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url(/images/build-tour-hero.jpg)' }}
+        <section ref={heroRef} className="relative h-screen min-h-[700px] max-h-[1200px] overflow-hidden">
+            {/* Parallax background */}
+            <motion.div style={{ y: heroY }} className="absolute inset-0 -top-[10%] h-[120%]">
+                <Image
+                    src="/images/build-tour-hero.webp"
+                    alt="Sri Lanka bespoke luxury tour planning — scenic aerial view"
+                    fill
+                    className="object-cover"
+                    sizes="100vw"
+                    priority
+                    quality={85}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f0d]/80 via-[#0a0f0d]/50 to-[#0a0f0d]" />
-                {/* Topographic texture */}
-                <div
-                    className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
-                    style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                    }}
-                />
-            </div>
+            </motion.div>
+
+            {/* Gradient overlays for text contrast */}
+            <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-off-white to-transparent pointer-events-none" />
 
             {/* Content */}
-            <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
-                {/* Eyebrow */}
-                <div className="flex items-center gap-2 mb-4 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                    <div className="h-px w-8 bg-antique-gold/50" />
-                    <span className="text-antique-gold text-[10px] sm:text-xs tracking-[0.3em] uppercase font-serif">
+            <motion.div
+                style={{ opacity: heroOpacity }}
+                className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 pt-20"
+            >
+                <div className="max-w-5xl mx-auto">
+                    {/* Micro-label */}
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, duration: 0.7 }}
+                        className="text-[10px] sm:text-[11px] tracking-[0.4em] uppercase text-antique-gold font-sans font-bold mb-6 drop-shadow-md"
+                    >
                         Bespoke Tour Planner
-                    </span>
-                    <div className="h-px w-8 bg-antique-gold/50" />
-                </div>
+                    </motion.p>
 
-                {/* Headline */}
-                <h1
-                    className="font-display text-3xl sm:text-4xl lg:text-5xl text-white leading-[1.1] mb-3 max-w-3xl animate-fade-in-up"
-                    style={{ animationDelay: '0.2s' }}
-                >
-                    Build a Smarter
-                    <span className="block gradient-text-gold mt-0.5">Sri Lanka Journey</span>
-                </h1>
-
-                {/* Subhead — sharper, product-led */}
-                <p
-                    className="text-white/45 text-xs sm:text-sm font-light max-w-xl mb-5 leading-relaxed animate-fade-in-up"
-                    style={{ animationDelay: '0.3s' }}
-                >
-                    Explore the island visually, choose regions with confidence, and shape a polished route
-                    with pacing, transfers, and concierge-ready planning built in.
-                </p>
-
-                {/* CTAs */}
-                <div
-                    className="flex flex-col sm:flex-row items-center gap-3 animate-fade-in-up"
-                    style={{ animationDelay: '0.4s' }}
-                >
-                    <button
-                        onClick={scrollToBuilder}
-                        className="flex items-center gap-2.5 px-7 py-3 bg-antique-gold text-deep-emerald font-serif text-xs uppercase tracking-[0.2em] rounded-lg hover:shadow-lg hover:shadow-antique-gold/30 hover:scale-[1.02] transition-all duration-300 font-semibold"
+                    {/* Headline */}
+                    <motion.h1
+                        initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        transition={{ delay: 0.4, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                        className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] font-display text-white leading-[1.05] mb-8 drop-shadow-[0_4px_32px_rgba(0,0,0,0.8)] font-medium"
                     >
-                        <MapPin className="w-4 h-4" />
-                        Start Planning
-                    </button>
-                    <button
-                        onClick={scrollToStarters}
-                        className="flex items-center gap-2 px-5 py-3 border border-white/20 text-white/70 font-serif text-xs uppercase tracking-[0.2em] rounded-lg hover:border-antique-gold/40 hover:text-white transition-all duration-300"
-                    >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        Use a Starter Route
-                    </button>
-                </div>
+                        Build a Smarter
+                        <span className="block text-antique-gold font-serif italic mt-2 drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)] font-semibold">Sri Lanka Journey</span>
+                    </motion.h1>
 
-                {/* Trust pills row */}
-                <div
-                    className="flex items-center flex-wrap justify-center gap-3 sm:gap-5 mt-5 animate-fade-in-up"
-                    style={{ animationDelay: '0.5s' }}
-                >
-                    {[
-                        { icon: Map, label: 'Interactive Map' },
-                        { icon: Route, label: 'Smart Route Logic' },
-                        { icon: MapPin, label: 'Transfer-Ready' },
-                        { icon: Users, label: 'Concierge Refinement' },
-                    ].map((pill) => (
-                        <div key={pill.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/8 bg-white/[0.03]">
-                            <pill.icon className="w-3 h-3 text-antique-gold/50" />
-                            <span className="text-white/30 text-[9px] uppercase tracking-wider font-nav">{pill.label}</span>
+                    {/* Sub-headline */}
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6, duration: 0.7 }}
+                        className="text-base sm:text-lg text-white max-w-2xl mx-auto leading-relaxed mb-12 drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)] font-medium"
+                    >
+                        Explore the island visually on our interactive map, choose regions with confidence,
+                        and shape an elegant route with concierge-ready planning.
+                    </motion.p>
+
+                    {/* CTAs */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8, duration: 0.7 }}
+                        className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
+                    >
+                        <button
+                            onClick={scrollToBuilder}
+                            className="flex items-center gap-2.5 px-8 py-4 bg-antique-gold text-deep-emerald text-[11px] tracking-[0.2em] uppercase font-semibold rounded-full hover:bg-white hover:shadow-lg transition-all duration-300"
+                        >
+                            <MapPin className="w-4 h-4" />
+                            Start Planning
+                        </button>
+                        <button
+                            onClick={scrollToStarters}
+                            className="flex items-center gap-2 px-8 py-4 border border-white/30 text-white text-[11px] tracking-[0.2em] uppercase font-semibold rounded-full hover:bg-white/10 transition-all duration-300"
+                        >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            Use a Starter Route
+                        </button>
+                    </motion.div>
+
+                    {/* Floating stats bar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 24, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ delay: 1, duration: 0.7 }}
+                        className="inline-flex items-center gap-8 sm:gap-12 px-10 py-5 rounded-[2.5rem] bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl"
+                    >
+                        <div className="text-center">
+                            <p className="text-2xl sm:text-3xl font-display text-white mb-1">7</p>
+                            <p className="text-[10px] tracking-[0.25em] uppercase text-white/50">Regions</p>
                         </div>
-                    ))}
+                        <div className="w-px h-10 bg-white/10" />
+                        <div className="text-center">
+                            <p className="text-2xl sm:text-3xl font-display text-white mb-1">25</p>
+                            <p className="text-[10px] tracking-[0.25em] uppercase text-white/50">Districts</p>
+                        </div>
+                        <div className="w-px h-10 bg-white/10" />
+                        <div className="text-center">
+                            <p className="text-2xl sm:text-3xl font-display text-antique-gold mb-1">100+</p>
+                            <p className="text-[10px] tracking-[0.25em] uppercase text-white/50">Places</p>
+                        </div>
+                    </motion.div>
                 </div>
-            </div>
+            </motion.div>
         </section>
     );
 }

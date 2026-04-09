@@ -69,17 +69,17 @@ Production Readiness — final QA pass and polish before go-live
 
 ## Last Session
 
-**Date**: 2026-04-04
+**Date**: 2026-04-05
 **What was done**:
-- Fixed 4 admin dashboard UI bugs: sidebar scroll gap, white hover effects on tables, ugly hover on ticket view icon, and numeric input validation on package form.
-- Replaced the entire admin Destinations table with a luxury card grid matching the public destinations page aesthetic.
-- Fixed broken ticket reply form by correcting the API endpoint and HTTP method.
-- Enabled Turbopack for faster local development.
-- Created and ran a destination seed script to sync all 25 static destinations into MongoDB.
+- Transitioned the BuildTourMap to a full-screen bleed layout via responsive Tailwind viewports.
+- Tuned the scale, container boundaries, and zoom controls to flexibly fit the island of Sri Lanka across varying screen sizes.
+- Implemented realistic road routing utilizing OSRM APIs with nearest-neighbor fallbacks to trace actual driving paths.
+- Finalized "My Journey" and "Select Region" interactive sliding transparent floating sidebars matching luxury aesthetics.
 
 **What to do next**:
-- Run `MONGODB_URI="<production-uri>" npx tsx src/scripts/seed-destinations.ts` against production DB to sync destinations on the hosted site.
-- Continue monitoring Vercel deployment for build errors.
+- Check dynamic route fidelity and ensure nearest-neighbor fallbacks run gracefully for distant nodes missing direct mapping data.
+- Execute manual QA across production routing features.
+- Review new UI structures on disparate mobile devices.
 
 **Current state**:
 - Branch: `main`
@@ -87,14 +87,10 @@ Production Readiness — final QA pass and polish before go-live
 - All changes pushed to GitHub for Vercel auto-deploy
 
 **Files changed (This Session)**:
-- `package.json` — added `--turbopack` to dev script
-- `src/app/dashboard/layout.tsx` — fixed `h-screen` for independent scrolling
-- `src/app/dashboard/support/[id]/page.tsx` — dark theme for ticket detail view
-- `src/components/dashboard/DestinationTable.tsx` — replaced table with card grid
-- `src/components/dashboard/PackageForm.tsx` — numeric validation + empty defaults
-- `src/components/dashboard/TicketReplyForm.tsx` — fixed API endpoint + dark theme
-- `src/components/dashboard/TicketTable.tsx` — fixed hover effects
-- `src/components/dashboard/VehicleTable.tsx` — fixed hover effects
-- `src/components/layout/DashboardSidebar.tsx` — fixed `h-screen` scrolling
-- `src/scripts/seed-destinations.ts` — new destination seeder script
+- `src/app/(public)/build-tour/page.tsx` — updated wrapper layout and removed margins.
+- `src/app/(public)/build-tour/_components/BuildTourClient.tsx` — mapped desktop/mobile relative heights to fit fullscreen.
+- `src/app/(public)/build-tour/_components/BuildTourMap.tsx` — integrated OSRM trip API, optimized rendering geometries, removed maxBounds constraint, and tuned newZoom dynamically.
+- `src/app/(public)/build-tour/_components/PlannerSidebar.tsx` — finalized layout and extracted from MapViewport.
+- `src/lib/maps/buildTourMapStyle.ts` — configured minimal map geometries and bounds filtering.
+- `src/lib/trip/buildTourTypes.ts` — updated shared types for BuildTour component structure.
 

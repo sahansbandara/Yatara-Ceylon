@@ -42,10 +42,9 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
-            {/* ── Journey Summary Card — glass effect ────────── */}
+            {/* ── Journey Summary Card ────────── */}
             <div className="px-4 pt-4 pb-3">
-                <div className="rounded-xl border border-antique-gold/[0.08] bg-antique-gold/[0.03] p-4 relative overflow-hidden">
-                    {/* Subtle gold gradient overlay */}
+                <div className="rounded-xl border border-antique-gold/[0.12] bg-antique-gold/[0.04] p-4 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-antique-gold/[0.04] via-transparent to-transparent pointer-events-none" />
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-3">
@@ -56,27 +55,26 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                         </div>
                         <div className="grid grid-cols-3 gap-3">
                             <div>
-                                <p className="text-white/80 font-serif text-lg leading-none">{stops.length}</p>
-                                <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">Stops</p>
+                                <p className="text-deep-emerald font-serif text-lg leading-none">{stops.length}</p>
+                                <p className="text-deep-emerald/35 text-[8px] uppercase tracking-wider mt-1 font-nav">Stops</p>
                             </div>
                             <div>
-                                <p className="text-white/80 font-serif text-lg leading-none">{stopsDistricts.size}</p>
-                                <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">Districts</p>
+                                <p className="text-deep-emerald font-serif text-lg leading-none">{stopsDistricts.size}</p>
+                                <p className="text-deep-emerald/35 text-[8px] uppercase tracking-wider mt-1 font-nav">Districts</p>
                             </div>
                             <div>
-                                <p className="text-white/80 font-serif text-lg leading-none">
+                                <p className="text-deep-emerald font-serif text-lg leading-none">
                                     {route ? `~${route.totalKm}` : '—'}
                                 </p>
-                                <p className="text-white/25 text-[8px] uppercase tracking-wider mt-1 font-nav">km</p>
+                                <p className="text-deep-emerald/35 text-[8px] uppercase tracking-wider mt-1 font-nav">km</p>
                             </div>
                         </div>
-                        {/* Concierge note */}
                         {stops.length >= 2 && (
-                            <div className="mt-3 pt-3 border-t border-white/5">
-                                <p className="text-antique-gold/40 text-[9px] font-light italic">
+                            <div className="mt-3 pt-3 border-t border-deep-emerald/[0.06]">
+                                <p className="text-antique-gold/60 text-[9px] font-light italic">
                                     {stops.length <= 4 ? 'Relaxed pace — ideal for luxury travel' :
-                                     stops.length <= 7 ? 'Balanced route — good coverage with comfort' :
-                                     'Dense itinerary — consider spreading across more days'}
+                                        stops.length <= 7 ? 'Balanced route — good coverage with comfort' :
+                                            'Dense itinerary — consider spreading across more days'}
                                 </p>
                             </div>
                         )}
@@ -86,12 +84,12 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
 
             {/* ── Content Area ────────────────────────────────── */}
             <div className="flex-1 overflow-y-auto px-4 pb-4 custom-scrollbar">
-                {/* State 1: No region — region cards with glass hover */}
+                {/* State 1: No region — region cards */}
                 {!activeRegionId && !selectedDistrict && (
                     <div className="space-y-2.5">
                         <div className="flex items-center gap-2 mb-1">
-                            <Globe className="w-3 h-3 text-white/20" />
-                            <span className="text-[9px] text-white/30 uppercase tracking-[0.2em] font-nav">
+                            <Globe className="w-3 h-3 text-deep-emerald/25" />
+                            <span className="text-[9px] text-deep-emerald/40 uppercase tracking-[0.2em] font-nav">
                                 Choose a Region
                             </span>
                         </div>
@@ -99,23 +97,23 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                             <button
                                 key={region.id}
                                 onClick={() => onSelectRegion(region.id)}
-                                className="w-full text-left rounded-xl region-card-glass p-3.5 group"
+                                className="w-full text-left rounded-xl p-3.5 group bg-deep-emerald/[0.02] border border-deep-emerald/[0.06] hover:bg-deep-emerald/[0.04] hover:border-antique-gold/20 hover:-translate-y-0.5 transition-all duration-300"
                             >
                                 <div className="flex items-start justify-between relative z-10">
                                     <div className="flex-1">
-                                        <p className="font-serif text-[13px] text-white/85 group-hover:text-white transition-colors">
+                                        <p className="font-serif text-[13px] text-deep-emerald/85 group-hover:text-deep-emerald transition-colors">
                                             {region.name}
                                         </p>
-                                        <p className="text-white/30 text-[10px] mt-0.5 font-light leading-relaxed">
+                                        <p className="text-deep-emerald/40 text-[10px] mt-0.5 font-light leading-relaxed">
                                             {region.tagline}
                                         </p>
                                         <div className="flex items-center gap-1 mt-2">
-                                            <span className="text-[8px] text-antique-gold/40 font-nav uppercase tracking-wider">
+                                            <span className="text-[8px] text-antique-gold/50 font-nav uppercase tracking-wider">
                                                 {region.districtIds.length} districts
                                             </span>
                                         </div>
                                     </div>
-                                    <ChevronRight className="w-4 h-4 text-white/10 group-hover:text-antique-gold/50 transition-colors mt-1 flex-shrink-0" />
+                                    <ChevronRight className="w-4 h-4 text-deep-emerald/15 group-hover:text-antique-gold/50 transition-colors mt-1 flex-shrink-0" />
                                 </div>
                             </button>
                         ))}
@@ -127,17 +125,17 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                     <div className="space-y-2.5">
                         <button
                             onClick={() => onSelectRegion(null)}
-                            className="flex items-center gap-1.5 text-[9px] text-antique-gold/50 hover:text-antique-gold font-nav uppercase tracking-wider transition-colors mb-1"
+                            className="flex items-center gap-1.5 text-[9px] text-antique-gold/60 hover:text-antique-gold font-nav uppercase tracking-wider transition-colors mb-1"
                         >
                             ← All Regions
                         </button>
                         <div className="mb-3">
-                            <h3 className="font-serif text-base text-white/90">{activeRegion.name}</h3>
-                            <p className="text-white/30 text-[10px] mt-0.5 font-light">{activeRegion.tagline}</p>
+                            <h3 className="font-serif text-base text-deep-emerald">{activeRegion.name}</h3>
+                            <p className="text-deep-emerald/40 text-[10px] mt-0.5 font-light">{activeRegion.tagline}</p>
                         </div>
                         <div className="flex items-center gap-2 mb-1">
-                            <MapPin className="w-3 h-3 text-white/20" />
-                            <span className="text-[9px] text-white/30 uppercase tracking-[0.2em] font-nav">
+                            <MapPin className="w-3 h-3 text-deep-emerald/25" />
+                            <span className="text-[9px] text-deep-emerald/40 uppercase tracking-[0.2em] font-nav">
                                 Select a District on the Map
                             </span>
                         </div>
@@ -147,13 +145,13 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                             return (
                                 <div
                                     key={dId}
-                                    className="rounded-xl region-card-glass p-3.5"
+                                    className="rounded-xl p-3.5 bg-deep-emerald/[0.02] border border-deep-emerald/[0.06]"
                                 >
-                                    <p className="font-serif text-[13px] text-white/80">{district.name}</p>
-                                    <p className="text-antique-gold/40 text-[10px] mt-0.5 font-light italic">{district.luxuryLabel}</p>
+                                    <p className="font-serif text-[13px] text-deep-emerald/80">{district.name}</p>
+                                    <p className="text-antique-gold/50 text-[10px] mt-0.5 font-light italic">{district.luxuryLabel}</p>
                                     <div className="flex flex-wrap gap-1 mt-2">
                                         {district.gems.slice(0, 3).map((gem) => (
-                                            <span key={gem} className="px-2 py-0.5 bg-white/[0.04] rounded text-[8px] text-white/35 font-nav">
+                                            <span key={gem} className="px-2 py-0.5 bg-deep-emerald/[0.04] rounded text-[8px] text-deep-emerald/45 font-nav">
                                                 {gem}
                                             </span>
                                         ))}
@@ -164,30 +162,30 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                     </div>
                 )}
 
-                {/* State 3: District selected — places with glass cards */}
+                {/* State 3: District selected — places */}
                 {selectedDistrict && (
                     <div className="space-y-2.5">
                         <button
                             onClick={() => {
                                 useBuildTourStore.getState().setDistrictFilter(null);
                             }}
-                            className="flex items-center gap-1.5 text-[9px] text-antique-gold/50 hover:text-antique-gold font-nav uppercase tracking-wider transition-colors mb-1"
+                            className="flex items-center gap-1.5 text-[9px] text-antique-gold/60 hover:text-antique-gold font-nav uppercase tracking-wider transition-colors mb-1"
                         >
                             ← {activeRegion ? activeRegion.name : 'All Regions'}
                         </button>
 
-                        {/* District header — gold accent glass */}
-                        <div className="rounded-xl border border-antique-gold/10 bg-antique-gold/[0.03] p-4 mb-2 relative overflow-hidden">
+                        {/* District header */}
+                        <div className="rounded-xl border border-antique-gold/15 bg-antique-gold/[0.04] p-4 mb-2 relative overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-br from-antique-gold/[0.05] via-transparent to-transparent pointer-events-none" />
                             <div className="relative z-10">
-                                <p className="font-serif text-base text-white/90">{selectedDistrict.name}</p>
-                                <p className="text-antique-gold/50 text-[11px] mt-0.5 font-light italic">{selectedDistrict.luxuryLabel}</p>
+                                <p className="font-serif text-base text-deep-emerald">{selectedDistrict.name}</p>
+                                <p className="text-antique-gold/60 text-[11px] mt-0.5 font-light italic">{selectedDistrict.luxuryLabel}</p>
                                 <div className="flex items-center gap-4 mt-3">
-                                    <div className="flex items-center gap-1.5 text-white/30">
+                                    <div className="flex items-center gap-1.5 text-deep-emerald/40">
                                         <Car className="w-3 h-3" />
                                         <span className="text-[9px] font-nav">from {formatTransferPrice(selectedDistrict.transferStart)}</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-white/30">
+                                    <div className="flex items-center gap-1.5 text-deep-emerald/40">
                                         <MapPin className="w-3 h-3" />
                                         <span className="text-[9px] font-nav">{districtPlaces.length} places</span>
                                     </div>
@@ -197,10 +195,10 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
 
                         {/* Signature Gems */}
                         <div className="mb-2">
-                            <span className="text-[9px] text-white/25 uppercase tracking-[0.2em] font-nav">Signature Gems</span>
+                            <span className="text-[9px] text-deep-emerald/35 uppercase tracking-[0.2em] font-nav">Signature Gems</span>
                             <div className="flex flex-wrap gap-1.5 mt-2">
                                 {selectedDistrict.gems.map((gem) => (
-                                    <span key={gem} className="px-2.5 py-1 bg-antique-gold/[0.06] border border-antique-gold/10 rounded-lg text-[9px] text-antique-gold/60 font-nav">
+                                    <span key={gem} className="px-2.5 py-1 bg-antique-gold/[0.08] border border-antique-gold/15 rounded-lg text-[9px] text-antique-gold/70 font-nav">
                                         {gem}
                                     </span>
                                 ))}
@@ -209,7 +207,7 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
 
                         {/* Category filters */}
                         <div className="mb-2">
-                            <span className="text-[9px] text-white/25 uppercase tracking-[0.2em] font-nav">Filter by Interest</span>
+                            <span className="text-[9px] text-deep-emerald/35 uppercase tracking-[0.2em] font-nav">Filter by Interest</span>
                             <div className="flex flex-wrap gap-1.5 mt-2">
                                 {ALL_CATEGORIES.slice(0, 6).map((cat) => {
                                     const isActive = filters.categories.includes(cat);
@@ -220,8 +218,8 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                                             onClick={() => toggleCategory(cat)}
                                             className={`px-2.5 py-1 rounded-full text-[8px] uppercase tracking-wider font-nav transition-all duration-200 ${isActive
                                                 ? 'shadow-sm'
-                                                : 'bg-white/5 text-white/35 hover:bg-white/8 hover:text-white/55 border border-white/5'
-                                            }`}
+                                                : 'bg-deep-emerald/[0.04] text-deep-emerald/40 hover:bg-deep-emerald/[0.08] hover:text-deep-emerald/60 border border-deep-emerald/[0.06]'
+                                                }`}
                                             style={isActive ? { backgroundColor: color + '20', color, borderColor: color + '35', border: '1px solid' } : undefined}
                                         >
                                             {CATEGORY_LABELS[cat]}
@@ -231,7 +229,7 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                             </div>
                         </div>
 
-                        {/* Place cards — with glass hover popup effect */}
+                        {/* Place cards */}
                         <div className="space-y-1.5">
                             {districtPlaces.map((place) => {
                                 const inStops = isInStops(place.id);
@@ -241,7 +239,10 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                                 return (
                                     <div
                                         key={place.id}
-                                        className={`group rounded-xl p-3 cursor-pointer place-card-glass ${inStops ? 'in-trip' : ''}`}
+                                        className={`group rounded-xl p-3 cursor-pointer border transition-all duration-300 ${inStops
+                                            ? 'bg-antique-gold/[0.05] border-antique-gold/15'
+                                            : 'border-transparent hover:bg-deep-emerald/[0.03] hover:border-deep-emerald/[0.06]'
+                                            }`}
                                         onClick={() => !inStops && addStop(place)}
                                     >
                                         <div className="flex items-start justify-between">
@@ -251,16 +252,16 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                                                         className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                                                         style={{ backgroundColor: color }}
                                                     />
-                                                    <p className="font-serif text-[12px] text-white/85 truncate">{place.name}</p>
+                                                    <p className="font-serif text-[12px] text-deep-emerald/85 truncate">{place.name}</p>
                                                 </div>
-                                                <p className="text-white/30 text-[9px] mt-1 line-clamp-2 font-light leading-relaxed pl-3.5">
+                                                <p className="text-deep-emerald/40 text-[9px] mt-1 line-clamp-2 font-light leading-relaxed pl-3.5">
                                                     {place.teaser}
                                                 </p>
                                                 <div className="flex items-center gap-3 mt-1.5 pl-3.5">
                                                     <span className="text-[7px] uppercase tracking-wider font-nav" style={{ color: color + '99' }}>
                                                         {CATEGORY_LABELS[place.category as PlaceCategory] || place.category}
                                                     </span>
-                                                    <div className="flex items-center gap-1 text-white/20">
+                                                    <div className="flex items-center gap-1 text-deep-emerald/25">
                                                         <Clock className="w-2.5 h-2.5" />
                                                         <span className="text-[8px] font-nav">
                                                             {place.estimatedVisitMinutes < 60
@@ -278,10 +279,10 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                                                     </div>
                                                 ) : (
                                                     <button
-                                                        className="w-7 h-7 rounded-full bg-white/[0.04] flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-antique-gold/15 transition-all duration-300"
+                                                        className="w-7 h-7 rounded-full bg-deep-emerald/[0.04] flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-antique-gold/15 transition-all duration-300"
                                                         onClick={(e) => { e.stopPropagation(); addStop(place); }}
                                                     >
-                                                        <Plus className="w-3 h-3 text-white/40 hover:text-antique-gold" />
+                                                        <Plus className="w-3 h-3 text-deep-emerald/40 hover:text-antique-gold" />
                                                     </button>
                                                 )}
                                             </div>

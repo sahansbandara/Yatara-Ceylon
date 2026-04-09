@@ -47,25 +47,30 @@ export const GET = withAuth(async (request, { user }) => {
     }
 });
 
-// Public – anyone can create a plan
-export async function POST(request: Request) {
+// Only normal users can create and save plans
+export const POST = withAuth(async (request, { user }) => {
     const { data, error } = await validateBody(request, createPlanSchema);
     if (error) return error;
+
     try {
         await connectDB();
-        const token = getTokenFromRequest(request);
-        const payload = token ? await verifyToken(token) : null;
+
+        if (user.role !== 'USER') {
+            return NextResponse.json({ error: 'Only regular users can save plans' }, { status: 403 });
+        }
+
         const plan = await CustomPlan.create({
             ...data,
-            userId: payload?.userId,
-            customerEmail: data!.customerEmail || payload?.email,
+            userId: user.userId,
+            customerEmail: data?.customerEmail || user.email,
         });
+
         return NextResponse.json({ plan }, { status: 201 });
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-}
+});
 
 export const PATCH = withAuth(async (request, { user }) => {
     const { data, error } = await validateBody(request, updatePlanSchema);

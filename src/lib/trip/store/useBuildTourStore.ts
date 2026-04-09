@@ -211,30 +211,54 @@ export const useBuildTourStore = create<BuildTourState>()(
                     lng: s.place.lng,
                 }));
                 const coordStr = coords.map((c) => `${c.lng},${c.lat}`).join(';');
-                const url = `https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`;
+                // Use OSRM Trip API — solves Traveling Salesman Problem
+                // roundtrip=false → one-way path (not a loop)
+                // source=first → always start from the first stop the user added
+                const url = `https://router.project-osrm.org/trip/v1/driving/${coordStr}?overview=full&geometries=geojson&roundtrip=false&source=first`;
 
                 const res = await fetch(url);
                 const data = await res.json();
 
-                if (data.code === 'Ok' && data.routes?.[0]) {
-                    const r = data.routes[0];
-                    const geometry: [number, number][] = r.geometry.coordinates.map(
+                if (data.code === 'Ok' && data.trips?.[0]) {
+                    const trip = data.trips[0];
+
+                    // Extract optimized waypoint order:
+                    // Each waypoint in data.waypoints has a `waypoint_index` (position in
+                    // optimized trip) and appears at its original input index in the array.
+                    // Build a mapping: optimized position → original input index
+                    const waypoints = data.waypoints as { waypoint_index: number }[];
+                    const optimizedOrder: number[] = new Array(waypoints.length);
+                    waypoints.forEach((wp, originalIdx) => {
+                        optimizedOrder[wp.waypoint_index] = originalIdx;
+                    });
+
+                    // Reorder stops in state to match the optimized driving sequence
+                    const reorderedStops = optimizedOrder.map((origIdx, newOrder) => ({
+                        ...stops[origIdx],
+                        order: newOrder,
+                    }));
+
+                    // Road-following geometry from OSRM (flip [lng,lat] → [lat,lng] for Leaflet)
+                    const geometry: [number, number][] = trip.geometry.coordinates.map(
                         (c: [number, number]) => [c[1], c[0]] as [number, number]
                     );
+
                     set({
+                        stops: reorderedStops,
                         route: {
-                            totalKm: Math.round(r.distance / 1000),
-                            totalHours: Math.round((r.duration / 3600) * 10) / 10,
-                            driveMinutes: Math.round(r.duration / 60),
+                            totalKm: Math.round(trip.distance / 1000),
+                            totalHours: Math.round((trip.duration / 3600) * 10) / 10,
+                            driveMinutes: Math.round(trip.duration / 60),
                             geometry,
                         },
                         routeLoading: false,
                     });
                 } else {
-                    throw new Error('No route');
+                    throw new Error('No trip found');
                 }
             } catch {
-                // Fallback to haversine
+                // Fallback: optimize locally with nearest-neighbor, no road geometry
+                get().optimizeOrder();
                 const est = get().getTripEstimate();
                 set({
                     route: est ? { ...est, geometry: null } : null,

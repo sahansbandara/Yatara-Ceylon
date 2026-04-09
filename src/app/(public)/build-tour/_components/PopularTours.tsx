@@ -15,7 +15,7 @@ interface PopularTour {
     title: string;
     tagline: string;
     duration: string;
-    popularity: number;      // % (display only)
+    popularity: number;
     gradient: string;
     accent: string;
     placeIds: string[];
@@ -31,18 +31,11 @@ const POPULAR_TOURS: PopularTour[] = [
         duration: '10–12 days',
         popularity: 94,
         gradient: 'from-[#043927] via-[#043927]/60 to-transparent',
-        accent: '#D4AF37',
+        accent: '#043927',
         placeIds: [
-            'colombo-galle-face',
-            'matale-sigiriya',
-            'matale-dambulla',
-            'kandy-tooth',
-            'nuwaraeliya-horton',
-            'nuwaraeliya-bluefield',
-            'badulla-nine-arches',
-            'hambantota-yala',
-            'matara-mirissa',
-            'galle-fort',
+            'colombo-galle-face', 'matale-sigiriya', 'matale-dambulla', 'kandy-tooth',
+            'nuwaraeliya-horton', 'nuwaraeliya-bluefield', 'badulla-nine-arches',
+            'hambantota-yala', 'matara-mirissa', 'galle-fort',
         ],
         tags: ['Most Popular', 'Best of Sri Lanka'],
         image: '/images/tours/grand-circuit.webp',
@@ -54,16 +47,10 @@ const POPULAR_TOURS: PopularTour[] = [
         duration: '6–8 days',
         popularity: 87,
         gradient: 'from-purple-900 via-purple-800/60 to-transparent',
-        accent: '#c084fc',
+        accent: '#7c3aed',
         placeIds: [
-            'anuradhapura-bodhi',
-            'anuradhapura-ruwanweli',
-            'anuradhapura-mihintale',
-            'matale-sigiriya',
-            'matale-dambulla',
-            'polonnaruwa-ruins',
-            'kandy-tooth',
-            'kandy-botanical',
+            'anuradhapura-bodhi', 'anuradhapura-ruwanweli', 'anuradhapura-mihintale',
+            'matale-sigiriya', 'matale-dambulla', 'polonnaruwa-ruins', 'kandy-tooth', 'kandy-botanical',
         ],
         tags: ['Cultural', 'Heritage'],
         image: '/images/tours/heritage-temple.webp',
@@ -75,15 +62,10 @@ const POPULAR_TOURS: PopularTour[] = [
         duration: '5–7 days',
         popularity: 82,
         gradient: 'from-emerald-900 via-emerald-800/60 to-transparent',
-        accent: '#34d399',
+        accent: '#047857',
         placeIds: [
-            'kandy-tooth',
-            'kandy-knuckles',
-            'nuwaraeliya-horton',
-            'nuwaraeliya-bluefield',
-            'nuwaraeliya-gregory',
-            'badulla-nine-arches',
-            'badulla-little-adams',
+            'kandy-tooth', 'kandy-knuckles', 'nuwaraeliya-horton',
+            'nuwaraeliya-bluefield', 'nuwaraeliya-gregory', 'badulla-nine-arches', 'badulla-little-adams',
         ],
         tags: ['Scenic', 'Train Ride'],
         image: '/images/tours/hill-country.webp',
@@ -95,14 +77,10 @@ const POPULAR_TOURS: PopularTour[] = [
         duration: '7–9 days',
         popularity: 79,
         gradient: 'from-amber-900 via-amber-800/60 to-transparent',
-        accent: '#fbbf24',
+        accent: '#b45309',
         placeIds: [
-            'kegalle-pinnawala',
-            'polonnaruwa-minneriya',
-            'hambantota-yala',
-            'hambantota-bundala',
-            'moneragala-galoya',
-            'ratnapura-sinharaja',
+            'kegalle-pinnawala', 'polonnaruwa-minneriya', 'hambantota-yala',
+            'hambantota-bundala', 'moneragala-galoya', 'ratnapura-sinharaja',
         ],
         tags: ['Wildlife', 'Nature'],
         image: '/images/tours/wildlife-safari.webp',
@@ -114,16 +92,10 @@ const POPULAR_TOURS: PopularTour[] = [
         duration: '8–10 days',
         popularity: 76,
         gradient: 'from-cyan-900 via-cyan-800/60 to-transparent',
-        accent: '#22d3ee',
+        accent: '#0e7490',
         placeIds: [
-            'galle-fort',
-            'galle-unawatuna',
-            'matara-mirissa',
-            'matara-hiriketiya',
-            'matara-weligama',
-            'ampara-arugam',
-            'trinco-nilaveli',
-            'trinco-pigeon',
+            'galle-fort', 'galle-unawatuna', 'matara-mirissa', 'matara-hiriketiya',
+            'matara-weligama', 'ampara-arugam', 'trinco-nilaveli', 'trinco-pigeon',
         ],
         tags: ['Beach', 'Surfing'],
         image: '/images/tours/coastal-bliss.webp',
@@ -135,13 +107,9 @@ const POPULAR_TOURS: PopularTour[] = [
         duration: '4–5 days',
         popularity: 73,
         gradient: 'from-rose-900 via-rose-800/60 to-transparent',
-        accent: '#fb7185',
+        accent: '#be185d',
         placeIds: [
-            'colombo-galle-face',
-            'matale-sigiriya',
-            'kandy-tooth',
-            'nuwaraeliya-horton',
-            'galle-fort',
+            'colombo-galle-face', 'matale-sigiriya', 'kandy-tooth', 'nuwaraeliya-horton', 'galle-fort',
         ],
         tags: ['Short Trip', 'Essentials'],
         image: '/images/tours/quick-highlights.webp',
@@ -153,15 +121,10 @@ const POPULAR_TOURS: PopularTour[] = [
         duration: '7–8 days',
         popularity: 71,
         gradient: 'from-pink-900 via-pink-800/60 to-transparent',
-        accent: '#f472b6',
+        accent: '#be185d',
         placeIds: [
-            'colombo-dutch-hospital',
-            'matale-sigiriya',
-            'kandy-botanical',
-            'nuwaraeliya-gregory',
-            'badulla-nine-arches',
-            'matara-mirissa',
-            'galle-fort',
+            'colombo-dutch-hospital', 'matale-sigiriya', 'kandy-botanical',
+            'nuwaraeliya-gregory', 'badulla-nine-arches', 'matara-mirissa', 'galle-fort',
         ],
         tags: ['Romantic', 'Luxury'],
         image: '/images/tours/honeymoon-luxe.webp',
@@ -173,16 +136,10 @@ const POPULAR_TOURS: PopularTour[] = [
         duration: '8–10 days',
         popularity: 68,
         gradient: 'from-indigo-900 via-indigo-800/60 to-transparent',
-        accent: '#818cf8',
+        accent: '#4338ca',
         placeIds: [
-            'matale-riverston',
-            'kandy-knuckles',
-            'badulla-dunhinda',
-            'ratnapura-sinharaja',
-            'ratnapura-adams-peak',
-            'moneragala-galoya',
-            'ampara-kumana',
-            'kurunegala-yapahuwa',
+            'matale-riverston', 'kandy-knuckles', 'badulla-dunhinda', 'ratnapura-sinharaja',
+            'ratnapura-adams-peak', 'moneragala-galoya', 'ampara-kumana', 'kurunegala-yapahuwa',
         ],
         tags: ['Adventure', 'Hidden Gems'],
         image: '/images/tours/off-beaten.webp',
@@ -214,67 +171,64 @@ export default function PopularTours() {
     };
 
     return (
-        <section className="py-20 bg-[#0a0f0d] relative overflow-hidden">
-            {/* Subtle pattern */}
-            <div
-                className="absolute inset-0 opacity-[0.015]"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                }}
-            />
-
+        <section className="py-20 bg-[#f8f6f2] relative overflow-hidden">
             <div className="section-container relative z-10">
                 {/* Header */}
                 <div className="text-center mb-14">
                     <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="h-px w-12 bg-antique-gold/30" />
-                        <span className="text-antique-gold text-[10px] tracking-[0.3em] uppercase font-serif flex items-center gap-1.5">
+                        <div className="h-px w-12 bg-antique-gold/40" />
+                        <span className="text-antique-gold text-[10px] tracking-[0.3em] uppercase font-serif flex items-center gap-1.5 font-medium">
                             <Heart className="w-3 h-3" />
                             Traveller Favourites
                         </span>
-                        <div className="h-px w-12 bg-antique-gold/30" />
+                        <div className="h-px w-12 bg-antique-gold/40" />
                     </div>
-                    <h2 className="font-display text-3xl sm:text-4xl text-white mb-3">
+                    <h2 className="font-display text-3xl sm:text-4xl text-deep-emerald mb-3">
                         Popular Tour Plans
                     </h2>
-                    <p className="text-white/40 text-sm font-light max-w-lg mx-auto">
+                    <p className="text-deep-emerald/40 text-sm font-light max-w-lg mx-auto">
                         Start from a plan loved by other travellers, then make it yours —
                         add places, remove stops, and customise freely.
                     </p>
                 </div>
 
-                {/* Tour Grid — Elite Glass Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Tour Grid — larger cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {POPULAR_TOURS.map((tour) => {
                         const resolved = resolvedPlaces(tour.placeIds);
                         return (
                             <button
                                 key={tour.id}
                                 onClick={() => setPreviewTour(tour)}
-                                className="group relative rounded-2xl overflow-hidden border border-white/10 text-left tour-card-elite"
+                                className="group rounded-2xl overflow-hidden relative flex flex-col h-[400px] sm:h-[440px] text-left shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:-translate-y-2 hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)] transition-all duration-500 border border-white/10"
                             >
-                                {/* Background Image */}
-                                <div
-                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
-                                    style={{ backgroundImage: `url(${tour.image})` }}
-                                />
-                                {/* BG Gradient & Liquid Glass Effect */}
-                                <div className={`absolute inset-0 bg-gradient-to-t ${tour.gradient} opacity-50 group-hover:opacity-70 transition-opacity duration-500`} />
-                                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-[#0a0f0d]/95" />
+                                {/* Full Background Image */}
+                                <div className="absolute inset-0 bg-black">
+                                    <img
+                                        src={tour.image}
+                                        alt={tour.title}
+                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-90"
+                                    />
+                                    {/* Elite clean gradients: strong bottom, soft top */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent" />
+                                </div>
 
-                                {/* Content Layer with Glass Border */}
-                                <div className="relative z-10 p-5 flex flex-col h-full min-h-[280px] border border-white/5 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:border-antique-gold/30 transition-colors duration-500">
+                                {/* Top Meta */}
+                                <div className="relative z-10 w-full p-6 flex justify-end">
+                                    <span className="text-[9px] tracking-[0.15em] uppercase font-medium text-white/90 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                                        {tour.duration}
+                                    </span>
+                                </div>
+
+                                {/* Content */}
+                                <div className="relative z-10 p-6 flex flex-col mt-auto w-full">
                                     {/* Tags */}
-                                    <div className="flex flex-wrap gap-1 mb-2.5">
+                                    <div className="flex flex-wrap gap-2 mb-3">
                                         {tour.tags.map((tag) => (
                                             <span
                                                 key={tag}
-                                                className="px-2 py-0.5 rounded text-[7px] font-nav uppercase tracking-wider border"
-                                                style={{
-                                                    color: tour.accent,
-                                                    borderColor: `${tour.accent}25`,
-                                                    backgroundColor: `${tour.accent}08`,
-                                                }}
+                                                className="text-[10px] tracking-[0.15em] uppercase font-medium text-antique-gold drop-shadow-sm"
                                             >
                                                 {tag}
                                             </span>
@@ -282,25 +236,21 @@ export default function PopularTours() {
                                     </div>
 
                                     {/* Title & Tagline */}
-                                    <h3 className="font-serif text-base text-white mb-1 group-hover:text-antique-gold/90 transition-colors">
+                                    <h3 className="text-2xl font-display text-white group-hover:text-antique-gold transition-colors duration-500 mb-2 leading-snug drop-shadow-md">
                                         {tour.title}
                                     </h3>
-                                    <p className="text-white/30 text-[10px] font-light leading-relaxed mb-auto">
+                                    <p className="text-white/80 font-light text-sm line-clamp-2 leading-relaxed mb-6 drop-shadow-sm">
                                         {tour.tagline}
                                     </p>
 
-                                    {/* Meta — clean, no broken metrics */}
-                                    <div className="flex items-center gap-3 mt-3 pt-2.5 border-t border-white/5">
-                                        <div className="flex items-center gap-1">
-                                            <Clock className="w-3 h-3 text-antique-gold/40" />
-                                            <span className="text-white/45 text-[9px] font-nav">{tour.duration}</span>
+                                    {/* Bottom Meta & Action */}
+                                    <div className="pt-5 border-t border-white/20 flex items-center justify-between">
+                                        <div className="flex items-center gap-1.5">
+                                            <MapPin className="w-4 h-4 text-antique-gold" />
+                                            <span className="text-white/90 text-xs font-nav font-medium tracking-wide drop-shadow-sm">{resolved.length} stops</span>
                                         </div>
-                                        <div className="flex items-center gap-1">
-                                            <MapPin className="w-3 h-3 text-antique-gold/40" />
-                                            <span className="text-white/45 text-[9px] font-nav">{resolved.length} stops</span>
-                                        </div>
-                                        <span className="ml-auto text-antique-gold/40 text-[8px] font-nav uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
-                                            Load →
+                                        <span className="text-white/60 group-hover:text-white uppercase tracking-widest text-[9px] font-semibold transition-colors duration-300">
+                                            View Details →
                                         </span>
                                     </div>
                                 </div>
@@ -317,18 +267,18 @@ export default function PopularTours() {
                     onClick={() => setPreviewTour(null)}
                 >
                     {/* Backdrop */}
-                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
-                    {/* Modal */}
+                    {/* Modal — Light Glass */}
                     <div
-                        className="relative w-full max-w-lg bg-[#0d1210] border border-white/10 rounded-2xl overflow-hidden shadow-2xl"
+                        className="relative w-full max-w-lg bg-white/95 backdrop-blur-2xl border border-deep-emerald/10 rounded-2xl overflow-hidden shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Header */}
+                        {/* Header with image */}
                         <div className={`relative p-6 bg-gradient-to-br ${previewTour.gradient}`}>
                             <button
                                 onClick={() => setPreviewTour(null)}
-                                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/30 text-white/60 hover:text-white transition-colors"
+                                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white/80 hover:text-white hover:bg-white/30 transition-colors"
                             >
                                 <X className="w-4 h-4" />
                             </button>
@@ -336,23 +286,19 @@ export default function PopularTours() {
                                 {previewTour.tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="px-2 py-0.5 rounded text-[9px] font-serif uppercase tracking-wider"
-                                        style={{
-                                            color: previewTour.accent,
-                                            backgroundColor: `${previewTour.accent}15`,
-                                        }}
+                                        className="px-2 py-0.5 rounded text-[9px] font-serif uppercase tracking-wider bg-white/15 text-white"
                                     >
                                         {tag}
                                     </span>
                                 ))}
                             </div>
                             <h3 className="font-display text-2xl text-white mb-1">{previewTour.title}</h3>
-                            <p className="text-white/50 text-sm font-light">{previewTour.tagline}</p>
+                            <p className="text-white/70 text-sm font-light">{previewTour.tagline}</p>
                             <div className="flex items-center gap-4 mt-3">
-                                <span className="text-white/40 text-xs font-serif flex items-center gap-1">
+                                <span className="text-white/60 text-xs font-serif flex items-center gap-1">
                                     <Clock className="w-3 h-3" /> {previewTour.duration}
                                 </span>
-                                <span className="text-white/40 text-xs font-serif flex items-center gap-1">
+                                <span className="text-white/60 text-xs font-serif flex items-center gap-1">
                                     <Users className="w-3 h-3" /> {previewTour.popularity}% pick this
                                 </span>
                             </div>
@@ -360,30 +306,26 @@ export default function PopularTours() {
 
                         {/* Places List */}
                         <div className="p-6">
-                            <p className="text-white/30 text-[10px] uppercase tracking-[0.2em] font-serif mb-3">
-                                Included Stops — tap "Use This Plan" to customise
+                            <p className="text-deep-emerald/35 text-[10px] uppercase tracking-[0.2em] font-serif mb-3">
+                                Included Stops — tap &quot;Use This Plan&quot; to customise
                             </p>
                             <div className="space-y-2 max-h-[260px] overflow-y-auto custom-scrollbar">
                                 {resolvedPlaces(previewTour.placeIds).map((place, i) => (
                                     <div
                                         key={place.id}
-                                        className="flex items-center gap-3 p-2.5 rounded-lg bg-white/[0.02] border border-white/5"
+                                        className="flex items-center gap-3 p-2.5 rounded-lg bg-deep-emerald/[0.03] border border-deep-emerald/[0.06]"
                                     >
                                         <span
-                                            className="w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-serif font-bold flex-shrink-0"
-                                            style={{
-                                                color: previewTour.accent,
-                                                backgroundColor: `${previewTour.accent}12`,
-                                            }}
+                                            className="w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-serif font-bold flex-shrink-0 bg-deep-emerald/10 text-deep-emerald"
                                         >
                                             {i + 1}
                                         </span>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-white/80 text-sm font-serif truncate">{place.name}</p>
-                                            <p className="text-white/25 text-[10px] font-light">{place.district}</p>
+                                            <p className="text-deep-emerald/80 text-sm font-serif truncate">{place.name}</p>
+                                            <p className="text-deep-emerald/30 text-[10px] font-light">{place.district}</p>
                                         </div>
                                         {isInStops(place.id) && (
-                                            <span className="text-antique-gold/50 text-[9px] font-serif">Already added</span>
+                                            <span className="text-antique-gold/60 text-[9px] font-serif">Already added</span>
                                         )}
                                     </div>
                                 ))}
@@ -393,7 +335,7 @@ export default function PopularTours() {
                             <div className="flex gap-3 mt-6">
                                 <button
                                     onClick={() => applyTour(previewTour, true)}
-                                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-antique-gold/10 border border-antique-gold/30 text-antique-gold font-serif text-xs uppercase tracking-[0.15em] rounded-lg hover:bg-antique-gold/20 hover:border-antique-gold/50 transition-all"
+                                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-deep-emerald text-white font-serif text-xs uppercase tracking-[0.15em] rounded-full hover:bg-antique-gold hover:text-deep-emerald transition-all duration-300"
                                 >
                                     <Sparkles className="w-3.5 h-3.5" />
                                     Use This Plan
@@ -401,7 +343,7 @@ export default function PopularTours() {
                                 {stops.length > 0 && (
                                     <button
                                         onClick={() => applyTour(previewTour, false)}
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 text-white/60 font-serif text-xs uppercase tracking-[0.15em] rounded-lg hover:bg-white/10 hover:border-white/20 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-deep-emerald/5 border border-deep-emerald/10 text-deep-emerald/60 font-serif text-xs uppercase tracking-[0.15em] rounded-full hover:bg-deep-emerald/10 hover:border-deep-emerald/20 transition-all"
                                     >
                                         <MapPin className="w-3.5 h-3.5" />
                                         Add to Current
@@ -409,7 +351,7 @@ export default function PopularTours() {
                                 )}
                             </div>
 
-                            <p className="text-center text-white/20 text-[10px] font-light mt-3">
+                            <p className="text-center text-deep-emerald/25 text-[10px] font-light mt-3">
                                 You can add or remove any stops after loading
                             </p>
                         </div>
