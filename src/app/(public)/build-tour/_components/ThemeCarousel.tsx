@@ -146,9 +146,9 @@ export default function ThemeCarousel() {
 
                             return (
                                 <SwiperSlide key={theme.title}>
-                                    <div className="group rounded-2xl overflow-hidden relative flex flex-col h-[400px] sm:h-[440px] shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:-translate-y-2 hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)] transition-all duration-500 border border-white/10 text-left">
+                                    <div className="group rounded-2xl overflow-hidden relative flex flex-col h-[400px] sm:h-[440px] shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:-translate-y-2 hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)] transition-all duration-500 border border-white/10 text-left [transform:translateZ(0)]">
                                         {/* Full Background Image */}
-                                        <div className="absolute inset-0 bg-black">
+                                        <div className="absolute inset-0 bg-black rounded-2xl overflow-hidden [transform:translateZ(0)]">
                                             <img
                                                 src={theme.image}
                                                 alt={theme.title}

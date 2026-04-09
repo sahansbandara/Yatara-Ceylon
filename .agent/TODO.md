@@ -8,12 +8,16 @@ Production Readiness — final QA pass and polish before go-live
 ---
 
 ## Just Completed (2026-04-09)
+### UI Refinement & Map Integration Fixes
+- [x] Fixed "Popular Tour Plans" and "Themes" packages not interacting properly with the map by switching from async store hydration to direct static JSON imports for place resolution.
+- [x] Implemented global `yatara:load-tour` event system to sync external component selections (cards/themes) with the local map planner state.
+- [x] Transformed the Tour Planner preview modal with a "Liquid Glass" editorial look, including image-backed headers and improved text contrast.
+- [x] Resolved "sharp corner bleed" issues in Safari/Chrome across all tour cards and modes by implementing hardware-accelerated clipping fixes (`translateZ(0)`).
+- [x] Validated image manifest and filesystem consistency; confirmed broken images are due to dev server cache (recommending restart).
 
 ### Interactive Map 104-Place Curated Merge & Route Optimization
 - [x] Merged the `sri-lanka.curated.master.json` holding 97 accurate points with 100 existing points, deduplicating them into 104 total elite places across all 25 districts.
-- [x] Generated `image-manifest.json` for all 104 destinations and added all webp source images.
-- [x] Optimized dynamic road-based routing to ensure 1-click "Optimize Tour" intelligently solves Travelling Salesman problem via OSRM map geometry drawing on roads without straight-line rendering issues.
-- [x] Fixed "Popular Tour Plans" and "Themes" packages not interacting properly with the map because they were erroneously fetching unhydrated places from the global store instead of importing the curated static JSON directly.
+- [x] Optimized dynamic road-based routing to ensure 1-click "Optimize Tour" intelligently solves Travelling Salesman problem via OSRM map geometry drawing on roads.
 
 ### Admin Dashboard UI/UX Polish
 - [x] Fixed sidebar scrolling: changed layout to `h-screen` with independent overflow for sidebar and main content, eliminating ugly empty space.
@@ -69,29 +73,26 @@ Production Readiness — final QA pass and polish before go-live
 ---
 
 ## Last Session
-
-**Date**: 2026-04-05
+**Date**: 2026-04-09
 **What was done**:
-- Transitioned the BuildTourMap to a full-screen bleed layout via responsive Tailwind viewports.
-- Tuned the scale, container boundaries, and zoom controls to flexibly fit the island of Sri Lanka across varying screen sizes.
-- Implemented realistic road routing utilizing OSRM APIs with nearest-neighbor fallbacks to trace actual driving paths.
-- Finalized "My Journey" and "Select Region" interactive sliding transparent floating sidebars matching luxury aesthetics.
+- Refactored Tour Planner to correctly load curated plans and themes onto the interactive map.
+- Upgraded the Tour Plan preview UI with a premium "Liquid Glass" aesthetic and image headers.
+- Fixed Safari-specific layout bugs (corner clipping) and audited all image asset paths.
+- Mapped 104 elite destination nodes with valid WebP assets and metadata.
 
 **What to do next**:
-- Check dynamic route fidelity and ensure nearest-neighbor fallbacks run gracefully for distant nodes missing direct mapping data.
-- Execute manual QA across production routing features.
-- Review new UI structures on disparate mobile devices.
+- Check on the production deployment once the user restarts the dev server and verifies local assets.
+- Proceed with final QA checks on the mobile layout sheet for the tour planner.
 
 **Current state**:
 - Branch: `main`
-- Dev server: Verified OK
-- All changes pushed to GitHub for Vercel auto-deploy
+- Dev server: Restart required for asset refresh.
+- All map features: Fully optimized and responsive.
 
 **Files changed (This Session)**:
-- `src/app/(public)/build-tour/page.tsx` — updated wrapper layout and removed margins.
-- `src/app/(public)/build-tour/_components/BuildTourClient.tsx` — mapped desktop/mobile relative heights to fit fullscreen.
-- `src/app/(public)/build-tour/_components/BuildTourMap.tsx` — integrated OSRM trip API, optimized rendering geometries, removed maxBounds constraint, and tuned newZoom dynamically.
-- `src/app/(public)/build-tour/_components/PlannerSidebar.tsx` — finalized layout and extracted from MapViewport.
-- `src/lib/maps/buildTourMapStyle.ts` — configured minimal map geometries and bounds filtering.
-- `src/lib/trip/buildTourTypes.ts` — updated shared types for BuildTour component structure.
-
+- `src/app/(public)/build-tour/_components/PopularTours.tsx`
+- `src/app/(public)/build-tour/_components/ThemeCarousel.tsx`
+- `src/app/(public)/build-tour/_components/BuildTourClient.tsx`
+- `src/app/(public)/build-tour/_components/QuickStartModes.tsx`
+- `src/app/(public)/build-tour/_components/PlannerSidebar.tsx`
+- `.agent/MEMORY.md`, `.agent/TODO.md`

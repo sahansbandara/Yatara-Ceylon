@@ -46,10 +46,10 @@ export default function QuickStartModes() {
                             <button
                                 key={mode.title}
                                 onClick={mode.action}
-                                className="group rounded-2xl overflow-hidden relative flex flex-col h-[320px] sm:h-[380px] text-left shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:-translate-y-2 hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)] transition-all duration-500 border border-white/10"
+                                className="group rounded-2xl overflow-hidden relative flex flex-col h-[320px] sm:h-[380px] text-left shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:-translate-y-2 hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)] transition-all duration-500 border border-white/10 outline-none focus:outline-none [transform:translateZ(0)]"
                             >
                                 {/* Full Background Image */}
-                                <div className="absolute inset-0 bg-black">
+                                <div className="absolute inset-0 bg-black rounded-2xl overflow-hidden [transform:translateZ(0)]">
                                     <img
                                         src={mode.image}
                                         alt={mode.title}

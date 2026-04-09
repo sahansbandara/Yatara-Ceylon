@@ -194,10 +194,10 @@ export default function PopularTours() {
                             <button
                                 key={tour.id}
                                 onClick={() => setPreviewTour(tour)}
-                                className="group rounded-2xl overflow-hidden relative flex flex-col h-[400px] sm:h-[440px] text-left shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:-translate-y-2 hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)] transition-all duration-500 border border-white/10"
+                                className="group rounded-2xl overflow-hidden relative flex flex-col h-[400px] sm:h-[440px] text-left shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:-translate-y-2 hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)] transition-all duration-500 border border-white/10 outline-none focus:outline-none [transform:translateZ(0)]"
                             >
                                 {/* Full Background Image */}
-                                <div className="absolute inset-0 bg-black">
+                                <div className="absolute inset-0 bg-black rounded-2xl overflow-hidden [transform:translateZ(0)]">
                                     <img
                                         src={tour.image}
                                         alt={tour.title}
@@ -265,58 +265,72 @@ export default function PopularTours() {
 
                     {/* Modal — Light Glass */}
                     <div
-                        className="relative w-full max-w-lg bg-white/95 backdrop-blur-2xl border border-deep-emerald/10 rounded-2xl overflow-hidden shadow-2xl"
+                        className="relative w-full max-w-lg tour-glass-drawer rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.15)] ring-1 ring-white/50"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header with image */}
-                        <div className={`relative p-6 bg-gradient-to-br ${previewTour.gradient}`}>
+                        <div className="relative p-8 min-h-[240px] flex flex-col justify-end overflow-hidden">
+                            <div className="absolute inset-0 bg-black">
+                                <img
+                                    src={previewTour.image}
+                                    alt={previewTour.title}
+                                    className="w-full h-full object-cover opacity-90"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+                            </div>
+
                             <button
                                 onClick={() => setPreviewTour(null)}
-                                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white/80 hover:text-white hover:bg-white/30 transition-colors"
+                                className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-white/20 transition-all"
                             >
                                 <X className="w-4 h-4" />
                             </button>
-                            <div className="flex flex-wrap gap-1 mb-3">
-                                {previewTour.tags.map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className="px-2 py-0.5 rounded text-[9px] font-serif uppercase tracking-wider bg-white/15 text-white"
-                                    >
-                                        {tag}
+
+                            <div className="relative z-10 w-full">
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    {previewTour.tags.map((tag) => (
+                                        <span
+                                            key={tag}
+                                            className="px-3 py-1 rounded-full text-[9px] font-medium uppercase tracking-[0.15em] bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-sm"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                                <h3 className="font-display text-3xl text-white mb-2 drop-shadow-md">{previewTour.title}</h3>
+                                <p className="text-white/80 text-sm font-light leading-relaxed drop-shadow-sm max-w-[95%]">{previewTour.tagline}</p>
+                                <div className="flex items-center gap-5 mt-4 pt-4 border-t border-white/20">
+                                    <span className="text-white/90 text-xs font-serif flex items-center gap-1.5 drop-shadow-sm">
+                                        <Clock className="w-3.5 h-3.5" /> {previewTour.duration}
                                     </span>
-                                ))}
-                            </div>
-                            <h3 className="font-display text-2xl text-white mb-1">{previewTour.title}</h3>
-                            <p className="text-white/70 text-sm font-light">{previewTour.tagline}</p>
-                            <div className="flex items-center gap-4 mt-3">
-                                <span className="text-white/60 text-xs font-serif flex items-center gap-1">
-                                    <Clock className="w-3 h-3" /> {previewTour.duration}
-                                </span>
-                                <span className="text-white/60 text-xs font-serif flex items-center gap-1">
-                                    <Users className="w-3 h-3" /> {previewTour.popularity}% pick this
-                                </span>
+                                    <span className="text-white/90 text-xs font-serif flex items-center gap-1.5 drop-shadow-sm">
+                                        <Users className="w-3.5 h-3.5" /> {previewTour.popularity}% pick this
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
                         {/* Places List */}
-                        <div className="p-6">
-                            <p className="text-deep-emerald/35 text-[10px] uppercase tracking-[0.2em] font-serif mb-3">
-                                Included Stops — tap &quot;Use This Plan&quot; to customise
+                        <div className="p-6 relative">
+                            <p className="text-deep-emerald/50 text-[10px] uppercase tracking-[0.2em] font-serif mb-4 flex items-center gap-2">
+                                Included Stops
+                                <span className="h-px w-8 bg-deep-emerald/10 block"></span>
                             </p>
-                            <div className="space-y-2 max-h-[260px] overflow-y-auto custom-scrollbar">
+                            <div className="space-y-2.5 max-h-[260px] overflow-y-auto custom-scrollbar pr-1 relative z-10">
                                 {resolvedPlaces(previewTour.placeIds).map((place, i) => (
                                     <div
                                         key={place.id}
-                                        className="flex items-center gap-3 p-2.5 rounded-lg bg-deep-emerald/[0.03] border border-deep-emerald/[0.06]"
+                                        className="flex items-center gap-3 p-3 rounded-xl gem-place-card"
                                     >
                                         <span
-                                            className="w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-serif font-bold flex-shrink-0 bg-deep-emerald/10 text-deep-emerald"
+                                            className="w-7 h-7 flex items-center justify-center rounded-full text-[10px] font-serif font-bold flex-shrink-0 bg-white shadow-sm text-deep-emerald border border-deep-emerald/10"
                                         >
                                             {i + 1}
                                         </span>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-deep-emerald/80 text-sm font-serif truncate">{place.name}</p>
-                                            <p className="text-deep-emerald/30 text-[10px] font-light">{place.district}</p>
+                                            <p className="text-deep-emerald/90 text-[15px] font-serif truncate tracking-wide">{place.name}</p>
+                                            <p className="text-deep-emerald/40 text-[10px] font-light uppercase tracking-widest mt-0.5">{place.district}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -326,21 +340,21 @@ export default function PopularTours() {
                             <div className="flex gap-3 mt-6">
                                 <button
                                     onClick={() => applyTour(previewTour, true)}
-                                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-deep-emerald text-white font-serif text-xs uppercase tracking-[0.15em] rounded-full hover:bg-antique-gold hover:text-deep-emerald transition-all duration-300"
+                                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-deep-emerald text-white font-serif text-xs uppercase tracking-[0.15em] rounded-full hover:bg-antique-gold hover:text-deep-emerald transition-all duration-300 shadow-[0_8px_16px_rgba(4,57,39,0.2)]"
                                 >
                                     <Sparkles className="w-3.5 h-3.5" />
                                     Use This Plan
                                 </button>
                                 <button
                                     onClick={() => applyTour(previewTour, false)}
-                                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-deep-emerald/5 border border-deep-emerald/10 text-deep-emerald/60 font-serif text-xs uppercase tracking-[0.15em] rounded-full hover:bg-deep-emerald/10 hover:border-deep-emerald/20 transition-all"
+                                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/60 backdrop-blur-md border border-white/60 text-deep-emerald font-serif text-xs uppercase tracking-[0.15em] rounded-full hover:bg-white hover:shadow-md transition-all shadow-sm"
                                 >
                                     <MapPin className="w-3.5 h-3.5" />
                                     Add to Current
                                 </button>
                             </div>
 
-                            <p className="text-center text-deep-emerald/25 text-[10px] font-light mt-3">
+                            <p className="text-center text-deep-emerald/70 font-medium tracking-wide text-[10px] mt-4 drop-shadow-sm">
                                 You can add or remove any stops after loading
                             </p>
                         </div>
