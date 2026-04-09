@@ -255,7 +255,7 @@ export default function ConciergePanel({ activeRegionId, onSelectRegion }: Conci
                                                     <p className="font-serif text-[12px] text-deep-emerald/85 truncate">{place.name}</p>
                                                 </div>
                                                 <p className="text-deep-emerald/40 text-[9px] mt-1 line-clamp-2 font-light leading-relaxed pl-3.5">
-                                                    {place.teaser}
+                                                    {place.shortDescription}
                                                 </p>
                                                 <div className="flex items-center gap-3 mt-1.5 pl-3.5">
                                                     <span className="text-[7px] uppercase tracking-wider font-nav" style={{ color: color + '99' }}>

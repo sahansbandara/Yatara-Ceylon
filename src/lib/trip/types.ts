@@ -12,9 +12,12 @@ export interface Place {
     district: string;
     districtId: string;
     category: PlaceCategory;
-    teaser: string;
+    shortDescription: string;
     estimatedVisitMinutes: number;
-    imageHint: string;
+    image: string;
+    rating?: number;
+    tags?: string[];
+    mapPriority?: number;
     isHidden?: boolean;
 }
 

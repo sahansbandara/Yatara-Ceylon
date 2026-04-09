@@ -323,7 +323,7 @@ export default function MapViewport({ activeRegionId }: MapViewportProps) {
                             <div class="popup-category" style="color: ${color}">${place.category}</div>
                             <div class="popup-name">${place.name}</div>
                             <div class="popup-district">${place.district}</div>
-                            <div class="popup-teaser">${place.teaser}</div>
+                            <div class="popup-teaser">${place.shortDescription}</div>
                             ${!currentlyInStops
                                 ? `<button class="popup-add-btn" data-place-id="${place.id}">+ Add to Trip</button>`
                                 : '<div class="popup-added">✓ Added</div>'

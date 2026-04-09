@@ -146,7 +146,7 @@ export default function PlacesPanel({ districts }: PlacesPanelProps) {
                                     {/* Thumbnail */}
                                     <div className="w-[72px] h-[72px] rounded-lg overflow-hidden flex-shrink-0 relative bg-white/5">
                                         <Image
-                                            src={place.imageHint || '/images/hints/scenic.jpg'}
+                                            src={place.image || '/images/hints/scenic.jpg'}
                                             alt={place.name}
                                             fill
                                             className="object-cover group-hover:scale-110 transition-transform duration-700"

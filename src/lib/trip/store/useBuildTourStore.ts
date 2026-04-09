@@ -90,7 +90,7 @@ export const useBuildTourStore = create<BuildTourState>()(
                     (p) =>
                         p.name.toLowerCase().includes(q) ||
                         p.district.toLowerCase().includes(q) ||
-                        p.teaser.toLowerCase().includes(q)
+                        p.shortDescription.toLowerCase().includes(q)
                 );
             }
 
