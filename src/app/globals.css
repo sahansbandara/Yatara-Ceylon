@@ -2306,3 +2306,98 @@
   border-radius: 12px !important;
   overflow: hidden !important;
 }
+
+/* ============================================
+   🗺️ YATARA LUXURY BUILD TOUR STYLES
+   ============================================ */
+
+/* Left/Right Drawer Panels */
+.tour-glass-drawer {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.70) 0%, rgba(255, 255, 255, 0.35) 100%);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Place Card - Left Panel */
+.gem-place-card {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(4, 57, 39, 0.05);
+  transition: all 0.3s ease;
+}
+
+.gem-place-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 20px rgba(4, 57, 39, 0.08);
+  transform: translateY(-2px);
+}
+
+.gem-place-card.active {
+  background: rgba(4, 57, 39, 0.03);
+  border-color: rgba(4, 57, 39, 0.2);
+  box-shadow: inset 0 2px 10px rgba(4, 57, 39, 0.05);
+}
+
+/* Reset Button */
+.planner-reset-button {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 24px rgba(4, 57, 39, 0.12);
+}
+
+.planner-reset-button:hover {
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgba(4, 57, 39, 0.16);
+  transform: translateY(-2px);
+}
+
+/* Timeline in Right Panel */
+.journey-timeline-line {
+  position: absolute;
+  left: 39px;
+  top: 40px;
+  bottom: 40px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+      rgba(212, 175, 55, 0.1),
+      rgba(212, 175, 55, 0.5) 50%,
+      rgba(212, 175, 55, 0.1));
+  border-radius: 2px;
+  z-index: 0;
+}
+
+/* Map Popup Override */
+.tour-popup .maplibregl-popup-content {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-radius: 16px !important;
+  overflow: visible !important;
+}
+
+.tour-popup .maplibregl-popup-tip {
+  border-top-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Custom Scrollbar for modals */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(4, 57, 39, 0.15);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(4, 57, 39, 0.3);
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { District, Place, JourneyStop } from '@/lib/trip/buildTourTypes';
 import dynamic from 'next/dynamic';
 import type { BuildTourMapProps } from './BuildTourMap';
@@ -23,10 +23,48 @@ export default function BuildTourClient() {
     const [journeyStops, setJourneyStops] = useState<JourneyStop[]>([]);
     const [routeVisible, setRouteVisible] = useState(false);
 
+    // Sync with external components (e.g. PopularTours, ThemeCarousel)
+    useEffect(() => {
+        const handleLoadTour = (e: CustomEvent<{ placeIds: string[], replace: boolean }>) => {
+            const { placeIds, replace } = e.detail;
+
+            if (replace) {
+                const newStops: JourneyStop[] = placeIds.map((id, index) => ({
+                    id: `stop-${Date.now()}-${index}`,
+                    placeId: id,
+                    day: 1,
+                    order: index
+                }));
+                setJourneyStops(newStops);
+                setSelectedPlaceIds(placeIds);
+            } else {
+                setJourneyStops(prev => {
+                    const existingIds = new Set(prev.map(s => s.placeId));
+                    const toAdd = placeIds.filter(id => !existingIds.has(id));
+                    const newStops: JourneyStop[] = toAdd.map((id, index) => ({
+                        id: `stop-${Date.now()}-${prev.length + index}`,
+                        placeId: id,
+                        day: prev.length > 0 ? Math.max(...prev.map(s => s.day)) : 1, // Add to highest day
+                        order: prev.length + index
+                    }));
+                    return [...prev, ...newStops];
+                });
+                setSelectedPlaceIds(prev => {
+                    const existing = new Set(prev);
+                    const newIds = placeIds.filter(id => !existing.has(id));
+                    return [...prev, ...newIds];
+                });
+            }
+        };
+
+        window.addEventListener('yatara:load-tour', handleLoadTour as EventListener);
+        return () => window.removeEventListener('yatara:load-tour', handleLoadTour as EventListener);
+    }, []);
+
     return (
-        <section id="planner" className="relative w-full bg-off-white flex flex-col lg:block lg:h-[90vh] lg:min-h-[700px] lg:max-h-[1000px] lg:overflow-hidden">
+        <section id="planner" className="relative w-full bg-off-white flex flex-col lg:block h-[calc(100vh-85px)] overflow-hidden">
             {/* ── Background Map (Top on mobile, Background on desktop) ────────────────────────── */}
-            <div className="relative w-full h-[60vh] lg:absolute lg:inset-0 lg:h-full z-0 bg-[#f4f1eb]">
+            <div className="relative w-full h-[50vh] lg:absolute lg:inset-0 lg:h-full z-0 bg-[#f4f1eb]">
                 <BuildTourMap
                     selectedDistrictId={selectedDistrictId}
                     hoveredDistrictId={hoveredDistrictId}

@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
-import Map, { Source, Layer } from 'react-map-gl/maplibre';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import Map, { Source, Layer, Marker, Popup } from 'react-map-gl/maplibre';
+import type { MapRef } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { MapLayerMouseEvent } from 'react-map-gl/maplibre';
+import { getViewportPadding } from '@/lib/buildTour/getViewportPadding';
 
 import type { JourneyStop } from '@/lib/trip/buildTourTypes';
 import { LIGHT_LUXURY_MAP_STYLE, SRI_LANKA_BOUNDS } from '@/lib/maps/buildTourMapStyle';
@@ -19,15 +21,15 @@ interface TripResult {
     waypointOrder: number[]; // Optimized indices order
 }
 
-async function fetchOptimizedTrip(coordinates: [number, number][]): Promise<TripResult | null> {
+async function fetchOptimizedTrip(coordinates: [number, number][], sourceFirst: boolean = false): Promise<TripResult | null> {
     if (coordinates.length < 2) return null;
     try {
         const coordStr = coordinates.map(c => `${c[0]},${c[1]}`).join(';');
         // Use trip endpoint: optimizes waypoint order for the shortest route
         // roundtrip=false → one-way path (not a loop)
-        // source=first → start from the first waypoint
+        const sourceParam = sourceFirst ? 'first' : 'any';
         const res = await fetch(
-            `https://router.project-osrm.org/trip/v1/driving/${coordStr}?overview=full&geometries=geojson&roundtrip=false&source=first`
+            `https://router.project-osrm.org/trip/v1/driving/${coordStr}?overview=full&geometries=geojson&roundtrip=false&source=${sourceParam}&destination=any`
         );
         const data = await res.json();
 
@@ -74,29 +76,53 @@ export default function BuildTourMap({
     routeVisible
 }: BuildTourMapProps) {
 
+    const mapRef = useRef<MapRef>(null);
+
     const [viewState, setViewState] = useState({
         longitude: 80.7718, // Center of Sri Lanka approx
         latitude: 7.8731,
-        zoom: 4.5, // Small enough to show full island with padding
+        zoom: 7, // Initial zoom that gets immediately overridden by fitBounds
         pitch: 0,
         bearing: 0
     });
 
-    useEffect(() => {
-        const handleResize = () => {
-            const width = window.innerWidth;
-            let newZoom = 4.2; // 3.2 + 1.0 = 4.2 (2x bigger than previous, but smaller than original 4.5)
-            if (width > 1500) newZoom = 4.9; // 3.9 + 1.0 = 4.9
-            else if (width > 1024) newZoom = 4.5; // 3.5 + 1.0 = 4.5
-            else if (width > 768) newZoom = 4.2; // 3.2 + 1.0 = 4.2
+    const fitSriLankaBounds = useCallback(() => {
+        if (!mapRef.current) return;
+        const padding = getViewportPadding();
+        mapRef.current.fitBounds(SRI_LANKA_BOUNDS, {
+            padding,
+            duration: 1000,
+            maxZoom: 8
+        });
+    }, []);
 
-            setViewState(prev => ({ ...prev, zoom: newZoom }));
+    // Initial load and resize bounds framing
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+        const handleResize = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                if (!selectedDistrictId) {
+                    fitSriLankaBounds();
+                } else {
+                    // Refit to district if selected (will be handled by DistrictLayer or here)
+                }
+            }, 300);
         };
 
-        handleResize(); // Set initial
         window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(timeoutId);
+        };
+    }, [selectedDistrictId, fitSriLankaBounds]);
+
+    // Handle selected district zoom
+    useEffect(() => {
+        if (!selectedDistrictId) {
+            fitSriLankaBounds();
+        }
+    }, [selectedDistrictId, fitSriLankaBounds]);
 
     const [cursorPos, setCursorPos] = useState<{ x: number, y: number } | null>(null);
     const [hoveredDistrictName, setHoveredDistrictName] = useState<string | null>(null);
@@ -114,10 +140,42 @@ export default function BuildTourMap({
         }
     };
 
+    // Helper to calculate bounding box of a GeoJSON feature
+    const getFeatureBounds = (feature: any): [number, number, number, number] => {
+        let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+        const processCoords = (coords: any[]) => {
+            if (typeof coords[0] === 'number') {
+                const [lng, lat] = coords;
+                if (lng < minLng) minLng = lng;
+                if (lat < minLat) minLat = lat;
+                if (lng > maxLng) maxLng = lng;
+                if (lat > maxLat) maxLat = lat;
+            } else {
+                coords.forEach(processCoords);
+            }
+        };
+        if (feature.geometry?.coordinates) {
+            processCoords(feature.geometry.coordinates);
+        }
+        return [minLng, minLat, maxLng, maxLat];
+    };
+
     const onClick = (event: MapLayerMouseEvent) => {
+        setPopupInfo(null);
         const feature = event.features && event.features[0];
         if (feature && feature.properties?.district_id) {
-            setSelectedDistrictId(feature.properties.district_id);
+            const districtId = feature.properties.district_id;
+            setSelectedDistrictId(districtId);
+
+            // Auto fit bounds to the district
+            const bounds = getFeatureBounds(feature);
+            if (bounds[0] !== Infinity && mapRef.current) {
+                mapRef.current.fitBounds(bounds, {
+                    padding: getViewportPadding(),
+                    duration: 1000,
+                    maxZoom: 9
+                });
+            }
         } else {
             setSelectedDistrictId(null);
         }
@@ -126,81 +184,114 @@ export default function BuildTourMap({
     // ── Smart Road-Route with TSP Optimization ────────────────────────
     const [routeData, setRouteData] = useState<any>(null);
     const [isOptimizing, setIsOptimizing] = useState(false);
+    const [showStartModal, setShowStartModal] = useState(false);
+    const [popupInfo, setPopupInfo] = useState<{ place: any, stopNumber: number } | null>(null);
 
-    // Initial straight-line route calculation without calling OSRM API
+    // Initial route calculation fetching real road geometry
     useEffect(() => {
-        const stopsWithCoords = journeyStops.map(stop => {
-            const place = curatedPlaces.find(p => p.id === stop.placeId);
-            return place ? { stop, coord: [place.lng, place.lat] as [number, number] } : null;
-        }).filter(Boolean) as { stop: JourneyStop; coord: [number, number] }[];
+        let isMounted = true;
 
-        if (stopsWithCoords.length < 1) {
-            setRouteData(null);
-            return;
-        }
-
-        if (stopsWithCoords.length < 2) {
-            // Single stop — just show the point
-            setRouteData({
-                type: 'FeatureCollection',
-                features: [{
-                    type: 'Feature', properties: { stopNumber: 1 },
-                    geometry: { type: 'Point', coordinates: stopsWithCoords[0].coord }
-                }]
-            });
-            return;
-        }
-
-        const coords = stopsWithCoords.map(s => s.coord);
-
-        // Build GeoJSON with straight lines connecting stops in their current manual order
-        const buildStraightLineRoute = () => ({
+        const buildRouteGeoJson = (coords: [number, number][]) => ({
             type: 'FeatureCollection',
             features: [
                 {
                     type: 'Feature', properties: {},
                     geometry: { type: 'LineString', coordinates: coords }
-                },
-                ...coords.map((coord, i) => ({
-                    type: 'Feature' as const,
-                    properties: { stopNumber: i + 1 },
-                    geometry: { type: 'Point' as const, coordinates: coord }
-                }))
+                }
             ]
         });
 
-        // By default, just draw the straight lines immediately (0 API calls locally)
-        setRouteData(buildStraightLineRoute());
+        const fetchAndSetRoute = async () => {
+            const stopsWithCoords = journeyStops.map(stop => {
+                const place = curatedPlaces.find(p => p.id === stop.placeId);
+                return place ? { stop, coord: [place.lng, place.lat] as [number, number] } : null;
+            }).filter(Boolean) as { stop: JourneyStop; coord: [number, number] }[];
 
-    }, [journeyStops.length, journeyStops.map(s => s.placeId).join(','), journeyStops.map(s => s.order).join(',')]);
+            if (stopsWithCoords.length < 1) {
+                if (isMounted) setRouteData(null);
+                return;
+            }
+
+            if (stopsWithCoords.length < 2) {
+                // Single stop — just show the point
+                if (isMounted) {
+                    setRouteData({
+                        type: 'FeatureCollection',
+                        features: [{
+                            type: 'Feature', properties: { stopNumber: 1 },
+                            geometry: { type: 'Point', coordinates: stopsWithCoords[0].coord }
+                        }]
+                    });
+                }
+                return;
+            }
+
+            const coords = stopsWithCoords.map(s => s.coord);
+
+            // Fetch actual road geometry for the current order
+            const coordStr = coords.map(c => `${c[0]},${c[1]}`).join(';');
+            try {
+                const res = await fetch(
+                    `https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`
+                );
+                const data = await res.json();
+
+                if (isMounted && data.code === 'Ok' && data.routes?.[0]) {
+                    setRouteData(buildRouteGeoJson(data.routes[0].geometry.coordinates));
+                } else if (isMounted) {
+                    // Fallback to straight lines only if API fails
+                    setRouteData(buildRouteGeoJson(coords));
+                }
+            } catch (err) {
+                if (isMounted) {
+                    // Fallback to straight lines on network error
+                    setRouteData(buildRouteGeoJson(coords));
+                }
+            }
+        };
+
+        // Don't auto-fetch if we are in the middle of a TSP optimization 
+        // to avoid race conditions with setting the optimized geometry
+        if (!isOptimizing) {
+            fetchAndSetRoute();
+        }
+
+        return () => {
+            isMounted = false;
+        };
+    }, [journeyStops.length, journeyStops.map(s => s.placeId).join(','), journeyStops.map(s => s.order).join(','), isOptimizing]);
 
 
     // ── Manual Optimization Trigger ───────────────────────────────────────────
-    const handleOptimizeRoute = async () => {
+    const handleRunOptimization = async (startStopId: string | null) => {
+        setShowStartModal(false);
         if (journeyStops.length < 2) return;
 
         setIsOptimizing(true);
 
-        const stopsWithCoords = journeyStops.map(stop => {
+        let stopsWithCoords = journeyStops.map(stop => {
             const place = curatedPlaces.find(p => p.id === stop.placeId);
             return place ? { stop, coord: [place.lng, place.lat] as [number, number] } : null;
         }).filter(Boolean) as { stop: JourneyStop; coord: [number, number] }[];
 
+        if (startStopId) {
+            const startIndex = stopsWithCoords.findIndex(s => s.stop.id === startStopId);
+            if (startIndex > 0) {
+                const startItem = stopsWithCoords.splice(startIndex, 1)[0];
+                stopsWithCoords.unshift(startItem);
+            }
+        }
+
         const coords = stopsWithCoords.map(s => s.coord);
 
         // Helper: build GeoJSON result from road geometry + ordered coordinates
-        const buildRouteGeoJson = (geometry: [number, number][], orderedCoords: [number, number][]) => ({
+        const buildRouteGeoJson = (geometry: [number, number][]) => ({
             type: 'FeatureCollection',
             features: [
                 {
                     type: 'Feature', properties: {},
                     geometry: { type: 'LineString', coordinates: geometry }
-                },
-                ...orderedCoords.map((coord, i) => ({
-                    type: 'Feature' as const,
-                    properties: { stopNumber: i + 1 },
-                    geometry: { type: 'Point' as const, coordinates: coord }
-                }))
+                }
             ]
         });
 
@@ -237,7 +328,7 @@ export default function BuildTourMap({
         };
 
         try {
-            const result = await fetchOptimizedTrip(coords);
+            const result = await fetchOptimizedTrip(coords, !!startStopId);
 
             if (result) {
                 // Reorder journey stops based on OSRM's optimized waypoint order
@@ -249,8 +340,7 @@ export default function BuildTourMap({
                 // but immediately overwrite it with the rich routeData to prioritize the road geometry.
                 setJourneyStops(optimizedStops);
 
-                const optimizedCoords = result.waypointOrder.map(idx => stopsWithCoords[idx].coord);
-                setRouteData(buildRouteGeoJson(result.geometry, optimizedCoords));
+                setRouteData(buildRouteGeoJson(result.geometry));
 
             } else {
                 // Fallback: nearest-neighbor reordering + OSRM route for road geometry
@@ -268,7 +358,7 @@ export default function BuildTourMap({
                 try {
                     const roadGeometry = await fetchRouteGeometry(reorderedCoords);
                     if (roadGeometry) {
-                        setRouteData(buildRouteGeoJson(roadGeometry, reorderedCoords));
+                        setRouteData(buildRouteGeoJson(roadGeometry));
                     } else {
                         throw new Error("No geom");
                     }
@@ -287,8 +377,10 @@ export default function BuildTourMap({
     return (
         <div className="w-full h-full relative z-0">
             <Map
+                ref={mapRef}
                 {...viewState}
                 onMove={evt => setViewState(evt.viewState)}
+                onLoad={fitSriLankaBounds}
                 mapStyle={LIGHT_LUXURY_MAP_STYLE}
                 interactiveLayerIds={['district-fills']}
                 onMouseMove={onHover}
@@ -297,12 +389,11 @@ export default function BuildTourMap({
                     setHoveredDistrictId(null);
                     setCursorPos(null);
                 }}
-                dragPan={false}
+                dragPan={true}
                 scrollZoom={false}
-                doubleClickZoom={false}
+                doubleClickZoom={true}
                 dragRotate={false}
-                touchZoomRotate={false}
-                maxBounds={SRI_LANKA_BOUNDS}
+                touchZoomRotate={true}
                 cursor={hoveredDistrictId ? 'pointer' : 'default'}
             >
                 <DistrictLayer
@@ -340,27 +431,88 @@ export default function BuildTourMap({
                                 'line-join': 'round'
                             }}
                         />
-                        {/* Stop node circles */}
-                        <Layer
-                            id="route-points"
-                            type="circle"
-                            filter={['==', ['geometry-type'], 'Point']}
-                            paint={{
-                                'circle-radius': 7,
-                                'circle-color': '#043927',
-                                'circle-stroke-width': 3,
-                                'circle-stroke-color': '#fff'
-                            }}
-                        />
                     </Source>
                 )}
 
+                {/* HTML Markers for Places */
+                }
+                {journeyStops.map((stop) => {
+                    const place = curatedPlaces.find(p => p.id === stop.placeId);
+                    if (!place) return null;
+
+                    const sortedStops = [...journeyStops].sort((a, b) => a.order - b.order);
+                    const displayIndex = sortedStops.findIndex(s => s.id === stop.id) + 1;
+
+                    return (
+                        <Marker
+                            key={stop.id}
+                            longitude={place.lng}
+                            latitude={place.lat}
+                            anchor="bottom"
+                            onClick={e => {
+                                e.originalEvent.stopPropagation();
+                                setPopupInfo({ place, stopNumber: displayIndex });
+                            }}
+                        >
+                            <div className="cursor-pointer group relative">
+                                <div className="absolute -top-3 -right-3 w-[22px] h-[22px] rounded-full bg-antique-gold text-deep-emerald flex items-center justify-center text-[10px] font-extrabold shadow-md ring-2 ring-white z-10 transition-transform group-hover:scale-110">
+                                    {displayIndex}
+                                </div>
+                                {/* SVG map pin */}
+                                <div className="w-9 h-9 text-deep-emerald filter drop-shadow-lg group-hover:-translate-y-1 transition-transform">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" stroke="white" strokeWidth="1.5">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </Marker>
+                    );
+                })}
+
+                {/* Popup for Markers */}
+                {popupInfo && (
+                    <Popup
+                        anchor="top"
+                        longitude={popupInfo.place.lng}
+                        latitude={popupInfo.place.lat}
+                        onClose={() => setPopupInfo(null)}
+                        className="tour-popup z-50 rounded-xl overflow-hidden shadow-2xl"
+                        closeButton={false}
+                        focusAfterOpen={false}
+                    >
+                        <div className="p-1 w-52 font-sans bg-white/95 rounded-xl border border-black/5">
+                            <div className="w-full h-28 relative rounded-lg overflow-hidden mb-2 bg-black/5">
+                                {popupInfo.place.image && <img src={popupInfo.place.image} alt={popupInfo.place.name} className="w-full h-full object-cover" />}
+                                <div className="absolute top-2 left-2 bg-antique-gold text-deep-emerald text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded shadow-sm">
+                                    Stop {popupInfo.stopNumber}
+                                </div>
+                            </div>
+                            <div className="px-1.5 pb-1">
+                                <h4 className="font-serif font-medium text-deep-emerald text-sm mb-1">{popupInfo.place.name}</h4>
+                                <p className="uppercase text-[10px] tracking-widest text-deep-emerald/60 line-clamp-1">{popupInfo.place.category.replace(/_/g, ' ')}</p>
+                            </div>
+                        </div>
+                    </Popup>
+                )}
+
                 {/* Floating Map Controls at Bottom Center */}
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col gap-4 pointer-events-none">
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col gap-4 pointer-events-none items-center">
+                    {/* View Sri Lanka Reset Button */}
+                    {selectedDistrictId && (
+                        <div className="pointer-events-auto">
+                            <button
+                                onClick={() => setSelectedDistrictId(null)}
+                                className="bg-white/80 backdrop-blur-xl border border-white/50 text-deep-emerald px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl hover:bg-white transition-all text-xs tracking-widest uppercase font-semibold flex items-center justify-center gap-2 planner-reset-button"
+                            >
+                                📍 View Sri Lanka
+                            </button>
+                        </div>
+                    )}
+
                     {/* Optimize Route Button */}
                     <div className="pointer-events-auto">
                         <button
-                            onClick={handleOptimizeRoute}
+                            onClick={() => setShowStartModal(true)}
                             disabled={isOptimizing || journeyStops.length < 2}
                             className="bg-deep-emerald text-white px-5 py-3 rounded-xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all text-xs tracking-widest uppercase font-bold disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-xl flex items-center justify-center gap-2"
                         >
@@ -387,6 +539,48 @@ export default function BuildTourMap({
                         }}
                     >
                         <span className="text-deep-emerald font-serif text-sm tracking-wide capitalize">{hoveredDistrictName || hoveredDistrictId}</span>
+                    </div>
+                )}
+
+                {/* Start Optimization Modal Overlay */}
+                {showStartModal && (
+                    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-[#f4f1eb]/60 backdrop-blur-md pointer-events-auto">
+                        <div className="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border border-black/5 relative overflow-hidden">
+                            <div className="relative z-10">
+                                <h3 className="text-xl font-serif text-deep-emerald mb-2">Select Starting Point</h3>
+                                <p className="text-xs text-deep-emerald/60 mb-5 leading-relaxed">Where will you begin your journey? Pick your location so we can optimize the route around it.</p>
+
+                                <div className="flex flex-col gap-2 max-h-[40vh] overflow-y-auto mb-4 custom-scrollbar pr-2">
+                                    <button
+                                        onClick={() => handleRunOptimization(null)}
+                                        className="w-full text-left p-3 rounded-xl hover:bg-deep-emerald/5 border border-transparent hover:border-deep-emerald/20 transition-all group"
+                                    >
+                                        <span className="font-semibold text-sm text-deep-emerald block">Let the algorithm decide</span>
+                                        <span className="text-[10px] text-deep-emerald/50">Finds the mathematically shortest loop</span>
+                                    </button>
+
+                                    {journeyStops.map(stop => {
+                                        const p = curatedPlaces.find(pl => pl.id === stop.placeId);
+                                        return (
+                                            <button
+                                                key={stop.id}
+                                                onClick={() => handleRunOptimization(stop.id)}
+                                                className="w-full text-left p-3 flex items-center gap-3 rounded-xl hover:bg-deep-emerald/5 border border-transparent hover:border-deep-emerald/20 transition-all"
+                                            >
+                                                <div className="w-8 h-8 rounded-lg bg-black/5 overflow-hidden relative shrink-0">
+                                                    {p?.image && <img src={p.image} alt={p.name} className="w-full h-full object-cover" />}
+                                                </div>
+                                                <div className="flex-1 overflow-hidden min-w-0">
+                                                    <span className="font-medium text-sm text-deep-emerald block truncate">{p?.name || stop.placeId}</span>
+                                                    <span className="text-[10px] uppercase tracking-widest text-deep-emerald/50 block truncate">{p?.district || 'Unknown'} District</span>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <button onClick={() => setShowStartModal(false)} className="w-full py-2.5 text-center text-xs font-bold tracking-widest uppercase text-deep-emerald/40 hover:text-deep-emerald transition-colors">Cancel</button>
+                            </div>
+                        </div>
                     </div>
                 )}
             </Map>

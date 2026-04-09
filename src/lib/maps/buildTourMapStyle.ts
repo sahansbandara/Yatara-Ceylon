@@ -18,7 +18,7 @@ export const LIGHT_LUXURY_MAP_STYLE: StyleSpecification = {
             id: 'background',
             type: 'background',
             paint: {
-                'background-color': '#f8f6f2'
+                'background-color': '#e8efe9' // subtle emerald/mint tint
             }
         },
         {
@@ -28,10 +28,10 @@ export const LIGHT_LUXURY_MAP_STYLE: StyleSpecification = {
             minzoom: 0,
             maxzoom: 19,
             paint: {
-                'raster-opacity': 0.8,
-                'raster-contrast': 0.1,
-                'raster-brightness-min': 0.1,
-                'raster-saturation': -0.2
+                'raster-opacity': 0.75, // let some background tint show through
+                'raster-contrast': 0.15,
+                'raster-brightness-min': 0.05,
+                'raster-saturation': -0.4 // less saturation for a premium muted look
             }
         }
     ]

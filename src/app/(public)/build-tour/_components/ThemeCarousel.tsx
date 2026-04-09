@@ -3,11 +3,13 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, A11y } from 'swiper/modules';
 import { ChevronLeft, ChevronRight, MapPin, Clock, Calendar, Compass } from 'lucide-react';
-import { useBuildTourStore } from '@/lib/trip/store/useBuildTourStore';
 import type { Place } from '@/lib/trip/types';
+import curatedPlacesRaw from '@/data/places/sri-lanka.curated.json';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
+
+const curatedPlaces = curatedPlacesRaw as unknown as Place[];
 
 interface TourTheme {
     title: string;
@@ -91,18 +93,13 @@ const THEMES: TourTheme[] = [
 ];
 
 export default function ThemeCarousel() {
-    const places = useBuildTourStore((s) => s.places);
-    const addStop = useBuildTourStore((s) => s.addStop);
-    const isInStops = useBuildTourStore((s) => s.isInStops);
-
     const addThemePlaces = (placeIds: string[]) => {
-        placeIds.forEach((id) => {
-            const place = places.find((p: Place) => p.id === id);
-            if (place && !isInStops(place.id)) {
-                addStop(place);
-            }
-        });
-        document.getElementById('trip-builder')?.scrollIntoView({ behavior: 'smooth' });
+        window.dispatchEvent(
+            new CustomEvent('yatara:load-tour', {
+                detail: { placeIds, replace: true },
+            })
+        );
+        document.getElementById('planner')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
@@ -144,7 +141,7 @@ export default function ThemeCarousel() {
                     >
                         {THEMES.map((theme) => {
                             const themePlaces = theme.placeIds
-                                .map((id) => places.find((p: Place) => p.id === id))
+                                .map((id) => curatedPlaces.find((p: Place) => p.id === id))
                                 .filter(Boolean) as Place[];
 
                             return (

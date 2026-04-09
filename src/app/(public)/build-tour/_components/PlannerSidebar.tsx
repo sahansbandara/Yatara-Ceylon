@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { X, Plus, Minus, ChevronRight, Save, Trash2, MapPin } from 'lucide-react';
+import { X, Plus, Minus, ChevronRight, Save, Trash2, MapPin, Clock } from 'lucide-react';
 import Image from 'next/image';
 import type { JourneyStop, Place } from '@/lib/trip/buildTourTypes';
 import curatedPlacesRaw from '@/data/places/sri-lanka.curated.json';
@@ -40,7 +40,7 @@ export default function PlannerSidebar({
     }, [selectedDistrictId]);
 
     const activeJourneyPlaces = useMemo(() => {
-        return journeyStops.map(stop => {
+        return [...journeyStops].sort((a, b) => a.order - b.order).map(stop => {
             const place = curatedPlaces.find(p => p.id === stop.placeId);
             return { ...stop, place };
         }).filter(s => s.place);
@@ -73,7 +73,7 @@ export default function PlannerSidebar({
             {/* ── Left Column: Select a District / Curated Places ── */}
             <div className="lg:pointer-events-auto w-full lg:w-[340px] flex flex-col h-[50vh] lg:h-full max-h-full shrink-0">
                 {selectedDistrictId ? (
-                    <div className="bg-white/75 backdrop-blur-2xl border border-white rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.06)] flex flex-col flex-1 min-h-0 overflow-hidden transition-all duration-500 transform opacity-100 translate-x-0">
+                    <div className="tour-glass-drawer rounded-3xl flex flex-col flex-1 min-h-0 overflow-hidden transition-all duration-500 transform opacity-100 translate-x-0">
                         {/* Header */}
                         <div className="relative px-6 py-5 border-b border-black/5 bg-white/50 shrink-0">
                             <button
@@ -96,11 +96,16 @@ export default function PlannerSidebar({
                                 {districtPlaces.length > 0 ? districtPlaces.map(place => {
                                     const isAdded = selectedPlaceIds.includes(place.id);
                                     return (
-                                        <div key={place.id} className={`flex items-center gap-4 p-3 rounded-2xl border transition-all ${isAdded ? 'border-deep-emerald/30 bg-deep-emerald/5 shadow-inner' : 'border-black/5 bg-white/50 hover:bg-white hover:shadow-md group/card cursor-pointer'}`}
+                                        <div key={place.id} className={`flex items-center gap-4 p-3 rounded-2xl gem-place-card group/card ${isAdded ? 'active cursor-default' : 'cursor-pointer'}`}
                                             onClick={() => !isAdded && handleAddPlace(place.id)}
                                         >
-                                            <div className="w-14 h-14 rounded-xl bg-black/5 overflow-hidden relative shrink-0">
-                                                <div className="absolute inset-0 bg-gradient-to-tr from-deep-emerald/20 to-antique-gold/20" />
+                                            <div className="w-14 h-14 rounded-xl bg-black/5 overflow-hidden relative shrink-0 shadow-inner">
+                                                {place.image ? (
+                                                    <Image src={place.image} alt={place.name} fill sizes="56px" className="object-cover transition-transform duration-700 group-hover/card:scale-110" />
+                                                ) : (
+                                                    <div className="absolute inset-0 bg-gradient-to-tr from-deep-emerald/20 to-antique-gold/20" />
+                                                )}
+                                                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-xl pointer-events-none" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="text-sm font-medium text-deep-emerald truncate">{place.name}</h4>
@@ -123,7 +128,7 @@ export default function PlannerSidebar({
                         </div>
                     </div>
                 ) : (
-                    <div className="bg-white/75 backdrop-blur-2xl border border-white rounded-3xl shadow-xl p-8 text-center transition-all duration-500 w-full lg:max-w-[340px]">
+                    <div className="tour-glass-drawer rounded-3xl p-8 text-center transition-all duration-500 w-full lg:max-w-[340px]">
                         <div className="w-12 h-12 mx-auto bg-deep-emerald/5 rounded-full flex items-center justify-center mb-4">
                             <MapPin className="w-5 h-5 text-deep-emerald/40" />
                         </div>
@@ -137,29 +142,52 @@ export default function PlannerSidebar({
 
             {/* ── Right Column: My Journey ── */}
             <div className="lg:pointer-events-auto w-full lg:w-[340px] flex flex-col h-[60vh] lg:h-auto lg:max-h-[calc(100vh-140px)] shrink-0">
-                <div className="bg-white/75 backdrop-blur-2xl border border-white rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.06)] flex flex-col flex-1 min-h-0 overflow-hidden">
+                <div className="tour-glass-drawer rounded-3xl flex flex-col flex-1 min-h-0 overflow-hidden">
                     {/* Header */}
                     <div className="px-6 py-5 border-b border-black/5 bg-white/50 shrink-0 flex items-center justify-between">
                         <h3 className="font-serif text-lg text-deep-emerald tracking-wide flex items-center gap-2">
                             My Journey
                         </h3>
-                        <div className="flex bg-deep-emerald/5 px-3 py-1 rounded-full items-center gap-2">
-                            <span className="text-[10px] font-bold tracking-widest uppercase text-deep-emerald/70">
-                                {journeyStops.length} Stops
-                            </span>
+                        <div className="flex flex-col items-end gap-1">
+                            <div className="flex bg-deep-emerald/5 px-2 py-0.5 rounded-full items-center gap-1">
+                                <span className="text-[10px] font-bold tracking-widest uppercase text-deep-emerald/70">
+                                    {journeyStops.length} Stops
+                                </span>
+                            </div>
+                            {journeyStops.length > 1 && (
+                                <span className="text-[10px] text-deep-emerald/50 flex flex-row items-center gap-1">
+                                    <Clock className="w-3 h-3" /> ~{Math.round(journeyStops.length * 1.5)} hrs driving
+                                </span>
+                            )}
                         </div>
                     </div>
 
                     {/* Timeline List */}
                     <div className="p-6 overflow-y-auto custom-scrollbar flex-1 relative">
                         {activeJourneyPlaces.length > 1 && (
-                            <div className="absolute left-[39px] top-[36px] bottom-[36px] w-[2px] bg-gradient-to-b from-deep-emerald/5 via-deep-emerald/20 to-deep-emerald/5 rounded-full" />
+                            <div className="journey-timeline-line" />
                         )}
                         <div className="flex flex-col gap-4 relative z-10">
                             {activeJourneyPlaces.length > 0 ? activeJourneyPlaces.map((stop, index) => (
-                                <div key={stop.id} className="group/journey flex items-center gap-4 bg-white/90 border border-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] p-3 pr-4 rounded-2xl transition-all hover:shadow-md">
-                                    {/* Stop Number */}
-                                    <div className="w-7 h-7 rounded-full bg-deep-emerald text-white flex items-center justify-center text-xs font-serif shrink-0 shadow-lg shadow-deep-emerald/20">
+                                <div key={stop.id} className="group/journey flex items-center gap-4 gem-place-card p-3 pr-4 rounded-2xl relative">
+                                    {/* Start Point Badge */}
+                                    {index === 0 && (
+                                        <div className="absolute -top-3 -left-1 bg-deep-emerald text-white text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full shadow-md z-20 shadow-deep-emerald/20">
+                                            Start
+                                        </div>
+                                    )}
+                                    {/* Stop Thumbnail */}
+                                    <div className="w-10 h-10 rounded-[10px] overflow-hidden relative shrink-0 shadow-md shadow-black/10">
+                                        {stop.place?.image ? (
+                                            <Image src={stop.place.image} alt={stop.place.name || 'Place'} fill sizes="40px" className="object-cover" />
+                                        ) : (
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-deep-emerald/20 to-antique-gold/20" />
+                                        )}
+                                        <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-[10px] pointer-events-none" />
+                                    </div>
+
+                                    {/* Stop Number Badge */}
+                                    <div className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-antique-gold text-deep-emerald flex items-center justify-center text-[10px] font-bold shrink-0 shadow-md ring-2 ring-[#f4f1eb] z-20">
                                         {index + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">

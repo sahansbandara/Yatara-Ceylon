@@ -7,18 +7,19 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
-## Just Completed (2026-04-04)
+## Just Completed (2026-04-09)
+
+### Interactive Map 104-Place Curated Merge & Route Optimization
+- [x] Merged the `sri-lanka.curated.master.json` holding 97 accurate points with 100 existing points, deduplicating them into 104 total elite places across all 25 districts.
+- [x] Generated `image-manifest.json` for all 104 destinations and added all webp source images.
+- [x] Optimized dynamic road-based routing to ensure 1-click "Optimize Tour" intelligently solves Travelling Salesman problem via OSRM map geometry drawing on roads without straight-line rendering issues.
+- [x] Fixed "Popular Tour Plans" and "Themes" packages not interacting properly with the map because they were erroneously fetching unhydrated places from the global store instead of importing the curated static JSON directly.
 
 ### Admin Dashboard UI/UX Polish
 - [x] Fixed sidebar scrolling: changed layout to `h-screen` with independent overflow for sidebar and main content, eliminating ugly empty space.
 - [x] Replaced harsh white hover effects on VehicleTable rows and action buttons with subtle dark-theme glass-morphism hover states.
 - [x] Fixed TicketTable and support detail page hover effects to use softer, themed blue/gold backgrounds.
 - [x] Changed ticket detail view (messages + reply form) from light `liquid-glass-stat` to dark `liquid-glass-stat-dark` backgrounds.
-- [x] Admin Packages Redesign
-    - [x] Converted the outdated data table into a responsive, luxury CSS Grid of interactive cards, mirroring the Destinations section.
-    - [x] Preserved selection checkboxes and hover-reveal CRUD controls.
-- [x] **Bug Fix:** Fixed ticket reply API call to use `PATCH` on `/api/tickets/[id]` instead of `POST`ing to an invalid endpoint.
-- [x] Added `--turbopack` flag to dev script for faster local development.
 
 ### Package Form Validation
 - [x] Blocked non-numeric characters (`e`, `E`, `+`, `-`) from duration and price inputs via `onKeyDown` handlers.

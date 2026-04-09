@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useBuildTourStore } from '@/lib/trip/store/useBuildTourStore';
 import { MapPin, Clock, Users, Star, ChevronRight, Sparkles, Heart, X } from 'lucide-react';
 import type { Place } from '@/lib/trip/types';
+import curatedPlacesRaw from '@/data/places/sri-lanka.curated.json';
+
+const curatedPlaces = curatedPlacesRaw as unknown as Place[];
 
 /* ──────────────────────────────────────────────────────────────
    Popular Tour Plans — community-favourite builds that users
@@ -147,27 +149,19 @@ const POPULAR_TOURS: PopularTour[] = [
 ];
 
 export default function PopularTours() {
-    const places = useBuildTourStore((s) => s.places);
-    const addStop = useBuildTourStore((s) => s.addStop);
-    const clearStops = useBuildTourStore((s) => s.clearStops);
-    const isInStops = useBuildTourStore((s) => s.isInStops);
-    const stops = useBuildTourStore((s) => s.stops);
-
     const [previewTour, setPreviewTour] = useState<PopularTour | null>(null);
 
     const resolvedPlaces = (placeIds: string[]) =>
-        placeIds.map((id) => places.find((p: Place) => p.id === id)).filter(Boolean) as Place[];
+        placeIds.map((id) => curatedPlaces.find((p: Place) => p.id === id)).filter(Boolean) as Place[];
 
     const applyTour = (tour: PopularTour, replace: boolean) => {
-        if (replace) clearStops();
-        tour.placeIds.forEach((id) => {
-            const place = places.find((p: Place) => p.id === id);
-            if (place && !isInStops(place.id)) {
-                addStop(place);
-            }
-        });
+        window.dispatchEvent(
+            new CustomEvent('yatara:load-tour', {
+                detail: { placeIds: tour.placeIds, replace },
+            })
+        );
         setPreviewTour(null);
-        document.getElementById('trip-builder')?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('planner')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
@@ -324,9 +318,6 @@ export default function PopularTours() {
                                             <p className="text-deep-emerald/80 text-sm font-serif truncate">{place.name}</p>
                                             <p className="text-deep-emerald/30 text-[10px] font-light">{place.district}</p>
                                         </div>
-                                        {isInStops(place.id) && (
-                                            <span className="text-antique-gold/60 text-[9px] font-serif">Already added</span>
-                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -340,15 +331,13 @@ export default function PopularTours() {
                                     <Sparkles className="w-3.5 h-3.5" />
                                     Use This Plan
                                 </button>
-                                {stops.length > 0 && (
-                                    <button
-                                        onClick={() => applyTour(previewTour, false)}
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-deep-emerald/5 border border-deep-emerald/10 text-deep-emerald/60 font-serif text-xs uppercase tracking-[0.15em] rounded-full hover:bg-deep-emerald/10 hover:border-deep-emerald/20 transition-all"
-                                    >
-                                        <MapPin className="w-3.5 h-3.5" />
-                                        Add to Current
-                                    </button>
-                                )}
+                                <button
+                                    onClick={() => applyTour(previewTour, false)}
+                                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-deep-emerald/5 border border-deep-emerald/10 text-deep-emerald/60 font-serif text-xs uppercase tracking-[0.15em] rounded-full hover:bg-deep-emerald/10 hover:border-deep-emerald/20 transition-all"
+                                >
+                                    <MapPin className="w-3.5 h-3.5" />
+                                    Add to Current
+                                </button>
                             </div>
 
                             <p className="text-center text-deep-emerald/25 text-[10px] font-light mt-3">

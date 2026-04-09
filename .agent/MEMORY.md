@@ -33,6 +33,7 @@
 
 ## Recent Findings
 
+- [2026-04-09] Pre-made tour template cards (Popular Tours, Theme Carousel) were broken ("0 stops") or wouldn't add places to the planner map. → The components relied on `useBuildTourStore((s) => s.places)` to resolve place IDs into full Place objects, but `places` is hydrated via `useEffect` deep inside the `BuildTourShell.client.tsx` component. → For static or pure client components mapping over curated lists, import the static JSON file directly (e.g., `import places from '@/data/places/sri-lanka.curated.json'`) instead of depending on asynchronous global store hydration.
 - [2026-04-05] Used OSRM's `/trip/v1/driving` API to provide realistic road geometry and automatic waypoint optimization directly into the BuildTour client map.
 - [2026-04-05] Using `react-map-gl` and Mapbox GL's `maxBounds` restriction blocks zoom-out if the viewport aspect ratio doesn't perfectly fit the bounded box, preventing responsive rescaling of a country map. Removed it for flexible display scaling.
 - [2026-04-04] Booking forms pre-fill user metadata successfully when `BookingRequestClient` fetches their user identity explicitly decoded from the page's route layout (`getUserFromToken()`), overcoming the hydration mismatch and improving customer experience immediately.
