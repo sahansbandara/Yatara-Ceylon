@@ -1,5 +1,10 @@
 # Yatara Ceylon — Agent Context
 
+## Agent Pre-flight Checklist
+**CRITICAL**: Every time before you start coding, modifying files, or debugging for a new session, you MUST read the project tracking state:
+- Use `view_file` on `.agent/MEMORY.md` to read the foundational changes and architecture findings.
+- Use `view_file` on `.agent/TODO.md` to review the previous session history and what needs to be done next.
+DO NOT begin implementing features or refactoring without checking these files first.
 ## Tech Stack
 - **Framework**: Next.js 15 (App Router, Server Components)
 - **Database**: MongoDB + Mongoose
