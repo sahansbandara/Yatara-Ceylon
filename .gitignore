@@ -50,8 +50,6 @@ next-env.d.ts
 .roo/
 .trae/
 .windsurf/
-.agent/
-.agents/
 
 # Python
 __pycache__/
