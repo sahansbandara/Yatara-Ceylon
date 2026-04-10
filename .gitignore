@@ -53,6 +53,10 @@ next-env.d.ts
 .agent/
 .agents/
 
+# Python
+__pycache__/
+*.pyc
+
 # build artifacts
 build_output.log
 toolbox
