@@ -1,0 +1,136 @@
+export const dynamic = 'force-dynamic';
+import { NextResponse } from 'next/server';
+import connectDB from '@/lib/mongodb';
+import Booking from '@/models/Booking';
+import VehicleBlock from '@/models/VehicleBlock';
+import { staffOrAdmin, withAuth } from '@/lib/rbac';
+import { validateBody } from '@/lib/validate';
+import { updateBookingStatusSchema, assignBookingSchema } from '@/lib/validations';
+import { logAudit } from '@/lib/audit';
+import { generateWhatsAppLink } from '@/lib/whatsapp';
+
+// GET /api/bookings/[id] – protected: staff/admin see all, customers see only their own
+export const GET = withAuth(async (_req, context) => {
+    try {
+        await connectDB();
+        const { id } = await context.params;
+        const booking = await Booking.findOne({ _id: id, isDeleted: false })
+            .populate('packageId', 'title slug priceMin priceMax')
+            .populate('assignedStaffId', 'name email')
+            .populate('assignedVehicleId', 'model type plateNumber')
+            .lean();
+        if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+        // Customers can only view their own bookings
+        const bookingAny = booking as any;
+        if (context.user.role === 'USER' && bookingAny.email !== context.user.email) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        // Generate WhatsApp link
+        const whatsAppLink = generateWhatsAppLink(
+            process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '',
+            {
+                customerName: bookingAny.customerName,
+                customerPhone: bookingAny.phone,
+                packageName: (bookingAny.packageId as { title?: string })?.title,
+                dates: bookingAny.dates ? { from: bookingAny.dates.from.toISOString().split('T')[0], to: bookingAny.dates.to.toISOString().split('T')[0] } : undefined,
+                pax: bookingAny.pax,
+                pickupLocation: bookingAny.pickupLocation,
+            }
+        );
+
+        return NextResponse.json({ booking, whatsAppLink });
+    } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
+});
+
+export const PATCH = staffOrAdmin(async (request, context) => {
+    try {
+        await connectDB();
+        const { id } = await context.params;
+        const body = await request.json();
+
+        // Status update
+        if (body.status) {
+            const result = updateBookingStatusSchema.safeParse(body);
+            if (!result.success) return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+
+            const currentBooking = await Booking.findOne({ _id: id, isDeleted: false });
+            if (!currentBooking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+            const booking = await Booking.findOneAndUpdate(
+                { _id: id, isDeleted: false },
+                { $set: { status: result.data.status } },
+                { new: true }
+            );
+
+            if (result.data.status === 'CONFIRMED' && currentBooking.status !== 'CONFIRMED' && booking?.assignedVehicleId) {
+                // Auto block vehicle
+                await VehicleBlock.create({
+                    vehicleId: booking.assignedVehicleId,
+                    from: booking.dates.from,
+                    to: booking.dates.to,
+                    reason: 'BOOKING',
+                    bookingId: booking._id,
+                });
+            } else if (result.data.status === 'CANCELLED' && currentBooking.status !== 'CANCELLED') {
+                // Unblock vehicle
+                await VehicleBlock.deleteMany({ bookingId: booking?._id });
+            }
+
+            await logAudit({ actorUserId: context.user.userId, action: 'STATUS_CHANGE', entity: 'Booking', entityId: id, meta: { status: result.data.status } });
+            return NextResponse.json({ booking });
+        }
+
+        // Assignment update
+        if (body.assignedStaffId !== undefined || body.assignedVehicleId !== undefined) {
+            const result = assignBookingSchema.safeParse(body);
+            if (!result.success) return NextResponse.json({ error: 'Invalid assignment' }, { status: 400 });
+
+            const currentBooking = await Booking.findOne({ _id: id, isDeleted: false });
+
+            const update: Record<string, unknown> = {};
+            if (result.data.assignedStaffId) update.assignedStaffId = result.data.assignedStaffId;
+            if (result.data.assignedVehicleId) update.assignedVehicleId = result.data.assignedVehicleId;
+            const booking = await Booking.findOneAndUpdate(
+                { _id: id, isDeleted: false },
+                { $set: update },
+                { new: true }
+            );
+            if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+            if (result.data.assignedVehicleId && currentBooking?.status === 'CONFIRMED') {
+                await VehicleBlock.deleteMany({ bookingId: booking._id });
+                await VehicleBlock.create({
+                    vehicleId: booking.assignedVehicleId,
+                    from: booking.dates.from,
+                    to: booking.dates.to,
+                    reason: 'BOOKING',
+                    bookingId: booking._id,
+                });
+            }
+
+            await logAudit({ actorUserId: context.user.userId, action: 'ASSIGN', entity: 'Booking', entityId: id, meta: update });
+            return NextResponse.json({ booking });
+        }
+
+        // General update
+        const booking = await Booking.findOneAndUpdate(
+            { _id: id, isDeleted: false },
+            { $set: body },
+            { new: true }
+        );
+        if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+        return NextResponse.json({ booking });
+    } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
+});
+
+export const DELETE = staffOrAdmin(async (_req, context) => {
+    try {
+        await connectDB();
+        const { id } = await context.params;
+        await Booking.findByIdAndUpdate(id, { $set: { isDeleted: true, deletedAt: new Date() } });
+        await logAudit({ actorUserId: context.user.userId, action: 'DELETE', entity: 'Booking', entityId: id });
+        return NextResponse.json({ success: true });
+    } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
+});

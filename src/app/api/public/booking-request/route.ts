@@ -1,0 +1,96 @@
+export const dynamic = 'force-dynamic';
+import { NextResponse, type NextRequest } from 'next/server';
+import connectDB from '@/lib/mongodb';
+import Booking from '@/models/Booking';
+import SupportTicket from '@/models/SupportTicket';
+import { validateBody } from '@/lib/validate';
+import { createBookingSchema } from '@/lib/validations';
+import { rateLimit } from '@/lib/rate-limit';
+import { enforceCsrf } from '@/lib/csrf';
+import { verifyTurnstileToken } from '@/lib/turnstile';
+import { verifyToken } from '@/lib/auth';
+import { cookies } from 'next/headers';
+
+// Public booking request – no auth required
+export async function POST(request: NextRequest) {
+    const csrfError = await enforceCsrf(request);
+    if (csrfError) return csrfError;
+
+    const limitError = await rateLimit(request);
+    if (limitError) return limitError;
+
+    const rawBody = await request.clone().json().catch(() => null);
+    const captchaResult = await verifyTurnstileToken(
+        rawBody?.turnstileToken || null,
+        request.headers.get('x-forwarded-for')
+    );
+    if (!captchaResult.success) {
+        return NextResponse.json({ error: captchaResult.error }, { status: 400 });
+    }
+
+    // Parse body
+    const { data, error } = await validateBody(request, createBookingSchema);
+    if (error) return error;
+
+    try {
+        await connectDB();
+
+        const totalCost = data!.totalCost || 0;
+        const advancePercentage = 20;
+        const advanceAmount = totalCost * (advancePercentage / 100);
+        const remainingBalance = totalCost;
+
+        // Clean out empty IDs which crash Mongoose ObjectId casting
+        const payload: any = { ...data };
+        if (!payload.packageId) delete payload.packageId;
+        if (!payload.vehicleId) delete payload.vehicleId;
+        if (!payload.customPlanId) delete payload.customPlanId;
+        if (!payload.email) delete payload.email;
+
+        // Try to attach user ID if logged in
+        try {
+            const cookieStore = await cookies();
+            const token = cookieStore.get('toms_token')?.value;
+            if (token) {
+                const decoded = await verifyToken(token);
+                if (decoded?.userId) {
+                    payload.customerId = decoded.userId;
+                }
+            }
+        } catch (e) {
+            // Ignore auth errors on public route
+        }
+
+        const booking = await Booking.create({
+            ...payload,
+            dates: { from: new Date(data!.dates.from), to: new Date(data!.dates.to) },
+            totalCost,
+            advancePercentage,
+            advanceAmount,
+            paidAmount: 0,
+            remainingBalance,
+            status: totalCost > 0 ? 'PAYMENT_PENDING' : 'NEW',
+        });
+
+        // Also create a support ticket for the booking
+        await SupportTicket.create({
+            customerName: data!.customerName,
+            phone: data!.phone,
+            email: data!.email,
+            subject: `New Booking Request - ${booking.bookingNo}`,
+            message: `New ${data!.type} booking request from ${data!.customerName}. Pax: ${data!.pax}. Dates: ${data!.dates.from} to ${data!.dates.to}.${data!.notes ? ` Notes: ${data!.notes}` : ''}`,
+            bookingId: booking._id,
+            status: 'OPEN',
+        });
+
+        return NextResponse.json({
+            success: true,
+            bookingNo: booking.bookingNo,
+            bookingId: booking._id,
+            message: 'Your booking request has been submitted. We will contact you shortly!',
+        }, { status: 201 });
+    } catch (error: any) {
+        console.error("Booking Create Error:", error);
+        return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    }
+}

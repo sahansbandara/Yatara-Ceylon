@@ -1,0 +1,626 @@
+[
+  {
+    "file": "public/images/places/ampara-arugam.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Arugam Bay, Ampara District, Sri Lanka. World-class surf break \u2014 right-hand point break perfection. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/ampara-buddhangala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Buddhangala, Ampara District, Sri Lanka. Ancient forest monastery with massive rock-cut meditation caves. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/ampara-kumana.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Kumana National Park, Ampara District, Sri Lanka. Bird sanctuary adjacent to Yala \u2014 herons, egrets, and painted storks. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/ampara-whiskey-point.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Whiskey Point, Ampara District, Sri Lanka. Low-key east-coast surf beach loved for sunrise light, open sand, and a more relaxed crowd than Arugam. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/anuradhapura-isurumuniya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Isurumuniya Temple, Anuradhapura District, Sri Lanka. Rock temple famous for the Isurumuniya Lovers carving and a more intimate sacred-city atmosphere. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/anuradhapura-bodhi.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Jaya Sri Maha Bodhi, Anuradhapura District, Sri Lanka. Oldest historically documented tree in the world \u2014 sacred fig since 288 BC. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/anuradhapura-mihintale.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Mihintale, Anuradhapura District, Sri Lanka. Birthplace of Buddhism in Sri Lanka \u2014 1,840 steps to enlightenment. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/anuradhapura-ruwanweli.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Ruwanwelisaya, Anuradhapura District, Sri Lanka. Gleaming white stupa \u2014 one of the tallest ancient structures on earth. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/anuradhapura-tissa-wewa.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Tissa Wewa, Anuradhapura District, Sri Lanka. Experience the beauty of Tissa Wewa in Anuradhapura.. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/badulla-dunhinda.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Dunhinda Falls, Badulla District, Sri Lanka. 64m waterfall \u2014 the 'Smoke Falls' for its perpetual misty veil. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/badulla-little-adams.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Little Adam's Peak, Badulla District, Sri Lanka. 45-minute trek rewarded with 360\u00b0 views of misty Ella valley. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/badulla-nine-arches.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Nine Arches Bridge (Ella), Badulla District, Sri Lanka. Legendary viaduct arching 24m above tropical forest \u2014 peak golden hour. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/badulla-ravana-falls.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Ravana Falls, Badulla District, Sri Lanka. Iconic roadside waterfall near Ella cascading through jungle rock with a strong monsoon-season presence. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/batticaloa-fort.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Batticaloa Fort, Batticaloa District, Sri Lanka. Dutch fortress surrounded by Batticaloa Lagoon's singing fish. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/batticaloa-batticaloa-lagoon.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Batticaloa Lagoon, Batticaloa District, Sri Lanka. Experience the beauty of Batticaloa Lagoon in Batticaloa.. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/batticaloa-kalkudah.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Kalkudah Beach, Batticaloa District, Sri Lanka. Long ribbon of pale sand beside Pasikudah, excellent for resort stays and calm-season ocean views. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/batticaloa-kallady.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Kallady Bridge, Batticaloa District, Sri Lanka. Historic bridge spanning the lagoon \u2014 best at sunset. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/batticaloa-pasikudah.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Pasikudah Bay, Batticaloa District, Sri Lanka. Shallow turquoise waters perfect for reef walks and snorkeling. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/colombo-dutch-hospital.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Dutch Hospital Precinct, Colombo District, Sri Lanka. Colonial-era complex reimagined as a premium dining & shopping enclave. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/colombo-galle-face.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Galle Face Green, Colombo District, Sri Lanka. Iconic oceanfront promenade \u2014 sunsets over the Indian Ocean. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/colombo-gangaramaya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Gangaramaya Temple, Colombo District, Sri Lanka. Iconic lakeside temple complex blending worship, heritage, and Colombo city elegance. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/colombo-viharamahadevi-park.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Viharamahadevi Park, Colombo District, Sri Lanka. Colombo's grand urban park with flowering avenues, shaded walks, and a polished city backdrop. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/galle-fort.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Galle Fort Heritage, Galle District, Sri Lanka. UNESCO World Heritage \u2014 16th-century Dutch-Portuguese coastal fort. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/galle-hikkaduwa.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Hikkaduwa Marine Park, Galle District, Sri Lanka. Vibrant coral sanctuary teeming with sea turtles and exotic reef life. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/galle-jungle-beach.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Jungle Beach, Galle District, Sri Lanka. Hidden cove near Galle Fort with calm water, tropical forest edges, and a quieter coastal feel. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/galle-rumassala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Rumassala, Galle District, Sri Lanka. Experience the beauty of Rumassala in Galle.. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/galle-unawatuna.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Unawatuna Beach, Galle District, Sri Lanka. Crescent-shaped bay ranked among the world's most beautiful beaches. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/gampaha-dutch-canal.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Dutch Canal, Gampaha District, Sri Lanka. 100km colonial waterway \u2014 explore by traditional canoe. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/gampaha-guruge-nature-park.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Guruge Nature Park, Gampaha District, Sri Lanka. Experience the beauty of Guruge Nature Park in Gampaha.. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/gampaha-muthurajawela.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Muthurajawela Marsh, Gampaha District, Sri Lanka. Boat through Sri Lanka's largest coastal marsh \u2014 mangroves, birdlife, and quiet golden-water channels. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/gampaha-negombo-beach.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Negombo Beach, Gampaha District, Sri Lanka. Golden west-coast shoreline ideal for sunset strolls, seafood stops, and lagoon-side stays. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/gampaha-negombo.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Negombo Lagoon, Gampaha District, Sri Lanka. Vast lagoon system \u2014 fishing boats, mangroves, and golden light. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/hambantota-bundala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Bundala Bird Sanctuary, Hambantota District, Sri Lanka. Ramsar wetland hosting flamingos, pelicans, and 200+ bird species. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/hambantota-ridiyagama.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Ridiyagama Safari, Hambantota District, Sri Lanka. Sri Lanka's only open-range safari park \u2014 African-style encounters. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/hambantota-tangalle-beach.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Tangalle Beach, Hambantota District, Sri Lanka. Wide southern coast with dramatic surf, boutique hideaways, and long cinematic stretches of sand. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/hambantota-yala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Yala National Park, Hambantota District, Sri Lanka. Highest leopard density on earth \u2014 early-dawn safari magic. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/jaffna-casuarina.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Casuarina Beach, Jaffna District, Sri Lanka. Untouched northern beach fringed by casuarina pines. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/jaffna-delft.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Delft Island, Jaffna District, Sri Lanka. Remote island with wild ponies and crumbling Portuguese-era ruins. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/jaffna-jaffna-fort.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Jaffna Fort, Jaffna District, Sri Lanka. Experience the beauty of Jaffna Fort in Jaffna.. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/jaffna-keerimalai.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Keerimalai Springs, Jaffna District, Sri Lanka. Seaside mineral springs beside the northern coast, mixing cultural depth with dramatic ocean-edge views. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/jaffna-nallur.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Nallur Kandaswamy Kovil, Jaffna District, Sri Lanka. Magnificent Hindu temple \u2014 its annual festival draws millions. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kalutara-bentota-beach.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Bentota Beach, Kalutara District, Sri Lanka. Palm-fringed sandbar with calm waters, luxury resorts, and postcard-perfect river-meets-sea views. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kalutara-brief.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Brief Garden, Kalutara District, Sri Lanka. Bevis Bawa's enchanted garden \u2014 sculpture, art, and tropical fantasy. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kalutara-bodhiya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Kalutara Bodhiya, Kalutara District, Sri Lanka. Hollow stupa housing a sacred Bo tree beside the Kalu River. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kalutara-richmond.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Richmond Castle, Kalutara District, Sri Lanka. Edwardian mansion blending Indian and British architectural splendor. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kandy-knuckles.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Knuckles Range, Kandy District, Sri Lanka. Cloud-forest peaks with endemic species and ancient trails. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kandy-botanical.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Royal Botanical Gardens, Kandy District, Sri Lanka. 147 acres of exotic orchids, giant bamboo, and colonial-era palm avenues. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kandy-tooth.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Temple of the Tooth, Kandy District, Sri Lanka. Sacred shrine housing the relic of Buddha's tooth \u2014 the spiritual heart of Sri Lanka. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kandy-udawattakele.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Udawattakele Forest Reserve, Kandy District, Sri Lanka. Historic hilltop forest above the sacred city with quiet trails, birdlife, and monastery viewpoints. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kegalle-belilena.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Belilena Cave, Kegalle District, Sri Lanka. Prehistoric cave site in the wet zone hills \u2014 archaeology, forest paths, and dramatic limestone chambers. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kegalle-kitulgala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Kitulgala White Water Rafting, Kegalle District, Sri Lanka. Sri Lanka's signature rafting destination \u2014 rainforest scenery and fast-moving Kelani rapids. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kegalle-pinnawala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Pinnawala Elephant Orphanage, Kegalle District, Sri Lanka. 80+ rescued elephants bathing in the Maha Oya river daily. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kilinochchi-elephant-pass.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Elephant Pass, Kilinochchi District, Sri Lanka. The gateway to the Jaffna peninsula \u2014 lagoons, causeway views, and striking northern landscapes. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kilinochchi-iranamadu.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Iranamadu Tank, Kilinochchi District, Sri Lanka. Expansive northern reservoir with calm waters, birdlife, and wide-open sunset views. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kilinochchi-sangupiddy.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Sangupiddy Bridge View, Kilinochchi District, Sri Lanka. Causeway views across lagoons and open northern skies \u2014 a striking arrival into the peninsula belt. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kurunegala-bathalagoda.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Bathalagoda Tank, Kurunegala District, Sri Lanka. A broad reservoir landscape with gentle views, birdlife, and one of the district's calmer visual stopovers. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kurunegala-ethagala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Ethagala Rock, Kurunegala District, Sri Lanka. Elephant-shaped rock towering above the 'Tusker Capital'. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kurunegala-panduwasnuwara.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Panduwasnuwara, Kurunegala District, Sri Lanka. Ancient royal palace ruins hidden in the Kurunegala lowlands. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/kurunegala-yapahuwa.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Yapahuwa Kingdom, Kurunegala District, Sri Lanka. 13th-century rock fortress with one of Lanka's finest carved staircases. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/mannar-adams-bridge-viewpoint.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Adam's Bridge Viewpoint, Mannar District, Sri Lanka. Wind-swept edge of Talaimannar where sea, sandbars, and history meet toward the Indian horizon. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/mannar-baobab.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Baobab Tree, Mannar District, Sri Lanka. 700-year-old African baobab \u2014 a botanical mystery on Lanka's shores. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/mannar-doric-bungalow.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Doric Bungalow, Mannar District, Sri Lanka. Elegant colonial relic overlooking the island landscape, adding character beyond Mannar's fort and coast. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/mannar-fort.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Mannar Fort, Mannar District, Sri Lanka. Portuguese star fort guarding the strait to India since 1560. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/matale-dambulla.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Dambulla Cave Temple, Matale District, Sri Lanka. Five sacred caves adorned with 150+ Buddha statues since 1st century BC. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/matale-riverston.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Riverston Peak, Matale District, Sri Lanka. Hidden mountain viewpoint \u2014 the 'Mini World's End' of the Knuckles. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/matale-sembuwatta.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Sembuwatta Lake, Matale District, Sri Lanka. Cool mountain lake wrapped in pine forest and mist \u2014 ideal for photos, soft adventure, and highland air. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/matale-sigiriya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Sigiriya Lion Rock, Matale District, Sri Lanka. Ancient rock fortress rising 200m above the jungle canopy. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/matara-hiriketiya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Hiriketiya Bay, Matara District, Sri Lanka. Secret horseshoe cove loved by surfers and sunset seekers. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/matara-mirissa.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Mirissa Beach, Matara District, Sri Lanka. Whale-watching capital of Asia \u2014 blue whales pass Nov\u2013Apr. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/matara-polhena.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Polhena Beach, Matara District, Sri Lanka. Protected reef beach known for easy swims, turtle sightings, and a relaxed family-friendly shoreline. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/matara-weligama.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Weligama Surf Point, Matara District, Sri Lanka. Gentle swells perfect for beginner surfers and stilt-fisherman sightings. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/moneragala-buduruwagala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Buduruwagala, Moneragala District, Sri Lanka. Rock-cut Buddhist figures rising from the forest \u2014 one of the island's most atmospheric ancient sites. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/moneragala-galoya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Gal Oya National Park, Moneragala District, Sri Lanka. Boat safaris past swimming elephants on Senanayake Samudra. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/moneragala-madulsima-mini-worlds-end.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Madulsima Mini World's End, Moneragala District, Sri Lanka. Cloud-kissed escarpment with dramatic dawn views over the eastern plains and tea country edges. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/moneragala-yala-block-v.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Yala National Park Block V, Moneragala District, Sri Lanka. A quieter Yala zone for wild landscapes, birdlife, and a more off-path safari feel from Moneragala side. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/mullaitivu-kokkilai.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Kokkilai Lagoon, Mullaitivu District, Sri Lanka. Quiet eastern lagoon of mangroves, birdlife, and untouched shoreline landscapes. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/mullaitivu-mullivaikkal-beach.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Mullivaikkal Beach, Mullaitivu District, Sri Lanka. A quiet northeastern shoreline with long sands, sea breeze, and a reflective coastal atmosphere. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/mullaitivu-nanthikadal.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Nanthikadal Lagoon, Mullaitivu District, Sri Lanka. A vast lagoon beside Mullaitivu town, ideal for serene views, birdlife, and waterside photography. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/nuwaraeliya-bluefield.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Bluefield Tea Gardens, Nuwara Eliya District, Sri Lanka. Walk the emerald rows and taste single-origin Ceylon at the source. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/nuwaraeliya-gregory.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Gregory Lake, Nuwara Eliya District, Sri Lanka. Serene highland lake surrounded by English-garden charm at 1,900m. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/nuwaraeliya-hakgala.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Hakgala Botanical Garden, Nuwara Eliya District, Sri Lanka. High-elevation botanic garden famed for roses, cool-climate blooms, and sweeping hill-country scenery. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/nuwaraeliya-horton.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Horton Plains, Nuwara Eliya District, Sri Lanka. Misty plateau ending at World's End \u2014 an 880m vertical cliff drop. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/nuwaraeliya-world-s-end.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of World's End, Nuwara Eliya District, Sri Lanka. Experience the beauty of World's End in Nuwara Eliya.. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/polonnaruwa-ruins.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Ancient City Ruins, Polonnaruwa District, Sri Lanka. UNESCO medieval capital \u2014 carved Buddhas and royal courtyards. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/polonnaruwa-gal-vihara.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Gal Vihara, Polonnaruwa District, Sri Lanka. Masterpiece granite Buddha sculptures \u2014 one of Sri Lanka's most elegant and photogenic heritage sites. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/polonnaruwa-minneriya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Minneriya Safari, Polonnaruwa District, Sri Lanka. 'The Gathering' \u2014 up to 300 elephants at the dry-season tank. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/polonnaruwa-parakrama.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Parakrama Samudra, Polonnaruwa District, Sri Lanka. 12th-century reservoir \u2014 a 'sea' built by a single king's vision. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/puttalam-alankuda.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Alankuda Beach, Puttalam District, Sri Lanka. Quiet west-coast beach near Kalpitiya with long sands, open horizon sunsets, and a laid-back resort feel. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/puttalam-kalpitiya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Kalpitiya Lagoon, Puttalam District, Sri Lanka. Dolphin pods, kitesurfing, and mangrove kayaking on the Puttalam coast. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/puttalam-stanne.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of St. Anne's Church, Puttalam District, Sri Lanka. Historic shrine drawing pilgrims from across the island since 1668. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/puttalam-wilpattu.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Wilpattu National Park, Puttalam District, Sri Lanka. Sri Lanka's largest park \u2014 leopard, sloth bear, and ancient lakes. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/ratnapura-adams-peak.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Adam's Peak (Sri Pada), Ratnapura District, Sri Lanka. Sacred 2,243m pilgrimage peak \u2014 sunrise above the cloud sea. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/ratnapura-bopath-ella.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Bopath Ella Falls, Ratnapura District, Sri Lanka. Fan-shaped waterfall near Ratnapura, popular for easy access, greenery, and classic wet-zone scenery. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/ratnapura-gem-museum.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Gem Museum, Ratnapura District, Sri Lanka. The 'City of Gems' \u2014 sapphires, rubies, and generations of craftsmanship. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/ratnapura-sinharaja.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Sinharaja Rain Forest, Ratnapura District, Sri Lanka. UNESCO virgin rainforest \u2014 50% of Sri Lanka's endemic species. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/trinco-fort.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Fort Frederick, Trincomalee District, Sri Lanka. Dutch-era fort perched on Swami Rock above turquoise Trinco bay. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/trincomalee-koneswaram-temple.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Koneswaram Temple, Trincomalee District, Sri Lanka. Experience the beauty of Koneswaram Temple in Trincomalee.. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/trincomalee-marble-beach.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Marble Beach, Trincomalee District, Sri Lanka. A compact turquoise bay near Trinco, known for clear water, soft sand, and a polished beach-day feel. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/trinco-nilaveli.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Nilaveli Beach, Trincomalee District, Sri Lanka. Pristine white sand stretching endlessly along the east coast. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/trinco-pigeon.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Pigeon Island, Trincomalee District, Sri Lanka. National park island with crystal waters and reef shark snorkeling. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/vavuniya-madhu-road-birding.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Madhu Road Wetland Stop, Vavuniya District, Sri Lanka. A gentle northern stop for birding, open-country photography, and slow overland travel. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/vavuniya-madukanda-viharaya.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Madukanda Viharaya, Vavuniya District, Sri Lanka. Ancient temple site linked to the sacred tooth relic route, with ruins and a peaceful forest setting. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/vavuniya-poonthottam.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Poonthottam Tank, Vavuniya District, Sri Lanka. A calm inland tank offering open skies, still-water reflections, and a softer landscape stop for the northern corridor. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  },
+  {
+    "file": "public/images/places/vavuniya-archaeological-museum.webp",
+    "size": "900x600",
+    "aspect": "3:2",
+    "prompt": "Luxury travel photograph of Vavuniya Archaeological Museum, Vavuniya District, Sri Lanka. Regional museum showcasing archaeological finds and cultural history from Vavuniya and its surroundings. Shot during golden hour with warm natural light. Premium editorial travel photography style, realistic, high resolution, no fantasy or CGI elements."
+  }
+]

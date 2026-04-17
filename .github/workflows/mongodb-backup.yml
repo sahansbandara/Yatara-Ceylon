@@ -1,0 +1,38 @@
+name: MongoDB Backup
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 02:00 Asia/Colombo (20:30 UTC the previous day)
+    - cron: '30 20 * * *'
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MongoDB Database Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl gnupg
+          curl -fsSL https://pgp.mongodb.com/server-8.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-8.0.gpg
+          echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-database-tools
+
+      - name: Create backup archive
+        env:
+          MONGODB_BACKUP_URI: ${{ secrets.MONGODB_BACKUP_URI }}
+          BACKUP_PATH: ${{ runner.temp }}/mongodb-backup.archive.gz
+        run: node scripts/backup-mongodb.mjs "$BACKUP_PATH"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mongodb-backup-${{ github.run_number }}
+          path: |
+            ${{ runner.temp }}/mongodb-backup.archive.gz
+            ${{ runner.temp }}/mongodb-backup.meta.json
+          retention-days: 30

@@ -1,0 +1,420 @@
+'use client';
+
+import { useEffect, useState, Suspense } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Loader2, User, Building2, Car, Shield, Users, Mail, Lock, Phone, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import TurnstileField from '@/components/public/TurnstileField';
+
+type AuthMode = 'login' | 'signup';
+
+export default function EliteLoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-deep-emerald">
+                <Loader2 className="w-8 h-8 animate-spin text-antique-gold" />
+            </div>
+        }>
+            <LoginContent />
+        </Suspense>
+    );
+}
+
+function LoginContent() {
+    const [authMode, setAuthMode] = useState<AuthMode>('login');
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [role, setRole] = useState('USER');
+    const [showPartnerAccess, setShowPartnerAccess] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState('');
+    const [turnstileError, setTurnstileError] = useState('');
+    const [resendingVerification, setResendingVerification] = useState(false);
+
+    // Form fields
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect');
+    const verificationState = searchParams.get('verified');
+    const resetState = searchParams.get('reset');
+
+    // Role-based redirect mapping
+    const getRoleRedirect = (role: string) => {
+        switch (role) {
+            case 'ADMIN': return '/dashboard';
+            case 'STAFF': return '/dashboard';
+            case 'VEHICLE_OWNER': return '/dashboard/fleet';
+            case 'HOTEL_OWNER': return '/dashboard/hotel';
+            case 'USER': return '/dashboard/my-bookings';
+            default: return '/dashboard';
+        }
+    };
+
+    useEffect(() => {
+        if (verificationState === 'success') {
+            setSuccessMsg('Email verified successfully. You can now sign in.');
+            setError('');
+        } else if (verificationState === 'invalid') {
+            setError('This verification link is invalid, expired, or has already been replaced by a newer email. Request a new one below and use only the most recent email.');
+        } else if (verificationState === 'missing') {
+            setError('Verification token is missing.');
+        } else if (verificationState === 'error') {
+            setError('Email verification failed. Please request a new link.');
+        }
+
+        if (resetState === 'success') {
+            setSuccessMsg('Password updated successfully. Please sign in with your new password.');
+            setError('');
+        }
+    }, [verificationState, resetState]);
+
+    const getRegistrationErrorMessage = (data: any) => {
+        const details = data?.details;
+        if (!details || typeof details !== 'object') {
+            return data?.error || 'Registration failed';
+        }
+
+        const firstFieldError = Object.values(details)
+            .flat()
+            .find((value): value is string => typeof value === 'string' && value.length > 0);
+
+        return firstFieldError || data?.error || 'Registration failed';
+    };
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        setSuccessMsg('');
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                // If it's a 403 due to pending approval, show specific message
+                setError(data.error || 'Login failed');
+                return;
+            }
+            // If there's a redirect URL (e.g., from booking page), use that
+            if (redirectTo) {
+                window.location.href = redirectTo;
+            } else {
+                // Otherwise, redirect based on role
+                const userRole = data.user?.role || 'USER';
+                window.location.href = getRoleRedirect(userRole);
+            }
+        } catch (err) {
+            setError('Network error. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSignup = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!turnstileToken) {
+            setError(turnstileError || 'Please complete the captcha before creating your account.');
+            setSuccessMsg('');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+        setSuccessMsg('');
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, password, role, turnstileToken }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setError(getRegistrationErrorMessage(data));
+                return;
+            }
+            setSuccessMsg(data.message || 'Account created successfully! Please verify your email before signing in.');
+            setAuthMode('login');
+        } catch {
+            setError('Network error. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResendVerification = async () => {
+        if (!email.trim()) {
+            setError('Enter your email address first so we know where to resend the verification link.');
+            return;
+        }
+
+        setResendingVerification(true);
+        setError('');
+        try {
+            const response = await fetch('/api/auth/resend-verification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                setError(data.error || 'Unable to resend verification email.');
+                return;
+            }
+
+            setSuccessMsg(data.message || 'Verification email resent.');
+        } catch {
+            setError('Unable to resend verification email right now.');
+        } finally {
+            setResendingVerification(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen relative flex items-center justify-center overflow-hidden py-8 px-4">
+            {/* Background Video */}
+            <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+            >
+                <source src="https://raw.githubusercontent.com/sahansbandara/Yatara-Ceylon/main/public/Hero-Section.mp4" type="video/mp4" />
+            </video>
+
+            {/* Overlays */}
+            <div className="absolute inset-0 bg-black/60 mix-blend-multiply" />
+            <div className="absolute inset-0 bg-gradient-to-t from-deep-emerald/90 via-transparent to-black/40" />
+
+            {/* Login Card */}
+            <div className="relative z-10 w-full max-w-[500px]">
+                {/* Liquid Glass Card */}
+                <div className="p-8 md:p-10 rounded-3xl backdrop-blur-md bg-black/30 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+
+                    {/* Logo */}
+                    <div className="flex justify-center mb-6">
+                        <Image
+                            src="/images/yatara-brand-block.svg"
+                            alt="Yatara Ceylon Logo"
+                            width={160}
+                            height={40}
+                            className="object-contain drop-shadow-lg brightness-0 invert opacity-90"
+                        />
+                    </div>
+
+                    <div className="text-center mb-6">
+                        <h1 className="text-2xl font-serif text-antique-gold tracking-wide mb-1.5">
+                            {authMode === 'login' ? 'Welcome Back' : 'Join Yatara Ceylon'}
+                        </h1>
+                        <p className="text-off-white/70 font-light text-[10px] md:text-xs tracking-[0.15em] uppercase">
+                            {authMode === 'login'
+                                ? 'Sign in to access your journeys'
+                                : 'Create your exclusive account'}
+                        </p>
+                    </div>
+
+                    {/* Auth Mode Toggle */}
+                    <div className="flex mb-6 gap-3">
+                        <button
+                            type="button"
+                            onClick={() => { setAuthMode('login'); setError(''); setSuccessMsg(''); }}
+                            className={`flex-1 py-3 text-xs tracking-[0.1em] uppercase font-semibold transition-all duration-300 rounded-xl border ${authMode === 'login'
+                                ? 'border-antique-gold text-antique-gold bg-black/40 shadow-inner'
+                                : 'border-white/10 text-white/50 hover:text-white/80 hover:border-white/30 bg-transparent'
+                                }`}
+                        >
+                            Sign In
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => { setAuthMode('signup'); setError(''); setSuccessMsg(''); }}
+                            className={`flex-1 py-3 text-xs tracking-[0.1em] uppercase font-semibold transition-all duration-300 rounded-xl border ${authMode === 'signup'
+                                ? 'border-antique-gold text-antique-gold bg-black/40 shadow-inner'
+                                : 'border-white/10 text-white/50 hover:text-white/80 hover:border-white/30 bg-transparent'
+                                }`}
+                        >
+                            Sign Up
+                        </button>
+                    </div>
+
+                    {/* Notification Messages */}
+                    {error && (
+                        <div className="bg-red-500/15 border border-red-400/30 text-red-300 text-xs rounded-md p-3 mb-5 text-center">
+                            {error}
+                        </div>
+                    )}
+                    {successMsg && (
+                        <div className="bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs rounded-md p-3 mb-5 text-center">
+                            {successMsg}
+                        </div>
+                    )}
+
+                    {/* Login Form */}
+                    {authMode === 'login' && (
+                        <form onSubmit={handleLogin} className="space-y-4">
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                <input
+                                    type="email"
+                                    placeholder="Email Address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="w-full bg-white/5 backdrop-blur-md border border-white/10 text-white h-12 pl-11 pr-4 rounded-xl focus:outline-none focus:border-antique-gold/70 focus:bg-white/10 placeholder:text-white/40 hover:bg-white/10 transition-all duration-300"
+                                />
+                            </div>
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="w-full bg-white/5 backdrop-blur-md border border-white/10 text-white h-12 pl-11 pr-12 rounded-xl focus:outline-none focus:border-antique-gold/70 focus:bg-white/10 placeholder:text-white/40 hover:bg-white/10 transition-all duration-300"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-antique-gold transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full mt-4 bg-transparent border border-white/20 hover:border-white/40 text-white hover:text-white font-medium text-xs tracking-[0.15em] h-12 rounded-xl shadow-lg hover:bg-white/5 transition-all duration-300 group flex items-center justify-center gap-2 uppercase"
+                            >
+                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                                    <>
+                                        ENTER YOUR JOURNEY
+                                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    </>
+                                )}
+                            </Button>
+
+                            <div className="flex items-center justify-between text-[11px] text-white/45 pt-1">
+                                <Link href={`/auth/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ''}`} className="hover:text-antique-gold transition-colors">
+                                    Forgot password?
+                                </Link>
+                                <button
+                                    type="button"
+                                    disabled={resendingVerification}
+                                    onClick={handleResendVerification}
+                                    className="hover:text-antique-gold transition-colors disabled:opacity-50"
+                                >
+                                    {resendingVerification ? 'Sending...' : 'Resend verification'}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {/* Signup Form */}
+                    {authMode === 'signup' && (
+                        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+
+                            <form onSubmit={handleSignup} className="space-y-3">
+                                {/* Reduced input heights from h-14 to h-11 to fit 13inch screens easily */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="relative group">
+                                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                        <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                    </div>
+                                    <div className="relative group">
+                                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                        <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                    </div>
+                                </div>
+                                <div className="relative group">
+                                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                    <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                </div>
+                                <div className="relative group">
+                                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                    <input type={showPassword ? 'text' : 'password'} placeholder="Create Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-10 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-antique-gold">
+                                        {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                    </button>
+                                </div>
+
+                                <TurnstileField
+                                    token={turnstileToken}
+                                    onTokenChange={setTurnstileToken}
+                                    onErrorChange={setTurnstileError}
+                                    theme="dark"
+                                />
+
+                                <Button
+                                    type="submit"
+                                    disabled={loading || !turnstileToken}
+                                    className="w-full bg-antique-gold hover:bg-antique-gold/90 text-[#0a1f15] font-bold text-xs tracking-[0.15em] h-11 mt-2 rounded-xl shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 flex items-center justify-center gap-2 uppercase disabled:cursor-not-allowed disabled:bg-antique-gold/60 disabled:text-[#0a1f15]/70"
+                                >
+                                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                                        <>CREATE ACCOUNT <ArrowRight className="h-3.5 w-3.5" /></>
+                                    )}
+                                </Button>
+
+                                {/* Partner Access Foldout */}
+                                <div className="pt-4">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="h-[1px] flex-1 bg-white/10"></div>
+                                        <span className="text-[9px] uppercase tracking-[0.2em] text-white/40">OR JOIN AS A PARTNER</span>
+                                        <div className="h-[1px] flex-1 bg-white/10"></div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole(role === 'VEHICLE_OWNER' ? 'USER' : 'VEHICLE_OWNER')}
+                                            className={`flex flex-col items-start gap-2 p-3 text-left transition-all duration-300 rounded-xl border ${role === 'VEHICLE_OWNER' ? 'border-antique-gold text-antique-gold bg-antique-gold/10 shadow-[0_0_15px_rgba(212,175,55,0.15)]' : 'border-white/10 text-white/50 hover:border-white/30 hover:text-white/80 bg-white/5'}`}
+                                        >
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Car className="h-4 w-4" />
+                                                <span className="text-[12px] tracking-wider font-semibold">Fleet Partner</span>
+                                            </div>
+                                            <span className="text-[10px] tracking-wide opacity-70 font-light">Manage your vehicles</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole(role === 'HOTEL_OWNER' ? 'USER' : 'HOTEL_OWNER')}
+                                            className={`flex flex-col items-start gap-2 p-3 text-left transition-all duration-300 rounded-xl border ${role === 'HOTEL_OWNER' ? 'border-antique-gold text-antique-gold bg-antique-gold/10 shadow-[0_0_15px_rgba(212,175,55,0.15)]' : 'border-white/10 text-white/50 hover:border-white/30 hover:text-white/80 bg-white/5'}`}
+                                        >
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Building2 className="h-4 w-4" />
+                                                <span className="text-[12px] tracking-wider font-semibold">Hotel Partner</span>
+                                            </div>
+                                            <span className="text-[10px] tracking-wide opacity-70 font-light">Manage your properties</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+
+                    {/* Footer Links */}
+                    <div className="mt-5 text-center">
+                        <Link
+                            href="https://wa.me/94704239802?text=I%20need%20assistance%20with%20my%20Yatara%20Ceylon%20account."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-white/40 hover:text-antique-gold font-light text-[10px] tracking-wide transition-colors duration-300 inline-flex border-b border-transparent hover:border-antique-gold pb-0.5"
+                        >
+                            Need Help? Contact Concierge
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

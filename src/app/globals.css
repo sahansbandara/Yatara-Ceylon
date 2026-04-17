@@ -1,0 +1,2403 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   TOMS – Yatara Ceylon Liquid Glass Design System
+   Futuristic Premium Tourism UI
+   ============================================ */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Liquid Glass Tokens */
+    --glass-bg: rgba(255, 255, 255, 0.12);
+    --glass-bg-light: rgba(255, 255, 255, 0.65);
+    --glass-bg-dark: rgba(4, 57, 39, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --glass-border-gold: rgba(212, 175, 55, 0.3);
+    --glass-shadow: rgba(0, 0, 0, 0.08);
+    --glass-glow-gold: rgba(212, 175, 55, 0.15);
+    --glass-blur: 20px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased tracking-widest;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+/* ============================================
+   🔮 LIQUID GLASS SYSTEM — Core Effects
+   ============================================ */
+
+/* Standard Liquid Glass Panel */
+.liquid-glass {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.5) 40%,
+      rgba(248, 248, 248, 0.65) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Dark Liquid Glass Panel */
+.liquid-glass-dark {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.88) 0%,
+      rgba(4, 57, 39, 0.78) 50%,
+      rgba(2, 40, 26, 0.92) 100%);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(212, 175, 55, 0.1);
+}
+
+/* Gold-Accented Liquid Glass */
+.liquid-glass-gold {
+  background: linear-gradient(135deg,
+      rgba(212, 175, 55, 0.08) 0%,
+      rgba(255, 255, 255, 0.65) 40%,
+      rgba(212, 175, 55, 0.05) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.04),
+    0 0 20px rgba(212, 175, 55, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* Liquid Glass Card — with hover */
+.liquid-glass-card {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.4) 100%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.liquid-glass-card:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.08),
+    0 0 30px rgba(212, 175, 55, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform: translateY(-4px);
+}
+
+/* Liquid Glass Dark Card */
+.liquid-glass-card-dark {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.75) 0%,
+      rgba(4, 57, 39, 0.6) 100%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(212, 175, 55, 0.06);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.liquid-glass-card-dark:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.25),
+    0 0 30px rgba(212, 175, 55, 0.15),
+    inset 0 1px 0 rgba(212, 175, 55, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Liquid Glass Panel — Overlay info panels inside images/cards */
+.liquid-glass-panel {
+  background: linear-gradient(135deg,
+      rgba(4, 57, 39, 0.7) 0%,
+      rgba(4, 57, 39, 0.55) 50%,
+      rgba(2, 40, 26, 0.75) 100%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow:
+    0 -8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.liquid-glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.3) 30%,
+      rgba(212, 175, 55, 0.3) 70%,
+      transparent 100%);
+}
+
+/* Liquid Glass Menu — Dropdown/mega-menu panels */
+.liquid-glass-menu {
+  background: linear-gradient(145deg,
+      rgba(6, 20, 14, 0.88) 0%,
+      rgba(4, 30, 20, 0.82) 50%,
+      rgba(6, 20, 14, 0.92) 100%);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 30px 60px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Liquid Glass Toolbar — Control bars with filters/search */
+.liquid-glass-toolbar {
+  background: linear-gradient(135deg,
+      rgba(4, 57, 39, 0.6) 0%,
+      rgba(4, 57, 39, 0.45) 50%,
+      rgba(2, 40, 26, 0.6) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Destination Card — Specular shine overlay */
+.destination-card-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.destination-card-shine:hover::before {
+  opacity: 0.6;
+}
+
+/* Liquid Glass Input */
+.liquid-glass-input {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(4, 57, 39, 0.12);
+  transition: all 0.3s ease;
+}
+
+.liquid-glass-input:focus {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.1),
+    0 4px 16px rgba(212, 175, 55, 0.08);
+  outline: none;
+}
+
+/* Liquid Glass Input — Dark Variant */
+.liquid-glass-input-dark {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #FAFAFA;
+  transition: all 0.3s ease;
+}
+
+.liquid-glass-input-dark:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  outline: none;
+}
+
+/* Liquid Glass Button */
+.liquid-glass-button {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(255, 255, 255, 0.1) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.liquid-glass-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.liquid-glass-button:hover {
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 0 16px rgba(212, 175, 55, 0.2);
+  transform: translateY(-2px);
+}
+
+.liquid-glass-button:hover::before {
+  transform: translateX(100%);
+}
+
+/* Liquid Glass Stat Card — Dashboard */
+.liquid-glass-stat {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0.55) 100%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass-stat::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.liquid-glass-stat:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    0 0 24px rgba(212, 175, 55, 0.1);
+  transform: translateY(-3px);
+}
+
+.liquid-glass-stat:hover::after {
+  opacity: 1;
+}
+
+/* ============================================
+   🔮 PREMIUM DASHBOARD GLASS SYSTEM — v2
+   4-Layer Surface Hierarchy:
+   L0 (Canvas):  #060d0b — near-black charcoal-emerald
+   L1 (Sidebar): #0a1410 — darkest panel
+   L2 (Cards):   rgba(255,255,255,0.05) — subtle lift
+   L3 (Tables):  rgba(255,255,255,0.03) — flatter secondary
+   Accent: Gold only for active nav, CTA, highlights (≤10%)
+   Status: teal/blue/green/orange/red for meaning
+   ============================================ */
+
+/* Dashboard Theme Classes */
+.dashboard-bg-admin {
+  background: #060d0b;
+  color: #FAFAFA;
+}
+
+.dashboard-bg-light {
+  background: #f4f6f8;
+  color: #1a202c;
+}
+
+/* Dashboard sidebar — darkest surface (L1) */
+.dashboard-sidebar-dark {
+  background: linear-gradient(180deg, #0a1410 0%, #070e0b 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.dashboard-sidebar-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      rgba(212, 175, 55, 0.2) 0%,
+      rgba(255, 255, 255, 0.05) 100%);
+}
+
+/* Premium stat card — Surface L2 */
+.liquid-glass-stat-dark {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.055) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 1px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.liquid-glass-stat-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 20%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.1) 80%,
+      transparent 100%);
+  z-index: 1;
+}
+
+.liquid-glass-stat-dark:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+/* Premium Dashboard Hero Strip — Surface L2 */
+.dashboard-hero-glass {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.015) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.dashboard-hero-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.12) 30%,
+      rgba(255, 255, 255, 0.12) 70%,
+      transparent 100%);
+}
+
+.dashboard-hero-glass::after {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Premium Dashboard Table — Surface L3 (flatter) */
+.dashboard-table-glass {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+.dashboard-table-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 20%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.08) 80%,
+      transparent 100%);
+  z-index: 1;
+}
+
+.dashboard-table-glass thead tr {
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dashboard-table-glass tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s ease;
+}
+
+.dashboard-table-glass tbody tr:last-child {
+  border-bottom: none;
+}
+
+.dashboard-table-glass tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Premium Empty State */
+.dashboard-empty-state {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.01) 100%);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  position: relative;
+}
+
+/* Premium Status Pills */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.status-pill-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pill-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-pill-info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-pill-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-pill-neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.status-pill-gold {
+  background: rgba(212, 175, 55, 0.15);
+  color: #f5e6a3;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.status-pill-purple {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* ============================================
+   🔮 Liquid Glass Navigation Bar
+   ============================================ */
+.navbar-liquid-glass {
+  background: linear-gradient(135deg,
+      rgba(248, 248, 248, 0.72) 0%,
+      rgba(255, 255, 255, 0.55) 40%,
+      rgba(248, 248, 248, 0.68) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow:
+    0 1px 3px rgba(4, 57, 39, 0.04),
+    0 8px 32px rgba(4, 57, 39, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Transparent navbar state (over hero) */
+.navbar-transparent {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Scrolled navbar state */
+.navbar-scrolled {
+  background: linear-gradient(135deg,
+      rgba(248, 248, 248, 0.85) 0%,
+      rgba(255, 255, 255, 0.7) 40%,
+      rgba(248, 248, 248, 0.8) 100%);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow:
+    0 1px 3px rgba(4, 57, 39, 0.04),
+    0 8px 32px rgba(4, 57, 39, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Navbar Dropdown */
+.navbar-dropdown {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.85) 100%);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ============================================
+   🔮 Liquid Glass Currency Toggle
+   ============================================ */
+.currency-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.15) 100%);
+  color: #043927;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.currency-toggle-btn:hover {
+  border-color: rgba(212, 175, 55, 0.8);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.25) 100%);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.2);
+  transform: translateY(-1px);
+}
+
+.currency-toggle-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D4AF37, #C5A028);
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
+  animation: currencyPulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   🔮 KEYFRAME ANIMATIONS
+   ============================================ */
+
+@keyframes currencyPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 4px rgba(212, 175, 55, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+  }
+}
+
+@keyframes glassShine {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+@keyframes floatSoft {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes textReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes parallaxDrift {
+  0% {
+    transform: scale(1.05) translateY(0);
+  }
+
+  100% {
+    transform: scale(1.05) translateY(-20px);
+  }
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 24px rgba(212, 175, 55, 0.5);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heroTextCycle {
+
+  0%,
+  30% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  35%,
+  65% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@keyframes counterUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmerStrip {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes goldShimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes glowLine {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    width: 0;
+  }
+
+  50% {
+    opacity: 1;
+    width: 100%;
+  }
+}
+
+@keyframes cardStaggerIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulseDot {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(212, 175, 55, 0);
+  }
+}
+
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ============================================
+   🔮 COMPONENT LAYER
+   ============================================ */
+
+@layer components {
+
+  /* Legacy glass-card (kept for backward compatibility) */
+  .glass-card {
+    @apply bg-white/60 backdrop-blur-md border border-white/60 shadow-[0_8px_30px_rgb(0, 0, 0, 0.04)] hover:shadow-[0_0_40px_rgba(212, 175, 55, 0.15)] hover:border-antique-gold/40 transition-all duration-700 rounded-xl relative overflow-hidden;
+  }
+
+  .glass-card-dark {
+    @apply bg-black/10 backdrop-blur-sm border border-white/20 shadow-[0_8px_30px_rgb(0, 0, 0, 0.04)] hover:shadow-[0_0_40px_rgba(212, 175, 55, 0.15)] hover:border-antique-gold/40 transition-all duration-700 rounded-xl relative overflow-hidden;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-ocean-600 to-ocean-400;
+  }
+
+  /* Gold gradient text */
+  .gradient-text-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F5E6A3] to-[#D4AF37];
+  }
+
+  /* Section container */
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Section divider — glowing gold line */
+  .section-divider-glass {
+    @apply relative h-px mx-auto max-w-3xl overflow-hidden;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(212, 175, 55, 0.4) 30%,
+        rgba(212, 175, 55, 0.6) 50%,
+        rgba(212, 175, 55, 0.4) 70%,
+        transparent 100%);
+  }
+
+  /* Premium button styles */
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-ocean-600 to-ocean-700 text-white font-semibold shadow-lg shadow-ocean-600/25 hover:shadow-xl hover:shadow-ocean-600/30 hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full bg-white text-ocean-700 font-semibold border-2 border-ocean-200 hover:bg-ocean-50 hover:border-ocean-300 hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:ring-offset-2;
+  }
+
+  .btn-whatsapp {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-0.5 transition-all duration-300;
+  }
+
+  /* Liquid Glass Premium CTA */
+  .btn-glass-cta {
+    @apply inline-flex items-center justify-center px-8 py-4 tracking-[0.2em] text-xs uppercase font-semibold relative overflow-hidden transition-all duration-500;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+  }
+
+  .btn-glass-cta:hover {
+    border-color: rgba(212, 175, 55, 0.6);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Dashboard sidebar with glass */
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300;
+  }
+
+  .sidebar-link-active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.08);
+  }
+
+  /* Status badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  .badge-new {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  .badge-contacted {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-confirmed {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-completed {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  .badge-cancelled {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .badge-draft {
+    @apply bg-gray-100 text-gray-600;
+  }
+
+  .badge-published {
+    @apply bg-green-100 text-green-700;
+  }
+
+  /* Data table styles — Liquid Glass */
+  .data-table {
+    @apply w-full text-sm;
+  }
+
+  .data-table th {
+    @apply px-4 py-3 text-left font-semibold text-deep-emerald border-b;
+    background: linear-gradient(135deg, rgba(4, 57, 39, 0.05) 0%, rgba(212, 175, 55, 0.03) 100%);
+    border-color: rgba(212, 175, 55, 0.15);
+  }
+
+  .data-table td {
+    @apply px-4 py-3;
+    border-bottom: 1px solid rgba(4, 57, 39, 0.06);
+  }
+
+  .data-table tr:hover td {
+    background: rgba(212, 175, 55, 0.03);
+  }
+
+  /* Card hover effect */
+  .hover-lift {
+    @apply transition-all duration-500;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08), 0 0 24px rgba(212, 175, 55, 0.1);
+  }
+
+  /* Leaflet map overrides */
+  .leaflet-container {
+    @apply rounded-xl;
+    font-family: 'Inter', sans-serif !important;
+  }
+}
+
+/* ============================================
+   🔮 Build Tour – Premium Planner Styles
+   ============================================ */
+
+/* Glass drawer panel */
+.tour-glass-drawer {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.88) 0%,
+      rgba(4, 57, 39, 0.92) 50%,
+      rgba(2, 40, 26, 0.95) 100%);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.1);
+}
+
+/* Place card entrance animation */
+.place-card-enter {
+  opacity: 0;
+  animation: cardStaggerIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* District glow for selected district */
+.district-glow {
+  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5)) drop-shadow(0 0 24px rgba(212, 175, 55, 0.25));
+}
+
+/* District label overlay */
+.district-label-overlay {
+  background: linear-gradient(135deg,
+      rgba(4, 57, 39, 0.92) 0%,
+      rgba(4, 57, 39, 0.85) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(212, 175, 55, 0.15);
+}
+
+/* Gem place card */
+.gem-place-card {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.85) 0%,
+      rgba(4, 57, 39, 0.75) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+}
+
+.gem-place-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.35),
+    0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+.gem-place-card.added {
+  opacity: 0.4;
+  border-color: rgba(212, 175, 55, 0.4);
+  pointer-events: none;
+}
+
+/* Drawer sortable item */
+.drawer-sort-item {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  transition: all 0.3s ease;
+}
+
+.drawer-sort-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Preview screen */
+.preview-route-label {
+  background: linear-gradient(135deg,
+      rgba(4, 57, 39, 0.95) 0%,
+      rgba(4, 57, 39, 0.88) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+/* Pace indicator pills */
+.pace-pill {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.pace-pill.active {
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  color: #D4AF37;
+}
+
+.pace-pill.inactive {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Build tour map – remove rounded corners */
+.build-tour-map .leaflet-container {
+  border-radius: 0 !important;
+}
+
+/* Pulse dot animation */
+.pulse-dot {
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+/* Fade-in-up for overlay elements */
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Gold shimmer text effect */
+.gold-shimmer-text {
+  background: linear-gradient(90deg, #D4AF37 0%, #F5E6A3 25%, #D4AF37 50%, #F5E6A3 75%, #D4AF37 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 4s linear infinite;
+}
+
+/* Glass shine sweep effect */
+.glass-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%);
+  animation: glassShine 3s ease-in-out infinite;
+}
+
+/* Marquee scroll strip */
+.marquee-strip {
+  display: flex;
+  animation: marqueeScroll 30s linear infinite;
+}
+
+.marquee-strip:hover {
+  animation-play-state: paused;
+}
+
+/* ============================================
+   🔮 DASHBOARD GLASS THEME
+   ============================================ */
+
+/* Dashboard sidebar — dark glass */
+.dashboard-sidebar-glass {
+  background: linear-gradient(180deg,
+      rgba(4, 57, 39, 0.97) 0%,
+      rgba(2, 40, 26, 0.98) 100%);
+  border-right: 1px solid rgba(212, 175, 55, 0.12);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Dashboard content area */
+.dashboard-content-glass {
+  background: linear-gradient(135deg,
+      #f8f9fa 0%,
+      #f0f1f2 50%,
+      #f5f6f7 100%);
+  position: relative;
+}
+
+.dashboard-content-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Dashboard header glass */
+.dashboard-header-glass {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.7) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+/* ── Dashboard Card System ── */
+
+/* KPI card — counts, totals, summaries */
+.dashboard-kpi-card {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.055) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 1px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dashboard-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 20%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.1) 80%,
+      transparent 100%);
+  z-index: 1;
+}
+
+.dashboard-kpi-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+/* Entity card — hotel, vehicle, package items */
+.dashboard-entity-card {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.055) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 1px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dashboard-entity-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 30%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.08) 70%,
+      transparent 100%);
+  z-index: 1;
+}
+
+.dashboard-entity-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(212, 175, 55, 0.06);
+}
+
+/* Action card — forms, CTAs */
+.dashboard-action-card {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.015) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.1) 30%,
+      rgba(212, 175, 55, 0.15) 50%,
+      rgba(212, 175, 55, 0.1) 70%,
+      transparent 100%);
+}
+
+/* Dashboard grid utility — consistent gaps */
+.dashboard-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    gap: 1.5rem;
+  }
+}
+
+/* ============================================
+   🔮 UTILITY LAYER
+   ============================================ */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animate-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  .animate-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  .animate-delay-700 {
+    animation-delay: 700ms;
+  }
+
+  .animate-delay-800 {
+    animation-delay: 800ms;
+  }
+
+  /* Scrollbar styling — light */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-ocean-200 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-ocean-300;
+  }
+
+  /* Scrollbar styling — dark glass */
+  .scrollbar-glass-dark::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .scrollbar-glass-dark::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-glass-dark::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
+  }
+
+  .scrollbar-glass-dark::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 175, 55, 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Hide default Tawk.to widget */
+  iframe[title="chat widget"] {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   🎠 SWIPER OVERRIDES — Yatara Theme
+   ============================================ */
+
+/* Hide default Swiper navigation arrows (we use custom ones) */
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+/* Testimonial fade carousel */
+.testimonial-swiper .swiper-slide {
+  opacity: 0 !important;
+  transition: opacity 0.7s ease;
+}
+
+.testimonial-swiper .swiper-slide-active {
+  opacity: 1 !important;
+}
+
+/* Ensure slides don't overflow */
+.swiper-slide {
+  height: auto;
+}
+
+/* ============================================
+   🗺️ BUILD TOUR V2 - MAP BUILDER STYLES
+   ============================================ */
+
+/* Left command panel styling */
+.build-tour-panel {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.45) 0%,
+      rgba(4, 57, 39, 0.35) 100%);
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+}
+
+@media (max-width: 1024px) {
+  .build-tour-panel {
+    background: linear-gradient(145deg,
+        rgba(2, 28, 19, 0.92) 0%,
+        rgba(4, 57, 39, 0.95) 100%);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-top: 1px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Custom scrollbar for builder panels */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.3);
+}
+
+/* Map Markers */
+.build-tour-pin-wrapper {
+  background: transparent;
+  border: none;
+}
+
+.build-tour-pin {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--pin-color, #D4AF37);
+  border: 2px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.build-tour-pin:hover {
+  transform: scale(1.3);
+  z-index: 1000 !important;
+}
+
+.build-tour-pin.in-stops {
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.build-tour-pin .pin-dot {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Marker Clusters */
+.build-tour-cluster-wrapper {
+  background: transparent;
+  border: none;
+}
+
+.build-tour-cluster {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(4, 57, 39, 0.9);
+  border: 2px solid #D4AF37;
+  color: #D4AF37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.build-tour-cluster:hover {
+  transform: scale(1.1);
+  background: rgba(212, 175, 55, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+/* Leaflet Popup overrides for dark luxury theme */
+.build-tour-popup-wrapper .leaflet-popup-content-wrapper {
+  background: rgba(4, 57, 39, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.build-tour-popup-wrapper .leaflet-popup-tip {
+  background: rgba(4, 57, 39, 0.95);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.build-tour-popup-wrapper .leaflet-popup-close-button {
+  color: rgba(255, 255, 255, 0.5) !important;
+  right: 8px !important;
+  top: 8px !important;
+}
+
+.build-tour-popup {
+  padding: 16px;
+  width: 240px;
+}
+
+.build-tour-popup .popup-category {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+  font-family: var(--font-cormorant), serif;
+  font-weight: 600;
+}
+
+.build-tour-popup .popup-name {
+  color: white;
+  font-size: 16px;
+  font-family: var(--font-cormorant), serif;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.build-tour-popup .popup-district {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.build-tour-popup .popup-teaser {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  font-weight: 300;
+}
+
+.build-tour-popup .popup-add-btn {
+  width: 100%;
+  padding: 8px 0;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #D4AF37;
+  border-radius: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.build-tour-popup .popup-add-btn:hover {
+  background: rgba(212, 175, 55, 0.25);
+}
+
+.build-tour-popup .popup-added {
+  width: 100%;
+  padding: 8px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* District Tooltip — Luxury label */
+.build-tour-district-tooltip {
+  background: rgba(4, 57, 39, 0.85) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  padding: 8px 14px !important;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-cormorant), serif;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.district-tooltip-luxury {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.district-tooltip-name {
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.district-tooltip-label {
+  font-family: var(--font-cormorant), serif;
+  font-size: 10px;
+  color: rgba(212, 175, 55, 0.6);
+  letter-spacing: 0.12em;
+  font-style: italic;
+  text-transform: none;
+}
+
+.leaflet-tooltip-left.build-tour-district-tooltip::before,
+.leaflet-tooltip-right.build-tour-district-tooltip::before {
+  display: none !important;
+}
+
+/* Route Info overlay */
+.build-tour-route-label {
+  background: rgba(4, 57, 39, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Floating map stats overlay */
+.map-stats-overlay {
+  background: rgba(4, 57, 39, 0.80);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(212, 175, 55, 0.08);
+}
+
+/* ============================================
+   🔮 GLASS HERO — "How Your Journey Is Crafted"
+   ============================================ */
+
+/* Main frosted glass panel */
+.glass-hero-panel {
+  background: rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Sub-glass cards */
+.glass-hero-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.glass-hero-card:hover {
+  transform: scale(1.02) translateY(-4px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow:
+    0 20px 42px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(212, 175, 55, 0.35);
+}
+
+/* CTA button */
+.glass-hero-cta {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.glass-hero-cta:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22), 0 0 16px rgba(212, 175, 55, 0.12);
+}
+
+.glass-hero-cta:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 3px;
+}
+
+/* Fallback if backdrop-filter unsupported */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-hero-panel {
+    background: rgba(10, 20, 16, 0.78);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .glass-hero-card {
+    background: rgba(10, 20, 16, 0.50);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+  .glass-hero-card,
+  .glass-hero-cta {
+    transition: none;
+  }
+
+  .glass-hero-card:hover,
+  .glass-hero-cta:hover {
+    transform: none;
+  }
+}
+
+/* ============================================
+   🗺️ BUILD TOUR V3 - ELITE PLANNER GLASS SYSTEM
+   ============================================ */
+
+/* Planner shell — dark luxury glass container */
+.planner-shell-glass {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.55) 0%,
+      rgba(2, 40, 26, 0.65) 50%,
+      rgba(4, 57, 39, 0.50) 100%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.planner-shell-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.4) 20%,
+      rgba(212, 175, 55, 0.5) 50%,
+      rgba(212, 175, 55, 0.4) 80%,
+      transparent 100%);
+  z-index: 2;
+}
+
+/* Planner sidebar — premium glass rail */
+.planner-sidebar-glass {
+  background: linear-gradient(180deg,
+      rgba(2, 28, 19, 0.95) 0%,
+      rgba(4, 40, 26, 0.92) 50%,
+      rgba(2, 28, 19, 0.97) 100%);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border-right: 1px solid rgba(212, 175, 55, 0.12);
+  box-shadow:
+    12px 0 40px rgba(0, 0, 0, 0.4),
+    inset -1px 0 0 rgba(212, 175, 55, 0.06);
+}
+
+/* Map container — dark ocean theme */
+.planner-map-container {
+  background: radial-gradient(ellipse at 50% 40%,
+      #1a3a2e 0%,
+      #0d2820 30%,
+      #081c16 60%,
+      #050e0a 100%);
+  position: relative;
+}
+
+.planner-map-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+/* Planner toolbar — floating glass bar */
+.planner-toolbar-glass {
+  background: linear-gradient(135deg,
+      rgba(4, 57, 39, 0.75) 0%,
+      rgba(2, 40, 26, 0.80) 100%);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(212, 175, 55, 0.08);
+}
+
+/* Quick-start mode card — interactive glass */
+.quick-start-card {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.6) 0%,
+      rgba(2, 40, 26, 0.5) 100%);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.06);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-start-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center,
+      rgba(212, 175, 55, 0.08) 0%,
+      transparent 50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.quick-start-card:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 40px rgba(212, 175, 55, 0.12),
+    inset 0 1px 0 rgba(212, 175, 55, 0.2);
+}
+
+.quick-start-card:hover::before {
+  opacity: 1;
+}
+
+/* Region card — hover popup glass effect */
+.region-card-glass {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.region-card-glass::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+      rgba(212, 175, 55, 0.03) 0%,
+      transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.region-card-glass:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(212, 175, 55, 0.25);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(212, 175, 55, 0.08);
+}
+
+.region-card-glass:hover::after {
+  opacity: 1;
+}
+
+/* Place card — micro hover popup */
+.place-card-glass {
+  border: 1px solid transparent;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.place-card-glass:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.place-card-glass.in-trip {
+  background: rgba(212, 175, 55, 0.06);
+  border-color: rgba(212, 175, 55, 0.15);
+}
+
+/* How it works step — glass step card */
+.how-step-glass {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.5) 0%,
+      rgba(2, 40, 26, 0.4) 100%);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(212, 175, 55, 0.08);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(212, 175, 55, 0.04);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.how-step-glass:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  transform: translateY(-4px);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.25),
+    0 0 24px rgba(212, 175, 55, 0.1),
+    inset 0 1px 0 rgba(212, 175, 55, 0.1);
+}
+
+/* Tour card popup — enhanced hover */
+.tour-card-elite {
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.tour-card-elite:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(212, 175, 55, 0.1);
+}
+
+.tour-card-elite::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  transition: border-color 0.5s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tour-card-elite:hover::after {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* Testimonial card — warm glass */
+.testimonial-glass-dark {
+  background: linear-gradient(145deg,
+      rgba(4, 57, 39, 0.6) 0%,
+      rgba(2, 40, 26, 0.5) 100%);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.06);
+}
+
+/* Map district — elite glow effect on selected */
+.district-glow-selected {
+  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.4));
+}
+
+/* Custom Leaflet zoom controls for elite map */
+.leaflet-control-zoom a {
+  background: rgba(4, 57, 39, 0.85) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  color: rgba(212, 175, 55, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(4, 57, 39, 0.95) !important;
+  border-color: rgba(212, 175, 55, 0.5) !important;
+  color: #D4AF37 !important;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.15) !important;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* Gold pulse ring animation */
+@keyframes goldPulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 12px rgba(212, 175, 55, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+  }
+}
+
+.gold-pulse-ring {
+  animation: goldPulseRing 2s ease-in-out infinite;
+}
+
+/* ============================================
+   🗺️ BUILD TOUR V4 - LIGHT PREMIUM PLANNER
+   ============================================ */
+
+/* Planner shell — light luxury glass container */
+.planner-shell-glass-light {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(40px) saturate(140%);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid rgba(4, 57, 39, 0.08);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+}
+
+.planner-shell-glass-light::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.2) 20%,
+      rgba(212, 175, 55, 0.3) 50%,
+      rgba(212, 175, 55, 0.2) 80%,
+      transparent 100%);
+  z-index: 2;
+}
+
+/* Planner sidebar — transparent glass (like destinations filter) */
+.planner-sidebar-glass-light {
+  background: rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(32px) saturate(140%);
+  -webkit-backdrop-filter: blur(32px) saturate(140%);
+  border-right: 1px solid rgba(4, 57, 39, 0.06);
+}
+
+/* Map container — lighter ocean theme */
+.planner-map-container-light {
+  background: radial-gradient(ellipse at 50% 40%,
+      #e8e4dc 0%,
+      #ddd8ce 30%,
+      #d5d0c6 60%,
+      #cdc8be 100%);
+  position: relative;
+}
+
+.planner-map-container-light::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.04);
+  z-index: 1;
+}
+
+/* Planner toolbar — floating light glass bar */
+.planner-toolbar-glass-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(4, 57, 39, 0.08);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Quick-start card — light glass */
+.quick-start-card-light {
+  background: rgba(255, 255, 255, 0.60);
+  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  border: 1px solid rgba(4, 57, 39, 0.06);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-start-card-light:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.08),
+    0 0 30px rgba(212, 175, 55, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* How-step — light glass cards */
+.how-step-glass-light {
+  background: rgba(255, 255, 255, 0.60);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  border: 1px solid rgba(4, 57, 39, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.how-step-glass-light:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.06),
+    0 0 20px rgba(212, 175, 55, 0.06);
+}
+
+/* Light theme Leaflet zoom controls */
+.planner-map-container-light .leaflet-control-zoom a {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(4, 57, 39, 0.1) !important;
+  color: rgba(4, 57, 39, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.planner-map-container-light .leaflet-control-zoom a:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(212, 175, 55, 0.3) !important;
+  color: rgba(4, 57, 39, 0.9) !important;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.1) !important;
+}
+
+.planner-map-container-light .leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* ============================================
+   🗺️ YATARA LUXURY BUILD TOUR STYLES
+   ============================================ */
+
+/* Left/Right Drawer Panels */
+.tour-glass-drawer {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.70) 0%, rgba(255, 255, 255, 0.35) 100%);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Place Card - Left Panel */
+.gem-place-card {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(4, 57, 39, 0.05);
+  transition: all 0.3s ease;
+}
+
+.gem-place-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 20px rgba(4, 57, 39, 0.08);
+  transform: translateY(-2px);
+}
+
+.gem-place-card.active {
+  background: rgba(4, 57, 39, 0.03);
+  border-color: rgba(4, 57, 39, 0.2);
+  box-shadow: inset 0 2px 10px rgba(4, 57, 39, 0.05);
+}
+
+/* Reset Button */
+.planner-reset-button {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 24px rgba(4, 57, 39, 0.12);
+}
+
+.planner-reset-button:hover {
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgba(4, 57, 39, 0.16);
+  transform: translateY(-2px);
+}
+
+/* Timeline in Right Panel */
+.journey-timeline-line {
+  position: absolute;
+  left: 39px;
+  top: 40px;
+  bottom: 40px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+      rgba(212, 175, 55, 0.1),
+      rgba(212, 175, 55, 0.5) 50%,
+      rgba(212, 175, 55, 0.1));
+  border-radius: 2px;
+  z-index: 0;
+}
+
+/* Map Popup Override */
+.tour-popup .maplibregl-popup-content {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-radius: 16px !important;
+  overflow: visible !important;
+}
+
+.tour-popup .maplibregl-popup-tip {
+  border-top-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Custom Scrollbar for modals */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(4, 57, 39, 0.15);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(4, 57, 39, 0.3);
+}

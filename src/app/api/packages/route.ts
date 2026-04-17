@@ -1,0 +1,95 @@
+export const dynamic = 'force-dynamic';
+import { NextResponse } from 'next/server';
+import connectDB from '@/lib/mongodb';
+import Package from '@/models/Package';
+import { withAuth, staffOrAdmin } from '@/lib/rbac';
+import { validateBody } from '@/lib/validate';
+import { createPackageSchema, updatePackageSchema } from '@/lib/validations';
+import { logAudit } from '@/lib/audit';
+import { buildUniqueSlug } from '@/lib/slug';
+
+// GET /api/packages – list packages (public: published only, dashboard: all)
+export async function GET(request: Request) {
+    try {
+        await connectDB();
+        const { searchParams } = new URL(request.url);
+        const published = searchParams.get('published');
+        const tag = searchParams.get('tag');
+        const search = searchParams.get('search');
+        const type = searchParams.get('type');        // 'journey' | 'transfer'
+        const style = searchParams.get('style');      // journey style filter
+        const duration = searchParams.get('duration'); // e.g. '5-7', '8-10', '11-14'
+        const featured = searchParams.get('featured'); // 'true' for featured journeys
+        const sort = searchParams.get('sort');         // 'price' | 'duration' | 'featured'
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '20');
+
+        const filter: Record<string, unknown> = { isDeleted: false };
+        if (published === 'true') filter.isPublished = true;
+        if (type) filter.type = type;
+        if (style) filter.style = style;
+        if (featured === 'true') filter.isFeatured = true;
+        if (tag) filter.tags = { $regex: new RegExp(`^${tag}$`, 'i') };
+        if (duration) {
+            const [minStr, maxStr] = duration.split('-');
+            const min = parseInt(minStr);
+            const max = parseInt(maxStr);
+            if (!isNaN(min) && !isNaN(max)) {
+                filter.durationDays = { $gte: min, $lte: max };
+            }
+        }
+        if (search) {
+            filter.$or = [
+                { title: { $regex: search, $options: 'i' } },
+                { summary: { $regex: search, $options: 'i' } },
+                { tags: { $regex: search, $options: 'i' } },
+            ];
+        }
+
+        // Determine sort order
+        let sortObj: Record<string, 1 | -1> = { createdAt: -1 };
+        if (sort === 'price') sortObj = { priceMin: 1 };
+        else if (sort === 'duration') sortObj = { durationDays: 1 };
+        else if (sort === 'featured') sortObj = { isFeatured: -1, homeRank: -1, createdAt: -1 };
+
+        const [packages, total] = await Promise.all([
+            Package.find(filter)
+                .sort(sortObj)
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .lean(),
+            Package.countDocuments(filter),
+        ]);
+
+        return NextResponse.json({ packages, total, page, totalPages: Math.ceil(total / limit) });
+    } catch (error) {
+        console.error('GET /api/packages error:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+// POST /api/packages – create package (auth required)
+export const POST = staffOrAdmin(async (request, { user }) => {
+    const { data, error } = await validateBody(request, createPackageSchema);
+    if (error) return error;
+
+    try {
+        await connectDB();
+        const finalSlug = await buildUniqueSlug(Package, data!.title);
+
+        const pkg = await Package.create({
+            ...data,
+            slug: finalSlug,
+        });
+
+        await logAudit({ actorUserId: user.userId, action: 'CREATE', entity: 'Package', entityId: pkg._id.toString() });
+
+        return NextResponse.json({ package: pkg }, { status: 201 });
+    } catch (error) {
+        console.error('POST /api/packages error:', error);
+        if ((error as { code?: number }).code === 11000) {
+            return NextResponse.json({ error: 'A package with a conflicting slug already exists. Update the title and try again.' }, { status: 409 });
+        }
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+});

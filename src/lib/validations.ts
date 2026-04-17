@@ -1,0 +1,294 @@
+import { z } from 'zod';
+import { passwordSchema, phoneRegex } from '@/lib/password-policy';
+
+// ─── Packages ───
+export const createPackageSchema = z.object({
+    title: z.string().min(1, 'Title is required').max(200),
+    summary: z.string().min(1, 'Summary is required'),
+    fullDescription: z.string().optional(),
+    duration: z.string().min(1),
+    durationDays: z.number().min(1).optional(),
+    type: z.enum(['journey', 'transfer']).optional().default('journey'),
+    style: z.enum(['cultural', 'wildlife', 'heritage', 'experiences', 'wellness', 'family', 'luxury', 'adventure', 'beach', 'marine']).optional(),
+    itinerary: z.array(z.object({
+        day: z.number().min(1),
+        title: z.string().min(1),
+        description: z.string().default(''),
+        activity: z.string().optional(),
+    })).optional().default([]),
+    priceMin: z.number().min(0),
+    priceMax: z.number().min(0),
+    price: z.number().optional(),
+    originalPrice: z.number().optional(),
+    images: z.array(z.string()).optional().default([]),
+    highlights: z.array(z.string()).optional().default([]),
+    inclusions: z.array(z.string()).optional().default([]),
+    exclusions: z.array(z.string()).optional().default([]),
+    tags: z.array(z.string()).optional().default([]),
+    isPublished: z.boolean().optional().default(false),
+    isFeatured: z.boolean().optional().default(false),
+    isFeaturedHome: z.boolean().optional().default(false),
+    homeRank: z.number().optional().default(0),
+});
+export const updatePackageSchema = createPackageSchema.partial();
+
+// ─── Destinations ───
+export const createDestinationSchema = z.object({
+    title: z.string().min(1).max(200),
+    description: z.string().min(1),
+    location: z.string().optional(),
+    images: z.array(z.string()).optional().default([]),
+    isPublished: z.boolean().optional().default(false),
+});
+export const updateDestinationSchema = createDestinationSchema.partial();
+
+// ─── FAQs ───
+export const createFAQSchema = z.object({
+    question: z.string().min(1),
+    answer: z.string().min(1),
+    isPublished: z.boolean().optional().default(false),
+});
+export const updateFAQSchema = createFAQSchema.partial();
+
+// ─── Testimonials ───
+export const createTestimonialSchema = z.object({
+    name: z.string().min(1),
+    rating: z.number().min(1).max(5),
+    comment: z.string().min(1),
+    isPublished: z.boolean().optional().default(false),
+});
+export const updateTestimonialSchema = createTestimonialSchema.partial();
+
+// ─── Gallery ───
+export const createGallerySchema = z.object({
+    type: z.enum(['IMAGE', 'BLOG']),
+    title: z.string().min(1),
+    content: z.string().optional(),
+    images: z.array(z.string()).optional().default([]),
+    isPublished: z.boolean().optional().default(false),
+});
+export const updateGallerySchema = createGallerySchema.partial();
+
+// ─── Notifications ───
+export const createNotificationSchema = z.object({
+    title: z.string().min(1),
+    body: z.string().min(1),
+    type: z.enum(['OFFER', 'UPDATE', 'ALERT']).default('UPDATE'),
+    visibleTo: z.enum(['CUSTOMERS', 'STAFF', 'VEHICLE_OWNERS', 'HOTEL_OWNERS', 'ALL']).default('ALL'),
+    isPublished: z.boolean().optional().default(false),
+    publishFrom: z.string().optional(),
+    publishTo: z.string().optional(),
+});
+export const updateNotificationSchema = createNotificationSchema.partial();
+
+// ─── Bookings ───
+export const createBookingSchema = z.object({
+    customerName: z.string().min(1),
+    phone: z.string().min(1).regex(phoneRegex, 'Invalid phone number format'),
+    email: z.string().email().optional().or(z.literal('')),
+    address: z.string().optional(),
+    city: z.string().optional(),
+    country: z.string().optional(),
+    type: z.enum(['PACKAGE', 'VEHICLE', 'CUSTOM']),
+    packageId: z.string().optional(),
+    vehicleId: z.string().optional(),
+    customPlanId: z.string().optional(),
+    pax: z.number().min(1),
+    pickupLocation: z.string().optional(),
+    totalCost: z.number().min(0).optional(),
+    dates: z.object({
+        from: z.string().min(1),
+        to: z.string().min(1),
+    }),
+    notes: z.string().optional(),
+    specialRequests: z.string().optional(),
+}).refine(
+    (data) => new Date(data.dates.from) <= new Date(data.dates.to),
+    { message: 'Start date must be before or equal to end date', path: ['dates'] }
+);
+
+export const updateBookingStatusSchema = z.object({
+    status: z.enum(['NEW', 'PAYMENT_PENDING', 'CONTACTED', 'ADVANCE_PAID', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']),
+});
+
+export const assignBookingSchema = z.object({
+    assignedStaffId: z.string().optional(),
+    assignedVehicleId: z.string().optional(),
+});
+
+// ─── Vehicles ───
+export const createVehicleSchema = z.object({
+    type: z.enum(['CAR', 'VAN', 'SUV', 'BUS', 'MINIBUS', 'TUK_TUK']),
+    model: z.string().min(1),
+    plateNumber: z.string().optional(),
+    seats: z.number().min(1),
+    luggage: z.number().min(0).optional(),
+    dailyRate: z.number().min(0),
+    status: z.enum(['AVAILABLE', 'MAINTENANCE', 'UNAVAILABLE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('AVAILABLE'),
+    images: z.array(z.string()).optional().default([]),
+    features: z.array(z.string()).optional().default([]),
+    transferTypes: z.array(z.enum(['AIRPORT_PICKUP', 'AIRPORT_DROP', 'CITY_TOUR'])).optional().default([]),
+});
+export const updateVehicleSchema = createVehicleSchema.partial();
+
+export const createVehicleBlockSchema = z.object({
+    from: z.string().min(1),
+    to: z.string().min(1),
+    reason: z.enum(['BOOKING', 'MAINTENANCE', 'PERSONAL', 'OTHER']).default('OTHER'),
+    bookingId: z.string().optional(),
+});
+
+// ─── Support Tickets ───
+export const createTicketSchema = z.object({
+    customerName: z.string().min(1),
+    phone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
+    email: z.string().email().optional().or(z.literal('')),
+    subject: z.string().min(1),
+    message: z.string().min(1),
+    bookingId: z.string().optional(),
+});
+
+export const replyTicketSchema = z.object({
+    body: z.string().min(1),
+});
+
+// ─── Invoices ───
+export const createInvoiceSchema = z.object({
+    bookingId: z.string().min(1),
+    items: z.array(z.object({
+        label: z.string().min(1),
+        qty: z.number().min(1),
+        unitPrice: z.number().min(0),
+    })).min(1),
+    discount: z.number().min(0).optional().default(0),
+    advanceRequired: z.number().min(0).optional(),
+    notes: z.string().optional(),
+    status: z.enum(['DRAFT', 'FINAL']).optional().default('DRAFT'),
+});
+export const updateInvoiceSchema = createInvoiceSchema.partial();
+
+// ─── Attachments ───
+export const createAttachmentSchema = z.object({
+    label: z.string().min(1).max(120),
+    type: z.enum(['INVOICE', 'ID_COPY', 'PASSPORT', 'VOUCHER', 'OTHER']).default('OTHER'),
+    url: z.string().url(),
+    invoiceId: z.string().optional(),
+    fileName: z.string().max(160).optional(),
+    notes: z.string().max(500).optional(),
+});
+
+// ─── Payments ───
+export const createPaymentSchema = z.object({
+    bookingId: z.string().min(1),
+    invoiceId: z.string().optional(),
+    amount: z.number().min(0.01),
+    method: z.enum(['CASH', 'BANK', 'CARD_OTHER', 'ONLINE']),
+    paidAt: z.string().optional(),
+    reference: z.string().optional(),
+    type: z.enum(['PAYMENT', 'REFUND']).default('PAYMENT'),
+    notes: z.string().optional(),
+});
+
+// ─── Partners ───
+export const createPartnerSchema = z.object({
+    type: z.enum(['GUIDE', 'HOTEL', 'DRIVER', 'RESTAURANT', 'OTHER']),
+    name: z.string().min(1),
+    contactPerson: z.string().optional(),
+    phone: z.string().min(1).regex(phoneRegex, 'Invalid phone number format'),
+    email: z.string().email().optional().or(z.literal('')),
+    address: z.string().optional(),
+    status: z.enum(['ACTIVE', 'INACTIVE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('ACTIVE'),
+    notes: z.string().optional(),
+});
+export const updatePartnerSchema = createPartnerSchema.partial();
+
+const partnerServiceBaseSchema = z.object({
+    serviceName: z.string().min(1),
+    rate: z.number().min(0),
+    unit: z.enum(['PER_DAY', 'PER_TRIP', 'PER_PERSON', 'PER_NIGHT', 'FLAT']),
+    description: z.string().optional(),
+    notes: z.string().optional(),
+});
+
+const normalizePartnerServicePayload = ({
+    notes,
+    description,
+    ...rest
+}: {
+    notes?: string;
+    description?: string;
+    serviceName?: string;
+    rate?: number;
+    unit?: 'PER_DAY' | 'PER_TRIP' | 'PER_PERSON' | 'PER_NIGHT' | 'FLAT';
+}) => ({
+    ...rest,
+    description: description ?? notes,
+});
+
+export const createPartnerServiceSchema = partnerServiceBaseSchema.transform(normalizePartnerServicePayload);
+export const updatePartnerServiceSchema = partnerServiceBaseSchema.partial().transform(normalizePartnerServicePayload);
+
+// ─── Custom Plans ───
+export const createPlanSchema = z.object({
+    title: z.string().min(1).max(120).optional(),
+    customerName: z.string().optional(),
+    customerPhone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
+    customerEmail: z.string().email().optional().or(z.literal('')),
+    days: z.array(z.object({
+        dayNo: z.number().min(1),
+        places: z.array(z.string()),
+        notes: z.string().optional(),
+    })).default([]),
+    districtsUsed: z.array(z.string()).optional().default([]),
+    status: z.enum(['DRAFT', 'SAVED']).default('DRAFT'),
+});
+export const updatePlanSchema = createPlanSchema.partial();
+
+// ─── District Places ───
+export const createPlaceSchema = z.object({
+    districtId: z.string().min(1),
+    name: z.string().min(1),
+    category: z.enum(['TEMPLE', 'BEACH', 'NATURE', 'HERITAGE', 'WILDLIFE', 'ADVENTURE', 'CITY', 'FOOD', 'OTHER']),
+    description: z.string().optional(),
+    coords: z.object({ lat: z.number(), lng: z.number() }).optional(),
+    images: z.array(z.string()).optional().default([]),
+    isActive: z.boolean().optional().default(true),
+});
+export const updatePlaceSchema = createPlaceSchema.partial();
+
+// ─── Users ───
+export const createUserSchema = z.object({
+    name: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
+    password: passwordSchema,
+    role: z.enum(['ADMIN', 'STAFF']).default('STAFF'),
+});
+export const updateUserSchema = z.object({
+    name: z.string().min(1).optional(),
+    email: z.string().email().optional(),
+    phone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
+    role: z.enum(['ADMIN', 'STAFF', 'USER', 'VEHICLE_OWNER', 'HOTEL_OWNER']).optional(),
+    status: z.enum(['ACTIVE', 'DISABLED', 'PENDING_APPROVAL', 'REJECTED']).optional(),
+});
+
+// ─── Booking Partner Assignment ───
+export const createBookingPartnerSchema = z.object({
+    bookingId: z.string().min(1),
+    partnerId: z.string().min(1),
+    serviceId: z.string().optional(),
+    agreedRate: z.number().min(0),
+    notes: z.string().optional(),
+});

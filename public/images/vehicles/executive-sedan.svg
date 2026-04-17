@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#17333A"/>
+      <stop offset="100%" stop-color="#365A66"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2A3036"/>
+      <stop offset="100%" stop-color="#1B1F24"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#11161A"/>
+      <stop offset="100%" stop-color="#2D343B"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="80%" cy="15%" r="40%">
+      <stop offset="0%" stop-color="#F6D28A" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#F6D28A" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.05"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+  <path d="M0 530C250 470 500 450 800 460C1100 470 1360 520 1600 610V900H0Z" fill="url(#road)"/>
+  <path d="M260 610L1420 610" stroke="#D8B06D" stroke-opacity="0.6" stroke-width="8" stroke-dasharray="40 28"/>
+
+  <g transform="translate(250 300)">
+    <path d="M70 260C90 210 170 150 300 130L690 130C770 130 850 175 900 230L1010 245C1042 249 1065 277 1065 309V355H20V312C20 284 40 265 70 260Z" fill="url(#body)"/>
+    <path d="M355 142H710C760 142 815 180 850 230H285C300 185 325 158 355 142Z" fill="#5A6774" fill-opacity="0.65"/>
+    <path d="M1040 315H1065V350H1020Z" fill="#F5D082"/>
+    <circle cx="240" cy="355" r="86" fill="#15191D"/>
+    <circle cx="850" cy="355" r="86" fill="#15191D"/>
+    <circle cx="240" cy="355" r="35" fill="#D2AA65"/>
+    <circle cx="850" cy="355" r="35" fill="#D2AA65"/>
+    <ellipse cx="560" cy="380" rx="530" ry="42" fill="#000" fill-opacity="0.35"/>
+  </g>
+
+  <rect width="1600" height="900" filter="url(#grain)"/>
+</svg>

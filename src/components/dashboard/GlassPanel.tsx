@@ -1,0 +1,36 @@
+import { ReactNode } from 'react';
+import Link from 'next/link';
+
+interface GlassPanelProps {
+    title?: string;
+    subtitle?: string;
+    actionLabel?: string;
+    actionHref?: string;
+    children: ReactNode;
+    className?: string;
+    noPadding?: boolean;
+}
+
+export function GlassPanel({ title, subtitle, actionLabel, actionHref, children, className = '', noPadding = false }: GlassPanelProps) {
+    return (
+        <div className={`dashboard-entity-card ${noPadding ? '' : 'p-6'} ${className}`}>
+            {title && (
+                <div className={`flex items-center justify-between border-b border-white/[0.06] ${noPadding ? 'px-6 pt-6' : ''} pb-4 mb-5`}>
+                    <div>
+                        <h3 className="text-base font-display font-semibold text-white/90 tracking-tight">{title}</h3>
+                        {subtitle && <p className="text-[11px] text-white/40 mt-0.5">{subtitle}</p>}
+                    </div>
+                    {actionLabel && actionHref && (
+                        <Link
+                            href={actionHref}
+                            className="text-[10px] tracking-[0.15em] text-antique-gold uppercase font-semibold hover:text-[#f5e6a3] transition-colors"
+                        >
+                            {actionLabel} →
+                        </Link>
+                    )}
+                </div>
+            )}
+            <div className={noPadding && title ? 'px-6 pb-6' : ''}>{children}</div>
+        </div>
+    );
+}

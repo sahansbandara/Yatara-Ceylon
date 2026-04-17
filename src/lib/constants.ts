@@ -1,0 +1,144 @@
+export const UserRoles = {
+    ADMIN: 'ADMIN',
+    STAFF: 'STAFF',
+    USER: 'USER',
+    VEHICLE_OWNER: 'VEHICLE_OWNER',
+    HOTEL_OWNER: 'HOTEL_OWNER',
+} as const;
+
+export const UserStatus = {
+    ACTIVE: 'ACTIVE',
+    DISABLED: 'DISABLED',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
+} as const;
+
+export const BookingTypes = {
+    PACKAGE: 'PACKAGE',
+    VEHICLE: 'VEHICLE',
+    CUSTOM: 'CUSTOM',
+} as const;
+
+export const BookingStatus = {
+    NEW: 'NEW',
+    PAYMENT_PENDING: 'PAYMENT_PENDING',
+    CONTACTED: 'CONTACTED',
+    ADVANCE_PAID: 'ADVANCE_PAID',
+    CONFIRMED: 'CONFIRMED',
+    ASSIGNED: 'ASSIGNED',
+    IN_PROGRESS: 'IN_PROGRESS',
+    COMPLETED: 'COMPLETED',
+    CANCELLED: 'CANCELLED',
+} as const;
+
+export const VehicleTypes = {
+    CAR: 'CAR',
+    VAN: 'VAN',
+    SUV: 'SUV',
+    BUS: 'BUS',
+    MINIBUS: 'MINIBUS',
+    TUK_TUK: 'TUK_TUK',
+} as const;
+
+export const VehicleStatus = {
+    AVAILABLE: 'AVAILABLE',
+    MAINTENANCE: 'MAINTENANCE',
+    UNAVAILABLE: 'UNAVAILABLE',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
+} as const;
+
+export const VehicleBlockReasons = {
+    BOOKING: 'BOOKING',
+    MAINTENANCE: 'MAINTENANCE',
+    PERSONAL: 'PERSONAL',
+    OTHER: 'OTHER',
+} as const;
+
+export const ServiceBlockReasons = {
+    BOOKING: 'BOOKING',
+    RENOVATION: 'RENOVATION',
+    PERSONAL: 'PERSONAL',
+    OTHER: 'OTHER',
+} as const;
+
+export const PartnerTypes = {
+    GUIDE: 'GUIDE',
+    HOTEL: 'HOTEL',
+    DRIVER: 'DRIVER',
+    RESTAURANT: 'RESTAURANT',
+    OTHER: 'OTHER',
+} as const;
+
+export const PartnerStatus = {
+    ACTIVE: 'ACTIVE',
+    INACTIVE: 'INACTIVE',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
+} as const;
+
+export const PartnerServiceUnits = {
+    PER_DAY: 'PER_DAY',
+    PER_TRIP: 'PER_TRIP',
+    PER_PERSON: 'PER_PERSON',
+    PER_NIGHT: 'PER_NIGHT',
+    FLAT: 'FLAT',
+} as const;
+
+export const PaymentMethods = {
+    CASH: 'CASH',
+    BANK: 'BANK',
+    CARD_OTHER: 'CARD_OTHER',
+    ONLINE: 'ONLINE',
+} as const;
+
+export const PaymentTypes = {
+    PAYMENT: 'PAYMENT',
+    REFUND: 'REFUND',
+} as const;
+
+export const InvoiceStatus = {
+    DRAFT: 'DRAFT',
+    FINAL: 'FINAL',
+    VOID: 'VOID',
+} as const;
+
+export const SupportTicketStatus = {
+    OPEN: 'OPEN',
+    REPLIED: 'REPLIED',
+    CLOSED: 'CLOSED',
+} as const;
+
+export const NotificationTypes = {
+    OFFER: 'OFFER',
+    UPDATE: 'UPDATE',
+    ALERT: 'ALERT',
+} as const;
+
+export const NotificationVisibility = {
+    CUSTOMERS: 'CUSTOMERS',
+    STAFF: 'STAFF',
+    ALL: 'ALL',
+} as const;
+
+export const GalleryPostTypes = {
+    IMAGE: 'IMAGE',
+    BLOG: 'BLOG',
+} as const;
+
+export const DistrictPlaceCategories = {
+    TEMPLE: 'TEMPLE',
+    BEACH: 'BEACH',
+    NATURE: 'NATURE',
+    HERITAGE: 'HERITAGE',
+    WILDLIFE: 'WILDLIFE',
+    ADVENTURE: 'ADVENTURE',
+    CITY: 'CITY',
+    FOOD: 'FOOD',
+    OTHER: 'OTHER',
+} as const;
+
+export const CustomPlanStatus = {
+    DRAFT: 'DRAFT',
+    SAVED: 'SAVED',
+} as const;

@@ -1,0 +1,375 @@
+{
+    "districts": [
+        {
+            "id": "CMB",
+            "name": "Colombo",
+            "luxury_label": "The Sovereign Arrival",
+            "gems": [
+                "Yatara HQ (Colombo 02)",
+                "Dutch Hospital Precinct",
+                "Galle Face Green"
+            ],
+            "coordinates": [
+                6.9271,
+                79.8612
+            ],
+            "transfer_start": 26500
+        },
+        {
+            "id": "MTL",
+            "name": "Matale",
+            "luxury_label": "The Ancient Lion Throne",
+            "gems": [
+                "Sigiriya Lion Rock",
+                "Dambulla Cave Temple",
+                "Riverston Peak"
+            ],
+            "coordinates": [
+                7.4675,
+                80.6234
+            ],
+            "transfer_start": 139500
+        },
+        {
+            "id": "GLE",
+            "name": "Galle",
+            "luxury_label": "Colonial Serenity",
+            "gems": [
+                "Galle Fort Heritage",
+                "Unawatuna Beach",
+                "Hikkaduwa Marine Park"
+            ],
+            "coordinates": [
+                6.0367,
+                80.2170
+            ],
+            "transfer_start": 88000
+        },
+        {
+            "id": "KDY",
+            "name": "Kandy",
+            "luxury_label": "The Sacred Highland Legacy",
+            "gems": [
+                "Temple of the Tooth",
+                "Royal Botanical Gardens",
+                "Knuckles Range"
+            ],
+            "coordinates": [
+                7.2906,
+                80.6337
+            ],
+            "transfer_start": 95000
+        },
+        {
+            "id": "BDL",
+            "name": "Badulla",
+            "luxury_label": "Misty Highland Odyssey",
+            "gems": [
+                "Nine Arches Bridge (Ella)",
+                "Little Adam's Peak",
+                "Dunhinda Falls"
+            ],
+            "coordinates": [
+                6.9934,
+                81.0550
+            ],
+            "transfer_start": 86800
+        },
+        {
+            "id": "NUA",
+            "name": "Nuwara Eliya",
+            "luxury_label": "The High Country Tea Trail",
+            "gems": [
+                "Gregory Lake",
+                "Horton Plains",
+                "Bluefield Tea Gardens"
+            ],
+            "coordinates": [
+                6.9497,
+                80.7891
+            ],
+            "transfer_start": 92000
+        },
+        {
+            "id": "MTR",
+            "name": "Matara",
+            "luxury_label": "Southern Coast Serenity",
+            "gems": [
+                "Mirissa Beach",
+                "Hiriketiya Bay",
+                "Weligama Surf Point"
+            ],
+            "coordinates": [
+                5.9549,
+                80.5550
+            ],
+            "transfer_start": 98000
+        },
+        {
+            "id": "HBT",
+            "name": "Hambantota",
+            "luxury_label": "The Sovereign Wilds",
+            "gems": [
+                "Yala National Park",
+                "Bundala Bird Sanctuary",
+                "Ridiyagama Safari"
+            ],
+            "coordinates": [
+                6.1245,
+                81.1185
+            ],
+            "transfer_start": 155000
+        },
+        {
+            "id": "TRI",
+            "name": "Trincomalee",
+            "luxury_label": "Whales & Waves",
+            "gems": [
+                "Nilaveli Beach",
+                "Pigeon Island",
+                "Fort Frederick"
+            ],
+            "coordinates": [
+                8.5711,
+                81.2335
+            ],
+            "transfer_start": 125000
+        },
+        {
+            "id": "JAF",
+            "name": "Jaffna",
+            "luxury_label": "The Northern Heritage",
+            "gems": [
+                "Nallur Kandaswamy Kovil",
+                "Casuarina Beach",
+                "Delft Island"
+            ],
+            "coordinates": [
+                9.6615,
+                80.0255
+            ],
+            "transfer_start": 185000
+        },
+        {
+            "id": "ANU",
+            "name": "Anuradhapura",
+            "luxury_label": "Ancient Kingdom Trails",
+            "gems": [
+                "Jaya Sri Maha Bodhi",
+                "Ruwanwelisaya",
+                "Mihintale"
+            ],
+            "coordinates": [
+                8.3114,
+                80.4037
+            ],
+            "transfer_start": 115000
+        },
+        {
+            "id": "POL",
+            "name": "Polonnaruwa",
+            "luxury_label": "The Royal Ruins",
+            "gems": [
+                "Ancient City Ruins",
+                "Parakrama Samudra",
+                "Minneriya Safari"
+            ],
+            "coordinates": [
+                7.9403,
+                81.0188
+            ],
+            "transfer_start": 120000
+        },
+        {
+            "id": "PUT",
+            "name": "Puttalam",
+            "luxury_label": "The Untamed West",
+            "gems": [
+                "Kalpitiya Lagoon",
+                "Wilpattu National Park",
+                "St. Anne's Church"
+            ],
+            "coordinates": [
+                8.0330,
+                79.8259
+            ],
+            "transfer_start": 110000
+        },
+        {
+            "id": "RAT",
+            "name": "Ratnapura",
+            "luxury_label": "The City of Gems",
+            "gems": [
+                "Sinharaja Rain Forest",
+                "Adam's Peak (Sri Pada)",
+                "Gem Museum"
+            ],
+            "coordinates": [
+                6.6828,
+                80.3992
+            ],
+            "transfer_start": 75000
+        },
+        {
+            "id": "KEG",
+            "name": "Kegalle",
+            "luxury_label": "Sovereign Sanctuaries",
+            "gems": [
+                "Pinnawala Elephant Orphanage",
+                "Saradiel Village",
+                "Utuwankanda"
+            ],
+            "coordinates": [
+                7.2513,
+                80.3464
+            ],
+            "transfer_start": 45000
+        },
+        {
+            "id": "GMP",
+            "name": "Gampaha",
+            "luxury_label": "Lagoon Elegance",
+            "gems": [
+                "Negombo Lagoon",
+                "Dutch Canal",
+                "Private Estate Tours"
+            ],
+            "coordinates": [
+                7.0873,
+                80.0144
+            ],
+            "transfer_start": 32000
+        },
+        {
+            "id": "KAL",
+            "name": "Kalutara",
+            "luxury_label": "The Bawa Legacy",
+            "gems": [
+                "Richmond Castle",
+                "Brief Garden",
+                "Kalutara Bodhiya"
+            ],
+            "coordinates": [
+                6.5854,
+                79.9607
+            ],
+            "transfer_start": 48000
+        },
+        {
+            "id": "KUR",
+            "name": "Kurunegala",
+            "luxury_label": "Ethagala Rock Heritage",
+            "gems": [
+                "Ethagala Rock",
+                "Yapahuwa Kingdom",
+                "Panduwasnuwara"
+            ],
+            "coordinates": [
+                7.4818,
+                80.3609
+            ],
+            "transfer_start": 65000
+        },
+        {
+            "id": "MNR",
+            "name": "Mannar",
+            "luxury_label": "The Island of Baobabs",
+            "gems": [
+                "Baobab Tree",
+                "Mannar Fort",
+                "Talaimannar Pier"
+            ],
+            "coordinates": [
+                8.9810,
+                79.9044
+            ],
+            "transfer_start": 165000
+        },
+        {
+            "id": "KIL",
+            "name": "Kilinochchi",
+            "luxury_label": "The Northern Gate",
+            "gems": [
+                "Elephant Pass",
+                "Iranamadu Tank"
+            ],
+            "coordinates": [
+                9.3803,
+                80.3992
+            ],
+            "transfer_start": 175000
+        },
+        {
+            "id": "MUL",
+            "name": "Mullaitivu",
+            "luxury_label": "The Marine Frontier",
+            "gems": [
+                "Nayaru Lagoon",
+                "Maritime Museum"
+            ],
+            "coordinates": [
+                9.2671,
+                80.8142
+            ],
+            "transfer_start": 170000
+        },
+        {
+            "id": "VAV",
+            "name": "Vavuniya",
+            "luxury_label": "The Gateway of the North",
+            "gems": [
+                "Vavuniya Museum",
+                "Madukanda Vihara"
+            ],
+            "coordinates": [
+                8.7514,
+                80.4971
+            ],
+            "transfer_start": 145000
+        },
+        {
+            "id": "BAT",
+            "name": "Batticaloa",
+            "luxury_label": "The Singing Fish Coast",
+            "gems": [
+                "Batticaloa Fort",
+                "Pasikudah Bay",
+                "Kallady Bridge"
+            ],
+            "coordinates": [
+                7.7102,
+                81.6924
+            ],
+            "transfer_start": 140000
+        },
+        {
+            "id": "AMP",
+            "name": "Ampara",
+            "luxury_label": "The Sovereign Surf",
+            "gems": [
+                "Arugam Bay",
+                "Kumana National Park",
+                "Buddhangala"
+            ],
+            "coordinates": [
+                7.2912,
+                81.6724
+            ],
+            "transfer_start": 160000
+        },
+        {
+            "id": "MON",
+            "name": "Moneragala",
+            "luxury_label": "The Highland Jungles",
+            "gems": [
+                "Gal Oya National Park",
+                "Maligawila Buddha Statue"
+            ],
+            "coordinates": [
+                6.8916,
+                81.3500
+            ],
+            "transfer_start": 130000
+        }
+    ]
+}

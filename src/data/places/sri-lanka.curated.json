@@ -1,0 +1,1874 @@
+[
+  {
+    "id": "ampara-arugam",
+    "name": "Arugam Bay",
+    "lat": 6.8403,
+    "lng": 81.8364,
+    "district": "Ampara",
+    "districtId": "ampara",
+    "category": "BEACH",
+    "shortDescription": "World-class surf break \u2014 right-hand point break perfection",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/ampara-arugam.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Ampara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "ampara-buddhangala",
+    "name": "Buddhangala",
+    "lat": 7.2167,
+    "lng": 81.5833,
+    "district": "Ampara",
+    "districtId": "ampara",
+    "category": "TEMPLE",
+    "shortDescription": "Ancient forest monastery with massive rock-cut meditation caves",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/ampara-buddhangala.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Ampara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "ampara-kumana",
+    "name": "Kumana National Park",
+    "lat": 6.58,
+    "lng": 81.72,
+    "district": "Ampara",
+    "districtId": "ampara",
+    "category": "WILDLIFE",
+    "shortDescription": "Bird sanctuary adjacent to Yala \u2014 herons, egrets, and painted storks",
+    "estimatedVisitMinutes": 240,
+    "image": "/images/places/ampara-kumana.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Ampara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "ampara-whiskey-point",
+    "name": "Whiskey Point",
+    "lat": 6.889,
+    "lng": 81.828,
+    "district": "Ampara",
+    "districtId": "ampara",
+    "category": "BEACH",
+    "shortDescription": "Low-key east-coast surf beach loved for sunrise light, open sand, and a more relaxed crowd than Arugam",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/ampara-whiskey-point.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Ampara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "anuradhapura-isurumuniya",
+    "name": "Isurumuniya Temple",
+    "lat": 8.3346,
+    "lng": 80.39,
+    "district": "Anuradhapura",
+    "districtId": "anuradhapura",
+    "category": "TEMPLE",
+    "shortDescription": "Rock temple famous for the Isurumuniya Lovers carving and a more intimate sacred-city atmosphere",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/anuradhapura-isurumuniya.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Anuradhapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "anuradhapura-bodhi",
+    "name": "Jaya Sri Maha Bodhi",
+    "lat": 8.3486,
+    "lng": 80.3964,
+    "district": "Anuradhapura",
+    "districtId": "anuradhapura",
+    "category": "TEMPLE",
+    "shortDescription": "Oldest historically documented tree in the world \u2014 sacred fig since 288 BC",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/anuradhapura-bodhi.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Anuradhapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "anuradhapura-mihintale",
+    "name": "Mihintale",
+    "lat": 8.3502,
+    "lng": 80.5114,
+    "district": "Anuradhapura",
+    "districtId": "anuradhapura",
+    "category": "HERITAGE",
+    "shortDescription": "Birthplace of Buddhism in Sri Lanka \u2014 1,840 steps to enlightenment",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/anuradhapura-mihintale.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Anuradhapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "anuradhapura-ruwanweli",
+    "name": "Ruwanwelisaya",
+    "lat": 8.35,
+    "lng": 80.3961,
+    "district": "Anuradhapura",
+    "districtId": "anuradhapura",
+    "category": "TEMPLE",
+    "shortDescription": "Gleaming white stupa \u2014 one of the tallest ancient structures on earth",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/anuradhapura-ruwanweli.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Anuradhapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "anuradhapura-tissa-wewa",
+    "name": "Tissa Wewa",
+    "lat": 8.337,
+    "lng": 80.38,
+    "district": "Anuradhapura",
+    "districtId": "anuradhapura",
+    "category": "LAKE_SCENIC",
+    "shortDescription": "Experience the beauty of Tissa Wewa in Anuradhapura.",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/anuradhapura-tissa-wewa.webp",
+    "rating": 4.8,
+    "tags": [
+      "lake",
+      "Anuradhapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "badulla-dunhinda",
+    "name": "Dunhinda Falls",
+    "lat": 7.0333,
+    "lng": 81.0167,
+    "district": "Badulla",
+    "districtId": "badulla",
+    "category": "NATURE",
+    "shortDescription": "64m waterfall \u2014 the 'Smoke Falls' for its perpetual misty veil",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/badulla-dunhinda.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Badulla"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "badulla-little-adams",
+    "name": "Little Adam's Peak",
+    "lat": 6.8671,
+    "lng": 81.058,
+    "district": "Badulla",
+    "districtId": "badulla",
+    "category": "ADVENTURE",
+    "shortDescription": "45-minute trek rewarded with 360\u00b0 views of misty Ella valley",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/badulla-little-adams.webp",
+    "rating": 4.8,
+    "tags": [
+      "adventure",
+      "Badulla"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "badulla-nine-arches",
+    "name": "Nine Arches Bridge (Ella)",
+    "lat": 6.878,
+    "lng": 81.0464,
+    "district": "Badulla",
+    "districtId": "badulla",
+    "category": "SCENIC",
+    "shortDescription": "Legendary viaduct arching 24m above tropical forest \u2014 peak golden hour",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/badulla-nine-arches.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Badulla"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "badulla-ravana-falls",
+    "name": "Ravana Falls",
+    "lat": 6.8406,
+    "lng": 81.0628,
+    "district": "Badulla",
+    "districtId": "badulla",
+    "category": "SCENIC",
+    "shortDescription": "Iconic roadside waterfall near Ella cascading through jungle rock with a strong monsoon-season presence",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/badulla-ravana-falls.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Badulla"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "batticaloa-fort",
+    "name": "Batticaloa Fort",
+    "lat": 7.7167,
+    "lng": 81.7,
+    "district": "Batticaloa",
+    "districtId": "batticaloa",
+    "category": "HERITAGE",
+    "shortDescription": "Dutch fortress surrounded by Batticaloa Lagoon's singing fish",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/batticaloa-fort.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Batticaloa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "batticaloa-batticaloa-lagoon",
+    "name": "Batticaloa Lagoon",
+    "lat": 7.7473,
+    "lng": 81.6708,
+    "district": "Batticaloa",
+    "districtId": "batticaloa",
+    "category": "LAGOON_SCENIC",
+    "shortDescription": "Experience the beauty of Batticaloa Lagoon in Batticaloa.",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/batticaloa-batticaloa-lagoon.webp",
+    "rating": 4.8,
+    "tags": [
+      "lagoon",
+      "Batticaloa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "batticaloa-kalkudah",
+    "name": "Kalkudah Beach",
+    "lat": 7.9215,
+    "lng": 81.5647,
+    "district": "Batticaloa",
+    "districtId": "batticaloa",
+    "category": "BEACH",
+    "shortDescription": "Long ribbon of pale sand beside Pasikudah, excellent for resort stays and calm-season ocean views",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/batticaloa-kalkudah.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Batticaloa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "batticaloa-kallady",
+    "name": "Kallady Bridge",
+    "lat": 7.7167,
+    "lng": 81.7083,
+    "district": "Batticaloa",
+    "districtId": "batticaloa",
+    "category": "SCENIC",
+    "shortDescription": "Historic bridge spanning the lagoon \u2014 best at sunset",
+    "estimatedVisitMinutes": 30,
+    "image": "/images/places/batticaloa-kallady.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Batticaloa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "batticaloa-pasikudah",
+    "name": "Pasikudah Bay",
+    "lat": 7.9333,
+    "lng": 81.5667,
+    "district": "Batticaloa",
+    "districtId": "batticaloa",
+    "category": "BEACH",
+    "shortDescription": "Shallow turquoise waters perfect for reef walks and snorkeling",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/batticaloa-pasikudah.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Batticaloa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "colombo-dutch-hospital",
+    "name": "Dutch Hospital Precinct",
+    "lat": 6.934,
+    "lng": 79.8428,
+    "district": "Colombo",
+    "districtId": "colombo",
+    "category": "HERITAGE",
+    "shortDescription": "Colonial-era complex reimagined as a premium dining & shopping enclave",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/colombo-dutch-hospital.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Colombo"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "colombo-galle-face",
+    "name": "Galle Face Green",
+    "lat": 6.92,
+    "lng": 79.8457,
+    "district": "Colombo",
+    "districtId": "colombo",
+    "category": "SCENIC",
+    "shortDescription": "Iconic oceanfront promenade \u2014 sunsets over the Indian Ocean",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/colombo-galle-face.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Colombo"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "colombo-gangaramaya",
+    "name": "Gangaramaya Temple",
+    "lat": 6.9167,
+    "lng": 79.8562,
+    "district": "Colombo",
+    "districtId": "colombo",
+    "category": "TEMPLE",
+    "shortDescription": "Iconic lakeside temple complex blending worship, heritage, and Colombo city elegance",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/colombo-gangaramaya.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Colombo"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "colombo-viharamahadevi-park",
+    "name": "Viharamahadevi Park",
+    "lat": 6.9147,
+    "lng": 79.8612,
+    "district": "Colombo",
+    "districtId": "colombo",
+    "category": "GARDEN",
+    "shortDescription": "Colombo's grand urban park with flowering avenues, shaded walks, and a polished city backdrop",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/colombo-viharamahadevi-park.webp",
+    "rating": 4.8,
+    "tags": [
+      "garden",
+      "Colombo"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "galle-fort",
+    "name": "Galle Fort Heritage",
+    "lat": 6.0267,
+    "lng": 80.217,
+    "district": "Galle",
+    "districtId": "galle",
+    "category": "HERITAGE",
+    "shortDescription": "UNESCO World Heritage \u2014 16th-century Dutch-Portuguese coastal fort",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/galle-fort.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Galle"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "galle-hikkaduwa",
+    "name": "Hikkaduwa Marine Park",
+    "lat": 6.135,
+    "lng": 80.1038,
+    "district": "Galle",
+    "districtId": "galle",
+    "category": "NATURE",
+    "shortDescription": "Vibrant coral sanctuary teeming with sea turtles and exotic reef life",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/galle-hikkaduwa.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Galle"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "galle-jungle-beach",
+    "name": "Jungle Beach",
+    "lat": 6.0186,
+    "lng": 80.262,
+    "district": "Galle",
+    "districtId": "galle",
+    "category": "BEACH",
+    "shortDescription": "Hidden cove near Galle Fort with calm water, tropical forest edges, and a quieter coastal feel",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/galle-jungle-beach.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Galle"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "galle-rumassala",
+    "name": "Rumassala",
+    "lat": 6.0175,
+    "lng": 80.2403,
+    "district": "Galle",
+    "districtId": "galle",
+    "category": "VIEWPOINT_NATURE",
+    "shortDescription": "Experience the beauty of Rumassala in Galle.",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/galle-rumassala.webp",
+    "rating": 4.8,
+    "tags": [
+      "viewpoint",
+      "Galle"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "galle-unawatuna",
+    "name": "Unawatuna Beach",
+    "lat": 6.0099,
+    "lng": 80.2489,
+    "district": "Galle",
+    "districtId": "galle",
+    "category": "BEACH",
+    "shortDescription": "Crescent-shaped bay ranked among the world's most beautiful beaches",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/galle-unawatuna.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Galle"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "gampaha-dutch-canal",
+    "name": "Dutch Canal",
+    "lat": 7.1667,
+    "lng": 79.8667,
+    "district": "Gampaha",
+    "districtId": "gampaha",
+    "category": "HERITAGE",
+    "shortDescription": "100km colonial waterway \u2014 explore by traditional canoe",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/gampaha-dutch-canal.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Gampaha"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "gampaha-guruge-nature-park",
+    "name": "Guruge Nature Park",
+    "lat": 7.0673,
+    "lng": 79.9168,
+    "district": "Gampaha",
+    "districtId": "gampaha",
+    "category": "NATURE_PARK",
+    "shortDescription": "Experience the beauty of Guruge Nature Park in Gampaha.",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/gampaha-guruge-nature-park.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Gampaha"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "gampaha-muthurajawela",
+    "name": "Muthurajawela Marsh",
+    "lat": 7.1203,
+    "lng": 79.8446,
+    "district": "Gampaha",
+    "districtId": "gampaha",
+    "category": "NATURE",
+    "shortDescription": "Boat through Sri Lanka's largest coastal marsh \u2014 mangroves, birdlife, and quiet golden-water channels",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/gampaha-muthurajawela.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Gampaha"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "gampaha-negombo-beach",
+    "name": "Negombo Beach",
+    "lat": 7.2372,
+    "lng": 79.8431,
+    "district": "Gampaha",
+    "districtId": "gampaha",
+    "category": "BEACH",
+    "shortDescription": "Golden west-coast shoreline ideal for sunset strolls, seafood stops, and lagoon-side stays",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/gampaha-negombo-beach.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Gampaha"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "gampaha-negombo",
+    "name": "Negombo Lagoon",
+    "lat": 7.2111,
+    "lng": 79.8363,
+    "district": "Gampaha",
+    "districtId": "gampaha",
+    "category": "NATURE",
+    "shortDescription": "Vast lagoon system \u2014 fishing boats, mangroves, and golden light",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/gampaha-negombo.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Gampaha"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "hambantota-bundala",
+    "name": "Bundala Bird Sanctuary",
+    "lat": 6.2,
+    "lng": 81.2,
+    "district": "Hambantota",
+    "districtId": "hambantota",
+    "category": "WILDLIFE",
+    "shortDescription": "Ramsar wetland hosting flamingos, pelicans, and 200+ bird species",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/hambantota-bundala.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Hambantota"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "hambantota-ridiyagama",
+    "name": "Ridiyagama Safari",
+    "lat": 6.1333,
+    "lng": 80.9667,
+    "district": "Hambantota",
+    "districtId": "hambantota",
+    "category": "WILDLIFE",
+    "shortDescription": "Sri Lanka's only open-range safari park \u2014 African-style encounters",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/hambantota-ridiyagama.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Hambantota"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "hambantota-tangalle-beach",
+    "name": "Tangalle Beach",
+    "lat": 6.0243,
+    "lng": 80.7977,
+    "district": "Hambantota",
+    "districtId": "hambantota",
+    "category": "BEACH",
+    "shortDescription": "Wide southern coast with dramatic surf, boutique hideaways, and long cinematic stretches of sand",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/hambantota-tangalle-beach.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Hambantota"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "hambantota-yala",
+    "name": "Yala National Park",
+    "lat": 6.3728,
+    "lng": 81.5317,
+    "district": "Hambantota",
+    "districtId": "hambantota",
+    "category": "WILDLIFE",
+    "shortDescription": "Highest leopard density on earth \u2014 early-dawn safari magic",
+    "estimatedVisitMinutes": 300,
+    "image": "/images/places/hambantota-yala.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Hambantota"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "jaffna-casuarina",
+    "name": "Casuarina Beach",
+    "lat": 9.8167,
+    "lng": 79.9,
+    "district": "Jaffna",
+    "districtId": "jaffna",
+    "category": "BEACH",
+    "shortDescription": "Untouched northern beach fringed by casuarina pines",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/jaffna-casuarina.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Jaffna"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "jaffna-delft",
+    "name": "Delft Island",
+    "lat": 9.5247,
+    "lng": 79.6856,
+    "district": "Jaffna",
+    "districtId": "jaffna",
+    "category": "HERITAGE",
+    "shortDescription": "Remote island with wild ponies and crumbling Portuguese-era ruins",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/jaffna-delft.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Jaffna"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "jaffna-jaffna-fort",
+    "name": "Jaffna Fort",
+    "lat": 9.6601,
+    "lng": 80.0076,
+    "district": "Jaffna",
+    "districtId": "jaffna",
+    "category": "HERITAGE_LANDMARK",
+    "shortDescription": "Experience the beauty of Jaffna Fort in Jaffna.",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/jaffna-jaffna-fort.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Jaffna"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "jaffna-keerimalai",
+    "name": "Keerimalai Springs",
+    "lat": 9.816,
+    "lng": 79.952,
+    "district": "Jaffna",
+    "districtId": "jaffna",
+    "category": "SCENIC",
+    "shortDescription": "Seaside mineral springs beside the northern coast, mixing cultural depth with dramatic ocean-edge views",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/jaffna-keerimalai.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Jaffna"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "jaffna-nallur",
+    "name": "Nallur Kandaswamy Kovil",
+    "lat": 9.6803,
+    "lng": 80.0248,
+    "district": "Jaffna",
+    "districtId": "jaffna",
+    "category": "TEMPLE",
+    "shortDescription": "Magnificent Hindu temple \u2014 its annual festival draws millions",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/jaffna-nallur.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Jaffna"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kalutara-bentota-beach",
+    "name": "Bentota Beach",
+    "lat": 6.4218,
+    "lng": 79.9958,
+    "district": "Kalutara",
+    "districtId": "kalutara",
+    "category": "BEACH",
+    "shortDescription": "Palm-fringed sandbar with calm waters, luxury resorts, and postcard-perfect river-meets-sea views",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/kalutara-bentota-beach.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Kalutara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kalutara-brief",
+    "name": "Brief Garden",
+    "lat": 6.5333,
+    "lng": 80.1833,
+    "district": "Kalutara",
+    "districtId": "kalutara",
+    "category": "NATURE",
+    "shortDescription": "Bevis Bawa's enchanted garden \u2014 sculpture, art, and tropical fantasy",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/kalutara-brief.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Kalutara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kalutara-bodhiya",
+    "name": "Kalutara Bodhiya",
+    "lat": 6.5833,
+    "lng": 79.9667,
+    "district": "Kalutara",
+    "districtId": "kalutara",
+    "category": "TEMPLE",
+    "shortDescription": "Hollow stupa housing a sacred Bo tree beside the Kalu River",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/kalutara-bodhiya.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Kalutara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kalutara-richmond",
+    "name": "Richmond Castle",
+    "lat": 6.5833,
+    "lng": 80.2167,
+    "district": "Kalutara",
+    "districtId": "kalutara",
+    "category": "HERITAGE",
+    "shortDescription": "Edwardian mansion blending Indian and British architectural splendor",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/kalutara-richmond.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Kalutara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kandy-knuckles",
+    "name": "Knuckles Range",
+    "lat": 7.45,
+    "lng": 80.7833,
+    "district": "Kandy",
+    "districtId": "kandy",
+    "category": "ADVENTURE",
+    "shortDescription": "Cloud-forest peaks with endemic species and ancient trails",
+    "estimatedVisitMinutes": 240,
+    "image": "/images/places/kandy-knuckles.webp",
+    "rating": 4.8,
+    "tags": [
+      "adventure",
+      "Kandy"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kandy-botanical",
+    "name": "Royal Botanical Gardens",
+    "lat": 7.2714,
+    "lng": 80.5966,
+    "district": "Kandy",
+    "districtId": "kandy",
+    "category": "NATURE",
+    "shortDescription": "147 acres of exotic orchids, giant bamboo, and colonial-era palm avenues",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/kandy-botanical.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Kandy"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kandy-tooth",
+    "name": "Temple of the Tooth",
+    "lat": 7.2936,
+    "lng": 80.6413,
+    "district": "Kandy",
+    "districtId": "kandy",
+    "category": "TEMPLE",
+    "shortDescription": "Sacred shrine housing the relic of Buddha's tooth \u2014 the spiritual heart of Sri Lanka",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/kandy-tooth.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Kandy"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kandy-udawattakele",
+    "name": "Udawattakele Forest Reserve",
+    "lat": 7.3017,
+    "lng": 80.6472,
+    "district": "Kandy",
+    "districtId": "kandy",
+    "category": "NATURE",
+    "shortDescription": "Historic hilltop forest above the sacred city with quiet trails, birdlife, and monastery viewpoints",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/kandy-udawattakele.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Kandy"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kegalle-belilena",
+    "name": "Belilena Cave",
+    "lat": 7.0198,
+    "lng": 80.4049,
+    "district": "Kegalle",
+    "districtId": "kegalle",
+    "category": "HERITAGE",
+    "shortDescription": "Prehistoric cave site in the wet zone hills \u2014 archaeology, forest paths, and dramatic limestone chambers",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/kegalle-belilena.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Kegalle"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kegalle-kitulgala",
+    "name": "Kitulgala White Water Rafting",
+    "lat": 6.9892,
+    "lng": 80.4178,
+    "district": "Kegalle",
+    "districtId": "kegalle",
+    "category": "ADVENTURE",
+    "shortDescription": "Sri Lanka's signature rafting destination \u2014 rainforest scenery and fast-moving Kelani rapids",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/kegalle-kitulgala.webp",
+    "rating": 4.8,
+    "tags": [
+      "adventure",
+      "Kegalle"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kegalle-pinnawala",
+    "name": "Pinnawala Elephant Orphanage",
+    "lat": 7.3003,
+    "lng": 80.3883,
+    "district": "Kegalle",
+    "districtId": "kegalle",
+    "category": "WILDLIFE",
+    "shortDescription": "80+ rescued elephants bathing in the Maha Oya river daily",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/kegalle-pinnawala.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Kegalle"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kilinochchi-elephant-pass",
+    "name": "Elephant Pass",
+    "lat": 9.503,
+    "lng": 80.406,
+    "district": "Kilinochchi",
+    "districtId": "kilinochchi",
+    "category": "SCENIC",
+    "shortDescription": "The gateway to the Jaffna peninsula \u2014 lagoons, causeway views, and striking northern landscapes",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/kilinochchi-elephant-pass.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Kilinochchi"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kilinochchi-iranamadu",
+    "name": "Iranamadu Tank",
+    "lat": 9.38,
+    "lng": 80.43,
+    "district": "Kilinochchi",
+    "districtId": "kilinochchi",
+    "category": "SCENIC",
+    "shortDescription": "Expansive northern reservoir with calm waters, birdlife, and wide-open sunset views",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/kilinochchi-iranamadu.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Kilinochchi"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kilinochchi-sangupiddy",
+    "name": "Sangupiddy Bridge View",
+    "lat": 9.608,
+    "lng": 80.325,
+    "district": "Kilinochchi",
+    "districtId": "kilinochchi",
+    "category": "SCENIC",
+    "shortDescription": "Causeway views across lagoons and open northern skies \u2014 a striking arrival into the peninsula belt",
+    "estimatedVisitMinutes": 30,
+    "image": "/images/places/kilinochchi-sangupiddy.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Kilinochchi"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kurunegala-bathalagoda",
+    "name": "Bathalagoda Tank",
+    "lat": 7.566,
+    "lng": 80.25,
+    "district": "Kurunegala",
+    "districtId": "kurunegala",
+    "category": "SCENIC",
+    "shortDescription": "A broad reservoir landscape with gentle views, birdlife, and one of the district's calmer visual stopovers",
+    "estimatedVisitMinutes": 30,
+    "image": "/images/places/kurunegala-bathalagoda.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Kurunegala"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kurunegala-ethagala",
+    "name": "Ethagala Rock",
+    "lat": 7.4867,
+    "lng": 80.3647,
+    "district": "Kurunegala",
+    "districtId": "kurunegala",
+    "category": "SCENIC",
+    "shortDescription": "Elephant-shaped rock towering above the 'Tusker Capital'",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/kurunegala-ethagala.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Kurunegala"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kurunegala-panduwasnuwara",
+    "name": "Panduwasnuwara",
+    "lat": 7.6167,
+    "lng": 80.1,
+    "district": "Kurunegala",
+    "districtId": "kurunegala",
+    "category": "HERITAGE",
+    "shortDescription": "Ancient royal palace ruins hidden in the Kurunegala lowlands",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/kurunegala-panduwasnuwara.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Kurunegala"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "kurunegala-yapahuwa",
+    "name": "Yapahuwa Kingdom",
+    "lat": 7.6833,
+    "lng": 80.3333,
+    "district": "Kurunegala",
+    "districtId": "kurunegala",
+    "category": "HERITAGE",
+    "shortDescription": "13th-century rock fortress with one of Lanka's finest carved staircases",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/kurunegala-yapahuwa.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Kurunegala"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "mannar-adams-bridge-viewpoint",
+    "name": "Adam's Bridge Viewpoint",
+    "lat": 9.0912,
+    "lng": 79.7213,
+    "district": "Mannar",
+    "districtId": "mannar",
+    "category": "SCENIC",
+    "shortDescription": "Wind-swept edge of Talaimannar where sea, sandbars, and history meet toward the Indian horizon",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/mannar-adams-bridge-viewpoint.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Mannar"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "mannar-baobab",
+    "name": "Baobab Tree",
+    "lat": 8.9833,
+    "lng": 79.9167,
+    "district": "Mannar",
+    "districtId": "mannar",
+    "category": "NATURE",
+    "shortDescription": "700-year-old African baobab \u2014 a botanical mystery on Lanka's shores",
+    "estimatedVisitMinutes": 30,
+    "image": "/images/places/mannar-baobab.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Mannar"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "mannar-doric-bungalow",
+    "name": "Doric Bungalow",
+    "lat": 8.978,
+    "lng": 79.912,
+    "district": "Mannar",
+    "districtId": "mannar",
+    "category": "HERITAGE",
+    "shortDescription": "Elegant colonial relic overlooking the island landscape, adding character beyond Mannar's fort and coast",
+    "estimatedVisitMinutes": 30,
+    "image": "/images/places/mannar-doric-bungalow.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Mannar"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "mannar-fort",
+    "name": "Mannar Fort",
+    "lat": 8.975,
+    "lng": 79.9083,
+    "district": "Mannar",
+    "districtId": "mannar",
+    "category": "HERITAGE",
+    "shortDescription": "Portuguese star fort guarding the strait to India since 1560",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/mannar-fort.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Mannar"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "matale-dambulla",
+    "name": "Dambulla Cave Temple",
+    "lat": 7.8567,
+    "lng": 80.6497,
+    "district": "Matale",
+    "districtId": "matale",
+    "category": "TEMPLE",
+    "shortDescription": "Five sacred caves adorned with 150+ Buddha statues since 1st century BC",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/matale-dambulla.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Matale"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "matale-riverston",
+    "name": "Riverston Peak",
+    "lat": 7.5342,
+    "lng": 80.7362,
+    "district": "Matale",
+    "districtId": "matale",
+    "category": "NATURE",
+    "shortDescription": "Hidden mountain viewpoint \u2014 the 'Mini World's End' of the Knuckles",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/matale-riverston.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Matale"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "matale-sembuwatta",
+    "name": "Sembuwatta Lake",
+    "lat": 7.311,
+    "lng": 80.725,
+    "district": "Matale",
+    "districtId": "matale",
+    "category": "SCENIC",
+    "shortDescription": "Cool mountain lake wrapped in pine forest and mist \u2014 ideal for photos, soft adventure, and highland air",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/matale-sembuwatta.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Matale"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "matale-sigiriya",
+    "name": "Sigiriya Lion Rock",
+    "lat": 7.957,
+    "lng": 80.7603,
+    "district": "Matale",
+    "districtId": "matale",
+    "category": "HERITAGE",
+    "shortDescription": "Ancient rock fortress rising 200m above the jungle canopy",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/matale-sigiriya.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Matale"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "matara-hiriketiya",
+    "name": "Hiriketiya Bay",
+    "lat": 5.9679,
+    "lng": 80.6992,
+    "district": "Matara",
+    "districtId": "matara",
+    "category": "BEACH",
+    "shortDescription": "Secret horseshoe cove loved by surfers and sunset seekers",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/matara-hiriketiya.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Matara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "matara-mirissa",
+    "name": "Mirissa Beach",
+    "lat": 5.9473,
+    "lng": 80.4583,
+    "district": "Matara",
+    "districtId": "matara",
+    "category": "BEACH",
+    "shortDescription": "Whale-watching capital of Asia \u2014 blue whales pass Nov\u2013Apr",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/matara-mirissa.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Matara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "matara-polhena",
+    "name": "Polhena Beach",
+    "lat": 5.9547,
+    "lng": 80.5223,
+    "district": "Matara",
+    "districtId": "matara",
+    "category": "BEACH",
+    "shortDescription": "Protected reef beach known for easy swims, turtle sightings, and a relaxed family-friendly shoreline",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/matara-polhena.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Matara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "matara-weligama",
+    "name": "Weligama Surf Point",
+    "lat": 5.9722,
+    "lng": 80.4283,
+    "district": "Matara",
+    "districtId": "matara",
+    "category": "ADVENTURE",
+    "shortDescription": "Gentle swells perfect for beginner surfers and stilt-fisherman sightings",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/matara-weligama.webp",
+    "rating": 4.8,
+    "tags": [
+      "adventure",
+      "Matara"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "moneragala-buduruwagala",
+    "name": "Buduruwagala",
+    "lat": 6.7004,
+    "lng": 81.2507,
+    "district": "Moneragala",
+    "districtId": "moneragala",
+    "category": "HERITAGE",
+    "shortDescription": "Rock-cut Buddhist figures rising from the forest \u2014 one of the island's most atmospheric ancient sites",
+    "estimatedVisitMinutes": 75,
+    "image": "/images/places/moneragala-buduruwagala.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Moneragala"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "moneragala-galoya",
+    "name": "Gal Oya National Park",
+    "lat": 7.2333,
+    "lng": 81.2167,
+    "district": "Moneragala",
+    "districtId": "moneragala",
+    "category": "WILDLIFE",
+    "shortDescription": "Boat safaris past swimming elephants on Senanayake Samudra",
+    "estimatedVisitMinutes": 300,
+    "image": "/images/places/moneragala-galoya.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Moneragala"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "moneragala-madulsima-mini-worlds-end",
+    "name": "Madulsima Mini World's End",
+    "lat": 6.9027,
+    "lng": 81.1495,
+    "district": "Moneragala",
+    "districtId": "moneragala",
+    "category": "VIEWPOINT",
+    "shortDescription": "Cloud-kissed escarpment with dramatic dawn views over the eastern plains and tea country edges",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/moneragala-madulsima-mini-worlds-end.webp",
+    "rating": 4.8,
+    "tags": [
+      "viewpoint",
+      "Moneragala"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "moneragala-yala-block-v",
+    "name": "Yala National Park Block V",
+    "lat": 6.6167,
+    "lng": 81.35,
+    "district": "Moneragala",
+    "districtId": "moneragala",
+    "category": "WILDLIFE",
+    "shortDescription": "A quieter Yala zone for wild landscapes, birdlife, and a more off-path safari feel from Moneragala side",
+    "estimatedVisitMinutes": 240,
+    "image": "/images/places/moneragala-yala-block-v.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Moneragala"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "mullaitivu-kokkilai",
+    "name": "Kokkilai Lagoon",
+    "lat": 9.2389,
+    "lng": 80.8647,
+    "district": "Mullaitivu",
+    "districtId": "mullaitivu",
+    "category": "NATURE",
+    "shortDescription": "Quiet eastern lagoon of mangroves, birdlife, and untouched shoreline landscapes",
+    "estimatedVisitMinutes": 75,
+    "image": "/images/places/mullaitivu-kokkilai.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Mullaitivu"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "mullaitivu-mullivaikkal-beach",
+    "name": "Mullivaikkal Beach",
+    "lat": 9.2958,
+    "lng": 80.8028,
+    "district": "Mullaitivu",
+    "districtId": "mullaitivu",
+    "category": "BEACH",
+    "shortDescription": "A quiet northeastern shoreline with long sands, sea breeze, and a reflective coastal atmosphere",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/mullaitivu-mullivaikkal-beach.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Mullaitivu"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "mullaitivu-nanthikadal",
+    "name": "Nanthikadal Lagoon",
+    "lat": 9.233,
+    "lng": 80.79,
+    "district": "Mullaitivu",
+    "districtId": "mullaitivu",
+    "category": "NATURE",
+    "shortDescription": "A vast lagoon beside Mullaitivu town, ideal for serene views, birdlife, and waterside photography",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/mullaitivu-nanthikadal.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Mullaitivu"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "nuwaraeliya-bluefield",
+    "name": "Bluefield Tea Gardens",
+    "lat": 6.9833,
+    "lng": 80.6833,
+    "district": "Nuwara Eliya",
+    "districtId": "nuwaraeliya",
+    "category": "FOOD",
+    "shortDescription": "Walk the emerald rows and taste single-origin Ceylon at the source",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/nuwaraeliya-bluefield.webp",
+    "rating": 4.8,
+    "tags": [
+      "food",
+      "Nuwara Eliya"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "nuwaraeliya-gregory",
+    "name": "Gregory Lake",
+    "lat": 6.9616,
+    "lng": 80.7716,
+    "district": "Nuwara Eliya",
+    "districtId": "nuwaraeliya",
+    "category": "SCENIC",
+    "shortDescription": "Serene highland lake surrounded by English-garden charm at 1,900m",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/nuwaraeliya-gregory.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Nuwara Eliya"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "nuwaraeliya-hakgala",
+    "name": "Hakgala Botanical Garden",
+    "lat": 6.9225,
+    "lng": 80.8213,
+    "district": "Nuwara Eliya",
+    "districtId": "nuwaraeliya",
+    "category": "GARDEN",
+    "shortDescription": "High-elevation botanic garden famed for roses, cool-climate blooms, and sweeping hill-country scenery",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/nuwaraeliya-hakgala.webp",
+    "rating": 4.8,
+    "tags": [
+      "garden",
+      "Nuwara Eliya"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "nuwaraeliya-horton",
+    "name": "Horton Plains",
+    "lat": 6.8018,
+    "lng": 80.8008,
+    "district": "Nuwara Eliya",
+    "districtId": "nuwaraeliya",
+    "category": "NATURE",
+    "shortDescription": "Misty plateau ending at World's End \u2014 an 880m vertical cliff drop",
+    "estimatedVisitMinutes": 240,
+    "image": "/images/places/nuwaraeliya-horton.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Nuwara Eliya"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "nuwaraeliya-world-s-end",
+    "name": "World's End",
+    "lat": 6.782,
+    "lng": 80.817,
+    "district": "Nuwara Eliya",
+    "districtId": "nuwaraeliya",
+    "category": "VIEWPOINT",
+    "shortDescription": "Experience the beauty of World's End in Nuwara Eliya.",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/nuwaraeliya-world-s-end.webp",
+    "rating": 4.8,
+    "tags": [
+      "viewpoint",
+      "Nuwara Eliya"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "polonnaruwa-ruins",
+    "name": "Ancient City Ruins",
+    "lat": 7.9452,
+    "lng": 81.0028,
+    "district": "Polonnaruwa",
+    "districtId": "polonnaruwa",
+    "category": "HERITAGE",
+    "shortDescription": "UNESCO medieval capital \u2014 carved Buddhas and royal courtyards",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/polonnaruwa-ruins.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Polonnaruwa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "polonnaruwa-gal-vihara",
+    "name": "Gal Vihara",
+    "lat": 7.9667,
+    "lng": 81.0167,
+    "district": "Polonnaruwa",
+    "districtId": "polonnaruwa",
+    "category": "HERITAGE",
+    "shortDescription": "Masterpiece granite Buddha sculptures \u2014 one of Sri Lanka's most elegant and photogenic heritage sites",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/polonnaruwa-gal-vihara.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Polonnaruwa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "polonnaruwa-minneriya",
+    "name": "Minneriya Safari",
+    "lat": 8.0333,
+    "lng": 80.9,
+    "district": "Polonnaruwa",
+    "districtId": "polonnaruwa",
+    "category": "WILDLIFE",
+    "shortDescription": "'The Gathering' \u2014 up to 300 elephants at the dry-season tank",
+    "estimatedVisitMinutes": 240,
+    "image": "/images/places/polonnaruwa-minneriya.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Polonnaruwa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "polonnaruwa-parakrama",
+    "name": "Parakrama Samudra",
+    "lat": 7.9333,
+    "lng": 81,
+    "district": "Polonnaruwa",
+    "districtId": "polonnaruwa",
+    "category": "SCENIC",
+    "shortDescription": "12th-century reservoir \u2014 a 'sea' built by a single king's vision",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/polonnaruwa-parakrama.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Polonnaruwa"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "puttalam-alankuda",
+    "name": "Alankuda Beach",
+    "lat": 8.116,
+    "lng": 79.72,
+    "district": "Puttalam",
+    "districtId": "puttalam",
+    "category": "BEACH",
+    "shortDescription": "Quiet west-coast beach near Kalpitiya with long sands, open horizon sunsets, and a laid-back resort feel",
+    "estimatedVisitMinutes": 90,
+    "image": "/images/places/puttalam-alankuda.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Puttalam"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "puttalam-kalpitiya",
+    "name": "Kalpitiya Lagoon",
+    "lat": 8.2333,
+    "lng": 79.7667,
+    "district": "Puttalam",
+    "districtId": "puttalam",
+    "category": "NATURE",
+    "shortDescription": "Dolphin pods, kitesurfing, and mangrove kayaking on the Puttalam coast",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/puttalam-kalpitiya.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Puttalam"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "puttalam-stanne",
+    "name": "St. Anne's Church",
+    "lat": 7.6,
+    "lng": 79.8333,
+    "district": "Puttalam",
+    "districtId": "puttalam",
+    "category": "HERITAGE",
+    "shortDescription": "Historic shrine drawing pilgrims from across the island since 1668",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/puttalam-stanne.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Puttalam"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "puttalam-wilpattu",
+    "name": "Wilpattu National Park",
+    "lat": 8.45,
+    "lng": 80.0333,
+    "district": "Puttalam",
+    "districtId": "puttalam",
+    "category": "WILDLIFE",
+    "shortDescription": "Sri Lanka's largest park \u2014 leopard, sloth bear, and ancient lakes",
+    "estimatedVisitMinutes": 300,
+    "image": "/images/places/puttalam-wilpattu.webp",
+    "rating": 4.8,
+    "tags": [
+      "wildlife",
+      "Puttalam"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "ratnapura-adams-peak",
+    "name": "Adam's Peak (Sri Pada)",
+    "lat": 6.8096,
+    "lng": 80.4994,
+    "district": "Ratnapura",
+    "districtId": "ratnapura",
+    "category": "ADVENTURE",
+    "shortDescription": "Sacred 2,243m pilgrimage peak \u2014 sunrise above the cloud sea",
+    "estimatedVisitMinutes": 360,
+    "image": "/images/places/ratnapura-adams-peak.webp",
+    "rating": 4.8,
+    "tags": [
+      "adventure",
+      "Ratnapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "ratnapura-bopath-ella",
+    "name": "Bopath Ella Falls",
+    "lat": 6.733,
+    "lng": 80.427,
+    "district": "Ratnapura",
+    "districtId": "ratnapura",
+    "category": "NATURE",
+    "shortDescription": "Fan-shaped waterfall near Ratnapura, popular for easy access, greenery, and classic wet-zone scenery",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/ratnapura-bopath-ella.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Ratnapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "ratnapura-gem-museum",
+    "name": "Gem Museum",
+    "lat": 6.6803,
+    "lng": 80.3989,
+    "district": "Ratnapura",
+    "districtId": "ratnapura",
+    "category": "CULTURE",
+    "shortDescription": "The 'City of Gems' \u2014 sapphires, rubies, and generations of craftsmanship",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/ratnapura-gem-museum.webp",
+    "rating": 4.8,
+    "tags": [
+      "culture",
+      "Ratnapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "ratnapura-sinharaja",
+    "name": "Sinharaja Rain Forest",
+    "lat": 6.4167,
+    "lng": 80.5,
+    "district": "Ratnapura",
+    "districtId": "ratnapura",
+    "category": "NATURE",
+    "shortDescription": "UNESCO virgin rainforest \u2014 50% of Sri Lanka's endemic species",
+    "estimatedVisitMinutes": 240,
+    "image": "/images/places/ratnapura-sinharaja.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Ratnapura"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "trinco-fort",
+    "name": "Fort Frederick",
+    "lat": 8.5783,
+    "lng": 81.2317,
+    "district": "Trincomalee",
+    "districtId": "trincomalee",
+    "category": "HERITAGE",
+    "shortDescription": "Dutch-era fort perched on Swami Rock above turquoise Trinco bay",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/trinco-fort.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Trincomalee"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "trincomalee-koneswaram-temple",
+    "name": "Koneswaram Temple",
+    "lat": 8.5833,
+    "lng": 81.2464,
+    "district": "Trincomalee",
+    "districtId": "trincomalee",
+    "category": "TEMPLE_LANDMARK",
+    "shortDescription": "Experience the beauty of Koneswaram Temple in Trincomalee.",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/trincomalee-koneswaram-temple.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Trincomalee"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "trincomalee-marble-beach",
+    "name": "Marble Beach",
+    "lat": 8.5125,
+    "lng": 81.194,
+    "district": "Trincomalee",
+    "districtId": "trincomalee",
+    "category": "BEACH",
+    "shortDescription": "A compact turquoise bay near Trinco, known for clear water, soft sand, and a polished beach-day feel",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/trincomalee-marble-beach.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Trincomalee"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "trinco-nilaveli",
+    "name": "Nilaveli Beach",
+    "lat": 8.6822,
+    "lng": 81.2014,
+    "district": "Trincomalee",
+    "districtId": "trincomalee",
+    "category": "BEACH",
+    "shortDescription": "Pristine white sand stretching endlessly along the east coast",
+    "estimatedVisitMinutes": 120,
+    "image": "/images/places/trinco-nilaveli.webp",
+    "rating": 4.8,
+    "tags": [
+      "beach",
+      "Trincomalee"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "trinco-pigeon",
+    "name": "Pigeon Island",
+    "lat": 8.725,
+    "lng": 81.2,
+    "district": "Trincomalee",
+    "districtId": "trincomalee",
+    "category": "NATURE",
+    "shortDescription": "National park island with crystal waters and reef shark snorkeling",
+    "estimatedVisitMinutes": 180,
+    "image": "/images/places/trinco-pigeon.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Trincomalee"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "mannar-madhu-road-birding",
+    "name": "Madhu Road Wetland Stop",
+    "lat": 8.8575,
+    "lng": 80.175,
+    "district": "Mannar",
+    "districtId": "mannar",
+    "category": "NATURE",
+    "shortDescription": "A gentle northern stop for birding, open-country photography, and slow overland travel",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/vavuniya-madhu-road-birding.webp",
+    "rating": 4.8,
+    "tags": [
+      "nature",
+      "Mannar"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "vavuniya-madukanda-viharaya",
+    "name": "Madukanda Viharaya",
+    "lat": 8.7598,
+    "lng": 80.5441,
+    "district": "Vavuniya",
+    "districtId": "vavuniya",
+    "category": "TEMPLE",
+    "shortDescription": "Ancient temple site linked to the sacred tooth relic route, with ruins and a peaceful forest setting",
+    "estimatedVisitMinutes": 60,
+    "image": "/images/places/vavuniya-madukanda-viharaya.webp",
+    "rating": 4.8,
+    "tags": [
+      "temple",
+      "Vavuniya"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "vavuniya-poonthottam",
+    "name": "Poonthottam Tank",
+    "lat": 8.758,
+    "lng": 80.5,
+    "district": "Vavuniya",
+    "districtId": "vavuniya",
+    "category": "SCENIC",
+    "shortDescription": "A calm inland tank offering open skies, still-water reflections, and a softer landscape stop for the northern corridor",
+    "estimatedVisitMinutes": 30,
+    "image": "/images/places/vavuniya-poonthottam.webp",
+    "rating": 4.8,
+    "tags": [
+      "scenic",
+      "Vavuniya"
+    ],
+    "mapPriority": 10
+  },
+  {
+    "id": "vavuniya-archaeological-museum",
+    "name": "Vavuniya Archaeological Museum",
+    "lat": 8.75,
+    "lng": 80.4833,
+    "district": "Vavuniya",
+    "districtId": "vavuniya",
+    "category": "HERITAGE",
+    "shortDescription": "Regional museum showcasing archaeological finds and cultural history from Vavuniya and its surroundings",
+    "estimatedVisitMinutes": 45,
+    "image": "/images/places/vavuniya-archaeological-museum.webp",
+    "rating": 4.8,
+    "tags": [
+      "heritage",
+      "Vavuniya"
+    ],
+    "mapPriority": 10
+  }
+]

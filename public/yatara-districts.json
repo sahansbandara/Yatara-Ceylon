@@ -1,0 +1,950 @@
+{
+    "districts": [
+        {
+            "id": "CMB",
+            "name": "Colombo",
+            "luxury_label": "The Sovereign Arrival",
+            "gems": [
+                "Yatara HQ (Colombo 02)",
+                "Dutch Hospital Precinct",
+                "Galle Face Green"
+            ],
+            "coordinates": [
+                6.9271,
+                79.8612
+            ],
+            "transfer_start": 26500,
+            "hidden_gems": [
+                {
+                    "name": "Beddagana Wetland Park",
+                    "category": "Nature",
+                    "teaser": "Urban wetland trails for birds and calm city sunsets.",
+                    "image_hint": "wetland",
+                    "visit_minutes_est": 75
+                },
+                {
+                    "name": "Seema Malakaya (Beira Lake)",
+                    "category": "Architecture",
+                    "teaser": "Serene lake-temple modernism—quiet, photogenic, minimal crowds.",
+                    "image_hint": "temple_lake",
+                    "visit_minutes_est": 40
+                },
+                {
+                    "name": "Pettah backstreets photo walk",
+                    "category": "Culture",
+                    "teaser": "Textures, markets, old signage—guided-style street discovery.",
+                    "image_hint": "street_market",
+                    "visit_minutes_est": 60
+                }
+            ]
+        },
+        {
+            "id": "MTL",
+            "name": "Matale",
+            "luxury_label": "The Ancient Lion Throne",
+            "gems": [
+                "Sigiriya Lion Rock",
+                "Dambulla Cave Temple",
+                "Riverston Peak"
+            ],
+            "coordinates": [
+                7.4675,
+                80.6234
+            ],
+            "transfer_start": 139500,
+            "hidden_gems": [
+                {
+                    "name": "Sembuwatta Lake (Elkaduwa)",
+                    "category": "Nature",
+                    "teaser": "Tea-estate lake with cool air and scenic viewpoints.",
+                    "image_hint": "tea_lake",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Nalanda Gedige",
+                    "category": "Heritage",
+                    "teaser": "Ancient stone temple—quiet, unusual architecture.",
+                    "image_hint": "ancient_stone_temple",
+                    "visit_minutes_est": 45
+                },
+                {
+                    "name": "Pitawala Pathana",
+                    "category": "Nature",
+                    "teaser": "Misty grassland plain near Knuckles—unique terrain.",
+                    "image_hint": "grassland",
+                    "visit_minutes_est": 120
+                }
+            ]
+        },
+        {
+            "id": "GLE",
+            "name": "Galle",
+            "luxury_label": "Colonial Serenity",
+            "gems": [
+                "Galle Fort Heritage",
+                "Unawatuna Beach",
+                "Hikkaduwa Marine Park"
+            ],
+            "coordinates": [
+                6.0367,
+                80.2170
+            ],
+            "transfer_start": 88000,
+            "hidden_gems": [
+                {
+                    "name": "Rumassala Hill walk",
+                    "category": "Nature",
+                    "teaser": "Short coastal hill trails and viewpoints—soft sunset light.",
+                    "image_hint": "coastal_hill",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "Jungle Beach (Rumassala side)",
+                    "category": "Beach",
+                    "teaser": "Hidden cove feel—more private than the main strips.",
+                    "image_hint": "hidden_beach",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Koggala Lake boat ride",
+                    "category": "Nature",
+                    "teaser": "Calm lake with islands and birdlife—relaxed pace.",
+                    "image_hint": "lake_boat",
+                    "visit_minutes_est": 120
+                }
+            ]
+        },
+        {
+            "id": "KDY",
+            "name": "Kandy",
+            "luxury_label": "The Sacred Highland Legacy",
+            "gems": [
+                "Temple of the Tooth",
+                "Royal Botanical Gardens",
+                "Knuckles Range"
+            ],
+            "coordinates": [
+                7.2906,
+                80.6337
+            ],
+            "transfer_start": 95000,
+            "hidden_gems": [
+                {
+                    "name": "Udawattakele Sanctuary",
+                    "category": "Nature",
+                    "teaser": "Royal forest above Kandy—easy trails, strong birdlife.",
+                    "image_hint": "forest_trail",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Embekke Devalaya",
+                    "category": "Heritage",
+                    "teaser": "Legendary wood carvings—craft detail overload.",
+                    "image_hint": "wood_carving",
+                    "visit_minutes_est": 45
+                },
+                {
+                    "name": "Gadaladeniya Temple",
+                    "category": "Heritage",
+                    "teaser": "Stone-built temple with quiet hill scenery.",
+                    "image_hint": "stone_temple",
+                    "visit_minutes_est": 45
+                }
+            ]
+        },
+        {
+            "id": "BDL",
+            "name": "Badulla",
+            "luxury_label": "Misty Highland Odyssey",
+            "gems": [
+                "Nine Arches Bridge (Ella)",
+                "Little Adam's Peak",
+                "Dunhinda Falls"
+            ],
+            "coordinates": [
+                6.9934,
+                81.0550
+            ],
+            "transfer_start": 86800,
+            "hidden_gems": [
+                {
+                    "name": "Upper Diyaluma Pools",
+                    "category": "Nature",
+                    "teaser": "Natural infinity pools with huge valley views.",
+                    "image_hint": "infinity_pools",
+                    "visit_minutes_est": 180
+                },
+                {
+                    "name": "Adisham Monastery",
+                    "category": "Heritage",
+                    "teaser": "Old-world bungalow + gardens—cool and calm.",
+                    "image_hint": "colonial_house",
+                    "visit_minutes_est": 75
+                },
+                {
+                    "name": "Bambarakanda Falls",
+                    "category": "Nature",
+                    "teaser": "Dramatic tall waterfall and pine-forest approach.",
+                    "image_hint": "waterfall",
+                    "visit_minutes_est": 120
+                }
+            ]
+        },
+        {
+            "id": "NUA",
+            "name": "Nuwara Eliya",
+            "luxury_label": "The High Country Tea Trail",
+            "gems": [
+                "Gregory Lake",
+                "Horton Plains",
+                "Bluefield Tea Gardens"
+            ],
+            "coordinates": [
+                6.9497,
+                80.7891
+            ],
+            "transfer_start": 92000,
+            "hidden_gems": [
+                {
+                    "name": "Galway's Land National Park",
+                    "category": "Nature",
+                    "teaser": "Small-town forest patch—easy birding and quiet walks.",
+                    "image_hint": "forest_trail",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "Pedro Tea Estate drive",
+                    "category": "Tea",
+                    "teaser": "Tea-country roads + viewpoints—slow luxury vibe.",
+                    "image_hint": "tea_viewpoint",
+                    "visit_minutes_est": 75
+                },
+                {
+                    "name": "Lover's Leap viewpoint (off-peak)",
+                    "category": "Viewpoint",
+                    "teaser": "Quick viewpoint stop—best in clear mornings.",
+                    "image_hint": "cliff_view",
+                    "visit_minutes_est": 40
+                }
+            ]
+        },
+        {
+            "id": "MTR",
+            "name": "Matara",
+            "luxury_label": "Southern Coast Serenity",
+            "gems": [
+                "Mirissa Beach",
+                "Hiriketiya Bay",
+                "Weligama Surf Point"
+            ],
+            "coordinates": [
+                5.9549,
+                80.5550
+            ],
+            "transfer_start": 98000,
+            "hidden_gems": [
+                {
+                    "name": "Polhena Reef snorkel (early)",
+                    "category": "Beach",
+                    "teaser": "Calm reef water—best before crowds and wind.",
+                    "image_hint": "reef_snorkel",
+                    "visit_minutes_est": 120
+                },
+                {
+                    "name": "Parey Dewa Temple (islet)",
+                    "category": "Culture",
+                    "teaser": "Sea temple feel—short, scenic, and different.",
+                    "image_hint": "islet_temple",
+                    "visit_minutes_est": 45
+                },
+                {
+                    "name": "Nilwala River mangrove edges",
+                    "category": "Nature",
+                    "teaser": "Slow river scenes—birdlife and green tunnels.",
+                    "image_hint": "mangrove",
+                    "visit_minutes_est": 90
+                }
+            ]
+        },
+        {
+            "id": "HBT",
+            "name": "Hambantota",
+            "luxury_label": "The Sovereign Wilds",
+            "gems": [
+                "Yala National Park",
+                "Bundala Bird Sanctuary",
+                "Ridiyagama Safari"
+            ],
+            "coordinates": [
+                6.1245,
+                81.1185
+            ],
+            "transfer_start": 155000,
+            "hidden_gems": [
+                {
+                    "name": "Bundala lagoons (quiet zones)",
+                    "category": "Nature",
+                    "teaser": "Birdlife + open skies—less intense than big safari hype.",
+                    "image_hint": "lagoon_birds",
+                    "visit_minutes_est": 150
+                },
+                {
+                    "name": "Tangalle backwater calm",
+                    "category": "Beach",
+                    "teaser": "Soft beaches and quiet coves beyond peak strips.",
+                    "image_hint": "quiet_beach",
+                    "visit_minutes_est": 120
+                },
+                {
+                    "name": "Weherahena Temple",
+                    "category": "Culture",
+                    "teaser": "Underground temple spaces—surprisingly massive.",
+                    "image_hint": "temple",
+                    "visit_minutes_est": 60
+                }
+            ]
+        },
+        {
+            "id": "TRI",
+            "name": "Trincomalee",
+            "luxury_label": "Whales & Waves",
+            "gems": [
+                "Nilaveli Beach",
+                "Pigeon Island",
+                "Fort Frederick"
+            ],
+            "coordinates": [
+                8.5711,
+                81.2335
+            ],
+            "transfer_start": 125000,
+            "hidden_gems": [
+                {
+                    "name": "Kanniya Hot Springs",
+                    "category": "Nature",
+                    "teaser": "Local hot spring stop—short, unique experience.",
+                    "image_hint": "hot_springs",
+                    "visit_minutes_est": 45
+                },
+                {
+                    "name": "Pigeon Island snorkel (early)",
+                    "category": "Marine",
+                    "teaser": "Coral and fish—best in calm morning water.",
+                    "image_hint": "snorkel",
+                    "visit_minutes_est": 180
+                },
+                {
+                    "name": "Marble Beach (off-peak)",
+                    "category": "Beach",
+                    "teaser": "Clear water and wide sand—timing matters for calm.",
+                    "image_hint": "clear_beach",
+                    "visit_minutes_est": 120
+                }
+            ]
+        },
+        {
+            "id": "JAF",
+            "name": "Jaffna",
+            "luxury_label": "The Northern Heritage",
+            "gems": [
+                "Nallur Kandaswamy Kovil",
+                "Casuarina Beach",
+                "Delft Island"
+            ],
+            "coordinates": [
+                9.6615,
+                80.0255
+            ],
+            "transfer_start": 185000,
+            "hidden_gems": [
+                {
+                    "name": "Keerimalai Springs",
+                    "category": "Culture",
+                    "teaser": "Sacred coastal springs—strong local atmosphere.",
+                    "image_hint": "coastal_springs",
+                    "visit_minutes_est": 40
+                },
+                {
+                    "name": "Kayts Island causeway drive",
+                    "category": "Scenic Drive",
+                    "teaser": "Causeways, lagoons, fishing villages—slow travel.",
+                    "image_hint": "causeway",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Nainativu (Nagadeepa) day trip",
+                    "category": "Culture",
+                    "teaser": "Boat trip with spiritual sites and sea-breeze calm.",
+                    "image_hint": "island_temple",
+                    "visit_minutes_est": 180
+                }
+            ]
+        },
+        {
+            "id": "ANU",
+            "name": "Anuradhapura",
+            "luxury_label": "Ancient Kingdom Trails",
+            "gems": [
+                "Jaya Sri Maha Bodhi",
+                "Ruwanwelisaya",
+                "Mihintale"
+            ],
+            "coordinates": [
+                8.3114,
+                80.4037
+            ],
+            "transfer_start": 115000,
+            "hidden_gems": [
+                {
+                    "name": "Vessagiriya Caves",
+                    "category": "Heritage",
+                    "teaser": "Forest monastery caves—quiet and atmospheric.",
+                    "image_hint": "caves",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "Kuttam Pokuna (Twin Ponds)",
+                    "category": "Heritage",
+                    "teaser": "Photogenic ancient bathing pools—fine stone detail.",
+                    "image_hint": "ruins_water",
+                    "visit_minutes_est": 35
+                },
+                {
+                    "name": "Nachchadoowa Reservoir sunset",
+                    "category": "Nature",
+                    "teaser": "Big-sky reservoir sunsets—local, low crowds.",
+                    "image_hint": "reservoir",
+                    "visit_minutes_est": 50
+                }
+            ]
+        },
+        {
+            "id": "POL",
+            "name": "Polonnaruwa",
+            "luxury_label": "The Royal Ruins",
+            "gems": [
+                "Ancient City Ruins",
+                "Parakrama Samudra",
+                "Minneriya Safari"
+            ],
+            "coordinates": [
+                7.9403,
+                81.0188
+            ],
+            "transfer_start": 120000,
+            "hidden_gems": [
+                {
+                    "name": "Medirigiriya Vatadage",
+                    "category": "Heritage",
+                    "teaser": "Atmospheric circular shrine—often missed by day-trippers.",
+                    "image_hint": "vatadage",
+                    "visit_minutes_est": 70
+                },
+                {
+                    "name": "Giritale Lake sunset",
+                    "category": "Nature",
+                    "teaser": "Quiet tank views—great decompression stop.",
+                    "image_hint": "tank_lake",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "Backroads cycling loop",
+                    "category": "Experience",
+                    "teaser": "Village roads + tanks—more authentic than main circuit.",
+                    "image_hint": "cycling",
+                    "visit_minutes_est": 120
+                }
+            ]
+        },
+        {
+            "id": "PUT",
+            "name": "Puttalam",
+            "luxury_label": "The Untamed West",
+            "gems": [
+                "Kalpitiya Lagoon",
+                "Wilpattu National Park",
+                "St. Anne's Church"
+            ],
+            "coordinates": [
+                8.0330,
+                79.8259
+            ],
+            "transfer_start": 110000,
+            "hidden_gems": [
+                {
+                    "name": "Anawilundawa Wetland Sanctuary",
+                    "category": "Nature",
+                    "teaser": "Ramsar wetland—birding and calm water scenes.",
+                    "image_hint": "wetland_birds",
+                    "visit_minutes_est": 150
+                },
+                {
+                    "name": "Kalpitiya Dutch Fort",
+                    "category": "Heritage",
+                    "teaser": "Dutch-era fort at lagoon edge—quick, photogenic stop.",
+                    "image_hint": "dutch_fort",
+                    "visit_minutes_est": 45
+                },
+                {
+                    "name": "Kalpitiya lagoon sunset ride",
+                    "category": "Nature",
+                    "teaser": "Lagoon glow + breeze—premium slow travel.",
+                    "image_hint": "lagoon",
+                    "visit_minutes_est": 90
+                }
+            ]
+        },
+        {
+            "id": "RAT",
+            "name": "Ratnapura",
+            "luxury_label": "The City of Gems",
+            "gems": [
+                "Sinharaja Rain Forest",
+                "Adam's Peak (Sri Pada)",
+                "Gem Museum"
+            ],
+            "coordinates": [
+                6.6828,
+                80.3992
+            ],
+            "transfer_start": 75000,
+            "hidden_gems": [
+                {
+                    "name": "Maduwanwela Walawwa",
+                    "category": "Heritage",
+                    "teaser": "Old walawwa mansion—big character, low crowds.",
+                    "image_hint": "walawwa",
+                    "visit_minutes_est": 70
+                },
+                {
+                    "name": "Wawulpane Limestone Cave",
+                    "category": "Nature",
+                    "teaser": "Cave adventure—off the usual tourist path.",
+                    "image_hint": "limestone_cave",
+                    "visit_minutes_est": 120
+                },
+                {
+                    "name": "Gem pit experience (guided)",
+                    "category": "Experience",
+                    "teaser": "Hands-on gem-country story—do it with a trusted guide.",
+                    "image_hint": "gem_mining",
+                    "visit_minutes_est": 90
+                }
+            ]
+        },
+        {
+            "id": "KEG",
+            "name": "Kegalle",
+            "luxury_label": "Sovereign Sanctuaries",
+            "gems": [
+                "Pinnawala Elephant Orphanage",
+                "Saradiel Village",
+                "Utuwankanda"
+            ],
+            "coordinates": [
+                7.2513,
+                80.3464
+            ],
+            "transfer_start": 45000,
+            "hidden_gems": [
+                {
+                    "name": "Kitulgala river edge stop",
+                    "category": "Nature",
+                    "teaser": "Rainforest river energy—short walks and viewpoints.",
+                    "image_hint": "river",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Utuwankanda hike (off-peak)",
+                    "category": "Viewpoint",
+                    "teaser": "Short hike for wide hill views—timing reduces crowds.",
+                    "image_hint": "mountain_view",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Local spice garden (small)",
+                    "category": "Lifestyle",
+                    "teaser": "Choose small, curated gardens—avoid tourist-trap factories.",
+                    "image_hint": "spice_garden",
+                    "visit_minutes_est": 60
+                }
+            ]
+        },
+        {
+            "id": "GMP",
+            "name": "Gampaha",
+            "luxury_label": "Lagoon Elegance",
+            "gems": [
+                "Negombo Lagoon",
+                "Dutch Canal",
+                "Private Estate Tours"
+            ],
+            "coordinates": [
+                7.0873,
+                80.0144
+            ],
+            "transfer_start": 32000,
+            "hidden_gems": [
+                {
+                    "name": "Muthurajawela marsh boardwalk",
+                    "category": "Nature",
+                    "teaser": "Marsh ecology + birdlife—quiet near the airport belt.",
+                    "image_hint": "marsh",
+                    "visit_minutes_est": 120
+                },
+                {
+                    "name": "Dutch Canal slow walk",
+                    "category": "Culture",
+                    "teaser": "Canal edges + old bridges—good for calm photography.",
+                    "image_hint": "canal",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "Negombo lagoon sunset points",
+                    "category": "Nature",
+                    "teaser": "Lagoon light + boat silhouettes—simple and premium.",
+                    "image_hint": "lagoon_sunset",
+                    "visit_minutes_est": 75
+                }
+            ]
+        },
+        {
+            "id": "KAL",
+            "name": "Kalutara",
+            "luxury_label": "The Bawa Legacy",
+            "gems": [
+                "Richmond Castle",
+                "Brief Garden",
+                "Kalutara Bodhiya"
+            ],
+            "coordinates": [
+                6.5854,
+                79.9607
+            ],
+            "transfer_start": 48000,
+            "hidden_gems": [
+                {
+                    "name": "Brief Garden (off-peak)",
+                    "category": "Architecture",
+                    "teaser": "Garden design and sculpture—slow, curated vibe.",
+                    "image_hint": "garden",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Richmond Castle grounds",
+                    "category": "Heritage",
+                    "teaser": "Colonial-era mansion photo stop—best with soft light.",
+                    "image_hint": "colonial_house",
+                    "visit_minutes_est": 75
+                },
+                {
+                    "name": "Kalu Ganga river mouth",
+                    "category": "Nature",
+                    "teaser": "River-meets-sea mood—quiet evening walk.",
+                    "image_hint": "river_mouth",
+                    "visit_minutes_est": 60
+                }
+            ]
+        },
+        {
+            "id": "KUR",
+            "name": "Kurunegala",
+            "luxury_label": "Ethagala Rock Heritage",
+            "gems": [
+                "Ethagala Rock",
+                "Yapahuwa Kingdom",
+                "Panduwasnuwara"
+            ],
+            "coordinates": [
+                7.4818,
+                80.3609
+            ],
+            "transfer_start": 65000,
+            "hidden_gems": [
+                {
+                    "name": "Ridi Viharaya",
+                    "category": "Heritage",
+                    "teaser": "Less touristy temple with strong local character.",
+                    "image_hint": "temple",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "Panduwasnuwara ruins",
+                    "category": "Heritage",
+                    "teaser": "Space and silence—slow exploration without crowds.",
+                    "image_hint": "ancient_city",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Athugala (Elephant Rock) viewpoint",
+                    "category": "Viewpoint",
+                    "teaser": "Quick town viewpoint for wide plains views.",
+                    "image_hint": "rock_viewpoint",
+                    "visit_minutes_est": 45
+                }
+            ]
+        },
+        {
+            "id": "MNR",
+            "name": "Mannar",
+            "luxury_label": "The Island of Baobabs",
+            "gems": [
+                "Baobab Tree",
+                "Mannar Fort",
+                "Talaimannar Pier"
+            ],
+            "coordinates": [
+                8.9810,
+                79.9044
+            ],
+            "transfer_start": 165000,
+            "hidden_gems": [
+                {
+                    "name": "Mannar Baobab Tree",
+                    "category": "Nature",
+                    "teaser": "Iconic ancient tree—short detour with big story.",
+                    "image_hint": "baobab",
+                    "visit_minutes_est": 30
+                },
+                {
+                    "name": "Mannar Fort (quiet hours)",
+                    "category": "Heritage",
+                    "teaser": "Ruins + sea breeze—best when light is soft.",
+                    "image_hint": "fort_ruins",
+                    "visit_minutes_est": 45
+                },
+                {
+                    "name": "Island causeways photo stops",
+                    "category": "Scenic Drive",
+                    "teaser": "Wide skies and salt flats—minimalist landscapes.",
+                    "image_hint": "causeway",
+                    "visit_minutes_est": 60
+                }
+            ]
+        },
+        {
+            "id": "KIL",
+            "name": "Kilinochchi",
+            "luxury_label": "The Northern Gate",
+            "gems": [
+                "Elephant Pass",
+                "Iranamadu Tank"
+            ],
+            "coordinates": [
+                9.3803,
+                80.3992
+            ],
+            "transfer_start": 175000,
+            "hidden_gems": [
+                {
+                    "name": "Elephant Pass viewpoint stop",
+                    "category": "Scenic Drive",
+                    "teaser": "Lagoon + sea panoramas—gateway atmosphere.",
+                    "image_hint": "lagoon_view",
+                    "visit_minutes_est": 30
+                },
+                {
+                    "name": "Iranamadu Tank edges",
+                    "category": "Nature",
+                    "teaser": "Big tank views—quiet, local, wide skies.",
+                    "image_hint": "tank_lake",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "A9 roadside photo pullouts",
+                    "category": "Experience",
+                    "teaser": "Minimalist north landscapes—short curated stops.",
+                    "image_hint": "road_trip",
+                    "visit_minutes_est": 30
+                }
+            ]
+        },
+        {
+            "id": "MUL",
+            "name": "Mullaitivu",
+            "luxury_label": "The Marine Frontier",
+            "gems": [
+                "Nayaru Lagoon",
+                "Maritime Museum"
+            ],
+            "coordinates": [
+                9.2671,
+                80.8142
+            ],
+            "transfer_start": 170000,
+            "hidden_gems": [
+                {
+                    "name": "Kokkilai Lagoon (birdlife)",
+                    "category": "Nature",
+                    "teaser": "Lagoon sanctuary—waterbirds and calm boat scenes.",
+                    "image_hint": "lagoon_birds",
+                    "visit_minutes_est": 150
+                },
+                {
+                    "name": "Quiet north-east beaches (off-peak)",
+                    "category": "Beach",
+                    "teaser": "Wide empty shoreline feel—best in calm season.",
+                    "image_hint": "empty_beach",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Lagoon-side village life",
+                    "category": "Lifestyle",
+                    "teaser": "Local fishing rhythms—slow travel moments.",
+                    "image_hint": "fishing_village",
+                    "visit_minutes_est": 60
+                }
+            ]
+        },
+        {
+            "id": "VAV",
+            "name": "Vavuniya",
+            "luxury_label": "The Gateway of the North",
+            "gems": [
+                "Vavuniya Museum",
+                "Madukanda Vihara"
+            ],
+            "coordinates": [
+                8.7514,
+                80.4971
+            ],
+            "transfer_start": 145000,
+            "hidden_gems": [
+                {
+                    "name": "Madukanda Vihara",
+                    "category": "Heritage",
+                    "teaser": "Historic temple stop—good break on north routes.",
+                    "image_hint": "rock_temple",
+                    "visit_minutes_est": 45
+                },
+                {
+                    "name": "Tank sunset walk (local)",
+                    "category": "Nature",
+                    "teaser": "Simple evening calm—best for slow pacing.",
+                    "image_hint": "tank_lake",
+                    "visit_minutes_est": 45
+                },
+                {
+                    "name": "Market street snack loop",
+                    "category": "Lifestyle",
+                    "teaser": "Local snacks + streets—short authentic stop.",
+                    "image_hint": "street_food",
+                    "visit_minutes_est": 45
+                }
+            ]
+        },
+        {
+            "id": "BAT",
+            "name": "Batticaloa",
+            "luxury_label": "The Singing Fish Coast",
+            "gems": [
+                "Batticaloa Fort",
+                "Pasikudah Bay",
+                "Kallady Bridge"
+            ],
+            "coordinates": [
+                7.7102,
+                81.6924
+            ],
+            "transfer_start": 140000,
+            "hidden_gems": [
+                {
+                    "name": "Batticaloa lagoon sunset",
+                    "category": "Nature",
+                    "teaser": "Lagoon glow + bridge silhouettes—simple and premium.",
+                    "image_hint": "lagoon_sunset",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "Dutch Bar (Kallady)",
+                    "category": "Nature",
+                    "teaser": "Where lagoon meets ocean—photogenic and breezy.",
+                    "image_hint": "sandbar",
+                    "visit_minutes_est": 75
+                },
+                {
+                    "name": "Local lighthouse/bridge photo stops",
+                    "category": "Experience",
+                    "teaser": "Short stops, big light—best at golden hour.",
+                    "image_hint": "bridge",
+                    "visit_minutes_est": 45
+                }
+            ]
+        },
+        {
+            "id": "AMP",
+            "name": "Ampara",
+            "luxury_label": "The Sovereign Surf",
+            "gems": [
+                "Arugam Bay",
+                "Kumana National Park",
+                "Buddhangala"
+            ],
+            "coordinates": [
+                7.2912,
+                81.6724
+            ],
+            "transfer_start": 160000,
+            "hidden_gems": [
+                {
+                    "name": "Kudumbigala Monastery hike",
+                    "category": "Heritage",
+                    "teaser": "Remote rock monastery feel—high payoff, low crowds.",
+                    "image_hint": "rock_monastery",
+                    "visit_minutes_est": 150
+                },
+                {
+                    "name": "Panama lagoon edges",
+                    "category": "Nature",
+                    "teaser": "Lagoon calm + birdlife—slow, scenic detour.",
+                    "image_hint": "lagoon_birds",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Buddhangala ridge (quiet hours)",
+                    "category": "Viewpoint",
+                    "teaser": "Rocky ridge with views—best early/late.",
+                    "image_hint": "rock_viewpoint",
+                    "visit_minutes_est": 90
+                }
+            ]
+        },
+        {
+            "id": "MON",
+            "name": "Moneragala",
+            "luxury_label": "The Highland Jungles",
+            "gems": [
+                "Gal Oya National Park",
+                "Maligawila Buddha Statue"
+            ],
+            "coordinates": [
+                6.8916,
+                81.3500
+            ],
+            "transfer_start": 130000,
+            "hidden_gems": [
+                {
+                    "name": "Maligawila statue (quiet hours)",
+                    "category": "Heritage",
+                    "teaser": "Massive statue site—calm, open-sky atmosphere.",
+                    "image_hint": "ancient_statue",
+                    "visit_minutes_est": 60
+                },
+                {
+                    "name": "Buttala countryside loop",
+                    "category": "Scenic Drive",
+                    "teaser": "Dry-zone landscapes—good for slow road trips.",
+                    "image_hint": "road_trip",
+                    "visit_minutes_est": 90
+                },
+                {
+                    "name": "Gal Oya lake edge viewpoints",
+                    "category": "Nature",
+                    "teaser": "Big-water views and quiet—premium reset moments.",
+                    "image_hint": "lake_view",
+                    "visit_minutes_est": 60
+                }
+            ]
+        }
+    ]
+}
