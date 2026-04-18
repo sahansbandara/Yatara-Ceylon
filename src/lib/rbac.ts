@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getTokenFromRequest, verifyToken, type TokenPayload, type UserRole } from './auth';
+import { enforceCsrf } from './csrf';
 
 type RouteHandler = (
     request: Request,
@@ -9,6 +10,13 @@ type RouteHandler = (
 // Require authentication (any valid user)
 export function withAuth(handler: RouteHandler) {
     return async (request: Request, context: { params: Promise<Record<string, string>> }) => {
+        if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
+            const csrfError = await enforceCsrf(request);
+            if (csrfError) {
+                return csrfError;
+            }
+        }
+
         const token = getTokenFromRequest(request);
         if (!token) {
             return NextResponse.json(

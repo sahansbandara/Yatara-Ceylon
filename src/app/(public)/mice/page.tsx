@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Building2, Users, Globe, Award, Briefcase, CalendarDays, MapPin, Headphones } from 'lucide-react';
+import { AnimatedStat } from '@/components/ui/AnimatedStat';
 
 const miceServices = [
     {
@@ -105,7 +106,9 @@ export default function MicePage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         {stats.map((stat, idx) => (
                             <div key={idx} className="text-center">
-                                <p className="text-4xl md:text-5xl font-display text-[#D4AF37] mb-2">{stat.value}</p>
+                                <p className="text-4xl md:text-5xl font-display text-[#D4AF37] mb-2">
+                                    <AnimatedStat value={stat.value} />
+                                </p>
                                 <p className="text-xs tracking-[0.15em] uppercase text-white/60 font-medium">{stat.label}</p>
                             </div>
                         ))}

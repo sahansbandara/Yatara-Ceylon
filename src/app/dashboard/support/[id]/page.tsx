@@ -112,39 +112,45 @@ export default async function TicketDetailsPage({ params }: { params: Params }) 
 
                 {/* Sidebar */}
                 <div className="space-y-6">
-                    <div className="liquid-glass-stat rounded-2xl p-6">
+                    <div className="liquid-glass-stat-dark rounded-2xl p-6 border border-white/[0.08]">
                         <h3 className="text-sm font-semibold text-off-white uppercase tracking-wider mb-4">Customer Details</h3>
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2 text-sm text-white/70">
-                                <UserIcon className="h-4 w-4 text-white/30" />
-                                <span>{ticket.customerName}</span>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3 text-sm text-white/70">
+                                <div className="h-8 w-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                                    <UserIcon className="h-4 w-4 text-white/50" />
+                                </div>
+                                <span className="font-medium text-white/90 truncate">{ticket.customerName}</span>
                             </div>
                             {ticket.email && (
-                                <div className="flex items-center gap-2 text-sm text-white/70">
-                                    <Mail className="h-4 w-4 text-white/30" />
-                                    <span>{ticket.email}</span>
+                                <div className="flex items-center gap-3 text-sm text-white/70">
+                                    <div className="h-8 w-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                                        <Mail className="h-4 w-4 text-white/50" />
+                                    </div>
+                                    <span className="truncate">{ticket.email}</span>
                                 </div>
                             )}
                             {ticket.phone && (
-                                <div className="flex items-center gap-2 text-sm text-white/70">
-                                    <Phone className="h-4 w-4 text-white/30" />
+                                <div className="flex items-center gap-3 text-sm text-white/70">
+                                    <div className="h-8 w-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                                        <Phone className="h-4 w-4 text-white/50" />
+                                    </div>
                                     <span>{ticket.phone}</span>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="liquid-glass-stat rounded-2xl p-6">
+                    <div className="liquid-glass-stat-dark rounded-2xl p-6 border border-white/[0.08]">
                         <h3 className="text-sm font-semibold text-off-white uppercase tracking-wider mb-4">Actions</h3>
                         <div className="space-y-3">
                             {ticket.status !== 'CLOSED' && (
-                                <Button variant="outline" className="w-full text-red-400 border-red-500/30 hover:bg-red-500/10 hover:text-red-300 bg-transparent">
+                                <Button variant="outline" className="w-full h-11 rounded-xl text-red-400 border-red-500/20 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/30 bg-transparent transition-all">
                                     Close Ticket
                                 </Button>
                             )}
                             {ticket.bookingId && (
-                                <Link href={`/dashboard/bookings/${ticket.bookingId}`}>
-                                    <Button variant="outline" className="w-full text-white/70 border-white/20 hover:bg-white/10 bg-transparent">View Booking</Button>
+                                <Link href={`/dashboard/bookings/${ticket.bookingId}`} className="block">
+                                    <Button variant="outline" className="w-full h-11 rounded-xl text-white/70 border-white/[0.1] hover:bg-white/[0.06] hover:text-white bg-transparent transition-all">View Booking</Button>
                                 </Link>
                             )}
                         </div>

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth-edge';
 
 const COOKIE_NAME = 'toms_token';
 
@@ -93,6 +93,8 @@ export async function middleware(request: NextRequest) {
 
     return response;
 }
+
+export const runtime = 'nodejs';
 
 export const config = {
     matcher: ['/dashboard/:path*'],

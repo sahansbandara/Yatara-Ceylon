@@ -21,10 +21,10 @@ const PARTNERS = [
 
 export default function TrustedByStrip() {
     return (
-        <section className="py-8 md:py-10 bg-white border-y border-black/[0.03] overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6 mb-6">
+        <section className="py-3 md:py-4 bg-white border-y border-black/[0.03] overflow-hidden">
+            <div className="max-w-7xl mx-auto px-6 mb-2 md:mb-3">
                 {/* Label */}
-                <h2 className="text-center text-lg md:text-xl font-display text-deep-emerald font-medium tracking-tight">
+                <h2 className="text-center text-xs md:text-sm font-display text-deep-emerald font-medium tracking-tight">
                     Global Accreditations & Prestigious Memberships
                 </h2>
             </div>
@@ -39,18 +39,18 @@ export default function TrustedByStrip() {
                 <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center">
                     {/* Render the sets multiple times for seamless loop */}
                     {[...Array(2)].map((_, setIndex) => (
-                        <div key={setIndex} className="flex flex-nowrap shrink-0 items-center gap-x-4 md:gap-x-8 px-2 md:px-4">
+                        <div key={setIndex} className="flex flex-nowrap shrink-0 items-center gap-x-3 md:gap-x-6 px-2 md:px-4">
                             {PARTNERS.map((partner) => (
                                 <div
                                     key={partner.name}
-                                    className="relative h-20 md:h-24 w-[160px] md:w-[200px] flex items-center justify-center transition-all duration-300 shrink-0"
+                                    className="relative h-14 md:h-16 w-[100px] md:w-[130px] flex items-center justify-center transition-all duration-300 shrink-0"
                                 >
                                     <Image
                                         src={partner.src}
                                         alt={partner.alt}
-                                        width={200}
-                                        height={120}
-                                        className="max-h-18 md:max-h-22 w-auto object-contain"
+                                        width={150}
+                                        height={80}
+                                        className="max-h-12 md:max-h-14 w-auto object-contain"
                                         style={{ transform: partner.scale ? `scale(${partner.scale})` : undefined }}
                                     />
                                 </div>

@@ -1,20 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Eye, Edit, Trash2 } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { BookingStatus } from '@/lib/constants';
+import { useTableSort } from '@/hooks/useTableSort';
+import SortableHeader from './SortableHeader';
 
 interface Booking {
     _id: string;
@@ -35,80 +28,123 @@ interface BookingTableProps {
 export default function BookingTable({ initialBookings }: BookingTableProps) {
     const [bookings, setBookings] = useState<Booking[]>(initialBookings);
     const router = useRouter();
+    const { sortedData, sortConfig, requestSort } = useTableSort(bookings);
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case BookingStatus.NEW: return 'bg-blue-100 text-blue-800 border-blue-200';
-            case BookingStatus.CONTACTED: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-            case BookingStatus.CONFIRMED: return 'bg-green-100 text-green-800 border-green-200';
-            case BookingStatus.COMPLETED: return 'bg-gray-100 text-gray-800 border-gray-200';
-            case BookingStatus.CANCELLED: return 'bg-red-100 text-red-800 border-red-200';
-            default: return 'bg-gray-100 text-gray-800';
+            case BookingStatus.NEW: return 'status-pill-info';
+            case BookingStatus.CONTACTED: return 'status-pill-warning';
+            case BookingStatus.CONFIRMED: return 'status-pill-success';
+            case BookingStatus.COMPLETED: return 'status-pill-neutral';
+            case BookingStatus.CANCELLED: return 'status-pill-danger';
+            default: return 'status-pill-neutral';
         }
     };
 
     return (
-        <div className="rounded-md border bg-white shadow-sm">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Booking No</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Dates</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {bookings.length > 0 ? (
-                        bookings.map((booking) => (
-                            <TableRow key={booking._id}>
-                                <TableCell className="font-medium">{booking.bookingNo}</TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col">
-                                        <span>{booking.customerName}</span>
-                                        <span className="text-xs text-muted-foreground">{booking.email}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant="outline">{booking.type}</Badge>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="text-sm">
-                                        {format(new Date(booking.startDate), 'MMM d')} - {format(new Date(booking.endDate), 'MMM d, yyyy')}
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    {booking.totalAmount > 0 ? `$${booking.totalAmount.toLocaleString()}` : '-'}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant="secondary" className={getStatusColor(booking.status)}>
-                                        {booking.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Button
-                                        size="icon"
-                                        variant="ghost"
-                                        className="h-8 w-8 text-ocean-600"
-                                        onClick={() => router.push(`/dashboard/bookings/${booking._id}`)}
-                                    >
-                                        <Eye className="h-4 w-4" />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={7} className="h-24 text-center">
-                                No bookings found.
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+        <div className="dashboard-table-glass overflow-hidden rounded-2xl w-full">
+            <div className="overflow-x-auto w-full">
+                <table className="w-full text-sm">
+                    <thead>
+                        <tr className="bg-white/[0.03] border-b border-white/[0.06]">
+                            <SortableHeader
+                                label="Booking No"
+                                sortKey="bookingNo"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Customer"
+                                sortKey="customerName"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Type"
+                                sortKey="type"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Dates"
+                                sortKey="startDate"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Amount"
+                                sortKey="totalAmount"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <SortableHeader
+                                label="Status"
+                                sortKey="status"
+                                currentKey={sortConfig.key}
+                                direction={sortConfig.direction}
+                                onSort={requestSort}
+                            />
+                            <th className="text-right px-5 py-3.5 text-[10px] tracking-[0.15em] uppercase text-white/30 font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {bookings.length > 0 ? (
+                            bookings.map((booking) => (
+                                <tr key={booking._id} className="border-b border-white/[0.04] last:border-b-0 hover:bg-antique-gold/[0.03] transition-colors">
+                                    <td className="px-5 py-3.5 font-medium">
+                                        <span className="text-white/85 text-xs font-mono">{booking.bookingNo}</span>
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                        <div className="flex flex-col">
+                                            <span className="text-white/85 text-xs">{booking.customerName}</span>
+                                            <span className="text-[10px] text-white/35 mt-0.5">{booking.email}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                        <span className="text-white/60 text-xs uppercase tracking-wider">{booking.type}</span>
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                        <div className="text-[11px] text-white/50">
+                                            {format(new Date(booking.startDate), 'MMM d')} - {format(new Date(booking.endDate), 'MMM d, yyyy')}
+                                        </div>
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                        <span className="text-white/85 text-xs font-bold">
+                                            {booking.totalAmount > 0 ? `LKR ${booking.totalAmount.toLocaleString()}` : '-'}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                        <span className={`status-pill ${getStatusColor(booking.status)}`}>
+                                            {booking.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-3.5 text-right">
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="h-8 w-8 text-white/40 hover:text-antique-gold hover:bg-white/10 transition-colors"
+                                            onClick={() => router.push(`/dashboard/bookings/${booking._id}`)}
+                                        >
+                                            <Eye className="h-4 w-4" />
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={7} className="px-5 py-12 text-center text-white/40 text-sm">
+                                    No bookings found.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

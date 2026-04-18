@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, ArrowRight, ArrowLeft, CheckCircle2, MessageCircle } from 'lucide-react';
+import TurnstileField from '@/components/public/TurnstileField';
 
 const INTEREST_OPTIONS = ['Heritage', 'Wildlife', 'Tea Country', 'Beach', 'Wellness', 'Photography', 'Adventure', 'Culinary'];
 const PACE_OPTIONS = ['Relaxed', 'Balanced', 'Active'];
@@ -19,6 +20,7 @@ export default function InquireForm({ inquiryType = 'proposal', journeySlug = ''
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState('');
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -72,6 +74,7 @@ export default function InquireForm({ inquiryType = 'proposal', journeySlug = ''
                     subject: `${inquiryType === 'concierge' ? 'Concierge Call' : 'Proposal Request'}${journeySlug ? ` [${journeySlug}]` : ''} — ${formData.name}`,
                     message: composeMessage(),
                     priority: 'HIGH',
+                    turnstileToken,
                 }),
             });
 
@@ -104,7 +107,7 @@ export default function InquireForm({ inquiryType = 'proposal', journeySlug = ''
                     <div className="border-t border-gray-100 pt-6">
                         <p className="text-xs tracking-[0.15em] uppercase text-gray-400 mb-3">Need us sooner?</p>
                         <a
-                            href="https://wa.me/94771234567"
+                            href="https://wa.me/94704239802"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 text-sm text-deep-emerald hover:text-antique-gold transition-colors"
@@ -288,6 +291,8 @@ export default function InquireForm({ inquiryType = 'proposal', journeySlug = ''
                                 className="min-h-[100px] rounded-none border-gray-200 focus:border-antique-gold focus:ring-antique-gold font-light resize-none bg-white/50"
                             />
                         </div>
+
+                        <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
 
                         <div className="flex gap-3 mt-2">
                             <Button

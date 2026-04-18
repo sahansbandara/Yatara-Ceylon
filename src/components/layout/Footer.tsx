@@ -57,12 +57,38 @@ function TrustStrip() {
                 {/* Credentials row */}
                 <div className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
                     <span className="text-[9px] tracking-[0.25em] font-nav text-white/30 uppercase">Member of</span>
-                    {credentials.map((c) => (
-                        <div key={c.label} className="flex items-center gap-2 text-white/45 hover:text-white/65 transition-colors">
-                            <c.icon className="w-4 h-4 text-antique-gold/50" strokeWidth={1.5} />
-                            <span className="text-[10px] tracking-[0.12em] font-nav uppercase">{c.label}</span>
+                    
+                    {/* SLTDA Logo */}
+                    <div className="flex items-center gap-2 group">
+                        <div className="relative w-8 h-8 opacity-70 group-hover:opacity-100 transition-opacity">
+                            <Image
+                                src="/images/partners/sltda-logo.webp"
+                                alt="SLTDA"
+                                fill
+                                className="object-contain"
+                            />
                         </div>
-                    ))}
+                        <span className="text-[10px] tracking-[0.12em] font-nav uppercase text-white/45 group-hover:text-white/65 transition-colors">
+                            SLTDA Licensed
+                        </span>
+                    </div>
+
+                    {/* SLAITO & PATA */}
+                    <div className="flex items-center gap-2 text-white/45 hover:text-white/65 transition-colors">
+                        <Award className="w-4 h-4 text-antique-gold/50" strokeWidth={1.5} />
+                        <span className="text-[10px] tracking-[0.12em] font-nav uppercase">SLAITO Member</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-white/45 hover:text-white/65 transition-colors">
+                        <div className="relative w-12 h-6 opacity-70 hover:opacity-100 transition-opacity">
+                            <Image
+                                src="/images/partners/pata-logo.webp"
+                                alt="PATA"
+                                fill
+                                className="object-contain filter grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"
+                            />
+                        </div>
+                        <span className="text-[10px] tracking-[0.12em] font-nav uppercase hidden sm:inline">PATA Affiliate</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -139,8 +165,8 @@ export function Footer() {
                                 </div>
                                 <div className="flex items-center gap-3 text-sm text-white/70">
                                     <Mail className="w-4 h-4 shrink-0 text-antique-gold/70" />
-                                    <a href="mailto:info@yataraceylon.com" className="font-light hover:text-white transition-colors duration-300">
-                                        info@yataraceylon.com
+                                    <a href="mailto:info@yataraceylon.me" className="font-light hover:text-white transition-colors duration-300">
+                                        info@yataraceylon.me
                                     </a>
                                 </div>
                             </div>
@@ -282,13 +308,17 @@ export function Footer() {
                         <p className="text-[10px] font-nav tracking-[0.15em] text-white/45 uppercase">
                             &copy; {new Date().getFullYear()} Yatara Ceylon. All Rights Reserved.
                         </p>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-wrap">
                             <Link href="/terms" className="text-[10px] font-nav tracking-[0.12em] text-white/45 uppercase hover:text-white/70 transition-colors duration-300">
                                 Terms &amp; Conditions
                             </Link>
                             <span className="text-white/20 text-[8px]">|</span>
                             <Link href="/privacy" className="text-[10px] font-nav tracking-[0.12em] text-white/45 uppercase hover:text-white/70 transition-colors duration-300">
                                 Privacy Policy
+                            </Link>
+                            <span className="text-white/20 text-[8px]">|</span>
+                            <Link href="/return-policy" className="text-[10px] font-nav tracking-[0.12em] text-white/45 uppercase hover:text-white/70 transition-colors duration-300">
+                                Return Policy
                             </Link>
                             <span className="text-white/20 text-[8px]">|</span>
                             <Link href="/sitemap.xml" className="text-[10px] font-nav tracking-[0.12em] text-white/45 uppercase hover:text-white/70 transition-colors duration-300">

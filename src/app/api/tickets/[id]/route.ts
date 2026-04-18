@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import SupportTicket from '@/models/SupportTicket';
@@ -5,10 +6,11 @@ import { staffOrAdmin } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { replyTicketSchema } from '@/lib/validations';
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-    try { await connectDB(); const { id } = await params; const ticket = await SupportTicket.findById(id).lean(); if (!ticket) return NextResponse.json({ error: 'Not found' }, { status: 404 }); return NextResponse.json({ ticket }); }
+// GET /api/tickets/[id] – protected: staff/admin only
+export const GET = staffOrAdmin(async (_req, context) => {
+    try { await connectDB(); const { id } = await context.params; const ticket = await SupportTicket.findById(id).lean(); if (!ticket) return NextResponse.json({ error: 'Not found' }, { status: 404 }); return NextResponse.json({ ticket }); }
     catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
-}
+});
 
 // PATCH – update status or add reply
 export const PATCH = staffOrAdmin(async (request, context) => {

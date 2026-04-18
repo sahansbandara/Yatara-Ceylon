@@ -5,9 +5,17 @@ export interface IUser extends Document {
     name: string;
     email: string;
     phone?: string;
+    avatar?: string;
     passwordHash: string;
     role: keyof typeof UserRoles;
     status: keyof typeof UserStatus;
+    emailVerified: boolean;
+    emailVerificationTokenHash?: string;
+    emailVerificationExpires?: Date;
+    passwordResetTokenHash?: string;
+    passwordResetExpires?: Date;
+    failedLoginAttempts: number;
+    lockedUntil?: Date;
     lastLogin?: Date;
     isDeleted: boolean;
     deletedAt?: Date;
@@ -25,6 +33,7 @@ const UserSchema = new Schema<IUser>(
             trim: true,
         },
         phone: { type: String, trim: true },
+        avatar: { type: String },
         passwordHash: { type: String, required: true, select: false },
         role: {
             type: String,
@@ -38,6 +47,13 @@ const UserSchema = new Schema<IUser>(
             default: UserStatus.ACTIVE,
             index: true,
         },
+        emailVerified: { type: Boolean, default: false },
+        emailVerificationTokenHash: { type: String, select: false },
+        emailVerificationExpires: Date,
+        passwordResetTokenHash: { type: String, select: false },
+        passwordResetExpires: Date,
+        failedLoginAttempts: { type: Number, default: 0 },
+        lockedUntil: Date,
         lastLogin: Date,
         isDeleted: { type: Boolean, default: false },
         deletedAt: Date,

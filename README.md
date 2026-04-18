@@ -21,6 +21,10 @@
 ## 📑 Table of Contents
 
 - [System Architecture](#-system-architecture)
+- [Use Case Diagram](#-use-case-diagram)
+- [Activity Diagram](#-activity-diagram)
+- [Data Flow Diagram (DFD)](#-data-flow-diagram-dfd)
+- [ER Diagram](#-core-database-schema-er-diagram)
 - [High-Level Flow](#-high-level-flow)
 - [Tech Stack](#-tech-stack)
 - [Management Modules](#-management-modules)
@@ -40,9 +44,7 @@
 
 The system follows a **layered architecture** separating the public tourism website, authentication layer, role-based portals, and backend operations.
 
-<div align="center">
-  <img src="docs/images/system-architecture.webp" alt="System Architecture" width="800" style="border-radius: 8px;">
-</div>
+> 📐 **[View Full System Architecture Diagram →](docs/diagrams/system_architecture.html)** *(Open in browser for interactive SVG)*
 
 ```mermaid
 graph TB
@@ -103,13 +105,122 @@ graph TB
 
 ---
 
+## 👤 Use Case Diagram
+
+The Use Case Diagram illustrates the interactions between different user roles (actors) and the core functionalities of the TOMS platform.
+
+```mermaid
+flowchart LR
+    %% Actors
+    C(("👤 Customer"))
+    S(("👨‍💼 Concierge Staff"))
+    A(("🔑 Admin"))
+    F(("🚗 Fleet Partner"))
+    H(("🏨 Hotel Partner"))
+
+    %% System
+    subgraph TOMS["Yatara Ceylon TOMS"]
+        direction TB
+        UC1(["Browse & Book Packages"])
+        UC2(["Build Custom Tour"])
+        UC3(["Process Payments"])
+        UC4(["Manage Bookings & Assignments"])
+        UC5(["Manage Fleet Availability"])
+        UC6(["Manage Hotel Availability"])
+        UC7(["Finance & Reports"])
+        UC8(["User Management"])
+        UC9(["Content & Package Management"])
+    end
+
+    C --> UC1
+    C --> UC2
+    C --> UC3
+    
+    S --> UC4
+    S --> UC9
+    
+    A --> UC4
+    A --> UC7
+    A --> UC8
+    A --> UC9
+    A --> UC5
+    A --> UC6
+    
+    F --> UC5
+    H --> UC6
+    
+    UC4 -. "Vehicle/Hotel<br>Assignments" .-> F & H
+```
+
+> 📐 **[View Full Use Case Diagram →](docs/diagrams/use_case_diagram.html)** *(Open in browser for detailed SVG diagram)*
+
+---
+
+## 🔄 Activity Diagram
+
+The Activity Diagram illustrates the end-to-end **Booking & Payment Flow** using swimlanes across Customer, Website, API Server, PayHere Gateway, and Admin roles.
+
+> 📐 **[View Full Activity Diagram →](docs/diagrams/activity_diagram.html)** *(Open in browser for detailed SVG diagram with swimlanes)*
+
+---
+
+## 🌊 Data Flow Diagram (DFD)
+
+The Level 1 Data Flow Diagram maps the flow of information between external entities, system processes, and core data stores.
+
+```mermaid
+flowchart TD
+    %% External Entities
+    Cust["👤 Customer"]
+    Admin["👨‍💼 Admin/Staff"]
+    PH["💳 PayHere Gateway"]
+    Part["🤝 Partners (Fleet/Hotel)"]
+
+    %% Processes (Circles)
+    P1(("1.0<br>Booking<br>Management"))
+    P2(("2.0<br>Payment<br>Processing"))
+    P3(("3.0<br>Resource<br>Assignment"))
+    P4(("4.0<br>Content<br>Management"))
+
+    %% Data Stores
+    D1[(D1: Users & Roles)]
+    D2[(D2: Packages & Destinations)]
+    D3[(D3: Bookings)]
+    D4[(D4: Payments & Finances)]
+    D5[(D5: Vehicles & Partners)]
+
+    %% Data Flows
+    Cust -- "Browses Tours" --> P4
+    P4 -- "Package Info" --> Cust
+    P4 -- "Reads/Updates" --> D2
+    D2 -- "Data" --> P4
+
+    Cust -- "Submits Booking" --> P1
+    P1 -- "Stores Booking" --> D3
+    P1 -- "Booking Details" --> P2
+
+    P2 -- "Payment Request" --> PH
+    PH -- "Payment Status (Webhook)" --> P2
+    P2 -- "Records Payment" --> D4
+    P2 -- "Updates Status" --> P1
+    P2 -. "Receipt" .-> Cust
+
+    Admin -- "Manages Bookings" --> P1
+    Admin -- "Assigns Resources" --> P3
+    P3 -- "Updates Assignment" --> D3
+    P3 -- "Reads/Updates" --> D5
+    D5 -- "Availability" --> P3
+    
+    Part -- "Updates Availability" --> P3
+    P3 -- "Notifies Assignment" --> Part
+    Admin -- "Manages Users" --> D1
+```
+
+---
+
 ## 🔄 High-Level Flow
 
 The end-to-end user journey from package discovery to booking completion:
-
-<div align="center">
-  <img src="docs/images/booking-flow.webp" alt="Booking Flow" width="800" style="border-radius: 8px;">
-</div>
 
 ```mermaid
 sequenceDiagram
@@ -183,118 +294,173 @@ sequenceDiagram
 
 This entity-relationship diagram maps out how the primary collections in the MongoDB database interact to form the complete tourism management system.
 
+> 📐 **[View Full ER Diagram →](docs/diagrams/er_diagram.html)** *(Open in browser for detailed SVG entity-relationship diagram)*
+
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '15px', 'fontFamily': 'Helvetica'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px', 'fontFamily': 'Helvetica'}}}%%
 flowchart TB
-    %% Entities - padded to prevent GitHub SVG truncation
-    U["   USER   "]
-    B["   BOOKING   "]
-    PKG["   PACKAGE   "]
-    DEST["   DESTINATION   "]
-    V["   VEHICLE   "]
-    P["   PARTNER   "]
-    INV["   INVOICE   "]
-    PAY["   PAYMENT   "]
+    %% ===== ENTITIES =====
+    U["  USER  "]
+    B["  BOOKING  "]
+    PKG["  PACKAGE  "]
+    DEST["  DESTINATION  "]
+    V["  VEHICLE  "]
+    P["  PARTNER  "]
+    INV["  INVOICE  "]
+    PAY["  PAYMENT  "]
+    CP["  CUSTOM PLAN  "]
+    VB["  VEHICLE BLOCK  "]
+    NT["  NOTIFICATION  "]
+    ST["  SUPPORT TICKET  "]
+    AL["  AUDIT LOG  "]
+    BPA["  BOOKING PARTNER  "]
 
-    %% Relationships
-    R_MAKES{" makes "}
-    R_OWNS_V{" owns "}
-    R_OWNS_P{" owns "}
-    R_INCLUDES{" includes "}
-    R_ASSIGNED_V{" assigned_to "}
-    R_ASSIGNED_P{" assigned_to "}
-    R_HAS_P{" creates "}
-    R_HAS_I{" generates "}
-    R_BOOKED_IN{" booked_in "}
+    %% ===== RELATIONSHIPS =====
+    R1{" makes "}
+    R2{" owns "}
+    R3{" owns "}
+    R4{" booked_in "}
+    R5{" includes "}
+    R6{" assigned_to "}
+    R7{" assigned_to "}
+    R8{" generates "}
+    R9{" creates "}
+    R10{" used_in "}
+    R11{" has_block "}
+    R12{" partners_with "}
 
-    %% Connections
-    U -- 1 ----- R_MAKES
-    R_MAKES ----- M --> B
+    %% ===== CONNECTIONS =====
+    U -- 1 ---- R1
+    R1 ---- M --> B
 
-    U -- 1 ----- R_OWNS_V
-    R_OWNS_V ----- M --> V
+    U -- 1 ---- R2
+    R2 ---- M --> V
 
-    U -- 1 ----- R_OWNS_P
-    R_OWNS_P ----- M --> P
+    U -- 1 ---- R3
+    R3 ---- M --> P
 
-    PKG -- 1 ----- R_BOOKED_IN
-    R_BOOKED_IN ----- M --> B
+    PKG -- 1 ---- R4
+    R4 ---- M --> B
 
-    PKG -- M ----- R_INCLUDES
-    R_INCLUDES ----- N --> DEST
+    PKG -- M ---- R5
+    R5 ---- N --> DEST
 
-    V -- 1 ----- R_ASSIGNED_V
-    R_ASSIGNED_V ----- M --> B
+    V -- 1 ---- R6
+    R6 ---- M --> B
 
-    P -- 1 ----- R_ASSIGNED_P
-    R_ASSIGNED_P ----- M --> B
+    P -- 1 ---- R7
+    R7 ---- M --> BPA
 
-    B -- 1 ----- R_HAS_I
-    R_HAS_I ----- M --> INV
+    B -- 1 ---- R8
+    R8 ---- M --> INV
 
-    B -- 1 ----- R_HAS_P
-    R_HAS_P ----- M --> PAY
+    B -- 1 ---- R9
+    R9 ---- M --> PAY
 
-    %% Attributes
-    U_email([" email "])
-    U_name([" name "])
-    U_role([" role "])
-    U -.- U_email
-    U -.- U_name
-    U -.- U_role
+    CP -- 1 ---- R10
+    R10 ---- 1 --> B
 
-    B_dates([" dates "])
-    B_pax([" pax "])
-    B_totalCost([" totalCost "])
-    B_status([" status "])
-    B -.- B_dates
-    B -.- B_pax
-    B -.- B_totalCost
-    B -.- B_status
+    V -- 1 ---- R11
+    R11 ---- M --> VB
 
-    PKG_title([" title "])
-    PKG_type([" type "])
-    PKG_price([" price "])
-    PKG -.- PKG_title
-    PKG -.- PKG_type
-    PKG -.- PKG_price
+    B -- 1 ---- R12
+    R12 ---- M --> BPA
 
-    V_type([" type "])
-    V_status([" status "])
-    V_plate([" plate "])
-    V -.- V_type
-    V -.- V_status
-    V -.- V_plate
+    U -..- NT
+    U -..- ST
+    U -..- AL
+    U -..- CP
 
-    P_type([" type "])
-    P_name([" name "])
-    P -.- P_type
-    P -.- P_name
+    %% ===== USER ATTRIBUTES =====
+    U1(["  email  "])
+    U2(["  name  "])
+    U3(["  role  "])
+    U4(["  phone  "])
+    U5(["  status  "])
+    U -.- U1
+    U -.- U2
+    U -.- U3
+    U -.- U4
+    U -.- U5
 
-    INV_status([" status "])
-    INV_total([" total "])
-    INV -.- INV_status
-    INV -.- INV_total
+    %% ===== BOOKING ATTRIBUTES =====
+    B1(["  bookingNo  "])
+    B2(["  status  "])
+    B3(["  totalCost  "])
+    B4(["  paidAmount  "])
+    B5(["  dates  "])
+    B6(["  pax  "])
+    B -.- B1
+    B -.- B2
+    B -.- B3
+    B -.- B4
+    B -.- B5
+    B -.- B6
 
-    PAY_amount([" amount "])
-    PAY_method([" method "])
-    PAY_status([" status "])
-    PAY -.- PAY_amount
-    PAY -.- PAY_method
-    PAY -.- PAY_status
+    %% ===== PACKAGE ATTRIBUTES =====
+    PK1(["  title  "])
+    PK2(["  type  "])
+    PK3(["  price  "])
+    PK4(["  duration  "])
+    PKG -.- PK1
+    PKG -.- PK2
+    PKG -.- PK3
+    PKG -.- PK4
 
-    DEST_name([" name "])
-    DEST_loc([" location "])
-    DEST -.- DEST_name
-    DEST -.- DEST_loc
+    %% ===== VEHICLE ATTRIBUTES =====
+    V1(["  type  "])
+    V2(["  status  "])
+    V3(["  plate  "])
+    V4(["  capacity  "])
+    V -.- V1
+    V -.- V2
+    V -.- V3
+    V -.- V4
 
-    classDef entity fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,font-weight:bolder;
-    classDef relationship fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000000,font-weight:bolder;
-    classDef attribute fill:#f8f9fa,stroke:#333333,stroke-width:1px,color:#000000,font-weight:normal;
+    %% ===== PARTNER ATTRIBUTES =====
+    P1(["  type  "])
+    P2(["  name  "])
+    P3(["  contact  "])
+    P4(["  status  "])
+    P -.- P1
+    P -.- P2
+    P -.- P3
+    P -.- P4
 
-    class U,B,PKG,DEST,V,P,INV,PAY entity;
-    class R_MAKES,R_OWNS_V,R_OWNS_P,R_INCLUDES,R_ASSIGNED_V,R_ASSIGNED_P,R_HAS_P,R_HAS_I,R_BOOKED_IN relationship;
-    class U_email,U_name,U_role,B_dates,B_pax,B_totalCost,B_status,PKG_title,PKG_type,PKG_price,V_type,V_status,V_plate,P_type,P_name,INV_status,INV_total,PAY_amount,PAY_method,PAY_status,DEST_name,DEST_loc attribute;
+    %% ===== PAYMENT ATTRIBUTES =====
+    PA1(["  amount  "])
+    PA2(["  method  "])
+    PA3(["  status  "])
+    PA4(["  currency  "])
+    PAY -.- PA1
+    PAY -.- PA2
+    PAY -.- PA3
+    PAY -.- PA4
+
+    %% ===== INVOICE ATTRIBUTES =====
+    IN1(["  invoiceNo  "])
+    IN2(["  status  "])
+    IN3(["  total  "])
+    IN4(["  dueDate  "])
+    INV -.- IN1
+    INV -.- IN2
+    INV -.- IN3
+    INV -.- IN4
+
+    %% ===== DESTINATION ATTRIBUTES =====
+    D1(["  name  "])
+    D2(["  location  "])
+    DEST -.- D1
+    DEST -.- D2
+
+    %% ===== STYLES =====
+    classDef entity fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,font-weight:bolder
+    classDef relationship fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000000,font-weight:bolder
+    classDef attribute fill:#f8f9fa,stroke:#555555,stroke-width:1px,color:#000000
+
+    class U,B,PKG,DEST,V,P,INV,PAY,CP,VB,NT,ST,AL,BPA entity
+    class R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12 relationship
+    class U1,U2,U3,U4,U5,B1,B2,B3,B4,B5,B6,PK1,PK2,PK3,PK4,V1,V2,V3,V4,P1,P2,P3,P4,PA1,PA2,PA3,PA4,IN1,IN2,IN3,IN4,D1,D2 attribute
 ```
 
 **Key Relationships Explained:**
@@ -452,11 +618,11 @@ After running `npm run seed`, these demo accounts are available:
 
 | Role | Email | Password | Dashboard |
 |------|-------|----------|-----------|
-| **Administrator** | `admin@yataraceylon.com` | `Admin@123` | `/dashboard` (full access) |
-| **Concierge Staff** | `concierge@yataraceylon.com` | `Concierge@123` | `/dashboard` (no Finance/Users) |
-| **Hotel Partner** | `hotel.partner@yataraceylon.com` | `Hotel@123` | `/dashboard/hotel` |
-| **Fleet Partner** | `fleet.partner@yataraceylon.com` | `Fleet@123` | `/dashboard/fleet` |
-| **Customer** | `customer1@yataraceylon.com` | `Customer@123` | `/dashboard/my-bookings` |
+| **Administrator** | `admin@yataraceylon.me` | `Admin@123` | `/dashboard` (full access) |
+| **Concierge Staff** | `concierge@yataraceylon.me` | `Concierge@123` | `/dashboard` (no Finance/Users) |
+| **Hotel Partner** | `hotel.partner@yataraceylon.me` | `Hotel@123` | `/dashboard/hotel` |
+| **Fleet Partner** | `fleet.partner@yataraceylon.me` | `Fleet@123` | `/dashboard/fleet` |
+| **Customer** | `customer1@yataraceylon.me` | `Customer@123` | `/dashboard/my-bookings` |
 | **Legacy Admin** | `admin@ceylonescapes.lk` | `Admin@123` | `/dashboard` |
 
 > **PayHere Sandbox**: Use test card `4916217501611292` with any future expiry and CVV `123`.

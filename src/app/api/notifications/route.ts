@@ -1,9 +1,11 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Notification from '@/models/Notification';
 import { staffOrAdmin } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
-import { createNotificationSchema, updateNotificationSchema } from '@/lib/validations';
+import { createNotificationSchema } from '@/lib/validations';
+import { getTokenFromRequest, verifyToken } from '@/lib/auth';
 
 export async function GET(request: Request) {
     try {
@@ -20,6 +22,15 @@ export async function GET(request: Request) {
                 { publishFrom: null },
                 { publishFrom: { $lte: now } },
             ];
+        } else {
+            const token = getTokenFromRequest(request);
+            const user = token ? await verifyToken(token) : null;
+            if (!user) {
+                return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+            }
+            if (!['ADMIN', 'STAFF'].includes(user.role)) {
+                return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+            }
         }
         if (type) filter.type = type;
         const notifications = await Notification.find(filter).sort({ createdAt: -1 }).lean();

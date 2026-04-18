@@ -1,10 +1,13 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
+import { staffOrAdmin } from '@/lib/rbac';
 
-export async function GET(request: Request) {
+// GET /api/finance/receipt – protected: staff/admin only
+export const GET = staffOrAdmin(async (request) => {
     const { searchParams } = new URL(request.url);
     const bookingNo = searchParams.get('bookingNo');
 
@@ -105,4 +108,4 @@ export async function GET(request: Request) {
         console.error('Error generating receipt:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
-}
+});

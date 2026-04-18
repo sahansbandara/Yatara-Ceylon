@@ -7,6 +7,8 @@ export interface IPlanDay {
 }
 
 export interface ICustomPlan extends Document {
+    title?: string;
+    userId?: Types.ObjectId;
     customerName?: string;
     customerPhone?: string;
     customerEmail?: string;
@@ -31,6 +33,8 @@ const PlanDaySchema = new Schema<IPlanDay>(
 
 const CustomPlanSchema = new Schema<ICustomPlan>(
     {
+        title: { type: String, trim: true },
+        userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
         customerName: { type: String, trim: true },
         customerPhone: { type: String, trim: true },
         customerEmail: { type: String, lowercase: true, trim: true },
@@ -47,6 +51,8 @@ const CustomPlanSchema = new Schema<ICustomPlan>(
     },
     { timestamps: true }
 );
+
+CustomPlanSchema.index({ customerEmail: 1, createdAt: -1 });
 
 export default mongoose.models.CustomPlan ||
     mongoose.model<ICustomPlan>('CustomPlan', CustomPlanSchema);

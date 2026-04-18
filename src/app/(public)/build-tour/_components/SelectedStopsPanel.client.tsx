@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
-    GripVertical, X, ChevronUp, ChevronDown, Sparkles, MapPin, Trash2, Wand2,
+    GripVertical, X, Sparkles, MapPin, Trash2, Wand2, Send, Clock, Save, Loader2,
 } from 'lucide-react';
 import {
     DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -14,10 +14,10 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useBuildTourStore } from '@/lib/trip/store/useBuildTourStore';
-import { getCategoryColor } from '@/lib/trip/types';
-import type { Stop } from '@/lib/trip/types';
+import { getCategoryColor, CATEGORY_LABELS } from '@/lib/trip/types';
+import type { Stop, PlaceCategory } from '@/lib/trip/types';
 
-// ─── Sortable Item ───────────────────────────────────────────────────────────
+/* ─── Sortable Item — Premium Glass Card ─────────────────────── */
 
 function SortableStopItem({
     stop, index, total, onRemove,
@@ -41,42 +41,52 @@ function SortableStopItem({
         <div
             ref={setNodeRef}
             style={style}
-            className={`group flex items-center gap-2.5 py-2.5 px-3 rounded-lg transition-all duration-200 ${isDragging ? 'bg-antique-gold/10 border border-antique-gold/20' : 'hover:bg-white/3'
-                }`}
+            className={`group relative flex items-center gap-2.5 py-3 px-3.5 rounded-xl transition-all duration-300 border ${isDragging
+                ? 'bg-antique-gold/10 border-antique-gold/25 shadow-lg shadow-antique-gold/10'
+                : 'border-transparent hover:bg-white/[0.03] hover:border-white/[0.06]'
+            }`}
         >
             {/* Drag handle */}
             <button
                 {...attributes}
                 {...listeners}
-                className="p-0.5 cursor-grab active:cursor-grabbing text-white/20 hover:text-antique-gold/60 transition-colors flex-shrink-0"
+                className="p-0.5 cursor-grab active:cursor-grabbing text-white/15 hover:text-antique-gold/50 transition-colors flex-shrink-0"
             >
                 <GripVertical className="w-3.5 h-3.5" />
             </button>
 
-            {/* Order badge */}
-            <div className="w-6 h-6 bg-antique-gold/15 text-antique-gold flex items-center justify-center font-serif text-[11px] rounded-full flex-shrink-0 border border-antique-gold/25">
+            {/* Order badge — gold ring */}
+            <div className="w-7 h-7 bg-antique-gold/10 text-antique-gold flex items-center justify-center font-serif text-[11px] rounded-full flex-shrink-0 border border-antique-gold/25 shadow-sm">
                 {index + 1}
             </div>
 
             {/* Info */}
             <div className="flex-1 min-w-0">
                 <p className="font-serif text-[12px] text-white/85 truncate">{stop.place.name}</p>
-                <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="flex items-center gap-2 mt-0.5">
                     <span
                         className="text-[7px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded"
                         style={{ color, backgroundColor: color + '18' }}
                     >
-                        {stop.place.category}
+                        {CATEGORY_LABELS[stop.place.category as PlaceCategory] || stop.place.category}
                     </span>
-                    <span className="text-white/20 text-[8px]">{stop.place.district}</span>
+                    <span className="text-white/15 text-[8px]">{stop.place.district}</span>
+                    <div className="flex items-center gap-0.5 text-white/15">
+                        <Clock className="w-2 h-2" />
+                        <span className="text-[7px]">
+                            {stop.place.estimatedVisitMinutes < 60
+                                ? `${stop.place.estimatedVisitMinutes}m`
+                                : `${Math.floor(stop.place.estimatedVisitMinutes / 60)}h`}
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            {/* Category dot + Remove */}
+            {/* Remove — appears on hover */}
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                 <button
                     onClick={(e) => { e.stopPropagation(); onRemove(stop.stopId); }}
-                    className="p-1 text-white/20 hover:text-red-400 hover:bg-red-400/10 rounded transition-all"
+                    className="p-1.5 text-white/15 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
                 >
                     <X className="w-3 h-3" />
                 </button>
@@ -84,21 +94,29 @@ function SortableStopItem({
 
             {/* Connection line to next stop */}
             {index < total - 1 && (
-                <div className="absolute left-[39px] bottom-0 translate-y-full w-px h-[6px] bg-antique-gold/15" />
+                <div className="absolute left-[42px] bottom-0 translate-y-full w-px h-[4px] bg-antique-gold/10" />
             )}
         </div>
     );
 }
 
-// ─── Main Panel ──────────────────────────────────────────────────────────────
+/* ─── Main Panel ──────────────────────────────────────────────── */
 
-export default function SelectedStopsPanel() {
+export default function SelectedStopsPanel({
+    activePlanId,
+    onPlanSaved,
+}: {
+    activePlanId?: string | null;
+    onPlanSaved?: (planId: string) => void;
+}) {
     const stops = useBuildTourStore((s) => s.stops);
     const removeStop = useBuildTourStore((s) => s.removeStop);
     const reorderStops = useBuildTourStore((s) => s.reorderStops);
     const clearStops = useBuildTourStore((s) => s.clearStops);
     const optimizeOrder = useBuildTourStore((s) => s.optimizeOrder);
     const getTripEstimate = useBuildTourStore((s) => s.getTripEstimate);
+    const [savingPlan, setSavingPlan] = useState(false);
+    const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -120,19 +138,69 @@ export default function SelectedStopsPanel() {
     );
 
     const tripEstimate = getTripEstimate();
+    const uniqueDistricts = new Set(stops.map((s) => s.place.district));
+    const saveLabel = useMemo(
+        () => (activePlanId ? 'Update Saved Plan' : 'Save Plan'),
+        [activePlanId]
+    );
 
-    // ─── Empty state ─────────────────────────────────────────────────────
+    const handleSavePlan = async () => {
+        setSavingPlan(true);
+        setSaveMessage(null);
+
+        try {
+            const payload = {
+                title: uniqueDistricts.size > 0
+                    ? `${Array.from(uniqueDistricts).join(' • ')} itinerary`
+                    : 'Custom Sri Lanka itinerary',
+                days: [
+                    {
+                        dayNo: 1,
+                        places: stops.map((stop) => stop.placeId),
+                    },
+                ],
+                districtsUsed: Array.from(uniqueDistricts),
+                totalDays: 1,
+                status: 'SAVED',
+            };
+
+            const response = await fetch(activePlanId ? `/api/plans?id=${activePlanId}` : '/api/plans', {
+                method: activePlanId ? 'PATCH' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                setSaveMessage(data.error || 'Unable to save this plan right now.');
+                return;
+            }
+
+            const savedPlanId = data.plan?._id || activePlanId;
+            if (savedPlanId) {
+                onPlanSaved?.(savedPlanId);
+            }
+            setSaveMessage(activePlanId ? 'Saved changes to your plan.' : 'Plan saved. You can reopen it later from My Plans.');
+        } catch (error) {
+            console.error(error);
+            setSaveMessage('Unable to save this plan right now.');
+        } finally {
+            setSavingPlan(false);
+        }
+    };
+
+    /* ── Empty state ─────────────────────────────────────────── */
     if (stops.length === 0) {
         return (
             <div className="h-full flex flex-col items-center justify-center text-center px-8 py-16">
-                <div className="w-16 h-16 rounded-2xl bg-antique-gold/5 border border-antique-gold/10 flex items-center justify-center mb-5">
-                    <MapPin className="w-7 h-7 text-antique-gold/30" strokeWidth={1.2} />
+                <div className="w-14 h-14 rounded-2xl bg-antique-gold/5 border border-antique-gold/10 flex items-center justify-center mb-4">
+                    <MapPin className="w-6 h-6 text-antique-gold/25" strokeWidth={1.2} />
                 </div>
-                <h3 className="font-serif text-white/60 text-sm tracking-wide mb-2">
+                <h3 className="font-serif text-white/55 text-sm tracking-wide mb-2">
                     No stops yet
                 </h3>
-                <p className="text-white/25 text-[10px] font-light leading-relaxed max-w-[200px]">
-                    Switch to <span className="text-antique-gold/50">Discover</span> tab and add places to build your trip.
+                <p className="text-white/20 text-[10px] font-light leading-relaxed max-w-[200px]">
+                    Switch to <span className="text-antique-gold/50">Explore</span> tab and add places to build your trip.
                 </p>
             </div>
         );
@@ -143,16 +211,16 @@ export default function SelectedStopsPanel() {
             {/* Header with actions */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                 <div className="flex items-center gap-2">
-                    <Sparkles className="w-3.5 h-3.5 text-antique-gold/60" />
-                    <span className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-serif">
-                        {stops.length} Stops
+                    <Sparkles className="w-3.5 h-3.5 text-antique-gold/50" />
+                    <span className="text-[10px] text-white/35 uppercase tracking-[0.2em] font-nav">
+                        {stops.length} Stops · {uniqueDistricts.size} Districts
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     {stops.length >= 3 && (
                         <button
                             onClick={optimizeOrder}
-                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-antique-gold/10 hover:bg-antique-gold/20 text-antique-gold/70 hover:text-antique-gold transition-all text-[9px] uppercase tracking-wider font-serif"
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-antique-gold/8 hover:bg-antique-gold/15 text-antique-gold/60 hover:text-antique-gold transition-all text-[9px] uppercase tracking-wider font-nav border border-antique-gold/10 hover:border-antique-gold/25"
                         >
                             <Wand2 className="w-2.5 h-2.5" />
                             Optimize
@@ -160,7 +228,7 @@ export default function SelectedStopsPanel() {
                     )}
                     <button
                         onClick={clearStops}
-                        className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-red-500/10 text-white/20 hover:text-red-400 transition-all text-[9px] uppercase tracking-wider font-serif"
+                        className="flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-red-500/10 text-white/15 hover:text-red-400 transition-all text-[9px] uppercase tracking-wider font-nav"
                     >
                         <Trash2 className="w-2.5 h-2.5" />
                         Clear
@@ -168,16 +236,26 @@ export default function SelectedStopsPanel() {
                 </div>
             </div>
 
-            {/* Trip estimate mini bar */}
+            {/* Trip estimate — glass mini bar */}
             {tripEstimate && (
-                <div className="px-4 py-2.5 border-b border-white/5 flex items-center gap-4">
-                    <div className="flex items-center gap-1.5">
-                        <span className="text-white/20 text-[9px] uppercase tracking-wider">Dist:</span>
-                        <span className="text-white/60 text-[11px] font-serif">~{tripEstimate.totalKm} km</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className="text-white/20 text-[9px] uppercase tracking-wider">Time:</span>
-                        <span className="text-white/60 text-[11px] font-serif">~{tripEstimate.totalHours} hrs</span>
+                <div className="px-4 py-2.5 border-b border-white/5 bg-antique-gold/[0.02]">
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-white/15 text-[8px] uppercase tracking-wider font-nav">Distance</span>
+                            <span className="text-white/55 text-[11px] font-serif">~{tripEstimate.totalKm} km</span>
+                        </div>
+                        <div className="w-px h-3 bg-white/8" />
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-white/15 text-[8px] uppercase tracking-wider font-nav">Time</span>
+                            <span className="text-white/55 text-[11px] font-serif">~{tripEstimate.totalHours} hrs</span>
+                        </div>
+                        <div className="w-px h-3 bg-white/8" />
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-white/15 text-[8px] uppercase tracking-wider font-nav">Pace</span>
+                            <span className={`text-[11px] font-serif ${stops.length <= 3 ? 'text-emerald-400/60' : stops.length <= 6 ? 'text-antique-gold/60' : 'text-amber-400/60'}`}>
+                                {stops.length <= 3 ? 'Relaxed' : stops.length <= 6 ? 'Balanced' : 'Dense'}
+                            </span>
+                        </div>
                     </div>
                 </div>
             )}
@@ -201,20 +279,37 @@ export default function SelectedStopsPanel() {
                 </DndContext>
             </div>
 
-            {/* Send to concierge */}
+            {/* Send to concierge — glass CTA */}
             {stops.length >= 2 && (
-                <div className="p-3 border-t border-white/5">
-                    <button
-                        onClick={() => {
-                            const itinerary = stops.map((s) => s.place.name).join(', ');
-                            const districts = Array.from(new Set(stops.map((s) => s.place.district))).join(', ');
-                            const params = new URLSearchParams({ itinerary, districts, source: 'build-tour' });
-                            window.location.href = `/inquire?${params.toString()}`;
-                        }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-antique-gold text-deep-emerald font-serif text-[11px] uppercase tracking-[0.2em] rounded-lg hover:shadow-lg hover:shadow-antique-gold/30 transition-all font-semibold"
-                    >
-                        Send Plan to Concierge
-                    </button>
+                <div className="p-3 border-t border-white/5 bg-antique-gold/[0.02]">
+                    <div className="grid gap-2">
+                        <button
+                            onClick={handleSavePlan}
+                            disabled={savingPlan}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/5 border border-white/10 text-white font-serif text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-antique-gold/40 hover:text-antique-gold transition-all disabled:opacity-60"
+                        >
+                            {savingPlan ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                            {saveLabel}
+                        </button>
+                        <button
+                            onClick={() => {
+                                const itinerary = stops.map((s) => s.place.name).join(', ');
+                                const districts = Array.from(uniqueDistricts).join(', ');
+                                const params = new URLSearchParams({ itinerary, districts, source: 'build-tour' });
+                                window.location.href = `/inquire?${params.toString()}`;
+                            }}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-antique-gold text-deep-emerald font-serif text-[11px] uppercase tracking-[0.2em] rounded-lg hover:shadow-lg hover:shadow-antique-gold/30 hover:scale-[1.01] transition-all font-semibold"
+                        >
+                            <Send className="w-3.5 h-3.5" />
+                            Send Plan to Concierge
+                        </button>
+                    </div>
+                    {saveMessage ? (
+                        <p className="text-center text-white/35 text-[10px] font-light mt-2">{saveMessage}</p>
+                    ) : null}
+                    <p className="text-center text-white/10 text-[8px] font-light mt-2">
+                        Your concierge will refine routing, transfers, and luxury details.
+                    </p>
                 </div>
             )}
         </div>

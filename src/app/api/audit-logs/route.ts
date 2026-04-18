@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import AuditLog from '@/models/AuditLog';
@@ -17,7 +18,7 @@ export const GET = adminOnly(async (request, context) => {
         if (action) filter.action = action;
 
         const [logs, total] = await Promise.all([
-            AuditLog.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
+            AuditLog.find(filter).sort({ at: -1 }).skip((page - 1) * limit).limit(limit).lean(),
             AuditLog.countDocuments(filter),
         ]);
 

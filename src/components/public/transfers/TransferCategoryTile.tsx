@@ -3,105 +3,113 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
 
 interface TransferCategoryTileProps {
-  slug: string;
-  title: string;
-  subtitle: string;
-  image: string;
-  startingFrom: string;
-  typicalDuration: string;
-  bestFor: string;
+    slug: string;
+    title: string;
+    subtitle: string;
+    image: string;
+    startingFromLkr: number;
+    typicalDuration: string;
+    bestFor: string;
 }
 
 export default function TransferCategoryTile({
-  slug,
-  title,
-  subtitle,
-  image,
-  startingFrom,
-  typicalDuration,
-  bestFor,
+    slug,
+    title,
+    subtitle,
+    image,
+    startingFromLkr,
+    typicalDuration,
+    bestFor,
 }: TransferCategoryTileProps) {
-  return (
-    <Link href={`/transfers/${slug}`}>
-      <div className="group relative h-96 overflow-hidden rounded-lg shadow-lg transition-all duration-500 hover:shadow-2xl hover:scale-105 cursor-pointer">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0">
-          {image ? (
-            <Image
-              src={image}
-              alt={title}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-deep-emerald/10" />
-          )}
-          {/* Dark overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
-        </div>
+    const getCategoryUrl = (slug: string) => {
+        switch (slug) {
+            case 'airport': return '/transfers/airport-concierge';
+            case 'intercity': return '/transfers/intercity-executive';
+            case 'hourly': return '/transfers/on-demand-chauffeur';
+            case 'safari': return '/transfers/safari-national-park';
+            case 'evening': return '/transfers/evening-event-chauffeur';
+            case 'cruise-rail-vip': return '/transfers/cruise-rail-vip';
+            default: return `/transfers#${slug}`;
+        }
+    };
 
-        {/* Gold Border Glow on Hover */}
-        <div className="absolute inset-0 border-2 border-antique-gold opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg" />
+    const { currency, convertRate } = useCurrency();
 
-        {/* Glass Effect Background */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 bg-white backdrop-blur-md rounded-lg" />
+    return (
+        <Link href={getCategoryUrl(slug)} className="group block">
+            <div className="relative h-[420px] overflow-hidden rounded-xl shadow-lg transition-all duration-500 hover:shadow-2xl cursor-pointer">
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                    {image ? (
+                        <Image
+                            src={image}
+                            alt={title}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                    ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-deep-emerald/30 to-deep-emerald/10" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+                </div>
 
-        {/* Content Container */}
-        <div className="relative h-full flex flex-col justify-between p-6 z-10">
-          {/* Top Content */}
-          <div>
-            <h3 className="font-serif text-3xl text-white font-bold mb-2 tracking-wide">
-              {title}
-            </h3>
-            <p className="text-white/70 text-sm font-nav leading-relaxed">
-              {subtitle}
-            </p>
-          </div>
+                {/* Content */}
+                <div className="relative h-full flex flex-col justify-between p-6 z-10">
+                    {/* Top — Best For badge */}
+                    <div className="flex justify-between items-start">
+                        <span className="inline-block px-3 py-1 bg-antique-gold/20 backdrop-blur-sm border border-antique-gold/30 rounded-full text-antique-gold text-[10px] font-nav font-semibold uppercase tracking-[0.2em]">
+                            {bestFor}
+                        </span>
+                        <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:translate-x-0 translate-x-2">
+                            <ArrowRight className="w-5 h-5 text-antique-gold" />
+                        </div>
+                    </div>
 
-          {/* Bottom Info Bar */}
-          <div className="border-t border-antique-gold/50 pt-4 space-y-3">
-            <div className="grid grid-cols-3 gap-4 text-xs font-nav">
-              {/* Starting Price */}
-              <div className="flex flex-col">
-                <span className="text-antique-gold uppercase tracking-widest font-semibold">
-                  From
-                </span>
-                <span className="text-white/90 mt-1">{startingFrom}</span>
-              </div>
+                    {/* Bottom — Main content */}
+                    <div>
+                        {/* Title & Subtitle */}
+                        <h3 className="font-serif text-2xl md:text-3xl text-white font-bold mb-2 leading-tight">
+                            {title}
+                        </h3>
+                        <p className="text-white/70 text-sm font-nav leading-relaxed mb-5 line-clamp-2">
+                            {subtitle}
+                        </p>
 
-              {/* Divider */}
-              <div className="flex items-center justify-center">
-                <div className="h-8 w-px bg-antique-gold/40" />
-              </div>
-
-              {/* Duration */}
-              <div className="flex flex-col">
-                <span className="text-antique-gold uppercase tracking-widest font-semibold">
-                  Duration
-                </span>
-                <span className="text-white/90 mt-1">{typicalDuration}</span>
-              </div>
+                        {/* Info Bar */}
+                        <div className="border-t border-antique-gold/40 pt-4">
+                            <div className="grid grid-cols-3 gap-3 text-xs font-nav">
+                                <div>
+                                    <span className="text-antique-gold uppercase tracking-widest font-semibold block mb-1">
+                                        From
+                                    </span>
+                                    <span className="text-white font-semibold">
+                                        {formatPrice(startingFromLkr, currency, convertRate)}
+                                    </span>
+                                </div>
+                                <div className="text-center">
+                                    <span className="text-antique-gold uppercase tracking-widest font-semibold block mb-1">
+                                        Duration
+                                    </span>
+                                    <span className="text-white/80">
+                                        {typicalDuration}
+                                    </span>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-antique-gold uppercase tracking-widest font-semibold block mb-1">
+                                        View
+                                    </span>
+                                    <span className="text-white/80 group-hover:text-antique-gold transition-colors">
+                                        Explore →
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            {/* Best For - Full Width */}
-            <div className="pt-2 border-t border-antique-gold/30">
-              <span className="text-antique-gold uppercase tracking-widest text-xs font-semibold block mb-1">
-                Best For
-              </span>
-              <p className="text-white/80 text-xs">{bestFor}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Arrow Icon - Bottom Right */}
-        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20">
-          <div className="bg-antique-gold/20 backdrop-blur-sm rounded-full p-2">
-            <ArrowRight className="w-5 h-5 text-antique-gold" />
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
+        </Link>
+    );
 }

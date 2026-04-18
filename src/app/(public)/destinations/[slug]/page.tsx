@@ -9,6 +9,8 @@ import Destination from '@/models/Destination';
 import Package from '@/models/Package';
 import { ArrowLeft, Calendar, Clock, MapPin, Sparkles, Star, Plane, Mountain, ChevronRight } from 'lucide-react';
 import { DESTINATION_BY_SLUG } from '@/data/destinations';
+import { JsonLd, buildDestinationPlace, buildBreadcrumb } from '@/lib/jsonLd';
+import { normalizeImageUrl } from '@/lib/image-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +22,7 @@ function toDestinationDetail(raw: any) {
         description: raw.description,
         longDescription: raw.longDescription,
         location: raw.location,
-        images: raw.images,
+        images: Array.isArray(raw.images) ? raw.images.map((image: string) => normalizeImageUrl(image)).filter(Boolean) : [],
         region: raw.region,
         luxuryLabel: raw.luxuryLabel,
         bestSeason: raw.bestSeason,
@@ -28,12 +30,17 @@ function toDestinationDetail(raw: any) {
         travelTimeFromColombo: raw.travelTimeFromColombo,
         travelStyleTags: raw.travelStyleTags,
         highlights: raw.highlights,
-        experiences: raw.experiences,
+        experiences: Array.isArray(raw.experiences)
+            ? raw.experiences.map((experience: { image?: string } & Record<string, unknown>) => ({
+                ...experience,
+                image: normalizeImageUrl(experience.image),
+            }))
+            : raw.experiences,
         itinerary: raw.itinerary,
         stayStyles: raw.stayStyles,
         nearestAirport: raw.nearestAirport,
         elevation: raw.elevation,
-        gallery: raw.gallery,
+        gallery: Array.isArray(raw.gallery) ? raw.gallery.map((image: string) => normalizeImageUrl(image)).filter(Boolean) : [],
     };
 }
 
@@ -97,15 +104,22 @@ export default async function DestinationDetailPage({ params }: { params: Promis
     const { destination, relatedPackages } = data;
     const districtImage = (s: string) => `/images/districts/${s}.jpg`;
 
-    const heroImage = destination.images?.[0] ?? districtImage(destination.slug || slug);
+    const heroImage = normalizeImageUrl(destination.images?.[0], districtImage(destination.slug || slug));
     const galleryImages = destination.gallery?.length
-        ? destination.gallery
+        ? destination.gallery.map((image: string) => normalizeImageUrl(image, heroImage)).filter(Boolean)
         : destination.images && destination.images.length > 1
-            ? destination.images.slice(1)
+            ? destination.images.slice(1).map((image: string) => normalizeImageUrl(image, heroImage)).filter(Boolean)
             : [districtImage(slug)];
 
     return (
         <div className="min-h-screen bg-[#f8f7f4] pb-24">
+            {/* ─── SEO Structured Data ─── */}
+            <JsonLd data={buildDestinationPlace(destination)} />
+            <JsonLd data={buildBreadcrumb([
+                { name: 'Home', url: '/' },
+                { name: 'Destinations', url: '/destinations' },
+                { name: destination.title, url: `/destinations/${destination.slug || slug}` },
+            ])} />
             {/* ── Cinematic Hero ── */}
             <div className="relative h-[70vh] min-h-[500px] w-full overflow-hidden">
                 <Image

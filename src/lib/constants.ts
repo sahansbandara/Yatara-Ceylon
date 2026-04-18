@@ -9,6 +9,8 @@ export const UserRoles = {
 export const UserStatus = {
     ACTIVE: 'ACTIVE',
     DISABLED: 'DISABLED',
+    PENDING_APPROVAL: 'PENDING_APPROVAL',
+    REJECTED: 'REJECTED',
 } as const;
 
 export const BookingTypes = {
@@ -49,6 +51,13 @@ export const VehicleStatus = {
 export const VehicleBlockReasons = {
     BOOKING: 'BOOKING',
     MAINTENANCE: 'MAINTENANCE',
+    PERSONAL: 'PERSONAL',
+    OTHER: 'OTHER',
+} as const;
+
+export const ServiceBlockReasons = {
+    BOOKING: 'BOOKING',
+    RENOVATION: 'RENOVATION',
     PERSONAL: 'PERSONAL',
     OTHER: 'OTHER',
 } as const;

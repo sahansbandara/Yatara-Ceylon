@@ -104,7 +104,29 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
         return result;
     }, [packages, selectedStyle, selectedDuration, sortBy]);
 
-    const featuredJourneys = filtered.filter(p => p.isFeatured).slice(0, 2);
+    const [highlighted, setHighlighted] = useState({ popular: null, affordable: null, luxury: null } as any);
+
+    const featuredJourneys = useMemo(() => {
+        if (filtered.length === 0) return [];
+        
+        // Find most popular (fallback to featured or first item)
+        const popular = filtered.find(p => p.slug === 'curated-kingdoms') || 
+                        filtered.find(p => p.isFeatured) || 
+                        filtered[0];
+                        
+        // Find most affordable
+        const affordable = [...filtered]
+            .filter(p => p._id !== popular._id && p.priceMin > 0)
+            .sort((a,b) => a.priceMin - b.priceMin)[0];
+            
+        // Find most luxury
+        const luxury = [...filtered]
+            .filter(p => p._id !== popular._id && p._id !== affordable?._id)
+            .sort((a,b) => b.priceMin - a.priceMin)[0];
+
+        return [popular, affordable, luxury].filter(Boolean);
+    }, [filtered]);
+
     const standardJourneys = filtered.filter(p => !featuredJourneys.some(f => f._id === p._id));
 
     return (
@@ -179,72 +201,126 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                 </div>
             </div>
 
-            {/* Featured Row — large editorial cards */}
+            {/* Highlighted Section — 3-row, 2-column grid */}
             {featuredJourneys.length > 0 && (
-                <div className="mb-14">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {featuredJourneys.map((pkg) => (
-                            <Link key={pkg._id} href={`/packages/${pkg.slug}`} className="group block">
-                                <article className="relative rounded-2xl overflow-hidden h-[480px] md:h-[520px]">
-                                    <Image
-                                        src={pkg.images?.[0] || '/images/home/curated-kingdoms.png'}
-                                        alt={pkg.title}
-                                        fill
-                                        className="object-cover transform group-hover:scale-[1.02] transition-transform duration-[1200ms] ease-out"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="mb-16">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-3 gap-6 lg:h-[760px]">
+                        {/* Most Popular (2x2) */}
+                        {featuredJourneys[0] && (
+                            <Link href={`/packages/${featuredJourneys[0].slug}`} className="group relative block rounded-2xl overflow-hidden lg:col-span-2 lg:row-span-2 h-[400px] lg:h-full">
+                                <Image
+                                    src={featuredJourneys[0].images?.[0] || '/images/home/curated-kingdoms.png'}
+                                    alt={featuredJourneys[0].title}
+                                    fill
+                                    className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                />
+                                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                                
+                                <div className="absolute top-6 left-6">
+                                    <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                                        Most Popular
+                                    </span>
+                                </div>
+                                <div className="absolute top-6 right-6">
+                                    <span className="text-[10px] tracking-[0.15em] uppercase font-medium text-white/90 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                                        {featuredJourneys[0].duration}
+                                    </span>
+                                </div>
 
-                                    {/* Featured badge */}
-                                    <div className="absolute top-6 left-6">
-                                        <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-antique-gold bg-black/30 backdrop-blur-md px-4 py-1.5 rounded-full border border-antique-gold/30">
-                                            Featured
-                                        </span>
+                                <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-10">
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        {(featuredJourneys[0].tags || []).slice(0, 3).map((tag: string) => (
+                                            <span key={tag} className="text-[9px] tracking-[0.15em] uppercase font-medium text-white/70 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/10">
+                                                {tag}
+                                            </span>
+                                        ))}
                                     </div>
-
-                                    {/* Duration badge */}
-                                    <div className="absolute top-6 right-6">
-                                        <span className="text-[10px] tracking-[0.15em] uppercase font-medium text-white/90 bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
-                                            {pkg.duration}
-                                        </span>
-                                    </div>
-
-                                    {/* Content overlay */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
-                                        {/* Tags */}
-                                        <div className="flex flex-wrap gap-2 mb-4">
-                                            {(pkg.tags || []).slice(0, 3).map((tag: string) => (
-                                                <span
-                                                    key={tag}
-                                                    className="text-[9px] tracking-[0.15em] uppercase font-medium text-white/70 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/10"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-
-                                        <h3 className="text-2xl md:text-3xl font-display text-white mb-3 leading-snug group-hover:text-antique-gold transition-colors duration-500">
-                                            {pkg.title}
-                                        </h3>
-                                        <p className="text-white/60 font-light text-sm line-clamp-2 mb-5 max-w-lg">
-                                            {pkg.summary}
+                                    <h3 className="text-3xl lg:text-4xl font-display text-white mb-3 group-hover:text-antique-gold transition-colors duration-500">
+                                        {featuredJourneys[0].title}
+                                    </h3>
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-white/60 font-light text-sm line-clamp-2 max-w-xl">
+                                            {featuredJourneys[0].summary}
                                         </p>
-
-                                        <div className="flex items-center justify-between">
-                                            {pkg.priceMin > 0 && (
-                                                <div>
-                                                    <p className="text-[10px] text-white/40 tracking-widest uppercase mb-0.5">From</p>
-                                                    <PackagePriceDisplay priceMin={pkg.priceMin} />
-                                                </div>
+                                        <div className="flex-shrink-0 text-right">
+                                            {featuredJourneys[0].priceMin > 0 && (
+                                                <PackagePriceDisplay priceMin={featuredJourneys[0].priceMin} variant="white" />
                                             )}
-                                            <span className="inline-flex items-center gap-1.5 text-[11px] tracking-[0.15em] uppercase font-semibold text-white group-hover:text-antique-gold transition-colors duration-300">
-                                                Explore Journey
-                                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        )}
+
+                        {/* Most Affordable (1x1) */}
+                        {featuredJourneys[1] && (
+                            <Link href={`/packages/${featuredJourneys[1].slug}`} className="group relative block rounded-2xl overflow-hidden lg:col-span-1 lg:row-span-1 h-[320px] lg:h-full">
+                                <Image
+                                    src={featuredJourneys[1].images?.[0] || '/images/home/curated-kingdoms.png'}
+                                    alt={featuredJourneys[1].title}
+                                    fill
+                                    className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                />
+                                <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                
+                                <div className="absolute top-5 left-5">
+                                    <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                                        Most Affordable
+                                    </span>
+                                </div>
+                                
+                                <div className="absolute bottom-0 left-0 right-0 p-6">
+                                    <h3 className="text-xl font-display text-white mb-2 group-hover:text-antique-gold transition-colors duration-500 line-clamp-1">
+                                        {featuredJourneys[1].title}
+                                    </h3>
+                                    <div className="flex items-end justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[11px] text-white/70 tracking-wider">
+                                                {featuredJourneys[1].duration}
                                             </span>
                                         </div>
+                                        {featuredJourneys[1].priceMin > 0 && (
+                                            <PackagePriceDisplay priceMin={featuredJourneys[1].priceMin} variant="white" />
+                                        )}
                                     </div>
-                                </article>
+                                </div>
                             </Link>
-                        ))}
+                        )}
+
+                        {/* Most Luxury (1x1) */}
+                        {featuredJourneys[2] && (
+                            <Link href={`/packages/${featuredJourneys[2].slug}`} className="group relative block rounded-2xl overflow-hidden lg:col-span-1 lg:row-span-1 h-[320px] lg:h-full">
+                                <Image
+                                    src={featuredJourneys[2].images?.[0] || '/images/home/curated-kingdoms.png'}
+                                    alt={featuredJourneys[2].title}
+                                    fill
+                                    className="object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                />
+                                <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                
+                                <div className="absolute top-5 left-5">
+                                    <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                                        Most Luxury
+                                    </span>
+                                </div>
+
+                                <div className="absolute bottom-0 left-0 right-0 p-6">
+                                    <h3 className="text-xl font-display text-white mb-2 group-hover:text-antique-gold transition-colors duration-500 line-clamp-1">
+                                        {featuredJourneys[2].title}
+                                    </h3>
+                                    <div className="flex items-end justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[11px] text-white/70 tracking-wider">
+                                                {featuredJourneys[2].duration}
+                                            </span>
+                                        </div>
+                                        {featuredJourneys[2].priceMin > 0 && (
+                                            <PackagePriceDisplay priceMin={featuredJourneys[2].priceMin} variant="white" />
+                                        )}
+                                    </div>
+                                </div>
+                            </Link>
+                        )}
                     </div>
                 </div>
             )}

@@ -116,7 +116,7 @@ flowchart TB
 
     subgraph Panels["Detail Panels"]
         P1["📋 Recent Payments\n10 latest payment records"]
-        P2["🔴 Outstanding Balances\n10 bookings with highest due"]
+        P2["🔴 Outstanding Balances\nCurrent actionable bookings first,\nthen highest stale balances"]
     end
 
     Cards --> Panels
@@ -132,7 +132,7 @@ flowchart TB
 | Pending Balances | `Booking.aggregate($sum remainingBalance where remainingBalance > 0)` |
 | Collection Rate | `collected / (collected + pending) × 100%` |
 | Recent Payments | `Payment.find().sort(createdAt: -1).limit(10)` |
-| Outstanding | `Booking.find(remainingBalance > 0).sort(remainingBalance: -1).limit(10)` |
+| Outstanding | `Booking.find(remainingBalance > 0)` then rank active upcoming bookings first by status + departure date, with highest-balance stale records as fallback |
 
 ---
 

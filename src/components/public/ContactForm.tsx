@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import TurnstileField from '@/components/public/TurnstileField';
 
 export default function ContactForm() {
     const router = useRouter();
@@ -16,6 +17,7 @@ export default function ContactForm() {
         subject: '',
         message: ''
     });
+    const [turnstileToken, setTurnstileToken] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,6 +32,7 @@ export default function ContactForm() {
                     subject: formData.subject,
                     message: formData.message,
                     priority: 'MEDIUM', // Default priority
+                    turnstileToken,
                 })
             });
 
@@ -97,6 +100,8 @@ export default function ContactForm() {
                     className="min-h-[150px] rounded-none border-gray-200 focus:border-antique-gold focus:ring-antique-gold font-light resize-none"
                 />
             </div>
+
+            <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
 
             <Button type="submit" disabled={loading} className="w-full h-14 bg-deep-emerald hover:bg-antique-gold text-antique-gold hover:text-deep-emerald rounded-none uppercase font-semibold tracking-widest text-[11px] transition-all duration-500 mt-4">
                 {loading ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}

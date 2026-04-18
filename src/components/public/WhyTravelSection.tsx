@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { AnimatedStat } from '@/components/ui/AnimatedStat';
 
 const benefits = [
     {
@@ -89,7 +90,7 @@ export default function WhyTravelSection() {
                             {stats.map((stat) => (
                                 <div key={stat.label} className="border-l-2 border-antique-gold/30 pl-6">
                                     <span className="block text-4xl md:text-5xl font-display text-deep-emerald font-medium leading-none mb-2">
-                                        {stat.value}
+                                        <AnimatedStat value={stat.value} />
                                     </span>
                                     <span className="block text-[10px] tracking-[0.18em] uppercase text-neutral-500 font-nav font-medium">
                                         {stat.label}

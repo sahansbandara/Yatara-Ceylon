@@ -4,7 +4,7 @@ import FeaturedJourneysClient from './FeaturedJourneysClient';
 
 async function getFeaturedJourneys() {
     const timeout = new Promise<any[]>((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 5000)
+        setTimeout(() => reject(new Error('Timeout')), 15000)
     );
 
     try {

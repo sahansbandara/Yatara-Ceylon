@@ -85,17 +85,17 @@ const navLinks = [
                 title: 'Transfer Services',
                 links: [
                     { href: '/transfers', label: 'Transfers Overview' },
-                    { href: '/transfers/airport-executive', label: 'Executive Airport Passage' },
-                    { href: '/transfers/intercity-executive', label: 'Intercity Executive' },
-                    { href: '/transfers/wilderness-safari', label: 'Wilderness Expeditions' },
+                    { href: '/transfers/colombo-airport-to-colombo-city', label: 'Airport to Colombo' },
+                    { href: '/transfers/colombo-airport-to-kandy', label: 'Airport to Kandy' },
+                    { href: '/transfers/colombo-to-galle', label: 'Colombo to Galle' },
                 ]
             },
             {
                 title: 'More Services',
                 links: [
-                    { href: '/transfers/capital-by-night', label: 'Capital & Coastal Evenings' },
-                    { href: '/transfers/chauffeur-reserve', label: 'On-Demand Chauffeur' },
-                    { href: '/transfers/signature-fleet', label: 'The Signature Fleet' },
+                    { href: '/transfers/kandy-to-nuwara-eliya', label: 'Kandy to Nuwara Eliya' },
+                    { href: '/transfers/nuwara-eliya-to-ella', label: 'Nuwara Eliya to Ella' },
+                    { href: '/transfers/yala-to-tangalle', label: 'Yala to Tangalle' },
                 ]
             }
         ]
@@ -401,12 +401,12 @@ export function Navbar() {
                                 <Menu className="h-6 w-6" />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="right" className="w-80 p-0 border-l border-[#D4AF37]/20 overflow-hidden">
-                            <div className="absolute inset-0 liquid-glass-dark" />
-                            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
+                        <SheetContent side="right" className="w-80 p-0 border-l border-[#D4AF37]/20 overflow-hidden flex flex-col">
+                            <div className="absolute inset-0 liquid-glass-dark pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none" />
 
-                            <div className="relative z-10 flex flex-col gap-6 mt-16 px-6">
-                                <div className="h-px w-16 bg-gradient-to-r from-[#D4AF37] to-transparent mb-4" />
+                            <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar mt-16 px-6 pb-6 flex flex-col gap-6">
+                                <div className="h-px w-16 bg-gradient-to-r from-[#D4AF37] to-transparent mb-4 shrink-0" />
 
                                 {navLinks.map((link, idx) => (
                                     <div key={link.href} style={{ animationDelay: `${idx * 80}ms` }} className="animate-fade-in-up opacity-0">
@@ -481,7 +481,7 @@ export function Navbar() {
                                     </Link>
                                 </div>
 
-                                <div className="absolute bottom-8 left-6 right-6">
+                                <div className="mt-auto pb-8 shrink-0">
                                     <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-transparent" />
                                     <p className="text-center text-[9px] tracking-[0.3em] text-white/20 mt-4 uppercase font-nav">
                                         Bespoke Sri Lanka

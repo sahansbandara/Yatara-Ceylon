@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
@@ -5,9 +6,13 @@ import Payment from '@/models/Payment';
 import { generatePayhereHash } from '@/lib/payhere/hash';
 import { getPayhereCheckoutUrl, PAYHERE_MERCHANT_ID, PAYHERE_MERCHANT_SECRET, PAYHERE_CURRENCY, APP_BASE_URL } from '@/lib/payhere/config';
 import crypto from 'crypto';
+import { enforceCsrf } from '@/lib/csrf';
 
 export async function POST(request: Request) {
     try {
+        const csrfError = await enforceCsrf(request);
+        if (csrfError) return csrfError;
+
         await connectDB();
         const body = await request.json();
         const { bookingId, customer, items, amount } = body;

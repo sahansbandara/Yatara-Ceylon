@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { passwordSchema, phoneRegex } from '@/lib/password-policy';
 
 // ─── Packages ───
 export const createPackageSchema = z.object({
@@ -83,7 +84,7 @@ export const updateNotificationSchema = createNotificationSchema.partial();
 // ─── Bookings ───
 export const createBookingSchema = z.object({
     customerName: z.string().min(1),
-    phone: z.string().min(1),
+    phone: z.string().min(1).regex(phoneRegex, 'Invalid phone number format'),
     email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
     city: z.string().optional(),
@@ -101,7 +102,10 @@ export const createBookingSchema = z.object({
     }),
     notes: z.string().optional(),
     specialRequests: z.string().optional(),
-});
+}).refine(
+    (data) => new Date(data.dates.from) <= new Date(data.dates.to),
+    { message: 'Start date must be before or equal to end date', path: ['dates'] }
+);
 
 export const updateBookingStatusSchema = z.object({
     status: z.enum(['NEW', 'PAYMENT_PENDING', 'CONTACTED', 'ADVANCE_PAID', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']),
@@ -137,7 +141,10 @@ export const createVehicleBlockSchema = z.object({
 // ─── Support Tickets ───
 export const createTicketSchema = z.object({
     customerName: z.string().min(1),
-    phone: z.string().optional(),
+    phone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
     email: z.string().email().optional().or(z.literal('')),
     subject: z.string().min(1),
     message: z.string().min(1),
@@ -163,6 +170,16 @@ export const createInvoiceSchema = z.object({
 });
 export const updateInvoiceSchema = createInvoiceSchema.partial();
 
+// ─── Attachments ───
+export const createAttachmentSchema = z.object({
+    label: z.string().min(1).max(120),
+    type: z.enum(['INVOICE', 'ID_COPY', 'PASSPORT', 'VOUCHER', 'OTHER']).default('OTHER'),
+    url: z.string().url(),
+    invoiceId: z.string().optional(),
+    fileName: z.string().max(160).optional(),
+    notes: z.string().max(500).optional(),
+});
+
 // ─── Payments ───
 export const createPaymentSchema = z.object({
     bookingId: z.string().min(1),
@@ -180,7 +197,7 @@ export const createPartnerSchema = z.object({
     type: z.enum(['GUIDE', 'HOTEL', 'DRIVER', 'RESTAURANT', 'OTHER']),
     name: z.string().min(1),
     contactPerson: z.string().optional(),
-    phone: z.string().min(1),
+    phone: z.string().min(1).regex(phoneRegex, 'Invalid phone number format'),
     email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
     status: z.enum(['ACTIVE', 'INACTIVE', 'PENDING_APPROVAL', 'REJECTED']).optional().default('ACTIVE'),
@@ -188,17 +205,41 @@ export const createPartnerSchema = z.object({
 });
 export const updatePartnerSchema = createPartnerSchema.partial();
 
-export const createPartnerServiceSchema = z.object({
+const partnerServiceBaseSchema = z.object({
     serviceName: z.string().min(1),
     rate: z.number().min(0),
     unit: z.enum(['PER_DAY', 'PER_TRIP', 'PER_PERSON', 'PER_NIGHT', 'FLAT']),
+    description: z.string().optional(),
     notes: z.string().optional(),
 });
 
+const normalizePartnerServicePayload = ({
+    notes,
+    description,
+    ...rest
+}: {
+    notes?: string;
+    description?: string;
+    serviceName?: string;
+    rate?: number;
+    unit?: 'PER_DAY' | 'PER_TRIP' | 'PER_PERSON' | 'PER_NIGHT' | 'FLAT';
+}) => ({
+    ...rest,
+    description: description ?? notes,
+});
+
+export const createPartnerServiceSchema = partnerServiceBaseSchema.transform(normalizePartnerServicePayload);
+export const updatePartnerServiceSchema = partnerServiceBaseSchema.partial().transform(normalizePartnerServicePayload);
+
 // ─── Custom Plans ───
 export const createPlanSchema = z.object({
+    title: z.string().min(1).max(120).optional(),
     customerName: z.string().optional(),
-    customerPhone: z.string().optional(),
+    customerPhone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
+    customerEmail: z.string().email().optional().or(z.literal('')),
     days: z.array(z.object({
         dayNo: z.number().min(1),
         places: z.array(z.string()),
@@ -225,16 +266,22 @@ export const updatePlaceSchema = createPlaceSchema.partial();
 export const createUserSchema = z.object({
     name: z.string().min(1),
     email: z.string().email(),
-    phone: z.string().optional(),
-    password: z.string().min(6),
+    phone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
+    password: passwordSchema,
     role: z.enum(['ADMIN', 'STAFF']).default('STAFF'),
 });
 export const updateUserSchema = z.object({
     name: z.string().min(1).optional(),
     email: z.string().email().optional(),
-    phone: z.string().optional(),
-    role: z.enum(['ADMIN', 'STAFF']).optional(),
-    status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+    phone: z.string().optional().refine(
+        (phone) => !phone || phoneRegex.test(phone),
+        'Invalid phone number format'
+    ),
+    role: z.enum(['ADMIN', 'STAFF', 'USER', 'VEHICLE_OWNER', 'HOTEL_OWNER']).optional(),
+    status: z.enum(['ACTIVE', 'DISABLED', 'PENDING_APPROVAL', 'REJECTED']).optional(),
 });
 
 // ─── Booking Partner Assignment ───

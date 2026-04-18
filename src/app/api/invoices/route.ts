@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Invoice from '@/models/Invoice';
@@ -7,7 +8,8 @@ import { validateBody } from '@/lib/validate';
 import { createInvoiceSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
 
-export async function GET(request: Request) {
+// GET /api/invoices – protected: staff/admin only
+export const GET = staffOrAdmin(async (request) => {
     try {
         await connectDB();
         const { searchParams } = new URL(request.url);
@@ -20,7 +22,7 @@ export async function GET(request: Request) {
         const invoices = await Invoice.find(filter).populate('bookingId', 'bookingNo customerName').sort({ createdAt: -1 }).lean();
         return NextResponse.json({ invoices });
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
-}
+});
 
 export const POST = staffOrAdmin(async (request, { user }) => {
     const { data, error } = await validateBody(request, createInvoiceSchema);

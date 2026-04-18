@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Destination from '@/models/Destination';
@@ -5,6 +6,7 @@ import { staffOrAdmin } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { updateDestinationSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
+import { buildUniqueSlug } from '@/lib/slug';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -29,12 +31,19 @@ export const PATCH = staffOrAdmin(async (request, context) => {
     try {
         await connectDB();
         const { id } = await context.params;
-        const dest = await Destination.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: data }, { new: true });
+        const update: Record<string, unknown> = { ...data };
+        if (data?.title) {
+            update.slug = await buildUniqueSlug(Destination, data.title, id);
+        }
+        const dest = await Destination.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: update }, { new: true });
         if (!dest) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         await logAudit({ actorUserId: context.user.userId, action: 'UPDATE', entity: 'Destination', entityId: id });
         return NextResponse.json({ destination: dest });
     } catch (error) {
         console.error(error);
+        if ((error as { code?: number }).code === 11000) {
+            return NextResponse.json({ error: 'A destination with a conflicting slug already exists. Update the title and try again.' }, { status: 409 });
+        }
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 });

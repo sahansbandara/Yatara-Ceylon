@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { CurrencyProvider } from '@/lib/CurrencyContext';
+import { CsrfBootstrap } from '@/components/providers/CsrfBootstrap';
 import './globals.css';
+
+// Force all pages to render dynamically at request time (not at build time)
+// This prevents MongoDB connection errors during Vercel builds
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
     title: {
@@ -51,6 +56,7 @@ export default function RootLayout({
             </head>
             <body className="min-h-screen bg-background font-sans antialiased">
                 <CurrencyProvider>
+                    <CsrfBootstrap />
                     {children}
                 </CurrencyProvider>
             </body>

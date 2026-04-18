@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Yatara Ceylon - Activity Diagram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #fff; display: flex; justify-content: center; padding: 15px; }
+  .container { width: 1300px; }
+  .title { text-align: center; font-size: 20px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 12px; color: #666; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Activity Diagram — Booking &amp; Payment Flow</div>
+  <div class="subtitle">Yatara Ceylon — Tourism Operations Management System (TOMS)</div>
+
+  <svg viewBox="0 0 1280 1520" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+      </marker>
+    </defs>
+
+    <!-- ========== SWIMLANE HEADERS ========== -->
+    <rect x="10" y="10" width="310" height="1490" rx="0" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <rect x="10" y="10" width="310" height="40" rx="0" fill="#3b82f6"/>
+    <text x="165" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Customer</text>
+
+    <rect x="320" y="10" width="310" height="1490" rx="0" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+    <rect x="320" y="10" width="310" height="40" rx="0" fill="#22c55e"/>
+    <text x="475" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">System (Next.js API)</text>
+
+    <rect x="630" y="10" width="310" height="1490" rx="0" fill="#fef9c3" stroke="#fde047" stroke-width="1.5"/>
+    <rect x="630" y="10" width="310" height="40" rx="0" fill="#eab308"/>
+    <text x="785" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">PayHere Gateway</text>
+
+    <rect x="940" y="10" width="330" height="1490" rx="0" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <rect x="940" y="10" width="330" height="40" rx="0" fill="#8b5cf6"/>
+    <text x="1105" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Admin / Staff</text>
+
+    <!-- ========== START NODE ========== -->
+    <circle cx="165" cy="85" r="15" fill="#1e293b"/>
+    <line x1="165" y1="100" x2="165" y2="120" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== A1: Browse Packages ========== -->
+    <rect x="65" y="125" width="200" height="40" rx="20" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="165" y="150" text-anchor="middle" font-size="11" font-weight="500" fill="#1e3a5f">Browse Packages / Tours</text>
+    <line x1="165" y1="165" x2="165" y2="185" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== A2: Select Package / Build Tour / Transfer ========== -->
+    <rect x="45" y="190" width="240" height="40" rx="20" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="165" y="215" text-anchor="middle" font-size="11" font-weight="500" fill="#1e3a5f">Select Package / Build Tour</text>
+    <line x1="165" y1="230" x2="165" y2="250" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== A3: Fill Booking Form ========== -->
+    <rect x="55" y="255" width="220" height="45" rx="20" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="165" y="275" text-anchor="middle" font-size="11" font-weight="500" fill="#1e3a5f">Fill Booking Form</text>
+    <text x="165" y="289" text-anchor="middle" font-size="8" fill="#94a3b8">Name, Phone, Pax, Dates</text>
+    <line x1="165" y1="300" x2="165" y2="315" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== A4: Submit Booking ========== -->
+    <rect x="65" y="320" width="200" height="40" rx="20" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="165" y="345" text-anchor="middle" font-size="11" font-weight="500" fill="#1e3a5f">Submit Booking Request</text>
+
+    <!-- Arrow to system -->
+    <line x1="265" y1="340" x2="370" y2="340" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="320" y="333" text-anchor="middle" font-size="8" fill="#64748b">POST /api/public/booking-request</text>
+
+    <!-- ========== S1: Create Booking in DB ========== -->
+    <rect x="375" y="320" width="200" height="45" rx="20" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="475" y="340" text-anchor="middle" font-size="11" font-weight="500" fill="#14532d">Create Booking in DB</text>
+    <text x="475" y="354" text-anchor="middle" font-size="8" fill="#94a3b8">Generate YC-XXXXXX</text>
+    <line x1="475" y1="365" x2="475" y2="385" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== S2: Calculate Costs ========== -->
+    <rect x="365" y="390" width="220" height="45" rx="20" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="475" y="410" text-anchor="middle" font-size="11" font-weight="500" fill="#14532d">Calculate Costs</text>
+    <text x="475" y="424" text-anchor="middle" font-size="8" fill="#94a3b8">advanceAmount = totalCost × 20%</text>
+    <line x1="475" y1="435" x2="475" y2="460" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== DECISION: totalCost > 0? ========== -->
+    <polygon points="475,465 535,500 475,535 415,500" fill="#fff" stroke="#475569" stroke-width="1.5"/>
+    <text x="475" y="503" text-anchor="middle" font-size="10" font-weight="600" fill="#1e293b">totalCost</text>
+    <text x="475" y="515" text-anchor="middle" font-size="10" font-weight="600" fill="#1e293b">> 0?</text>
+
+    <!-- No branch - Status: NEW -->
+    <line x1="535" y1="500" x2="580" y2="500" stroke="#475569" stroke-width="1.5"/>
+    <text x="555" y="493" font-size="9" fill="#64748b">[No]</text>
+    <rect x="580" y="482" width="100" height="36" rx="18" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="630" y="504" text-anchor="middle" font-size="10" font-weight="600" fill="#1e40af">NEW</text>
+    <!-- Arrow down from NEW to join later -->
+    <line x1="630" y1="518" x2="630" y2="850" stroke="#475569" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+    <!-- Yes branch -->
+    <line x1="475" y1="535" x2="475" y2="555" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="490" y="550" font-size="9" fill="#64748b">[Yes]</text>
+
+    <!-- ========== S3: Set PAYMENT_PENDING ========== -->
+    <rect x="370" y="560" width="210" height="36" rx="18" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="475" y="582" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">Status: PAYMENT_PENDING</text>
+
+    <!-- Arrow back to Customer -->
+    <line x1="370" y1="578" x2="265" y2="610" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="310" y="588" font-size="8" fill="#64748b">Return bookingId</text>
+
+    <!-- ========== C5: Redirect to PayHere ========== -->
+    <rect x="50" y="600" width="220" height="40" rx="20" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="160" y="625" text-anchor="middle" font-size="11" font-weight="500" fill="#1e3a5f">PayHere Popup Opens</text>
+
+    <!-- Arrow to PayHere -->
+    <line x1="270" y1="620" x2="680" y2="620" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="475" y="613" text-anchor="middle" font-size="8" fill="#64748b">20% advance amount + merchant fields</text>
+
+    <!-- ========== PH1: Display Payment Form ========== -->
+    <rect x="685" y="600" width="200" height="40" rx="20" fill="#fff" stroke="#eab308" stroke-width="1.5"/>
+    <text x="785" y="625" text-anchor="middle" font-size="11" font-weight="500" fill="#713f12">Display Payment Form</text>
+    <line x1="785" y1="640" x2="785" y2="660" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== C6: Enter Card Details ========== -->
+    <rect x="55" y="660" width="210" height="40" rx="20" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="160" y="685" text-anchor="middle" font-size="11" font-weight="500" fill="#1e3a5f">Enter Card Details</text>
+    <line x1="270" y1="680" x2="685" y2="680" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== PH2: Process Payment ========== -->
+    <rect x="685" y="665" width="200" height="40" rx="20" fill="#fff" stroke="#eab308" stroke-width="1.5"/>
+    <text x="785" y="690" text-anchor="middle" font-size="11" font-weight="500" fill="#713f12">Process Card Payment</text>
+    <line x1="785" y1="705" x2="785" y2="725" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== DECISION: Payment Success? ========== -->
+    <polygon points="785,730 845,765 785,800 725,765" fill="#fff" stroke="#475569" stroke-width="1.5"/>
+    <text x="785" y="762" text-anchor="middle" font-size="10" font-weight="600" fill="#1e293b">Payment</text>
+    <text x="785" y="774" text-anchor="middle" font-size="10" font-weight="600" fill="#1e293b">OK?</text>
+
+    <!-- Fail branch -->
+    <line x1="845" y1="765" x2="900" y2="765" stroke="#475569" stroke-width="1.5"/>
+    <text x="870" y="758" font-size="9" fill="#ef4444">[Fail]</text>
+    <rect x="900" y="747" width="130" height="36" rx="18" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="965" y="770" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">CANCELLED</text>
+    <!-- End node for cancel -->
+    <line x1="1030" y1="765" x2="1060" y2="765" stroke="#475569" stroke-width="1.5"/>
+    <circle cx="1075" cy="765" r="12" fill="none" stroke="#1e293b" stroke-width="2"/>
+    <circle cx="1075" cy="765" r="8" fill="#1e293b"/>
+
+    <!-- Success branch -->
+    <line x1="785" y1="800" x2="785" y2="820" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="800" y="815" font-size="9" fill="#22c55e">[Success]</text>
+
+    <!-- ========== PH3: Send Webhook ========== -->
+    <rect x="685" y="825" width="200" height="40" rx="20" fill="#fff" stroke="#eab308" stroke-width="1.5"/>
+    <text x="785" y="850" text-anchor="middle" font-size="11" font-weight="500" fill="#713f12">Send Webhook Notification</text>
+
+    <!-- Arrow to System -->
+    <line x1="685" y1="845" x2="585" y2="845" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="635" y="838" font-size="8" fill="#64748b">POST /api/payhere/notify</text>
+
+    <!-- ========== S4: Verify MD5 Signature ========== -->
+    <rect x="370" y="825" width="210" height="40" rx="20" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="475" y="850" text-anchor="middle" font-size="11" font-weight="500" fill="#14532d">Verify MD5 Signature</text>
+    <line x1="475" y1="865" x2="475" y2="885" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== S5: Update Booking ========== -->
+    <rect x="355" y="890" width="240" height="50" rx="20" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="475" y="910" text-anchor="middle" font-size="11" font-weight="500" fill="#14532d">Update Booking</text>
+    <text x="475" y="926" text-anchor="middle" font-size="8" fill="#94a3b8">paidAmount += advance, remainingBalance recalc</text>
+    <line x1="475" y1="940" x2="475" y2="960" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- Join from NEW branch -->
+    <line x1="630" y1="850" x2="630" y2="975" stroke="#475569" stroke-width="1" stroke-dasharray="4,3"/>
+    <line x1="630" y1="975" x2="540" y2="975" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== S6: Status ADVANCE_PAID ========== -->
+    <rect x="370" y="965" width="170" height="36" rx="18" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="455" y="987" text-anchor="middle" font-size="10" font-weight="600" fill="#166534">Status: ADVANCE_PAID</text>
+    <line x1="475" y1="1001" x2="475" y2="1020" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== S7: Create Support Ticket ========== -->
+    <rect x="370" y="1025" width="210" height="36" rx="20" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="475" y="1048" text-anchor="middle" font-size="11" font-weight="500" fill="#14532d">Create Support Ticket</text>
+
+    <!-- Arrow to Admin -->
+    <line x1="580" y1="1043" x2="985" y2="1043" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="785" y="1036" text-anchor="middle" font-size="8" fill="#64748b">Notify Admin / Staff</text>
+
+    <!-- ========== AD1: Review Booking ========== -->
+    <rect x="990" y="1025" width="210" height="40" rx="20" fill="#fff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="1095" y="1050" text-anchor="middle" font-size="11" font-weight="500" fill="#4c1d95">Review Booking Details</text>
+    <line x1="1095" y1="1065" x2="1095" y2="1085" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== AD2: Confirm Booking ========== -->
+    <rect x="990" y="1090" width="210" height="36" rx="18" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="1095" y="1112" text-anchor="middle" font-size="10" font-weight="600" fill="#166534">Status: CONFIRMED</text>
+    <line x1="1095" y1="1126" x2="1095" y2="1148" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== AD3: Assign Vehicle ========== -->
+    <rect x="990" y="1153" width="210" height="40" rx="20" fill="#fff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="1095" y="1178" text-anchor="middle" font-size="11" font-weight="500" fill="#4c1d95">Assign Vehicle &amp; Staff</text>
+    <line x1="1095" y1="1193" x2="1095" y2="1213" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== AD4: Status ASSIGNED ========== -->
+    <rect x="1010" y="1218" width="170" height="36" rx="18" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="1095" y="1240" text-anchor="middle" font-size="10" font-weight="600" fill="#581c87">Status: ASSIGNED</text>
+    <line x1="1095" y1="1254" x2="1095" y2="1274" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== AD5: Trip Starts ========== -->
+    <rect x="990" y="1279" width="210" height="36" rx="18" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5"/>
+    <text x="1095" y="1301" text-anchor="middle" font-size="10" font-weight="600" fill="#3730a3">Status: IN_PROGRESS</text>
+    <line x1="1095" y1="1315" x2="1095" y2="1335" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== AD6: Trip Ends ========== -->
+    <rect x="1010" y="1340" width="170" height="36" rx="18" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="1095" y="1362" text-anchor="middle" font-size="10" font-weight="600" fill="#334155">Status: COMPLETED</text>
+    <line x1="1095" y1="1376" x2="1095" y2="1400" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== END NODE ========== -->
+    <circle cx="1095" cy="1415" r="15" fill="none" stroke="#1e293b" stroke-width="2.5"/>
+    <circle cx="1095" cy="1415" r="9" fill="#1e293b"/>
+
+    <!-- ========== Notify Customer after COMPLETED ========== -->
+    <line x1="990" y1="1358" x2="275" y2="1358" stroke="#475569" stroke-width="1" stroke-dasharray="4,3"/>
+    <rect x="60" y="1340" width="210" height="36" rx="18" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="165" y="1362" text-anchor="middle" font-size="10" font-weight="500" fill="#1e40af">Booking Complete Notification</text>
+
+    <!-- ========== FORK BAR for parallel Support Ticket ========== -->
+
+    <!-- ========== FOOTER ========== -->
+    <text x="640" y="1490" text-anchor="middle" font-size="10" fill="#94a3b8">SLIIT ITP · IT24100559 · Yatara Ceylon TOMS · Booking &amp; Payment Activity Flow</text>
+  </svg>
+</div>
+</body>
+</html>

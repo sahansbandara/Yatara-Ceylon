@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse, type NextRequest } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
@@ -5,11 +6,25 @@ import SupportTicket from '@/models/SupportTicket';
 import { validateBody } from '@/lib/validate';
 import { createBookingSchema } from '@/lib/validations';
 import { rateLimit } from '@/lib/rate-limit';
+import { enforceCsrf } from '@/lib/csrf';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 // Public booking request – no auth required
 export async function POST(request: NextRequest) {
+    const csrfError = await enforceCsrf(request);
+    if (csrfError) return csrfError;
+
     const limitError = await rateLimit(request);
     if (limitError) return limitError;
+
+    const rawBody = await request.clone().json().catch(() => null);
+    const captchaResult = await verifyTurnstileToken(
+        rawBody?.turnstileToken || null,
+        request.headers.get('x-forwarded-for')
+    );
+    if (!captchaResult.success) {
+        return NextResponse.json({ error: captchaResult.error }, { status: 400 });
+    }
 
     // Parse body
     const { data, error } = await validateBody(request, createBookingSchema);
@@ -29,9 +44,6 @@ export async function POST(request: NextRequest) {
         if (!payload.vehicleId) delete payload.vehicleId;
         if (!payload.customPlanId) delete payload.customPlanId;
         if (!payload.email) delete payload.email;
-
-        // Optionally associate booking to logged in user if token is present
-        const token = request.cookies.get('toms_token')?.value;
 
         const booking = await Booking.create({
             ...payload,

@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Loader2, CheckCircle2, User, Mail, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import TurnstileField from '@/components/public/TurnstileField';
 
 const TRAVEL_MONTHS = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -23,6 +24,7 @@ export default function FinalCTA() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState('');
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -50,6 +52,7 @@ export default function FinalCTA() {
                             formData.travelMonth ? `Anticipated Month: ${formData.travelMonth}` : '',
                         ].filter(Boolean).join('\n'),
                         priority: 'HIGH',
+                        turnstileToken,
                     }),
                 });
             } catch (error) {
@@ -199,6 +202,9 @@ export default function FinalCTA() {
                                     </div>
 
                                     <div className="flex flex-col items-center justify-center">
+                                        <div className="mb-6 w-full max-w-[340px]">
+                                            <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
+                                        </div>
                                         <Button
                                             type="submit"
                                             disabled={loading}

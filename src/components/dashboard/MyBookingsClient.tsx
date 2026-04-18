@@ -11,7 +11,7 @@ const STATUS_COLORS: Record<string, string> = {
     CONFIRMED: 'bg-green-500/15 text-green-300',
     ASSIGNED: 'bg-purple-500/15 text-purple-300',
     IN_PROGRESS: 'bg-indigo-500/15 text-indigo-300',
-    COMPLETED: 'bg-white/10 text-white/60',
+    COMPLETED: 'bg-white/[0.05] text-white/60 border border-white/10',
     CANCELLED: 'bg-red-500/15 text-red-300',
     CONTACTED: 'bg-sky-500/15 text-sky-300',
 };
@@ -64,7 +64,7 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                                         <p className="text-[10px] font-medium text-orange-600">Due: {formatPrice(booking.remainingBalance || 0, currency, convertRate)}</p>
                                     )}
                                 </div>
-                                <span className={`text-[10px] px-2.5 py-1 rounded-full font-bold whitespace-nowrap shadow-sm ${STATUS_COLORS[booking.status] || 'bg-white/10 text-white/50'}`}>
+                                <span className={`text-[10px] px-2.5 py-1 rounded-full font-bold whitespace-nowrap shadow-sm ${STATUS_COLORS[booking.status] || 'bg-white/[0.05] text-white/50 border border-white/10'}`}>
                                     {booking.status?.replace(/_/g, ' ')}
                                 </span>
                             </div>

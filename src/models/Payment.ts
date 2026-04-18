@@ -4,10 +4,12 @@ export interface IPayment extends Document {
     bookingId: Types.ObjectId;
     invoiceId?: Types.ObjectId;
     amount: number;
-    provider: 'PAYHERE' | 'MANUAL';
-    status: 'INITIATED' | 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELED' | 'CHARGEDBACK';
+    provider: 'PAYHERE' | 'STRIPE' | 'MANUAL';
+    status: 'INITIATED' | 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELED' | 'CHARGEDBACK' | 'VOIDED';
     orderId?: string;
     payherePaymentId?: string;
+    stripeSessionId?: string;
+    stripePaymentIntentId?: string;
     md5sigVerified?: boolean;
     rawNotifyPayload?: any;
     method?: 'CASH' | 'BANK' | 'CARD_OTHER' | 'ONLINE';
@@ -16,6 +18,7 @@ export interface IPayment extends Document {
     type: 'PAYMENT' | 'REFUND';
     notes?: string;
     recordedBy?: Types.ObjectId;
+    voidedAt?: Date;
     isDeleted: boolean;
     deletedAt?: Date;
     createdAt: Date;
@@ -34,16 +37,18 @@ const PaymentSchema = new Schema<IPayment>(
         amount: { type: Number, required: true, min: 0 },
         provider: {
             type: String,
-            enum: ['PAYHERE', 'MANUAL'],
+            enum: ['PAYHERE', 'STRIPE', 'MANUAL'],
             default: 'MANUAL',
         },
         status: {
             type: String,
-            enum: ['INITIATED', 'PENDING', 'SUCCESS', 'FAILED', 'CANCELED', 'CHARGEDBACK'],
+            enum: ['INITIATED', 'PENDING', 'SUCCESS', 'FAILED', 'CANCELED', 'CHARGEDBACK', 'VOIDED'],
             default: 'SUCCESS', // Default for backward compatibility with existing manual payments
         },
         orderId: { type: String, unique: true, sparse: true },
         payherePaymentId: { type: String },
+        stripeSessionId: { type: String },
+        stripePaymentIntentId: { type: String },
         md5sigVerified: { type: Boolean },
         rawNotifyPayload: { type: Schema.Types.Mixed },
         method: {
@@ -60,6 +65,7 @@ const PaymentSchema = new Schema<IPayment>(
         },
         notes: String,
         recordedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+        voidedAt: Date,
         isDeleted: { type: Boolean, default: false },
         deletedAt: Date,
     },

@@ -1,11 +1,12 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Package from '@/models/Package';
 import { withAuth, staffOrAdmin } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { createPackageSchema, updatePackageSchema } from '@/lib/validations';
-import slugify from 'slugify';
 import { logAudit } from '@/lib/audit';
+import { buildUniqueSlug } from '@/lib/slug';
 
 // GET /api/packages – list packages (public: published only, dashboard: all)
 export async function GET(request: Request) {
@@ -74,11 +75,7 @@ export const POST = staffOrAdmin(async (request, { user }) => {
 
     try {
         await connectDB();
-        const slug = slugify(data!.title, { lower: true, strict: true });
-
-        // Check unique slug
-        const existing = await Package.findOne({ slug });
-        const finalSlug = existing ? `${slug}-${Date.now()}` : slug;
+        const finalSlug = await buildUniqueSlug(Package, data!.title);
 
         const pkg = await Package.create({
             ...data,
@@ -90,6 +87,9 @@ export const POST = staffOrAdmin(async (request, { user }) => {
         return NextResponse.json({ package: pkg }, { status: 201 });
     } catch (error) {
         console.error('POST /api/packages error:', error);
+        if ((error as { code?: number }).code === 11000) {
+            return NextResponse.json({ error: 'A package with a conflicting slug already exists. Update the title and try again.' }, { status: 409 });
+        }
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 });

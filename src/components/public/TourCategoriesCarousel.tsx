@@ -2,314 +2,222 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { tourCategories } from '@/data/tourCategories';
+import { MouseEvent, useRef } from 'react';
 
-export default function TourCategoriesCarousel() {
-    const scrollRef = useRef<HTMLDivElement>(null);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [centerIndex, setCenterIndex] = useState(0);
-    const [isHovered, setIsHovered] = useState(false);
+// Soft, premium synthetic click sound
+const playHoverSound = () => {
+    try {
+        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
 
-    const filteredCategories = tourCategories;
-    const totalSlides = filteredCategories.length;
+        // Very high but soft attack ping (bubbles/glass sound)
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.05);
 
-    // Repeat items multiple times to create a robust infinite scroll buffer
-    const NUM_SETS = 15;
-    const displayCategories = Array(NUM_SETS).fill(filteredCategories).flat();
-    const MID_SET = Math.floor(NUM_SETS / 2);
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.015, ctx.currentTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
 
-    // Determine which card is closest to the center of the viewport
-    const updateCenterCard = useCallback(() => {
-        if (!scrollRef.current) return;
-        const container = scrollRef.current;
-        const containerRect = container.getBoundingClientRect();
-        const containerCenter = containerRect.left + containerRect.width / 2;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.1);
+    } catch (e) {
+        // Ignore Audio context restrictions (expected on strict browsers before interaction)
+    }
+};
 
-        let closestIdx = 0;
-        let closestDist = Infinity;
+function TourCard({ cat, idx }: { cat: any; idx: number }) {
+    const cardRef = useRef<HTMLAnchorElement>(null);
 
-        Array.from(container.children).forEach((child, idx) => {
-            const childRect = child.getBoundingClientRect();
-            const childCenter = childRect.left + childRect.width / 2;
-            const dist = Math.abs(containerCenter - childCenter);
-            if (dist < closestDist) {
-                closestDist = dist;
-                closestIdx = idx;
-            }
-        });
-
-        setCenterIndex(closestIdx);
-        setCurrentIndex(closestIdx % totalSlides); // map actual index back to dot
-
-        // Loop back safely if the user swipes manually too close to edges
-        const firstChild = container.children[0] as HTMLElement | undefined;
-        const secondChild = container.children[1] as HTMLElement | undefined;
-        if (firstChild && secondChild) {
-            const itemOffset = secondChild.offsetLeft - firstChild.offsetLeft;
-
-            // If nearing the end of our buffer on the right
-            if (container.scrollLeft > itemOffset * (totalSlides * (NUM_SETS - 2))) {
-                container.scrollLeft = itemOffset * (totalSlides * MID_SET) + (container.scrollLeft % (itemOffset * totalSlides));
-            }
-            // If nearing the start of our buffer on the left
-            else if (container.scrollLeft < itemOffset * (totalSlides * 2)) {
-                container.scrollLeft = itemOffset * (totalSlides * MID_SET) + (container.scrollLeft % (itemOffset * totalSlides));
-            }
-        }
-
-    }, [totalSlides, NUM_SETS, MID_SET]);
-
-    const initRef = useRef(false);
-    useEffect(() => {
-        const container = scrollRef.current;
-        if (!container) return;
-
-        if (!initRef.current) {
-            setTimeout(() => {
-                const firstChild = container.children[0] as HTMLElement | undefined;
-                const secondChild = container.children[1] as HTMLElement | undefined;
-                if (!firstChild) return;
-
-                const itemOffset = secondChild ? secondChild.offsetLeft - firstChild.offsetLeft : (firstChild.offsetWidth + 32);
-
-                // Jump to the start of the middle set
-                const scrollPos = itemOffset * (totalSlides * MID_SET);
-                container.scrollLeft = scrollPos;
-
-                initRef.current = true;
-            }, 100);
-        }
-
-        container.addEventListener('scroll', updateCenterCard, { passive: true });
-        // Run once on mount to set initial center
-        updateCenterCard();
-        return () => container.removeEventListener('scroll', updateCenterCard);
-    }, [updateCenterCard, totalSlides, MID_SET]);
-
-    const scrollTo = (direction: 'left' | 'right' | 'start') => {
-        if (!scrollRef.current) return;
-        const container = scrollRef.current;
-        const firstChild = container.children[0] as HTMLElement | undefined;
-        const secondChild = container.children[1] as HTMLElement | undefined;
-        const itemOffset = secondChild ? secondChild.offsetLeft - (firstChild?.offsetLeft || 0) : (firstChild?.offsetWidth || 400) + 32;
-
-        if (direction === 'start') {
-            container.scrollLeft = itemOffset * (totalSlides * MID_SET);
-            return;
-        }
-
-        container.scrollBy({
-            left: direction === 'left' ? -itemOffset : itemOffset,
-            behavior: 'smooth',
-        });
+    const handleMouseMove = (e: MouseEvent<HTMLAnchorElement>) => {
+        if (!cardRef.current) return;
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        cardRef.current.style.setProperty('--mouse-x', `${x}px`);
+        cardRef.current.style.setProperty('--mouse-y', `${y}px`);
     };
 
-    // Auto-scroll loop
-    useEffect(() => {
-        if (isHovered) return;
-
-        const timer = setInterval(() => {
-            if (scrollRef.current) {
-                const container = scrollRef.current;
-                // If we've reached the very end of the duplicated scroll area, snap back to the start invisibly
-                if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
-                    scrollTo('start');
-                } else {
-                    scrollTo('right');
-                }
-            }
-        }, 3500);
-
-        return () => clearInterval(timer);
-    }, [isHovered]);
+    const isBespoke = cat.isBespoke;
+    const topTags = cat.tags.filter((t: string) => !t.toLowerCase().includes('night')).slice(0, 2);
+    const durationTag = cat.tags.find((t: string) => t.toLowerCase().includes('night'));
 
     return (
-        <section className="py-20 md:py-28 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
-            {/* Subtle background accents */}
-            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-antique-gold/[0.03] rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-deep-emerald/[0.02] rounded-full blur-3xl" />
+        <Link
+            href={cat.href}
+            ref={cardRef}
+            onMouseEnter={playHoverSound}
+            onMouseMove={handleMouseMove}
+            className={`relative rounded-2xl overflow-hidden group w-full block shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform
+                ${isBespoke ? 'md:col-span-2 md:row-span-2 bg-black' : 'bg-stone-900'}
+            `}
+            style={{
+                // Default center values
+                '--mouse-x': '150px',
+                '--mouse-y': '150px',
+            } as React.CSSProperties}
+        >
+            {/* Image */}
+            <Image
+                src={cat.image}
+                alt={cat.title}
+                fill
+                sizes={
+                    isBespoke
+                    ? "(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 800px"
+                    : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+                }
+                className="object-cover transform group-hover:scale-[1.05] transition-transform duration-[1.2s] ease-[cubic-bezier(0.23,1,0.32,1)] origin-center"
+            />
 
-            <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-                {/* ── Header ── */}
-                <div className="mb-6 md:mb-10">
-                    <span className="inline-block mb-4 text-[11px] tracking-[0.35em] font-medium text-antique-gold uppercase">
-                        Handpicked Itineraries
+            {/* Base Overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-t mix-blend-multiply opacity-80 group-hover:opacity-100 transition-opacity duration-700 ${
+                isBespoke 
+                ? 'from-[#051F10]/95 via-[#051F10]/30 to-transparent'
+                : 'from-black/90 via-black/20 to-transparent'
+            }`} />
+
+            {/* Liquid Glass Mouse-Follow Overlay */}
+            <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none mix-blend-overlay"
+                style={{
+                    background: `radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.3), transparent 50%)`
+                }}
+            />
+
+            {/* Inner Border glow on hover */}
+            <div className="absolute inset-0 rounded-3xl border border-white/0 group-hover:border-white/20 transition-colors duration-700 pointer-events-none" />
+
+            {/* Top Left Tags */}
+            <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 flex flex-col items-start gap-2 pointer-events-none transform -translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                <div className="flex flex-wrap gap-2">
+                    {topTags.map((tag: string) => (
+                        <span
+                            key={tag}
+                            className={`text-[9px] md:text-[10px] tracking-[0.15em] uppercase font-medium text-white/90 bg-black/30 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-lg transition-colors group-hover:border-white/30 group-hover:bg-white/10 
+                            ${isBespoke ? 'group-hover:text-antique-gold group-hover:border-antique-gold/40 cursor-pointer' : ''}`}
+                        >
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Top Right Duration Tag */}
+            {durationTag && (
+                <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 pointer-events-none transform -translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                    <span className="inline-block text-[9px] md:text-[10px] tracking-[0.15em] uppercase font-medium text-antique-gold bg-white/10 backdrop-blur-md border border-antique-gold/40 px-3 py-1.5 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-colors group-hover:border-antique-gold group-hover:bg-white/20">
+                        {durationTag}
                     </span>
-                    <h2 className="text-4xl md:text-6xl font-display text-deep-emerald leading-[1.1] mb-5">
-                        Signature{' '}
-                        <span className="italic font-light">Experiences</span>
-                    </h2>
-                    <p className="text-gray-500 font-light text-base md:text-lg max-w-xl leading-relaxed">
-                        Handpicked itineraries designed around pace, privacy, and purpose.
-                        <br className="hidden md:block" />
-                        Choose a travel style. We tailor the rest.
+                </div>
+            )}
+
+            {/* Background Glass Plate that slides up (Strictly 75% Height or 100% for Bespoke) */}
+            <div className={`absolute inset-x-0 bottom-0 z-10 pointer-events-none transform translate-y-6 group-hover:translate-y-0 transition-all duration-700 ease-out ${
+                isBespoke ? 'h-full' : 'h-[75%]'
+            }`}>
+                <div className="absolute inset-0 bg-white/10 backdrop-blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-t-2xl border-t border-white/20 mix-blend-hard-light" 
+                     style={{ maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)' }} />
+            </div>
+
+            {/* Main Text Content */}
+            <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-6 md:p-8 z-20 pointer-events-none transform translate-y-6 group-hover:translate-y-0 transition-all duration-700 ease-out">
+
+                <h3 className={`font-display tracking-wide text-white leading-tight drop-shadow-lg transition-colors duration-500 ${
+                    isBespoke ? 'text-3xl md:text-5xl lg:text-6xl mb-3' : 'text-2xl md:text-3xl mb-2'
+                }`}>
+                    {cat.title}
+                </h3>
+
+                <p className={`text-white/70 group-hover:text-white/95 font-light leading-relaxed mb-4 transition-colors duration-500 ${
+                    isBespoke 
+                    ? 'text-sm md:text-base max-w-lg' 
+                    : 'text-xs md:text-sm line-clamp-2'
+                }`}>
+                    {cat.promise}
+                </p>
+
+                <div className="mt-auto pointer-events-auto overflow-hidden pt-2">
+                    <div className="transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-150">
+                        {isBespoke ? (
+                            <span className="inline-flex items-center gap-2 text-[9px] md:text-[10px] tracking-[0.2em] uppercase font-bold bg-white/10 hover:bg-white text-white hover:text-deep-emerald border border-white/20 px-5 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                Design My Trip
+                            </span>
+                        ) : (
+                            <span className="inline-flex items-center gap-2 text-[9px] md:text-[10px] tracking-[0.2em] uppercase font-bold bg-white/10 hover:bg-white text-white hover:text-deep-emerald border border-white/20 px-5 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.1)] group/btn">
+                                Explore Journey
+                                <ArrowRight className="h-3.5 w-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </Link>
+    );
+}
+
+export default function TourCategoriesCarousel() {
+    const displayCategories = tourCategories;
+
+    return (
+        <section className="py-10 md:py-12 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
+            {/* Background Pattern Overlay */}
+            <div
+                className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-multiply"
+                style={{
+                    backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                    backgroundSize: '400px',
+                    backgroundPosition: 'top left',
+                    backgroundRepeat: 'repeat'
+                }}
+            />
+
+            {/* Subtle background accents */}
+            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-antique-gold/[0.03] rounded-full blur-3xl transition-transform duration-[10s] hover:scale-110" />
+            <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-deep-emerald/[0.02] rounded-full blur-3xl transition-transform duration-[10s] hover:scale-110" />
+
+            <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 relative z-10 w-full flex flex-col items-center">
+                {/* ── Header ── */}
+                <div className="mb-8 md:mb-12 w-full text-center md:text-left flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                    <div>
+                        <span className="inline-block mb-2 text-[9px] md:text-[10px] tracking-[0.35em] font-medium text-antique-gold uppercase delay-150">
+                            Handpicked Itineraries
+                        </span>
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-display text-deep-emerald leading-[1.1]">
+                            Signature{' '}
+                            <span className="italic font-light">Experiences</span>
+                        </h2>
+                    </div>
+                    
+                    <p className="text-gray-500 font-light text-xs md:text-sm max-w-sm md:text-right leading-relaxed mb-1">
+                        Designed around pace, privacy, and purpose. Choose your style. We tailor the rest.
                     </p>
-                    <div className="h-px w-20 bg-gradient-to-r from-antique-gold to-transparent mt-7" />
                 </div>
 
-                {/* ── Spacer ── */}
-                <div className="mb-4"></div>
-
-                {/* Carousel Container (Dark Green Background Zone) */}
-                <div className="relative group/carousel -mx-6 md:-mx-12 pt-8">
-
-                    {/* Background Highlight wrapping the package row full-width */}
-                    <div className="absolute top-0 bottom-0 left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] bg-[#D1E5DB]/70 -z-10 pointer-events-none hidden md:block" />
-
-                    {/* Left Navigation - Nude Glass Circle */}
-                    <button
-                        onClick={() => scrollTo('left')}
-                        className="absolute left-2 md:left-5 lg:left-7 top-[40%] md:top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-deep-emerald/60 hover:bg-white/45 hover:text-deep-emerald shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-110"
-                        aria-label="Previous"
-                    >
-                        <ChevronLeft className="w-5 h-5 stroke-[2]" />
-                    </button>
-
-                    {/* Right Navigation - Nude Glass Circle */}
-                    <button
-                        onClick={() => scrollTo('right')}
-                        className="absolute right-2 md:right-5 lg:right-7 top-[40%] md:top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-deep-emerald/60 hover:bg-white/45 hover:text-deep-emerald shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-110"
-                        aria-label="Next"
-                    >
-                        <ChevronRight className="w-5 h-5 stroke-[2]" />
-                    </button>
-
-                    {/* ── Scroll-snap Horizontal Rail ── */}
-                    <div
-                        ref={scrollRef}
-                        className="flex gap-6 md:gap-8 overflow-x-auto pt-10 pb-6 snap-x snap-mandatory px-[max(1.5rem,calc(50vw-140px))] md:px-[max(3rem,calc(50vw-165px))] lg:px-[max(3rem,calc(50vw-185px))] scrollbar-none relative z-10"
-                        style={{
-                            scrollbarWidth: 'none',
-                            msOverflowStyle: 'none'
-                        }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
-                        onTouchStart={() => setIsHovered(true)}
-                        onTouchEnd={() => setIsHovered(false)}
-                    >
-                        {displayCategories.map((cat, idx) => {
-                            const topTags = cat.tags.filter((t: string) => !t.toLowerCase().includes('night')).slice(0, 2);
-                            const durationTag = cat.tags.find((t: string) => t.toLowerCase().includes('night'));
-
-                            return (
-                                <div
-                                    key={`${idx}-${cat.title}`}
-                                    className={`relative rounded-[32px] overflow-hidden cursor-pointer flex-shrink-0 snap-center group w-[300px] md:w-[380px] lg:w-[430px] h-[420px] md:h-[520px] lg:h-[600px]`}
-                                    style={{
-                                        transform: idx === centerIndex ? 'scale(1.08)' : 'scale(0.9)',
-                                        opacity: 1,
-                                        transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    }}
-                                >
-                                    {/* Image */}
-                                    <Image
-                                        src={cat.image}
-                                        alt={cat.title}
-                                        fill
-                                        sizes="(max-width: 768px) 300px, (max-width: 1024px) 400px, 500px"
-                                        className="object-cover transform group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
-                                    />
-
-                                    {/* Dark gradient overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent mix-blend-multiply opacity-90 transition-opacity duration-500 group-hover:opacity-100" />
-
-                                    {/* Top Left Tags */}
-                                    <div className="absolute top-6 left-6 md:top-8 md:left-8 z-20 flex flex-col items-start gap-2 pointer-events-none">
-                                        <div className="flex flex-wrap gap-2.5">
-                                            {topTags.map((tag: string) => (
-                                                <span
-                                                    key={tag}
-                                                    className="text-[10px] md:text-[11px] tracking-[0.15em] uppercase font-medium text-white bg-white/20 backdrop-blur-md border border-white/30 px-[16px] py-[6px] rounded-full shadow-sm"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-7 md:p-8 z-10 pointer-events-none">
-                                        {durationTag && (
-                                            <div className="mb-4">
-                                                <span className="inline-block text-[10px] md:text-[11px] tracking-[0.15em] uppercase font-medium text-white bg-white/20 backdrop-blur-md border border-white/30 px-[16px] py-[6px] rounded-full shadow-sm">
-                                                    {durationTag}
-                                                </span>
-                                            </div>
-                                        )}
-
-                                        <h3 className="text-2xl md:text-[28px] font-display tracking-wide text-white mb-2.5 leading-tight group-hover:text-antique-gold transition-colors duration-500 drop-shadow-lg">
-                                            {cat.title}
-                                        </h3>
-
-                                        <p className="text-white/80 font-light text-[13px] md:text-sm leading-relaxed mb-5 line-clamp-2">
-                                            {cat.promise}
-                                        </p>
-
-                                        <div className="mt-auto pointer-events-auto">
-                                            {cat.isBespoke ? (
-                                                <Link href={cat.href}>
-                                                    <span className="inline-flex items-center gap-2 text-antique-gold hover:text-white text-[11px] tracking-[0.2em] uppercase font-semibold transition-colors duration-300 cursor-pointer">
-                                                        <Sparkles className="w-3.5 h-3.5" />
-                                                        Design My Trip
-                                                    </span>
-                                                </Link>
-                                            ) : (
-                                                <Link href={cat.href}>
-                                                    <span className="text-antique-gold hover:text-white flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase font-semibold transform translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 cursor-pointer">
-                                                        Explore This Style{' '}
-                                                        <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-                                                    </span>
-                                                </Link>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Naked Glassy Pagination Dots Inside Dark Green Overlay */}
-                    <div className="flex justify-center items-center gap-3 relative z-20 pb-8 mt-2">
-                        {Array.from({ length: totalSlides }).map((_, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => {
-                                    const container = scrollRef.current;
-                                    const firstChild = container?.children[0] as HTMLElement | undefined;
-                                    const secondChild = container?.children[1] as HTMLElement | undefined;
-                                    if (!firstChild) return;
-
-                                    const itemOffset = secondChild ? secondChild.offsetLeft - firstChild.offsetLeft : (firstChild.offsetWidth + 32);
-
-                                    const currentSetBaseOffset = Math.floor(centerIndex / totalSlides) * totalSlides;
-                                    let targetIdx = currentSetBaseOffset + idx;
-                                    if (targetIdx >= displayCategories.length) targetIdx = idx;
-
-                                    container?.scrollTo({
-                                        left: targetIdx * itemOffset,
-                                        behavior: 'smooth'
-                                    });
-                                }}
-                                className={`rounded-full transition-all duration-500 shadow-sm ${idx === currentIndex
-                                    ? 'h-2.5 w-8 bg-white/40 backdrop-blur-md border border-white/60' // active glass
-                                    : 'h-2.5 w-2.5 bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/50' // inactive clear
-                                    }`}
-                                aria-label={`Go to slide ${idx + 1}`}
-                            />
-                        ))}
-                    </div>
+                {/* ── Grid Container ── */}
+                {/* We use 4 rows, 3 columns. */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-[280px] sm:auto-rows-[220px] lg:auto-rows-[240px] gap-3 md:gap-5 lg:gap-6 w-full mx-auto">
+                    {displayCategories.map((cat, idx) => (
+                        <TourCard key={`${idx}-${cat.title}`} cat={cat} idx={idx} />
+                    ))}
                 </div>
 
-                {/* ── Bottom Controls (View All Button Separate) ── */}
-                <div className="mt-12 flex justify-center px-4 md:px-0 relative z-20">
+                {/* ── Bottom Controls ── */}
+                <div className="mt-6 flex justify-center w-full relative z-20">
                     <Link
                         href="/packages"
-                        className="inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-semibold text-deep-emerald/70 px-8 py-4 md:px-10 md:py-4 rounded-full w-full md:w-auto bg-gradient-to-br from-white/25 via-white/15 to-white/10 backdrop-blur-xl border border-white/35 shadow-[0_4px_24px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.4)] hover:from-white/35 hover:via-white/25 hover:to-white/15 hover:text-deep-emerald hover:shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.5)] hover:border-antique-gold/30 hover:scale-[1.02] transition-all duration-300"
+                        className="inline-flex items-center justify-center gap-3 text-[10px] md:text-[11px] tracking-[0.2em] uppercase font-semibold text-deep-emerald hover:text-white px-8 py-3.5 md:px-10 md:py-4 rounded-full w-auto bg-white/30 backdrop-blur-md border border-deep-emerald/10 hover:bg-deep-emerald shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.1)] transition-all duration-500 ease-out"
                     >
                         View All Signature Journeys
-                        <ArrowRight className="h-4 w-4 stroke-[2.5]" />
+                        <ArrowRight className="h-4 w-4 stroke-[2]" />
                     </Link>
                 </div>
             </div>

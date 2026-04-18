@@ -1,4 +1,5 @@
 import connectDB from "@/lib/mongodb";
+import { formatLKR } from '@/lib/currency';
 import Booking from "@/models/Booking";
 import Payment from "@/models/Payment";
 import Invoice from "@/models/Invoice";
@@ -6,10 +7,17 @@ import Vehicle from "@/models/Vehicle";
 import RecordPaymentModal from "@/components/dashboard/finance/RecordPaymentModal";
 import CreateInvoiceModal from "@/components/dashboard/finance/CreateInvoiceModal";
 import FinalizeInvoiceButton from "@/components/dashboard/finance/FinalizeInvoiceButton";
+import VoidInvoiceButton from "@/components/dashboard/finance/VoidInvoiceButton";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CalendarCheck, CreditCard, Car, Users, MapPin, FileText } from "lucide-react";
+import { ArrowLeft, CalendarCheck, CreditCard, Car, Users, MapPin, FileText, History } from "lucide-react";
+import BookingTimeline from "@/components/dashboard/bookings/BookingTimeline";
+import BookingAttachmentsPanel from "@/components/dashboard/bookings/BookingAttachmentsPanel";
+import BookingWhatsAppCard from "@/components/dashboard/bookings/BookingWhatsAppCard";
 import BookingStatusUpdater from "./BookingStatusUpdater";
+import { getSessionUser } from "@/lib/auth";
+import AssignVehicleModal from "@/components/dashboard/bookings/AssignVehicleModal";
+import FinalizePricingModal from "@/components/dashboard/bookings/FinalizePricingModal";
 
 const STATUS_COLORS: Record<string, string> = {
     NEW: 'bg-blue-500/15 text-blue-300',
@@ -58,6 +66,9 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
     const { id } = await params;
     const data = await getBookingDetail(id);
     if (!data) notFound();
+
+    const session = await getSessionUser();
+    const userRole = session?.role || 'USER';
 
     const { booking, payments, invoices, vehicles } = data;
     const pkg = booking.packageId;
@@ -161,7 +172,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                                             <p className="text-[10px] text-gray-400">{p.provider} · {p.method || '—'}</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm font-semibold text-off-white">${(p.amount || 0).toLocaleString()}</p>
+                                            <p className="text-sm font-semibold text-off-white">{formatLKR(p.amount || 0)}</p>
                                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === 'SUCCESS' ? 'bg-green-500/15 text-green-300' : p.status === 'PENDING' ? 'bg-yellow-500/15 text-yellow-300' : 'bg-red-500/15 text-red-300'}`}>
                                                 {p.status}
                                             </span>
@@ -192,12 +203,15 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                                             <p className="text-[10px] text-gray-400">Issued: {new Date(inv.createdAt).toLocaleDateString()}</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm font-semibold text-off-white">${(inv.total || 0).toLocaleString()}</p>
+                                            <p className="text-sm font-semibold text-off-white">{formatLKR(inv.total || 0)}</p>
                                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${inv.status === 'FINAL' ? 'bg-purple-500/15 text-purple-300' : 'bg-gray-500/15 text-gray-300'}`}>
                                                 {inv.status}
                                             </span>
                                             {inv.status === 'DRAFT' && (
                                                 <FinalizeInvoiceButton invoiceId={inv._id.toString()} />
+                                            )}
+                                            {inv.status === 'FINAL' && (
+                                                <VoidInvoiceButton invoiceId={inv._id.toString()} />
                                             )}
                                         </div>
                                     </div>
@@ -208,7 +222,18 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                         )}
                     </div>
 
-                    {/* Vehicle Assignment */}
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <BookingAttachmentsPanel
+                            bookingId={String(booking._id)}
+                            invoiceOptions={invoices.map((invoice: any) => ({
+                                _id: String(invoice._id),
+                                invoiceNo: invoice.invoiceNo,
+                                status: invoice.status,
+                            }))}
+                            canManage={userRole === 'ADMIN' || userRole === 'STAFF'}
+                        />
+                    </div>
+
                     <div className="liquid-glass-stat rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-4">
                             <Car className="h-4 w-4 text-antique-gold" />
@@ -225,6 +250,22 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                         ) : (
                             <p className="text-sm text-gray-400 italic">No vehicle assigned yet.</p>
                         )}
+                        {(userRole === 'ADMIN' || userRole === 'VEHICLE_OWNER' || userRole === 'STAFF') && (
+                            <AssignVehicleModal 
+                                bookingId={booking._id} 
+                                currentVehicleId={booking.assignedVehicleId?._id}
+                                vehicles={vehicles} 
+                            />
+                        )}
+                    </div>
+
+                    {/* Activity Timeline */}
+                    <div className="liquid-glass-stat rounded-2xl p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <History className="h-4 w-4 text-antique-gold" />
+                            <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider">Activity Timeline</h3>
+                        </div>
+                        <BookingTimeline bookingId={booking._id} />
                     </div>
                 </div>
 
@@ -235,30 +276,39 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-white/50">Total Cost</span>
-                                <span className="text-lg font-bold text-off-white">${(booking.totalCost || 0).toLocaleString()}</span>
+                                <span className="text-lg font-bold text-off-white">{formatLKR(booking.totalCost || 0)}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-white/50">Advance ({booking.advancePercentage || 20}%)</span>
-                                <span className="text-sm font-semibold text-antique-gold">${(booking.advanceAmount || 0).toLocaleString()}</span>
+                                <span className="text-xs text-white/50">Advance (20%)</span>
+                                <span className="text-sm font-semibold text-antique-gold">{formatLKR((booking.totalCost || 0) * 0.2)}</span>
                             </div>
                             <hr className="border-white/[0.08]" />
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-emerald-600 font-medium">Amount Paid</span>
-                                <span className="text-sm font-bold text-emerald-600">${(booking.paidAmount || 0).toLocaleString()}</span>
+                                <span className="text-sm font-bold text-emerald-600">{formatLKR(booking.paidAmount || 0)}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-orange-600 font-medium">Remaining Balance</span>
-                                <span className="text-sm font-bold text-orange-600">${(booking.remainingBalance || 0).toLocaleString()}</span>
+                                <span className="text-sm font-bold text-orange-600">{formatLKR(booking.remainingBalance || 0)}</span>
                             </div>
                         </div>
                         {booking.remainingBalance > 0 && (
-                            <div className="mt-6 pt-4 border-t border-white/[0.08] flex justify-center">
+                            <div className="mt-6 pt-4 border-t border-white/[0.08] flex justify-center flex-col gap-2">
                                 <RecordPaymentModal bookingId={booking._id} remainingBalance={booking.remainingBalance} />
+                            </div>
+                        )}
+                        {userRole === 'ADMIN' && booking.status === 'NEW' && (
+                            <div className="mt-2 text-center">
+                                <FinalizePricingModal bookingId={booking._id} currentTotalCost={booking.totalCost || 0} />
                             </div>
                         )}
                     </div>
 
                     {/* Staff Assignment */}
+                    {(userRole === 'ADMIN' || userRole === 'STAFF') && (
+                        <BookingWhatsAppCard bookingId={String(booking._id)} />
+                    )}
+
                     <div className="liquid-glass-stat rounded-2xl p-6">
                         <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider mb-3">Assigned Staff</h3>
                         {booking.assignedStaffId ? (

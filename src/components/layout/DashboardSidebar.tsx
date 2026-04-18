@@ -19,7 +19,12 @@ import {
     Building2,
     UserCircle,
     FileText,
+    Logs,
     LogOut,
+    ClipboardList,
+    Activity,
+    ArchiveRestore,
+    TrendingUp,
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -44,6 +49,7 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
             label: 'Overview',
             links: [
                 { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+                { href: '/dashboard/analytics', label: 'Analytics', icon: TrendingUp },
             ],
         },
         {
@@ -64,10 +70,13 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
         {
             label: 'Management',
             links: [
+                { href: '/dashboard/admin-applications', label: 'Applications', icon: ClipboardList },
                 { href: '/dashboard/finance', label: 'Finance', icon: DollarSign },
                 { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
                 { href: '/dashboard/users', label: 'Users', icon: Users },
                 { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+                { href: '/dashboard/audit-logs', label: 'Audit Logs', icon: Activity },
+                { href: '/dashboard/archive', label: 'Archive', icon: ArchiveRestore },
             ],
         },
     ],
@@ -97,6 +106,7 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
         {
             label: 'System',
             links: [
+                { href: '/dashboard/admin-applications', label: 'Applications', icon: ClipboardList },
                 { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
             ],
         },
@@ -154,9 +164,9 @@ const ROLE_LABELS: Record<string, string> = {
     USER: 'Customer',
 };
 
-function SidebarContent({ userRole, userName }: { userRole: string; userName: string }) {
+function SidebarContent({ userRole, userName, isLoading }: { userRole: string; userName: string; isLoading?: boolean }) {
     const pathname = usePathname();
-    const groups = NAV_GROUPS_BY_ROLE[userRole] || NAV_GROUPS_BY_ROLE.USER;
+    const groups = isLoading ? [] : (NAV_GROUPS_BY_ROLE[userRole] || NAV_GROUPS_BY_ROLE.USER);
 
     const handleLogout = async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
@@ -166,25 +176,38 @@ function SidebarContent({ userRole, userName }: { userRole: string; userName: st
     return (
         <div className="flex h-full flex-col bg-transparent text-white">
             {/* Brand Lockup */}
-            <div className="flex h-[72px] items-center px-5 border-b border-white/[0.06]">
-                <Link href="/dashboard" className="flex items-center gap-3 group">
-                    <div className="w-9 h-9 rounded-xl bg-antique-gold/15 border border-antique-gold/25 flex items-center justify-center group-hover:bg-antique-gold/25 group-hover:shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
-                        <Image src="/images/yatara-brand-block.svg" alt="Yatara" width={28} height={28} className="brightness-0 invert opacity-80" />
-                    </div>
-                    <div>
-                        <span className="font-display text-base font-bold tracking-tight text-off-white">
-                            Yatara Ceylon
-                        </span>
-                        <p className="text-[9px] tracking-[0.2em] uppercase text-off-white/25">Tour Management</p>
-                    </div>
+            <div className="flex h-[80px] items-center px-5 border-b border-white/[0.06] justify-center pt-2">
+                <Link href="/dashboard" className="flex items-center group transition-transform hover:scale-[1.02]">
+                    <Image
+                        src="/images/yatara-brand-block.svg"
+                        alt="Yatara Ceylon"
+                        width={180}
+                        height={40}
+                        className="brightness-0 invert opacity-95"
+                        priority
+                    />
                 </Link>
             </div>
 
             {/* User Info */}
-            <div className="px-5 py-3 border-b border-white/[0.04]">
-                <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
-                <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">{userName || 'User'}</p>
-                <p className="text-[10px] text-off-white/35 mt-0.5">{ROLE_LABELS[userRole] || 'Customer'}</p>
+            <div className="px-5 py-3 border-b border-white/[0.04] flex items-center gap-3">
+                {isLoading ? (
+                    <div className="h-10 w-10 bg-white/10 rounded-full animate-pulse flex-shrink-0" />
+                ) : (
+                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-antique-gold/20 border border-antique-gold/30 flex items-center justify-center text-antique-gold font-bold text-sm liquid-glass-card-dark">
+                        {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                )}
+                <div className="min-w-0">
+                    <p className="text-[10px] tracking-[0.12em] text-off-white/25 uppercase">Signed in as</p>
+                    {isLoading ? (
+                        <div className="h-4 w-24 bg-white/10 rounded mt-1 animate-pulse" />
+                    ) : (
+                        <p className="text-xs text-antique-gold font-medium mt-0.5 truncate">
+                            {userName || 'User'} <span className="text-off-white/50 font-normal text-[10px] block">({ROLE_LABELS[userRole] || 'Customer'})</span>
+                        </p>
+                    )}
+                </div>
             </div>
 
             {/* Navigation Groups */}
@@ -199,18 +222,22 @@ function SidebarContent({ userRole, userName }: { userRole: string; userName: st
                                 const Icon = link.icon;
                                 const isActive =
                                     pathname === link.href ||
-                                    (link.href !== '/dashboard' && pathname.startsWith(link.href));
+                                    (link.href !== '/dashboard' && pathname?.startsWith(link.href + '/')) ||
+                                    (link.href !== '/dashboard' && pathname === link.href);
                                 return (
                                     <Link
                                         key={link.href}
                                         href={link.href}
                                         className={cn(
-                                            'flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300',
+                                            'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 overflow-hidden',
                                             isActive
-                                                ? 'bg-antique-gold/[0.12] border border-antique-gold/20 text-antique-gold shadow-[0_0_12px_rgba(212,175,55,0.06)]'
+                                                ? 'bg-antique-gold/15 border border-antique-gold/20 text-antique-gold'
                                                 : 'text-off-white/50 hover:text-off-white/80 hover:bg-white/[0.04] border border-transparent'
                                         )}
                                     >
+                                        {isActive && (
+                                            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-antique-gold" />
+                                        )}
                                         <Icon className={cn(
                                             "h-4 w-4 flex-shrink-0 transition-all duration-300",
                                             isActive ? "text-antique-gold" : "text-off-white/30 group-hover:text-off-white/50"
@@ -249,6 +276,7 @@ export function DashboardSidebar() {
     const [open, setOpen] = useState(false);
     const [userRole, setUserRole] = useState('USER');
     const [userName, setUserName] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         fetch('/api/auth/me')
@@ -259,14 +287,15 @@ export function DashboardSidebar() {
                     setUserName(data.user.name || '');
                 }
             })
-            .catch(() => { });
+            .catch(() => { })
+            .finally(() => setIsLoading(false));
     }, []);
 
     return (
         <>
             {/* Desktop Sidebar */}
             <aside className="hidden md:block min-h-screen dashboard-sidebar-dark">
-                <SidebarContent userRole={userRole} userName={userName} />
+                <SidebarContent userRole={userRole} userName={userName} isLoading={isLoading} />
             </aside>
 
             {/* Mobile Sidebar Toggle */}
@@ -279,7 +308,7 @@ export function DashboardSidebar() {
                     </SheetTrigger>
                     <SheetContent side="left" className="w-72 p-0 border-r border-antique-gold/10 bg-[#020b08]">
                         <div className="h-full dashboard-sidebar-dark">
-                            <SidebarContent userRole={userRole} userName={userName} />
+                            <SidebarContent userRole={userRole} userName={userName} isLoading={isLoading} />
                         </div>
                     </SheetContent>
                 </Sheet>

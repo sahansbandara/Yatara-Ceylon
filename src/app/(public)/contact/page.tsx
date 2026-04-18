@@ -62,8 +62,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h4 className="font-serif text-lg text-deep-emerald mb-1">Email</h4>
-                                        <p className="text-gray-500 font-light">concierge@yataraceylon.com</p>
-                                        <p className="text-gray-500 font-light">bespoke@yataraceylon.com</p>
+                                        <p className="text-gray-500 font-light">info@yataraceylon.me</p>
                                     </div>
                                 </div>
 

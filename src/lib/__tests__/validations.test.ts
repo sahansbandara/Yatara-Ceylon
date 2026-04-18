@@ -244,6 +244,19 @@ describe('Zod validation schemas', () => {
             const result = createBookingSchema.safeParse({ ...validBooking, email: 'not-an-email' });
             expect(result.success).toBe(false);
         });
+
+        it('should reject invalid phone number format', () => {
+            const result = createBookingSchema.safeParse({ ...validBooking, phone: '123' });
+            expect(result.success).toBe(false);
+        });
+
+        it('should reject when end date is before start date', () => {
+            const result = createBookingSchema.safeParse({
+                ...validBooking,
+                dates: { from: '2025-01-10', to: '2025-01-07' },
+            });
+            expect(result.success).toBe(false);
+        });
     });
 
     describe('updateBookingStatusSchema', () => {
@@ -433,7 +446,7 @@ describe('Zod validation schemas', () => {
         it('should accept all partner types', () => {
             for (const type of ['GUIDE', 'HOTEL', 'DRIVER', 'RESTAURANT', 'OTHER']) {
                 const result = createPartnerSchema.safeParse({
-                    type, name: 'Test', phone: '123',
+                    type, name: 'Test', phone: '+94771234567',
                 });
                 expect(result.success).toBe(true);
             }
@@ -454,6 +467,20 @@ describe('Zod validation schemas', () => {
                     serviceName: 'S', rate: 100, unit,
                 });
                 expect(result.success).toBe(true);
+            }
+        });
+
+        it('should map legacy notes field into description', () => {
+            const result = createPartnerServiceSchema.safeParse({
+                serviceName: 'Airport pickup',
+                rate: 100,
+                unit: 'FLAT',
+                notes: 'Legacy note',
+            });
+
+            expect(result.success).toBe(true);
+            if (result.success) {
+                expect(result.data.description).toBe('Legacy note');
             }
         });
     });
@@ -520,7 +547,7 @@ describe('Zod validation schemas', () => {
             const result = createUserSchema.safeParse({
                 name: 'Admin User',
                 email: 'admin@yatara.com',
-                password: 'secure123',
+                password: 'Strong@1234',
             });
             expect(result.success).toBe(true);
             if (result.success) {
@@ -528,7 +555,7 @@ describe('Zod validation schemas', () => {
             }
         });
 
-        it('should reject password shorter than 6 characters', () => {
+        it('should reject passwords that do not meet the stronger complexity rules', () => {
             const result = createUserSchema.safeParse({
                 name: 'User', email: 'u@test.com', password: '12345',
             });
@@ -537,14 +564,14 @@ describe('Zod validation schemas', () => {
 
         it('should reject invalid email', () => {
             const result = createUserSchema.safeParse({
-                name: 'User', email: 'not-email', password: '123456',
+                name: 'User', email: 'not-email', password: 'Strong@1234',
             });
             expect(result.success).toBe(false);
         });
 
         it('should accept ADMIN role', () => {
             const result = createUserSchema.safeParse({
-                name: 'Admin', email: 'a@b.com', password: '123456', role: 'ADMIN',
+                name: 'Admin', email: 'a@b.com', password: 'Strong@1234', role: 'ADMIN',
             });
             expect(result.success).toBe(true);
         });

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Script from 'next/script';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, CreditCard, DollarSign, AlertCircle } from 'lucide-react';
 import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
+import TurnstileField from '@/components/public/TurnstileField';
 
 interface BookingRequestClientProps {
     vehicle?: any;
@@ -25,6 +25,7 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
 
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<{ message: string; success: boolean } | null>(null);
+    const [turnstileToken, setTurnstileToken] = useState('');
 
     const [form, setForm] = useState({
         customerName: '',
@@ -87,11 +88,34 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
         setLoading(true);
         setStatus(null);
 
+        // Date validation
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const fromDate = new Date(form.dates.from);
+        const toDate = new Date(form.dates.to);
+
+        if (!form.dates.from || !form.dates.to) {
+            setStatus({ success: false, message: 'Please select both Date From and Date To.' });
+            setLoading(false);
+            return;
+        }
+        if (fromDate < today) {
+            setStatus({ success: false, message: 'Date From cannot be in the past.' });
+            setLoading(false);
+            return;
+        }
+        if (toDate <= fromDate) {
+            setStatus({ success: false, message: 'Date To must be after Date From.' });
+            setLoading(false);
+            return;
+        }
+
         try {
             // 1. Create booking via public API
             const bookingPayload: any = {
                 ...form,
                 totalCost: amounts.total,
+                turnstileToken,
             };
 
             const bookingRes = await fetch('/api/public/booking-request', {
@@ -147,32 +171,20 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                     return;
                 }
 
-                // 3. Trigger PayHere SDK Popup
-                // @ts-ignore
-                if (typeof window !== 'undefined' && window.payhere) {
-                    // @ts-ignore
-                    window.payhere.onCompleted = function onCompleted(orderId: string) {
-                        setStatus({ success: true, message: 'Payment completed successfully. Validating...' });
-                        window.location.href = `/payment/return?order_id=${orderId}`;
-                    };
-                    // @ts-ignore
-                    window.payhere.onDismissed = function onDismissed() {
-                        setStatus({ success: false, message: 'Payment popup was dismissed. Your booking is saved — you can pay later.' });
-                        setLoading(false);
-                    };
-                    // @ts-ignore
-                    window.payhere.onError = function onError(error: any) {
-                        console.error('PayHere error', error);
-                        setStatus({ success: false, message: 'An error occurred with the payment gateway.' });
-                        setLoading(false);
-                    };
-                    // @ts-ignore
-                    window.payhere.startPayment(payData.fields);
-                } else {
-                    console.error("PayHere SDK not loaded");
-                    setStatus({ success: false, message: 'Payment gateway SDK not loaded. Your booking is saved.' });
-                    setLoading(false);
-                }
+                // 3. Redirect to PayHere Checkout via hidden form POST
+                const payForm = document.createElement('form');
+                payForm.method = 'POST';
+                payForm.action = payData.checkoutUrl;
+                // Populate hidden fields
+                Object.entries(payData.fields as Record<string, string>).forEach(([key, value]) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = String(value);
+                    payForm.appendChild(input);
+                });
+                document.body.appendChild(payForm);
+                payForm.submit();
             } else {
                 setStatus({ success: true, message: 'Booking request sent successfully. We will contact you soon.' });
                 setLoading(false);
@@ -261,11 +273,11 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
                     <div className="space-y-2">
                         <Label htmlFor="dateFrom">Date From</Label>
-                        <Input id="dateFrom" type="date" required value={form.dates.from} onChange={e => setForm({ ...form, dates: { ...form.dates, from: e.target.value } })} />
+                        <Input id="dateFrom" type="date" required min={new Date().toISOString().split('T')[0]} value={form.dates.from} onChange={e => setForm({ ...form, dates: { ...form.dates, from: e.target.value } })} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="dateTo">Date To</Label>
-                        <Input id="dateTo" type="date" required value={form.dates.to} onChange={e => setForm({ ...form, dates: { ...form.dates, to: e.target.value } })} />
+                        <Input id="dateTo" type="date" required min={form.dates.from || new Date().toISOString().split('T')[0]} value={form.dates.to} onChange={e => setForm({ ...form, dates: { ...form.dates, to: e.target.value } })} />
                     </div>
                 </div>
 
@@ -285,6 +297,8 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                     />
                 </div>
 
+                <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
+
                 <Button
                     type="submit"
                     disabled={loading}
@@ -301,8 +315,6 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                     )}
                 </Button>
             </form>
-
-            <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
         </>
     );
 }

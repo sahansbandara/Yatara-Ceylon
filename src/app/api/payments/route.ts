@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Payment from '@/models/Payment';
@@ -7,7 +8,8 @@ import { validateBody } from '@/lib/validate';
 import { createPaymentSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
 
-export async function GET(request: Request) {
+// GET /api/payments – protected: staff/admin only
+export const GET = staffOrAdmin(async (request) => {
     try {
         await connectDB();
         const { searchParams } = new URL(request.url);
@@ -20,7 +22,7 @@ export async function GET(request: Request) {
             .lean();
         return NextResponse.json({ payments });
     } catch (error) { console.error(error); return NextResponse.json({ error: 'Internal server error' }, { status: 500 }); }
-}
+});
 
 export const POST = staffOrAdmin(async (request, { user }) => {
     const { data, error } = await validateBody(request, createPaymentSchema);

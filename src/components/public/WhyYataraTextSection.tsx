@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ConciergeBell, CarFront, ShieldCheck, Landmark, RotateCcw } from "lucide-react";
+import { motion, useInView as useFramerInView, useAnimation } from "framer-motion";
 
-type Stat = { value: number; suffix?: string; label: string };
-type Benefit = { title: string; detail?: string };
+type Stat = { value: number; suffix?: string; label: string; start?: number };
+type Benefit = { title: string; detail?: string; icon: React.ReactNode };
 
+/* Reduced Motion Hook as a fallback */
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
@@ -17,31 +20,11 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-function useInView<T extends HTMLElement>(options?: IntersectionObserverInit) {
-  const ref = useRef<T | null>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const el = ref.current;
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setInView(true);
-        io.disconnect();
-      }
-    }, options);
-
-    io.observe(el);
-    return () => io.disconnect();
-  }, [options]);
-
-  return { ref, inView };
-}
-
+/* Number Counting Animation Component */
 function CountUp({
   value,
   suffix = "+",
-  durationMs = 1200,
+  durationMs = 2000, // Very slow and majestic
   start = 0,
   play,
 }: {
@@ -55,16 +38,20 @@ function CountUp({
   const [current, setCurrent] = useState(start);
 
   useEffect(() => {
-    if (!play) return;
+    if (!play) {
+      setCurrent(start);
+      return;
+    }
     if (reduced) {
       setCurrent(value);
       return;
     }
     let raf = 0;
-    const t0 = performance.now();
+    let t0: number | null = null;
     const tick = (t: number) => {
+      if (!t0) t0 = t;
       const p = Math.min(1, (t - t0) / durationMs);
-      const eased = 1 - Math.pow(1 - p, 3);
+      const eased = 1 - Math.pow(1 - p, 4); // Quartic ease out for super smooth ending
       setCurrent(Math.round(start + (value - start) * eased));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
@@ -83,96 +70,134 @@ function CountUp({
 export default function WhyYataraTextSection() {
   const stats: Stat[] = useMemo(
     () => [
-      { value: 24, suffix: "/7", label: "Concierge support" },
-      { value: 100, suffix: "+", label: "Curated routes & experiences" },
-      { value: 1, suffix: "", label: "Single point of contact" },
-      { value: 0, suffix: "", label: "Hidden service fees" },
+      { value: 15, suffix: "+", label: "Years of Luxury", start: 1 },
+      { value: 400, suffix: "+", label: "Estates Audited", start: 100 },
+      { value: 24, suffix: "/7", label: "Private Concierge", start: 1 },
+      { value: 100, suffix: "%", label: "Bespoke Routes", start: 10 },
     ],
     []
   );
 
   const benefits: Benefit[] = useMemo(
     () => [
-      { title: "Concierge-led planning", detail: "One specialist plans, books, and manages your journey." },
-      { title: "Private logistics", detail: "Seamless transfers with vetted driver-guides." },
-      { title: "Curated stays", detail: "Boutique and luxury properties chosen for experience, not volume." },
-      { title: "Pace-first itineraries", detail: "Routes built around comfort\u2014no rushed checklist travel." },
-      { title: "On-trip support", detail: "Real-time adjustments when conditions or preferences change." },
+      { icon: <ConciergeBell className="w-6 h-6 text-[#CFB53B]" strokeWidth={1.5} />, title: "A dedicated travel concierge orchestrating your journey" },
+      { icon: <CarFront className="w-6 h-6 text-[#CFB53B]" strokeWidth={1.5} />, title: "Private VIP logistics with elite, seasoned driver-guides" },
+      { icon: <ShieldCheck className="w-6 h-6 text-[#CFB53B]" strokeWidth={1.5} />, title: "Bank-level secure booking and uncompromised privacy" },
+      { icon: <Landmark className="w-6 h-6 text-[#CFB53B]" strokeWidth={1.5} />, title: "Curated sanctuaries chosen for exclusivity, not volume" },
+      { icon: <RotateCcw className="w-6 h-6 text-[#CFB53B]" strokeWidth={1.5} />, title: "Flexible cancellation up to 24 hours on all transfers" },
     ],
     []
   );
 
-  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.25 });
+  /* Framer Motion Integration for Viewport Triggering */
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useFramerInView(sectionRef, { amount: 0.2 });
+  const controls = useAnimation();
+  
+  const statsRef = useRef<HTMLDivElement>(null);
+  const statsInView = useFramerInView(statsRef, { amount: 0.5 });
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    } else {
+      controls.start("hidden");
+    }
+  }, [isInView, controls]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15, // Majestic slow stagger
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98] }
+    }
+  };
 
   return (
-    <section className="bg-white">
-      <div ref={ref} className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid grid-cols-1 gap-14 lg:grid-cols-12 lg:items-start">
-          {/* Left: text benefits */}
-          <div className="lg:col-span-6">
-            <p className="text-xs tracking-[0.28em] text-neutral-500">
-              WHY TRAVEL WITH YATARA
-            </p>
+    <section className="relative bg-white pb-16 md:pb-20 lg:pb-24" ref={sectionRef}>
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 xl:px-20 relative z-10">
 
-            <h2 className="mt-4 text-4xl leading-tight text-neutral-900">
-              A private journey, executed quietly well.
-            </h2>
+        <motion.div
+          initial="hidden"
+          animate={controls}
+          variants={containerVariants}
+          className="flex flex-col lg:flex-row justify-between lg:items-center lg:gap-24"
+        >
 
-            <p className="mt-4 max-w-xl text-neutral-700">
-              We tailor each itinerary to your pace—combining refined stays,
-              curated access, and seamless logistics across Sri Lanka.
-            </p>
+          {/* ── Left: Huge Headline & List ── */}
+          <div className="w-full lg:w-[45%] flex flex-col mb-16 lg:mb-0">
+            {/* 👉 ADJUST TITLE MARGIN BELOW: mb-8 to mb-14 */}
+            <motion.h2 variants={itemVariants} className="font-serif leading-[1.05] tracking-tight mb-8">
+              {/* 👉 ADJUST TITLE TOP TEXT SIZE BELOW */}
+              <span className="block text-[2rem] md:text-[2.25rem] lg:text-[2.75rem] text-neutral-900 font-medium mb-1">
+                Why Journey With
+              </span>
+              {/* 👉 ADJUST TITLE BOTTOM TEXT SIZE BELOW */}
+              <span className="block text-[2.5rem] md:text-[3rem] lg:text-[3.75rem] font-bold text-[#CFB53B]">
+                Yatara Ceylon?
+              </span>
+            </motion.h2>
 
-            <div className="mt-10 space-y-6">
+            <div className="flex flex-col mt-4">
               {benefits.map((b, i) => (
-                <div key={i} className="border-l border-neutral-200 pl-5">
-                  <p className="text-neutral-900">{b.title}</p>
-                  {b.detail ? (
-                    <p className="mt-1 text-sm text-neutral-600">{b.detail}</p>
-                  ) : null}
-                </div>
+                <motion.div
+                  key={i}
+                  variants={itemVariants}
+                  className="flex items-center gap-5 py-3 group"
+                >
+                  <div className="shrink-0 flex items-center justify-center p-2 rounded-lg bg-neutral-50 group-hover:bg-[#113d33]/5 transition-colors duration-500">
+                    {b.icon}
+                  </div>
+                  <div>
+                    <h4 className="text-[15px] md:text-[16px] text-neutral-800 font-medium group-hover:text-[#113d33] transition-colors duration-500 leading-snug">{b.title}</h4>
+                  </div>
+                </motion.div>
               ))}
-            </div>
-
-            <div className="mt-10 flex items-center gap-6">
-              <a
-                href="/about"
-                className="rounded-full bg-neutral-900 px-6 py-3 text-sm text-white"
-              >
-                About Yatara
-              </a>
-              <a
-                href="/inquire"
-                className="text-sm text-neutral-900 underline underline-offset-4"
-              >
-                Inquire →
-              </a>
             </div>
           </div>
 
-          {/* Right: text stats */}
-          <div className="lg:col-span-6">
-            <div className="grid grid-cols-2 gap-8">
+          {/* ── Right: Intro Text & Massive Stats Container ── */}
+          <div className="w-full lg:w-[50%] flex flex-col pt-0">
+            {/* 👉 ADJUST INTRO TEXT MARGIN BELOW: mb-12 or mb-16 */}
+            <motion.p variants={itemVariants} className="text-[1rem] md:text-[1.1rem] text-neutral-600 leading-[1.6] font-light mb-8 max-w-[90%]">
+              At Yatara Ceylon, we customize each itinerary to fit your precise preferences, ensuring an absolutely flawless and elite luxury experience.
+            </motion.p>
+
+            <div className="grid grid-cols-2 gap-x-8 gap-y-8 lg:gap-y-10" ref={statsRef}>
               {stats.map((s, i) => (
-                <div key={i} className="border-t border-neutral-200 pt-6">
-                  <div className="text-5xl font-semibold leading-none text-neutral-900">
+                <motion.div key={i} variants={itemVariants} className="flex flex-col">
+                  {/* Huge Walker-Style numbers in deep emerald */}
+                  {/* 👉 ADJUST NUMBERS TEXT SIZE BELOW */}
+                  <div className="text-[3rem] md:text-[4rem] lg:text-[5rem] font-bold leading-none text-[#113d33] tracking-tighter mb-2">
                     <CountUp
                       value={s.value}
                       suffix={s.suffix ?? "+"}
-                      play={inView}
-                      durationMs={1100}
+                      start={s.start ?? 0}
+                      play={statsInView}
+                      durationMs={2000}
                     />
                   </div>
-                  <p className="mt-3 text-xs tracking-[0.22em] text-neutral-600">
-                    {s.label.toUpperCase()}
+                  {/* Small tracking caps label */}
+                  <p className="text-[10px] md:text-[11px] tracking-[0.2em] font-bold text-neutral-500 uppercase max-w-[200px]">
+                    {s.label}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
-
-            {/* Stats grid end */}
           </div>
-        </div>
+
+        </motion.div>
       </div>
     </section>
   );
