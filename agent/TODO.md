@@ -115,27 +115,48 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
+## Just Completed (2026-04-18 - Session 3)
+### Advanced Invoicing & Audit
+- [x] Added `edit` functionality to Draft Invoices using a dedicated pre-populated modal (`EditInvoiceModal`).
+- [x] Added `delete` functionality to Draft Invoices with explicit undo warnings (`DeleteInvoiceButton` using Radix UI).
+- [x] Implemented API logic to safely mutate or drop draft records whilst protecting finalized receipts.
+- [x] Created `src/app/api/finance/audit/route.ts` delivering detailed CSV bounds queries on invoices, payments and aging ledgers.
+- [x] Added a `GenerateAuditReportModal` inside the Finance Dashboard with Date parameter presets (Month-to-Date, Quarter vs Quarter, Custom bounds) and format options.
+
+---
+
+## Just Completed (2026-04-18 - Session 4)
+### Minor UI Fixes & Support Email Notifications
+- [x] Fixed bright white hover background bug on Archive page action buttons.
+- [x] Fixed `VehicleTable` header row hover effect, removing the stark white background when dragging the mouse over the table headers.
+- [x] Repaired the "Partner Requests" dashboard link, which previously returned a 404 URL (`/dashboard/partners/requests`). Pointed it effectively to `/dashboard/partners?filter=pending`.
+- [x] Added `sendSupportReplyEmail` inside `src/lib/email.ts` to shoot branded emails out to customers whenever an admin replies to their support ticket. Wired up via the `PATCH` handler in `/api/tickets/[id]/route.ts`.
+
+---
+
 ## Last Session
 **Date**: 2026-04-18
 **What was done**:
 - Refactored the PayHere `PaymentConfirmingClient` UX to fail gracefully and allow manual override during test scenarios (localhost).
 - Built central `PaymentService.recalculateBookingFinance()` allowing exact reconciliation of net paid amounts vs total cost.
-- Handled the remaining 80% admin-recordable balance and integrated a refund handler directly into the Admin UI sidebar.
-- Improved the public Booking Request page with auto-calculating dates, passenger-based pricing multiplication, and reordered UI.
-- Ran a database script to globally drop the trailing zero on all package prices and updated corresponding seed scripts.
+- Fixed UI hover inconsistencies on the Archive and Vehicles pages.
+- Fixed 404 on the Dashboard pending partner requests link.
+- Implemented and wired up automated email notifications when responding to support tickets!
 
 **What to do next**:
 - The user is checking if their production Vercel `.env` instances fully replicate `.env.local` to securely unlock Webhooks.
-- Once environmental parity is reached, test an end-to-end payment block using a production URL or sandbox endpoint.
+- Verify production audit CSV exports against local test data.
 
 **Current state**:
 - Branch: `main`
 - PayHere ledger handles `ADVANCE_PAID`, `BALANCE_PENDING`, and refunds properly.
-- Public booking forms and global package prices are refined.
+- Full Invoice lifecycle (Create, Edit, Delete, Finalize, Void) is complete.
+- Financial exports are functional.
+- Support tickets now trigger direct email alerts to users dynamically.
 
 **Files changed (This Session)**:
-- `src/components/public/BookingRequestClient.tsx`
-- `scripts/divide-package-prices.js` (new)
-- `scripts/seed-adventure.ts`, `scripts/seed-adventure2.ts`, `scripts/seed-ramayana.ts`
-- `scripts/update-adventure-highlands.js`
-- `agent/TODO.md`, `agent/MEMORY.md`
+- `src/app/dashboard/archive/page.tsx`
+- `src/components/dashboard/VehicleTable.tsx`
+- `src/app/dashboard/page.tsx`
+- `src/lib/email.ts`
+- `src/app/api/tickets/[id]/route.ts`

@@ -113,3 +113,44 @@ export async function sendPasswordResetEmail(params: {
         html,
     });
 }
+
+export async function sendSupportReplyEmail(params: {
+    to: string;
+    name: string;
+    subject: string;
+    replyText: string;
+}) {
+    const text = [
+        `Hello ${params.name},`,
+        '',
+        `We have an update regarding your support ticket: "${params.subject}"`,
+        '',
+        '--- Reply from our team ---',
+        params.replyText,
+        '---------------------------',
+        '',
+        'If you have any further questions, you can simply reply to this email.',
+        '',
+        'Best regards,',
+        'Yatara Ceylon Support Team'
+    ].join('\n');
+
+    const html = `
+        <div style="font-family: sans-serif; color: #333; line-height: 1.5;">
+            <p>Hello ${params.name},</p>
+            <p>We have an update regarding your support ticket: <strong>"${params.subject}"</strong></p>
+            <div style="border-left: 4px solid #D4AF37; padding-left: 15px; margin: 20px 0; background: #f9f9f9; padding-block: 10px; padding-right: 10px;">
+                <p style="margin: 0; white-space: pre-wrap;">${params.replyText}</p>
+            </div>
+            <p>If you have any further questions, you can simply reply to this email.</p>
+            <p>Best regards,<br>Yatara Ceylon Support Team</p>
+        </div>
+    `;
+
+    return sendEmail({
+        to: params.to,
+        subject: `Update on your ticket: ${params.subject}`,
+        text,
+        html,
+    });
+}

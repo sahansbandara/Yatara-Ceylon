@@ -38,15 +38,13 @@ export default function VoidInvoiceButton({ invoiceId }: VoidInvoiceButtonProps)
     };
 
     return (
-        <Button
-            variant="ghost"
-            size="sm"
+        <button
             onClick={handleVoid}
             disabled={loading}
-            className="h-6 text-[10px] px-2 ml-2 bg-red-500/10 hover:bg-red-500/20 text-red-400"
+            title="Void Invoice"
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all disabled:opacity-50"
         >
-            {loading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <XCircle className="h-3 w-3 mr-1" />}
-            Void
-        </Button>
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
+        </button>
     );
 }

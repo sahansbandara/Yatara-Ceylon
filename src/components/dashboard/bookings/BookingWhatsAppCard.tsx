@@ -39,32 +39,33 @@ export default function BookingWhatsAppCard({ bookingId }: BookingWhatsAppCardPr
     }, [bookingId]);
 
     return (
-        <div className="liquid-glass-stat rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-3">
+        <div className="rounded-3xl p-6 bg-gradient-to-br from-[#111A16] to-[#0A100D] border border-white/[0.05] shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="flex items-center gap-2 mb-4 relative z-10">
                 <MessageCircle className="h-4 w-4 text-emerald-400" />
-                <h3 className="text-sm font-display font-semibold text-deep-emerald uppercase tracking-wider">
+                <h3 className="text-sm font-display font-semibold text-off-white uppercase tracking-wider">
                     WhatsApp Concierge
                 </h3>
             </div>
 
             {loading ? (
-                <div className="flex items-center gap-2 text-sm text-white/45">
+                <div className="flex items-center gap-3 text-sm text-white/40 h-[76px] relative z-10">
                     <Loader2 className="h-4 w-4 animate-spin text-emerald-400" />
-                    Preparing concierge shortcut...
+                    Preparing shortcut...
                 </div>
             ) : configured && whatsAppLink ? (
-                <div className="space-y-3">
-                    <p className="text-sm text-white/55">
+                <div className="space-y-4 relative z-10">
+                    <p className="text-xs text-white/50 leading-relaxed">
                         Open a prefilled concierge message with this booking’s key details.
                     </p>
                     <a
                         href={whatsAppLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2.5 text-sm font-medium text-emerald-300 transition-colors hover:bg-emerald-500/15"
+                        className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20 px-4 py-3 text-sm font-medium text-emerald-400 transition-all hover:bg-emerald-500/20 hover:scale-[1.02] shadow-[0_0_15px_rgba(16,185,129,0.05)] hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]"
                     >
                         <ExternalLink className="h-4 w-4" />
-                        Open WhatsApp
+                        Open WhatsApp Message
                     </a>
                 </div>
             ) : (

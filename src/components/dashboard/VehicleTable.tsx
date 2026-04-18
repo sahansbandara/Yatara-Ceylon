@@ -130,7 +130,7 @@ export default function VehicleTable({ initialVehicles }: VehicleTableProps) {
         <div className="rounded-md border border-white/10 bg-transparent">
             <Table>
                 <TableHeader>
-                    <TableRow>
+                    <TableRow className="hover:bg-transparent border-white/10">
                         <TableHead className="w-[80px]">Image</TableHead>
                         <SortableHeader
                             label="Model"

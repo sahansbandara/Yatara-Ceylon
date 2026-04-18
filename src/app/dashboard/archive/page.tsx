@@ -155,9 +155,9 @@ export default function ArchiveCenterPage() {
                                             Restore
                                         </Button>
                                         <Button 
-                                            variant="outline" 
+                                            variant="ghost" 
                                             size="sm"
-                                            className="border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-400 flex-1 sm:flex-none"
+                                            className="bg-transparent border border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-400 flex-1 sm:flex-none"
                                             onClick={() => handleAction(item._id, item.collectionName, 'delete')}
                                             disabled={processingId === item._id}
                                         >

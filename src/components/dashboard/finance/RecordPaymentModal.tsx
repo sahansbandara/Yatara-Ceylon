@@ -62,18 +62,19 @@ export default function RecordPaymentModal({ bookingId, remainingBalance }: Reco
     return (
         <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>
-                <Button className="bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0a1f15] font-semibold text-xs tracking-widest rounded-xl transition-all hover:scale-105 gap-2">
+                <Button className="w-full bg-antique-gold/10 hover:bg-antique-gold/20 border border-antique-gold/30 text-antique-gold font-semibold text-[11px] tracking-widest rounded-xl transition-all hover:scale-[1.02] py-5 gap-2 uppercase shadow-[0_0_15px_rgba(212,175,55,0.05)]">
                     <Plus className="h-4 w-4" /> Record Payment
                 </Button>
             </Dialog.Trigger>
 
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity" />
-                <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[500px] translate-x-[-50%] translate-y-[-50%] rounded-2xl liquid-glass-panel p-8 shadow-2xl z-50 overflow-y-auto text-off-white border border-white/10">
-                    <Dialog.Title className="text-xl font-display font-bold text-white mb-1">
+                <Dialog.Overlay className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 transition-opacity" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+                <Dialog.Content className="pointer-events-auto relative w-full max-w-[500px] max-h-[90vh] overflow-y-auto rounded-[2rem] bg-gradient-to-br from-[#111A16] to-[#0A100D] border border-white/[0.05] shadow-[0_0_40px_rgba(212,175,55,0.05)] p-8 outline-none text-off-white scrollbar-glass-dark">
+                    <Dialog.Title className="text-xl font-display font-semibold text-antique-gold mb-1 tracking-wide">
                         Record Manual Payment
                     </Dialog.Title>
-                    <Dialog.Description className="text-sm text-white/50 mb-6">
+                    <Dialog.Description className="text-sm text-white/40 mb-8 font-light">
                         Log a payment received outside of the automated online gateway.
                     </Dialog.Description>
 
@@ -150,16 +151,17 @@ export default function RecordPaymentModal({ bookingId, remainingBalance }: Reco
                             />
                         </div>
 
-                        <div className="flex gap-3 justify-end pt-4 border-t border-white/10 mt-6">
-                            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={saving} className="border-antique-gold/40 text-antique-gold hover:bg-antique-gold/10">
+                        <div className="flex gap-4 justify-end pt-6 border-t border-white/10 mt-8">
+                            <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={saving} className="rounded-xl px-6 bg-transparent border border-white/20 text-white/80 hover:bg-white/10 hover:text-white">
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={saving} className="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-medium">
+                            <Button type="submit" disabled={saving} className="rounded-xl px-8 bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold shadow-[0_0_20px_rgba(212,175,55,0.2)]">
                                 {saving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin text-deep-emerald" /> Saving...</> : 'Record Payment'}
                             </Button>
                         </div>
                     </form>
                 </Dialog.Content>
+                </div>
             </Dialog.Portal>
         </Dialog.Root>
     );

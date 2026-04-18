@@ -4,6 +4,8 @@ import { CalendarCheck, ArrowUpRight, Package as PackageIcon, Clock, CreditCard,
 import Link from "next/link";
 import Image from "next/image";
 import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const STATUS_CONFIG: Record<string, { color: string; icon: any; label: string }> = {
     NEW: { color: 'from-blue-500/20 to-blue-400/10 text-blue-300 border-blue-500/30', icon: Clock, label: 'Pending Review' },
@@ -19,6 +21,31 @@ const STATUS_CONFIG: Record<string, { color: string; icon: any; label: string }>
 
 export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
     const { currency, convertRate } = useCurrency();
+    const router = useRouter();
+    const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+    const handleCancel = async (bookingId: string, isPaid: boolean) => {
+        const msg = isPaid 
+            ? "Are you sure you want to request a refund? Your booking will be marked for cancellation and reviewed by our staff." 
+            : "Are you sure you want to cancel this booking?";
+        if (!window.confirm(msg)) return;
+
+        setActionLoading(bookingId);
+        try {
+            const res = await fetch(`/api/bookings/${bookingId}/cancel`, { method: 'POST' });
+            if (res.ok) {
+                router.refresh();
+            } else {
+                const data = await res.json();
+                alert(data.error || "Failed to process request.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred. Please try again.");
+        } finally {
+            setActionLoading(null);
+        }
+    };
 
     return (
         <div className="flex flex-col gap-8 animate-in fade-in duration-500">
@@ -122,6 +149,20 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                                             )}
                                         </div>
                                     </div>
+
+
+                                    {/* Action Buttons */}
+                                    {!['CANCELLED', 'REFUND_PENDING', 'REFUNDED', 'COMPLETED'].includes(booking.status) && (
+                                        <div className="mt-4 pt-4 border-t border-white/[0.03] flex justify-end">
+                                            <button
+                                                onClick={() => handleCancel(booking._id, booking.paidAmount > 0)}
+                                                disabled={actionLoading === booking._id}
+                                                className="text-[11px] font-medium tracking-wider px-4 py-2 border border-red-500/20 text-red-300/80 hover:text-red-300 hover:bg-red-500/10 hover:border-red-500/40 rounded-lg transition-all duration-300 disabled:opacity-50"
+                                            >
+                                                {actionLoading === booking._id ? "Processing..." : (booking.paidAmount > 0 ? "Request Refund" : "Cancel Booking")}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         );

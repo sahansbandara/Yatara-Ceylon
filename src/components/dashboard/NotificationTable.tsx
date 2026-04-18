@@ -250,13 +250,13 @@ export default function NotificationTable({
                             }
                             className="h-10 rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none"
                         >
-                            <option value="ALL" className="bg-[#08110d]">
+                            <option value="ALL" className="bg-[#08110d] text-white">
                                 All statuses
                             </option>
-                            <option value="PUBLISHED" className="bg-[#08110d]">
+                            <option value="PUBLISHED" className="bg-[#08110d] text-white">
                                 Published
                             </option>
-                            <option value="DRAFT" className="bg-[#08110d]">
+                            <option value="DRAFT" className="bg-[#08110d] text-white">
                                 Drafts
                             </option>
                         </select>
@@ -267,16 +267,16 @@ export default function NotificationTable({
                             }
                             className="h-10 rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none"
                         >
-                            <option value="ALL" className="bg-[#08110d]">
+                            <option value="ALL" className="bg-[#08110d] text-white">
                                 All types
                             </option>
-                            <option value="ALERT" className="bg-[#08110d]">
+                            <option value="ALERT" className="bg-[#08110d] text-white">
                                 Alerts
                             </option>
-                            <option value="OFFER" className="bg-[#08110d]">
+                            <option value="OFFER" className="bg-[#08110d] text-white">
                                 Offers
                             </option>
-                            <option value="UPDATE" className="bg-[#08110d]">
+                            <option value="UPDATE" className="bg-[#08110d] text-white">
                                 Updates
                             </option>
                         </select>

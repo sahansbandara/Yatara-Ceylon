@@ -274,8 +274,8 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                                         onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                                         className="flex h-11 w-full rounded-xl border border-white/[0.08] bg-[#030d09] px-3 py-2 text-sm text-white focus-visible:outline-none focus:ring-2 focus:ring-antique-gold/20 transition-all cursor-pointer hover:bg-white/[0.02]"
                                     >
-                                        <option value="journey">Journey</option>
-                                        <option value="transfer">Transfer</option>
+                                        <option value="journey" className="bg-[#0f1115] text-white">Journey</option>
+                                        <option value="transfer" className="bg-[#0f1115] text-white">Transfer</option>
                                     </select>
                                 </div>
                                 <div className="grid gap-2">
@@ -286,17 +286,17 @@ export default function PackageForm({ initialData, isEdit = false }: PackageForm
                                         onChange={(e) => setFormData({ ...formData, style: e.target.value })}
                                         className="flex h-11 w-full rounded-xl border border-white/[0.08] bg-[#030d09] px-3 py-2 text-sm text-white focus-visible:outline-none focus:ring-2 focus:ring-antique-gold/20 transition-all cursor-pointer hover:bg-white/[0.02]"
                                     >
-                                        <option value="">— No style —</option>
-                                        <option value="cultural">Cultural</option>
-                                        <option value="wildlife">Wildlife</option>
-                                        <option value="heritage">Heritage</option>
-                                        <option value="experiences">Experiences</option>
-                                        <option value="wellness">Wellness</option>
-                                        <option value="family">Family</option>
-                                        <option value="luxury">Luxury</option>
-                                        <option value="adventure">Adventure</option>
-                                        <option value="beach">Beach</option>
-                                        <option value="marine">Marine</option>
+                                        <option value="" className="bg-[#0f1115] text-white">— No style —</option>
+                                        <option value="cultural" className="bg-[#0f1115] text-white">Cultural</option>
+                                        <option value="wildlife" className="bg-[#0f1115] text-white">Wildlife</option>
+                                        <option value="heritage" className="bg-[#0f1115] text-white">Heritage</option>
+                                        <option value="experiences" className="bg-[#0f1115] text-white">Experiences</option>
+                                        <option value="wellness" className="bg-[#0f1115] text-white">Wellness</option>
+                                        <option value="family" className="bg-[#0f1115] text-white">Family</option>
+                                        <option value="luxury" className="bg-[#0f1115] text-white">Luxury</option>
+                                        <option value="adventure" className="bg-[#0f1115] text-white">Adventure</option>
+                                        <option value="beach" className="bg-[#0f1115] text-white">Beach</option>
+                                        <option value="marine" className="bg-[#0f1115] text-white">Marine</option>
                                     </select>
                                 </div>
                                 <div className="grid gap-2">

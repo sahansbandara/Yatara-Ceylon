@@ -357,7 +357,7 @@ export default async function DashboardPage() {
         <GlassPanel title="Pending Approvals" subtitle={`${totalPendingApprovals} items need review`}>
           <div className="space-y-3">
             {stats.pendingPartnerRequests > 0 && (
-              <Link href="/dashboard/partners/requests" className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition-colors group">
+              <Link href="/dashboard/partners?filter=pending" className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition-colors group">
                 <div className="p-2 rounded-lg bg-amber-500/15 border border-amber-500/30 flex-shrink-0">
                   <AlertCircle className="h-4 w-4 text-amber-400" />
                 </div>

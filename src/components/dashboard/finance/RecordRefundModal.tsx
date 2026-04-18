@@ -68,18 +68,19 @@ export default function RecordRefundModal({ bookingId, maxRefundable }: RecordRe
     return (
         <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>
-                <Button variant="outline" className="border-red-500/30 hover:border-red-500/50 hover:bg-red-500/10 text-red-400 font-semibold text-xs tracking-widest rounded-xl transition-all gap-2">
+                <Button className="w-full bg-red-500/5 hover:bg-red-500/15 border border-red-500/20 text-red-500 font-semibold text-[11px] tracking-widest rounded-xl transition-all hover:scale-[1.02] py-5 gap-2 uppercase shadow-[0_0_15px_rgba(239,68,68,0.05)]">
                     <Undo2 className="h-4 w-4" /> Issue Refund
                 </Button>
             </Dialog.Trigger>
 
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity" />
-                <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[500px] translate-x-[-50%] translate-y-[-50%] rounded-2xl liquid-glass-panel p-8 shadow-2xl z-50 overflow-y-auto text-off-white border border-red-500/20">
-                    <Dialog.Title className="text-xl font-display font-bold text-red-500 mb-1">
+                <Dialog.Overlay className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 transition-opacity" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+                <Dialog.Content className="pointer-events-auto relative w-full max-w-[500px] max-h-[90vh] overflow-y-auto rounded-[2rem] bg-gradient-to-br from-[#111A16] to-[#0A100D] border border-white/[0.05] shadow-[0_0_40px_rgba(239,68,68,0.05)] p-8 outline-none text-off-white scrollbar-glass-dark">
+                    <Dialog.Title className="text-xl font-display font-semibold text-red-500 mb-1 tracking-wide">
                         Issue Refund
                     </Dialog.Title>
-                    <Dialog.Description className="text-sm text-white/50 mb-6">
+                    <Dialog.Description className="text-sm text-white/40 mb-8 font-light">
                         Record funds returned to the customer. Max refundable: LKR {maxRefundable.toLocaleString()}
                     </Dialog.Description>
 
@@ -158,16 +159,17 @@ export default function RecordRefundModal({ bookingId, maxRefundable }: RecordRe
                             />
                         </div>
 
-                        <div className="flex gap-3 justify-end pt-4 border-t border-white/10 mt-6">
-                            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={saving} className="border-white/20 text-white hover:bg-white/10">
+                        <div className="flex gap-4 justify-end pt-6 border-t border-white/10 mt-8">
+                            <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={saving} className="rounded-xl px-6 bg-transparent border border-white/20 text-white/80 hover:bg-white/10 hover:text-white">
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={saving} className="bg-red-600 hover:bg-red-700 text-white font-medium">
+                            <Button type="submit" disabled={saving} className="rounded-xl px-8 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 text-red-400 font-semibold shadow-[0_0_20px_rgba(239,68,68,0.1)]">
                                 {saving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</> : 'Issue Refund'}
                             </Button>
                         </div>
                     </form>
                 </Dialog.Content>
+                </div>
             </Dialog.Portal>
         </Dialog.Root>
     );

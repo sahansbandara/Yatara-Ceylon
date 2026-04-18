@@ -38,15 +38,15 @@ export default async function InvoiceDetailPage({
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
-                <div className="liquid-glass-stat rounded-2xl p-5">
+                <div className="liquid-glass-stat-dark rounded-2xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Invoice Total</p>
                     <p className="mt-2 text-lg font-semibold text-white">{formatLKR(invoice.total || 0)}</p>
                 </div>
-                <div className="liquid-glass-stat rounded-2xl p-5">
+                <div className="liquid-glass-stat-dark rounded-2xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Advance Required</p>
                     <p className="mt-2 text-lg font-semibold text-white">{formatLKR(invoice.advanceRequired || 0)}</p>
                 </div>
-                <div className="liquid-glass-stat rounded-2xl p-5">
+                <div className="liquid-glass-stat-dark rounded-2xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Created</p>
                     <p className="mt-2 text-lg font-semibold text-white">{new Date(invoice.createdAt).toLocaleDateString()}</p>
                 </div>

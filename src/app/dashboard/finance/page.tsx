@@ -7,6 +7,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { GlassPanel } from "@/components/dashboard/GlassPanel";
 import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
 import FinanceDateFilter from "@/components/dashboard/finance/FinanceDateFilter";
+import GenerateAuditReportModal from "@/components/dashboard/finance/GenerateAuditReportModal";
 import { buildMonthBuckets } from "@/lib/date-range";
 
 export default async function FinancePage({
@@ -44,10 +45,13 @@ export default async function FinancePage({
 
     return (
         <div className="flex flex-col gap-6">
-            <DashboardHero
-                title="Finance"
-                subtitle={`Collection rate: ${collectionRate}`}
-            />
+            <div className="flex items-center justify-between">
+                <DashboardHero
+                    title="Finance"
+                    subtitle={`Collection rate: ${collectionRate}`}
+                />
+                <GenerateAuditReportModal />
+            </div>
 
             {/* Date Range Filter */}
             <FinanceDateFilter

@@ -179,7 +179,7 @@ export default function HotelServicesManager({
                                                 className="w-full rounded-lg border border-white/10 bg-[#0f1a14] px-3 py-2 text-sm text-white focus:border-antique-gold/40 focus:outline-none"
                                             >
                                                 {Object.entries(UNIT_LABELS).map(([key, label]) => (
-                                                    <option key={key} value={key} className="bg-[#0f1a14]">{label}</option>
+                                                    <option key={key} value={key} className="bg-[#0f1a14] text-white">{label}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -204,8 +204,8 @@ export default function HotelServicesManager({
                                             onChange={(e) => setDraft((d) => ({ ...d, isActive: e.target.value }))}
                                             className="w-full rounded-lg border border-white/10 bg-[#0f1a14] px-3 py-2 text-sm text-white focus:border-antique-gold/40 focus:outline-none"
                                         >
-                                            <option value="true" className="bg-[#0f1a14]">Active</option>
-                                            <option value="false" className="bg-[#0f1a14]">Inactive</option>
+                                            <option value="true" className="bg-[#0f1a14] text-white">Active</option>
+                                            <option value="false" className="bg-[#0f1a14] text-white">Inactive</option>
                                         </select>
                                     </div>
 

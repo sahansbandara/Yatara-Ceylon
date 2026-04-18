@@ -5,6 +5,7 @@ import SupportTicket from '@/models/SupportTicket';
 import { staffOrAdmin } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { replyTicketSchema } from '@/lib/validations';
+import { sendSupportReplyEmail } from '@/lib/email';
 
 // GET /api/tickets/[id] – protected: staff/admin only
 export const GET = staffOrAdmin(async (_req, context) => {
@@ -30,6 +31,16 @@ export const PATCH = staffOrAdmin(async (request, context) => {
                 { new: true }
             );
             if (!ticket) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+            if (ticket.email) {
+                sendSupportReplyEmail({
+                    to: ticket.email,
+                    name: ticket.customerName,
+                    subject: ticket.subject,
+                    replyText: body.body,
+                }).catch(err => console.error('Failed to send support reply email:', err));
+            }
+
             return NextResponse.json({ ticket });
         }
 

@@ -35,15 +35,13 @@ export default function FinalizeInvoiceButton({ invoiceId }: FinalizeInvoiceButt
     };
 
     return (
-        <Button
-            variant="ghost"
-            size="sm"
+        <button
             onClick={handleFinalize}
             disabled={loading}
-            className="h-6 text-[10px] px-2 ml-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400"
+            title="Finalize Invoice"
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all disabled:opacity-50"
         >
-            {loading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <CheckCircle2 className="h-3 w-3 mr-1" />}
-            Finalize
-        </Button>
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+        </button>
     );
 }
