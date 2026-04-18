@@ -8,6 +8,7 @@
 
 > Format: `[DATE]` What went wrong → Root cause → What to do instead
 
+- [2026-04-18] The `.env.local` file became entirely empty, causing `/api/auth/login` to crash on `connectDB` throwing a 500 `Internal server error` while users or tools mistakenly blamed `package-lock.json` → Always check `.env` and `.env.local` file contents for missing vital secrets like `MONGODB_URI` and `JWT_SECRET` when an unexpected 500 error crashes core system routes.
 - [2026-04-02] Package and destination dashboard forms/toggles still sent `PUT` requests while `/api/packages/[id]` and `/api/destinations/[id]` only expose `PATCH` for updates → publish toggles and edit submits silently fail or 405 even though the backend exists → Before wiring any polish on dashboard CRUD tables/forms, verify the real route methods and align every client action to them.
 - [2026-04-02] The root Next.js build picked up files from the separate Expo app under `mobile/Yatara-Ceylon` because `tsconfig.json` included every `**/*.ts(x)` file in the repo → `npm run build` failed on mobile-only path aliases unrelated to the web app → Exclude nested projects from the root TypeScript config so the web build only validates the intended app.
 - [2026-04-02] Jest scanned the generated `.claude/worktrees/.../package.json` files and threw a haste-map naming collision before route tests even ran → targeted API regression tests became unreliable despite the code being valid → Ignore `.claude/worktrees/` in `jest.config.ts` so local worktrees do not contaminate the repo test graph.

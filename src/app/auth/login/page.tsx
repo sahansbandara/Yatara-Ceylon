@@ -110,6 +110,43 @@ function LoginContent() {
         setLoading(true);
         setError('');
         setSuccessMsg('');
+
+        if (phone) {
+            const sanitizedPhone = phone.replace(/[\s-]/g, '');
+            const phonePattern = /^\+\d{1,3}\d{9}$/;
+            if (!phonePattern.test(sanitizedPhone)) {
+                setError('Please enter a valid phone number with a country code and 9 digits (e.g. +94771234567).');
+                setLoading(false);
+                return;
+            }
+        }
+
+        if (password.length < 10) {
+            setError('Password must be at least 10 characters.');
+            setLoading(false);
+            return;
+        }
+        if (!/[A-Z]/.test(password)) {
+            setError('Password must contain at least one uppercase letter.');
+            setLoading(false);
+            return;
+        }
+        if (!/[a-z]/.test(password)) {
+            setError('Password must contain at least one lowercase letter.');
+            setLoading(false);
+            return;
+        }
+        if (!/[0-9]/.test(password)) {
+            setError('Password must contain at least one number.');
+            setLoading(false);
+            return;
+        }
+        if (!/[^A-Za-z0-9]/.test(password)) {
+            setError('Password must contain at least one symbol.');
+            setLoading(false);
+            return;
+        }
+
         try {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
