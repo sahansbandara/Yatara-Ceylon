@@ -128,6 +128,14 @@ function LoginContent() {
         }
 
         setLoading(true);
+        const phoneRegex = /^\+?[\d\s\-()]{7,}$/;
+        if (!phone.trim() || !phoneRegex.test(phone.trim())) {
+            setError('Please enter a valid phone number (at least 7 digits, e.g., +94 77 123 4567).');
+            setSuccessMsg('');
+            setLoading(false);
+            return;
+        }
+
         setError('');
         setSuccessMsg('');
         try {
@@ -333,7 +341,7 @@ function LoginContent() {
                                     </div>
                                     <div className="relative group">
                                         <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
-                                        <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                        <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
                                     </div>
                                 </div>
                                 <div className="relative group">

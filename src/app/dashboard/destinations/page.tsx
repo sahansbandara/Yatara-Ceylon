@@ -12,8 +12,8 @@ export default async function DestinationsPage() {
 
     const totalDestinations = destinations.length;
     const publishedCount = destinations.filter((d: any) => d.isPublished).length;
-    const withImagesCount = destinations.filter((d: any) => d.heroImage || (d.gallery && d.gallery.length > 0)).length;
-    const missingImagesCount = destinations.filter((d: any) => !d.heroImage && (!d.gallery || d.gallery.length === 0)).length;
+    const withImagesCount = destinations.filter((d: any) => d.heroImage || (d.images && d.images.length > 0) || (d.gallery && d.gallery.length > 0)).length;
+    const missingImagesCount = destinations.filter((d: any) => !d.heroImage && (!d.images || d.images.length === 0) && (!d.gallery || d.gallery.length === 0)).length;
 
     return (
         <div className="flex flex-col gap-6">

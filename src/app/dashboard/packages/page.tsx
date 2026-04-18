@@ -15,7 +15,7 @@ export default async function PackagesPage() {
     const publishedCount = packages.filter((p: any) => p.isPublished).length;
     const draftCount = packages.filter((p: any) => !p.isPublished).length;
     const featuredCount = packages.filter((p: any) => p.isFeatured).length;
-    const zeroPriceCount = packages.filter((p: any) => !p.price || p.price === 0).length;
+    const zeroPriceCount = packages.filter((p: any) => (!p.price || p.price === 0) && (!p.priceMin || p.priceMin === 0)).length;
 
     return (
         <div className="flex flex-col gap-6">
