@@ -2,6 +2,9 @@ import { Metadata } from 'next';
 import InquireForm from '@/components/public/InquireForm';
 import { Shield, Clock, MessageCircle } from 'lucide-react';
 
+import { transferProducts } from '@/data/transfers';
+import SignatureRouteCard from '@/components/public/transfers/SignatureRouteCard';
+
 export const metadata: Metadata = {
     title: 'Request a Curated Proposal | Yatara Ceylon',
     description: 'Tell us your travel vision and our Sri Lanka concierge team will craft a fully bespoke itinerary within 2 hours. Private transfers, handpicked stays, 24/7 support.',
@@ -26,7 +29,7 @@ const promises = [
 ];
 
 interface InquirePageProps {
-    searchParams: Promise<{ type?: string; journey?: string }>;
+    searchParams: Promise<{ type?: string; journey?: string; pickup?: string; dropoff?: string; date?: string; passengers?: string }>;
 }
 
 export default async function InquirePage({ searchParams }: InquirePageProps) {
@@ -35,6 +38,43 @@ export default async function InquirePage({ searchParams }: InquirePageProps) {
     const journeySlug = params.journey || '';
 
     const isConcierge = inquiryType === 'concierge';
+    const isSearch = !!(params.pickup || params.dropoff || params.passengers || params.date);
+
+    let matchedRoutes: typeof transferProducts = [];
+
+    if (isSearch || params.type === 'one-way' || params.type === 'round-trip') {
+        const searchPickup = params.pickup?.toLowerCase() || '';
+        const searchDropoff = params.dropoff?.toLowerCase() || '';
+        const searchPax = params.passengers ? parseInt(params.passengers) : 1;
+
+        // Strict match first
+        matchedRoutes = transferProducts.filter(t => {
+            const matchesPickup = searchPickup ? t.pickupLabel.toLowerCase().includes(searchPickup) || t.title.toLowerCase().includes(searchPickup) : true;
+            const matchesDropoff = searchDropoff ? t.dropoffLabel.toLowerCase().includes(searchDropoff) || t.title.toLowerCase().includes(searchDropoff) : true;
+            const matchesCapacity = t.passengerCapacity >= searchPax;
+
+            // if neither pickup nor dropoff is provided, just matching capacity is not enough to consider it a "strict" match unless we want all.
+            // But if it's a search, we assume they passed something.
+            return matchesPickup && matchesDropoff && matchesCapacity;
+        });
+
+        // Loose match fallback (just pickup or dropoff)
+        if (matchedRoutes.length === 0 && (searchPickup || searchDropoff)) {
+            matchedRoutes = transferProducts.filter(t => {
+                const matchesPickup = searchPickup ? t.pickupLabel.toLowerCase().includes(searchPickup) || t.title.toLowerCase().includes(searchPickup) : false;
+                const matchesDropoff = searchDropoff ? t.dropoffLabel.toLowerCase().includes(searchDropoff) || t.title.toLowerCase().includes(searchDropoff) : false;
+                const matchesCapacity = t.passengerCapacity >= searchPax;
+                return (matchesPickup || matchesDropoff) && matchesCapacity;
+            });
+        }
+
+        // Capacity match fallback
+        if (matchedRoutes.length === 0) {
+            matchedRoutes = transferProducts.filter(t => t.passengerCapacity >= searchPax);
+        }
+
+        matchedRoutes = matchedRoutes.slice(0, 3);
+    }
 
     return (
         <div className="min-h-screen bg-gray-50/50 pt-24 pb-20">
@@ -42,20 +82,51 @@ export default async function InquirePage({ searchParams }: InquirePageProps) {
                 {/* Header */}
                 <div className="mb-16 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
                     <span className="inline-block py-1 px-4 text-xs tracking-[0.2em] uppercase font-medium text-antique-gold border border-antique-gold/30 mb-6 bg-deep-emerald/5">
-                        {isConcierge ? 'Personal Concierge' : 'Concierge Services'}
+                        {isConcierge ? 'Personal Concierge' : isSearch ? 'Matched Transfer Options' : 'Concierge Services'}
                     </span>
                     <h1 className="text-4xl md:text-5xl font-serif text-deep-emerald mb-4">
-                        {isConcierge ? 'Speak to a Designer' : 'Request a Curated Proposal'}
+                        {isConcierge ? 'Speak to a Designer' : isSearch ? 'Your Travel Options' : 'Request a Curated Proposal'}
                     </h1>
                     <p className="text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
                         {isConcierge
                             ? 'Connect directly with a travel designer who will guide your journey from the first conversation.'
-                            : 'Tailored journeys. Private transfers. 24/7 concierge.'}
+                            : isSearch 
+                                ? 'We found these premium routes based on your search. Fill the form below to confirm.'
+                                : 'Tailored journeys. Private transfers. 24/7 concierge.'}
                     </p>
                     <p className="text-antique-gold text-xs tracking-[0.15em] uppercase mt-4 font-medium">
                         Reply within 2 hours · No obligation · Fully bespoke
                     </p>
                 </div>
+
+                {isSearch && matchedRoutes.length > 0 && (
+                    <div className="mb-16">
+                        <div className="flex items-center justify-between mb-8">
+                            <h2 className="text-2xl font-serif text-deep-emerald">Recommended for You</h2>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                            {matchedRoutes.map((route) => (
+                                <SignatureRouteCard
+                                    key={route.slug}
+                                    from={route.pickupLabel}
+                                    to={route.dropoffLabel}
+                                    title={route.title}
+                                    slug={route.slug}
+                                    transferType={route.transferType}
+                                    duration={route.duration}
+                                    distance={`${route.distanceKm} km`}
+                                    startingPriceLkr={route.startingPriceLkr}
+                                    vehicleTier={
+                                        route.vehicleTierRecommended.charAt(0).toUpperCase() +
+                                        route.vehicleTierRecommended.slice(1)
+                                    }
+                                    includes={['Meet & greet', 'Private chauffeur', 'Bottled water']}
+                                    image={route.heroImage}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
                     {/* Left: Concierge Promise */}
@@ -99,7 +170,7 @@ export default async function InquirePage({ searchParams }: InquirePageProps) {
 
                     {/* Right: Form */}
                     <div className="lg:col-span-3">
-                        <InquireForm inquiryType={inquiryType} journeySlug={journeySlug} />
+                        <InquireForm inquiryType={isSearch ? 'transfer' : inquiryType} journeySlug={journeySlug} />
                     </div>
                 </div>
             </div>

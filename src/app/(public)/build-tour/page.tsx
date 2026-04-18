@@ -30,7 +30,7 @@ export default async function BuildTourPage({
 
             {/* 3. Main planner — the star of the page */}
             <div id="planner" className="w-full">
-                <BuildTourClient />
+                <BuildTourClient initialPlanId={planId} />
             </div>
 
             {/* 4. How it works — 3-step strip */}

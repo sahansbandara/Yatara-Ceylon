@@ -31,34 +31,34 @@ export default function TransfersTeaser() {
     const { currency, convertRate } = useCurrency();
 
     return (
-        <section className="relative w-full overflow-hidden py-28 md:py-40 bg-[#043927]">
-            {/* Background Image */}
-            <div className="absolute inset-0 z-0">
-                <Image
-                    src="/images/transfers/transfers-teaser-bg.webp"
-                    alt="Luxury Fleet Transfers"
-                    fill
-                    className="object-cover object-center opacity-25 mix-blend-luminosity transform scale-105"
-                    quality={100}
-                    priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#021810] via-transparent to-[#021810]" />
-                <div className="absolute inset-0 bg-black/40" />
-            </div>
+        <section className="relative w-full overflow-hidden py-28 md:py-40 bg-[#E3EFE9] text-deep-emerald">
+            {/* Background Pattern Overlay */}
+            <div
+                className="absolute inset-0 z-0 opacity-30 pointer-events-none mix-blend-multiply"
+                style={{
+                    backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                    backgroundSize: '400px',
+                    backgroundPosition: 'top left',
+                    backgroundRepeat: 'repeat'
+                }}
+            />
+            {/* Subtle background accents */}
+            <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-antique-gold/[0.03] rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-deep-emerald/[0.02] rounded-full blur-3xl" />
 
             <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative z-10">
                 {/* ─── Section heading ─── */}
                 <div className="text-center mb-8">
-                    <span className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-antique-gold/20 bg-black/20 backdrop-blur-md text-[10px] sm:text-xs tracking-[0.25em] font-nav text-antique-gold uppercase mb-6">
-                        <span className="w-1.5 h-1.5 rounded-full bg-antique-gold animate-pulse" />
+                    <span className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-deep-emerald/20 bg-white/50 backdrop-blur-md text-[10px] sm:text-xs tracking-[0.25em] font-nav text-deep-emerald uppercase mb-6 shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-deep-emerald animate-pulse" />
                         Private Transfers
                     </span>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-display text-white mt-4 mb-6 leading-tight font-bold">
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-display text-deep-emerald mt-4 mb-6 leading-[1.1] font-bold">
                         Seamless Ground Transport{' '}
                         <br className="hidden md:block" />
-                        <span className="italic text-antique-gold font-serif font-normal">Across Sri Lanka</span>
+                        <span className="italic font-light">Across Sri Lanka</span>
                     </h2>
-                    <p className="text-base md:text-lg font-nav text-white/70 tracking-wide max-w-2xl mx-auto leading-relaxed font-light">
+                    <p className="text-base md:text-lg font-light text-gray-500 tracking-wide max-w-2xl mx-auto leading-relaxed">
                         Airport arrivals, intercity routes, and chauffeured day use — each transfer is designed for
                         comfort, punctuality, and privacy.
                     </p>
@@ -71,10 +71,10 @@ export default function TransfersTeaser() {
                         return (
                             <div
                                 key={pill.label}
-                                className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
+                                className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md border border-deep-emerald/10 shadow-sm rounded-full hover:bg-white transition-colors"
                             >
-                                <Icon className="w-3.5 h-3.5 text-antique-gold" />
-                                <span className="text-white/70 text-[11px] font-nav font-medium tracking-wide">
+                                <Icon className="w-3.5 h-3.5 text-deep-emerald" />
+                                <span className="text-deep-emerald/80 text-[11px] font-nav font-semibold tracking-wide uppercase">
                                     {pill.label}
                                 </span>
                             </div>
@@ -166,14 +166,14 @@ export default function TransfersTeaser() {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                     <Link
                         href="/transfers"
-                        className="inline-flex items-center gap-3 px-10 py-4 bg-antique-gold text-deep-emerald font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:bg-antique-gold/90 transition-all duration-300"
+                        className="inline-flex items-center gap-3 px-10 py-4 bg-deep-emerald text-white font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:bg-antique-gold hover:text-deep-emerald transition-all duration-300 shadow-md hover:shadow-lg"
                     >
                         Explore All Transfer Services
                         <ArrowRight className="w-4 h-4" />
                     </Link>
                     <Link
                         href="/vehicles"
-                        className="inline-flex items-center gap-2 px-10 py-4 border border-antique-gold/30 text-antique-gold font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:border-antique-gold hover:bg-antique-gold/5 transition-all duration-300"
+                        className="inline-flex items-center gap-2 px-10 py-4 border border-deep-emerald/30 text-deep-emerald font-nav font-semibold uppercase tracking-[0.15em] text-sm rounded-lg hover:border-deep-emerald hover:bg-deep-emerald/5 transition-all duration-300"
                     >
                         View Fleet
                     </Link>

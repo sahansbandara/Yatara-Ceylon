@@ -110,6 +110,8 @@
 - Archive/Restore Center: API pattern uses `Promise.all()` to query all collections with `{ isDeleted: true }`, merges results with `collectionName` tag, sorts by `deletedAt` descending. Action route uses a `modelMap` object to resolve collection name to Mongoose model.
 - Soft delete pattern: Set `isDeleted: true` + `deletedAt: new Date()` on DELETE. Restore = `$set: { isDeleted: false }, $unset: { deletedAt: "" }`. Permanent delete = `findByIdAndDelete(id)`.
 - All active-record queries must filter `{ isDeleted: false }` or `{ isDeleted: { $ne: true } }` to exclude soft-deleted items.
+- Trust bar / promise strip pattern: Use ultra-thin `py-4 lg:py-6` sections with `bg-white` and `border-y border-deep-emerald/5`. Items arranged in horizontal `flex-row` with icon left + text right. Icons in `w-8 h-8` rounded-full containers with `border-antique-gold/20`. Text uses `font-serif text-[15px]` for value and `text-[8px] tracking-[0.15em] uppercase` for label. User strongly prefers minimal vertical height for informational trust sections.
+- Transfer page component architecture: `TransfersHero` (cinematic hero + booking strip), `TransferCategoryGrid` (5 category cards), `FadeIn` (animation wrapper using framer-motion), `BookingStrip` (inline booking form), `FleetTierCard` (vehicle tier cards), `SignatureRouteCard` (route cards with pricing). All in `src/app/(public)/transfers/_components/` or `src/components/public/transfers/`.
 
 ---
 
@@ -201,21 +203,22 @@
 
 ## Last Session
 
-**Date**: 2026-04-18
+**Date**: 2026-04-19
 
 **What was done**:
-1. Completed final multi-stage PayHere payment ledger, bridging initial deposits via PayHere, and follow-up Admin collections + refunds via `PaymentService.recalculateBookingFinance()`.
-2. Brought down PayHere verification lag UI polling loops from 40 seconds to 7.5 seconds for manual Sandbox bypass.
-3. Isolated local URL issues affecting real Vercel hosted callbacks and notified User of EXACT mandatory Vercel env keys needed (`NEXT_PUBLIC_APP_URL`, `PAYHERE_APP_ID`, `PAYHERE_MERCHANT_SECRET_PROD`, `PAYHERE_APP_SECRET`).
-4. Enhanced the public Booking Request page with auto-calculating `Date To` (read-only for packages) and dynamic passenger-based price multiplication. Re-ordered the layout to push the price summary below the form.
-5. Successfully migrated database package prices globally to drop the trailing zero (e.g., 245,000 to 24,500 LKR). All `priceMin`, `priceMax`, `price`, `originalPrice` fields were updated and seed scripts were corrected.
+1. Rebuilt the `/transfers` page with a full premium redesign: new `TransfersHero` component, `TransferCategoryGrid`, `FadeIn` animation wrapper, `BookingStrip`, `FleetTierCard`, and `SignatureRouteCard` components.
+2. Redesigned "What's Included" (Premium Promises) section — flattened from a full-screen dark section into an ultra-thin, elegant 6-column trust bar on white background with hover-reveal descriptions.
+3. Redesigned "Trust Strip" section — replaced heavy dark metallic glassmorphism box with a minimalist horizontal layout using 4 distinct icons (`ShieldCheck`, `Headphones`, `Car`, `Star`) side-by-side with text in a single thin row.
+4. Provided image generation specs (folder paths, filenames, 3:2 aspect ratio, photorealistic prompts) for 4 "How It Works" images — user generates manually.
+5. Polished `FleetTierCard`, `SignatureRouteCard`, `BookingStrip`, `HowItWorks`, `TransfersTeaser`, `Footer`, and `Inquire` page to align with the new transfer page architecture.
 
 **Current state**:
-- `yataraceylon.me` production requires updated `.env` mirroring of local before PayHere Webhooks confirm natively.
-- Admin dashboards for Collections/Balances are 100% active.
-- Public booking forms correctly calculate dynamic totals per `pax` (number of passengers).
-- Package catalog globally displays correctly adjusted prices (divided by 10).
+- `/transfers` page fully rebuilt with premium sections: Hero → BookingStrip → Premium Promises → Transfer Categories → Signature Routes → Fleet Tiers → How It Works → Trust Strip → FAQ → CTA.
+- Trust Strip and Premium Promises are ultra-thin "trust bar" style sections.
+- 4 process images pending user generation at `public/images/transfers/process-{1-4}.webp`.
+- All transfer data lives in `src/data/transfers.ts` (static, no DB dependency).
 
 **What to do next**:
-- Await test cases driven by exact Vercel Environment key parity.
-- Provide any last minute UI tweaks needed on `.md` file layouts or Payment UI responses.
+- User to generate 4 "How It Works" images using provided prompts and place in `public/images/transfers/`.
+- Cross-browser QA on the newly slimmed-down trust sections (mobile responsiveness).
+- Continue any remaining UI polish requests from user.

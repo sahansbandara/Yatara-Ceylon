@@ -17,7 +17,7 @@ const BuildTourMap = dynamic<BuildTourMapProps>(() => import('./BuildTourMap'), 
     )
 });
 
-export default function BuildTourClient() {
+export default function BuildTourClient({ initialPlanId }: { initialPlanId?: string }) {
     // ── Global Planner State ──────────────────────────────────
     const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
     const [hoveredDistrictId, setHoveredDistrictId] = useState<string | null>(null);
@@ -26,6 +26,43 @@ export default function BuildTourClient() {
     const [routeVisible, setRouteVisible] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const router = useRouter();
+
+    // Reopen an existing plan if initialPlanId is provided
+    useEffect(() => {
+        if (!initialPlanId) return;
+
+        const loadSavedPlan = async () => {
+            try {
+                const res = await fetch(`/api/plans?id=${initialPlanId}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const plan = data.plan;
+
+                if (plan && plan.days) {
+                    let stops: JourneyStop[] = [];
+                    let placeIds: string[] = [];
+                    let order = 0;
+                    plan.days.forEach((d: any) => {
+                        d.places.forEach((placeId: string) => {
+                            stops.push({
+                                id: `stop-${Date.now()}-${order}`,
+                                placeId,
+                                day: d.dayNo,
+                                order: order++,
+                            });
+                            placeIds.push(placeId);
+                        });
+                    });
+                    setJourneyStops(stops);
+                    setSelectedPlaceIds(placeIds);
+                }
+            } catch (err) {
+                console.error('Failed to load saved plan', err);
+            }
+        };
+
+        loadSavedPlan();
+    }, [initialPlanId]);
 
     const handleSaveDraft = async () => {
         setIsSaving(true);
