@@ -87,7 +87,7 @@ const navLinks = [
                     { href: '/transfers', label: 'Transfers Overview' },
                     { href: '/transfers/colombo-airport-to-colombo-city', label: 'Airport to Colombo' },
                     { href: '/transfers/colombo-airport-to-kandy', label: 'Airport to Kandy' },
-                    { href: '/transfers/colombo-to-galle', label: 'Colombo to Galle' },
+                    { href: '/transfers/colombo-to-galle-fort', label: 'Colombo to Galle' },
                 ]
             },
             {
@@ -95,7 +95,7 @@ const navLinks = [
                 links: [
                     { href: '/transfers/kandy-to-nuwara-eliya', label: 'Kandy to Nuwara Eliya' },
                     { href: '/transfers/nuwara-eliya-to-ella', label: 'Nuwara Eliya to Ella' },
-                    { href: '/transfers/yala-to-tangalle', label: 'Yala to Tangalle' },
+                    { href: '/transfers/ella-to-yala', label: 'Ella to Yala' },
                 ]
             }
         ]
@@ -105,21 +105,21 @@ const navLinks = [
         label: 'BESPOKE TOUR',
         dropdown: [
             {
-                title: 'Custom Travel',
+                title: 'Popular Tour Plans',
                 links: [
-                    { href: '/build-tour', label: 'Build Your Tour' },
-                    { href: '/build-tour/how-it-works', label: 'How It Works' },
-                    { href: '/build-tour/proposal', label: 'Proposal in 24 Hours' },
+                    { href: '/packages/luxury-sri-lanka-in-10-days', label: 'Luxury Sri Lanka In 10 Days' },
+                    { href: '/packages/wildlife-safari-adventure', label: 'Wildlife Safari Adventure' },
+                    { href: '/packages/ramayana-trail-deluxe', label: 'Ramayana Trail Deluxe' },
+                    { href: '/packages/adventure-and-highlands', label: 'Adventure & Highlands' },
                 ]
             },
             {
-                title: 'Signature Regions',
+                title: 'Signature Experiences',
                 links: [
-                    { href: '/destinations?region=cultural-triangle', label: 'Cultural Triangle' },
-                    { href: '/destinations?region=tea-highlands', label: 'Tea Highlands' },
-                    { href: '/destinations?region=south-coast', label: 'South Coast' },
-                    { href: '/destinations?region=wildlife-safari', label: 'Wildlife & Safari' },
-                    { href: '/build-tour', label: 'Explore all →', special: true },
+                    { href: '/packages/artisan-in-travel-curating-luxury', label: 'Artisan in Travel' },
+                    { href: '/packages/curating-your-healing-journey', label: 'Curating Your Healing Journey' },
+                    { href: '/packages/escape-the-ordinary', label: 'Escape the Ordinary' },
+                    { href: '/packages/honeymoon-private-villa-experiences', label: 'Honeymoon Private Villa' },
                 ]
             }
         ]

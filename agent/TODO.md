@@ -169,29 +169,43 @@ Production Readiness — final QA pass and polish before go-live
 - [x] Added `<Suspense>` wrapper to `DestinationsPage` for `useSearchParams()` compatibility.
 - [x] Updated all agent MD files and pushed to GitHub.
 
+## Just Completed (2026-04-19 - Session 3)
+### Transfer Detail Page Premium Redesign
+- [x] Redesigned `/transfers/[slug]` detail pages with luxury liquid-glass aesthetics (glassmorphic cards, gold glow borders, premium chips).
+- [x] Refactored transfer detail page layout to match journey package 2-column sidebar design (sticky booking card, bespoke CTA, upgrade options).
+
+### Navbar Link Fixes
+- [x] Fixed broken `colombo-to-galle` link → corrected to `colombo-to-galle-fort`.
+- [x] Replaced non-existent `yala-to-tangalle` → `ella-to-yala`.
+- [x] Replaced "Bespoke Tour" dropdown columns — removed non-existent "How It Works", "Proposal in 24 Hours", and "Signature Regions".
+- [x] Added "Popular Tour Plans" column (Luxury Sri Lanka In 10 Days, Wildlife Safari Adventure, Ramayana Trail Deluxe, Adventure & Highlands).
+- [x] Added "Signature Experiences" column (Artisan in Travel, Curating Your Healing Journey, Escape the Ordinary, Honeymoon Private Villa).
+- [x] Fixed broken `ceylon-grand-circuit` link → replaced with `luxury-sri-lanka-in-10-days`.
+- [x] Updated all agent MD files and pushed to GitHub.
+
 ---
 
 ## Last Session
-**Date**: 2026-04-19 (Session 2)
+**Date**: 2026-04-19 (Session 3)
 **What was done**:
-- Redesigned transfers FAQ section as a clean 2-column glassmorphic accordion grid.
-- Fixed navbar journey filter links not syncing with JourneysGrid component state.
-- Fixed navbar destination region filter links not syncing with DestinationsPage state.
+- Redesigned transfer detail pages with premium liquid-glass aesthetics and 2-column sidebar layout.
+- Fixed broken navbar transfer links (colombo-to-galle, yala-to-tangalle).
+- Replaced Bespoke Tour dropdown with real package links in two columns: Popular Tour Plans + Signature Experiences.
+- Fixed broken ceylon-grand-circuit link.
 - Updated agent docs and pushed all changes to GitHub.
 
 **What to do next**:
 - User to generate 4 "How It Works" images using provided prompts and place in `public/images/transfers/`.
-- Cross-browser QA on the FAQ section and navbar filter flows.
+- Cross-browser QA on transfer detail pages and bespoke tour dropdown.
 - Continue any remaining UI polish requests.
 
 **Current state**:
 - Branch: `main`
-- All navbar filter navigation working correctly.
-- Transfers FAQ uses 2-column glassmorphic grid.
-- 4 process images still pending user generation.
+- All navbar dropdown links point to valid, existing pages.
+- Transfer detail pages match journey package layout.
+- Bespoke Tour dropdown shows real pre-built packages.
 
 **Files changed (This Session)**:
-- `src/app/(public)/transfers/page.tsx` — FAQ section redesign + Image import fix
-- `src/components/public/JourneysGrid.tsx` — Added useEffect sync for style/duration filters
-- `src/app/(public)/destinations/page.tsx` — Added useSearchParams + Suspense for region filter sync
+- `src/app/(public)/transfers/[slug]/page.tsx` — Premium redesign + 2-column sidebar layout
+- `src/components/layout/Navbar.tsx` — Fixed transfer links + Bespoke Tour dropdown overhaul
 

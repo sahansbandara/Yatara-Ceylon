@@ -206,21 +206,22 @@
 
 ## Last Session
 
-**Date**: 2026-04-19 (Session 2)
+**Date**: 2026-04-19 (Session 3)
 
 **What was done**:
-1. Redesigned the `/transfers` FAQ section — replaced copy-pasted PremiumStory layout with a fresh 2-column grid of glassmorphic accordion items using native `<details>`/`<summary>` with `Plus`/`Minus` icons, light green pattern background (`bg-[#E3EFE9]`), and blur orbs.
-2. Fixed `Image is not defined` runtime error on transfers page by adding missing `import Image from 'next/image'`.
-3. Fixed navbar journey filter links not working — `JourneysGrid` component now syncs `selectedStyle` and `selectedDuration` state with URL props via `useEffect` hooks.
-4. Fixed navbar destination region filter links not working — `DestinationsPage` now reads `?region=` search params via `useSearchParams()`, normalizes slug format (`hill-country` → `Hill Country`), and sets `activeRegion` state. Added required `<Suspense>` wrapper.
+1. Redesigned `/transfers/[slug]` detail pages with luxury liquid-glass aesthetics — added glassmorphic route overview cards, vehicle tier cards with gold glow borders, and premium inclusion chips.
+2. Refactored transfer detail page layout to match the journey package 2-column sidebar design (sticky booking card, bespoke CTA, upgrade options sidebar).
+3. Fixed broken navbar transfer links — replaced `colombo-to-galle` with correct slug `colombo-to-galle-fort`, replaced non-existent `yala-to-tangalle` with `ella-to-yala`.
+4. Replaced "Bespoke Tour" dropdown — removed non-existent "How It Works" and "Proposal in 24 Hours" links and "Signature Regions" column. Replaced with "Popular Tour Plans" (Luxury Sri Lanka In 10 Days, Wildlife Safari Adventure, Ramayana Trail Deluxe, Adventure & Highlands) and "Signature Experiences" (Artisan in Travel, Curating Your Healing Journey, Escape the Ordinary, Honeymoon Private Villa).
+5. Fixed broken `ceylon-grand-circuit` link (page not found) — replaced with `luxury-sri-lanka-in-10-days`.
 
 **Current state**:
-- `/transfers` FAQ section is a clean 2-column grid with light green pattern background.
-- Navbar "By Style" and "By Duration" dropdown links correctly filter the `/packages` journeys grid.
-- Navbar "By Region" and "Top Places" destination links correctly filter the `/destinations` grid.
+- Transfer detail pages have premium 2-column sidebar layout matching journey packages.
+- All navbar dropdown links point to valid, existing pages.
+- "Bespoke Tour" dropdown shows real pre-built packages instead of placeholder links.
 - All changes build successfully.
 
 **What to do next**:
 - User to generate 4 "How It Works" images using provided prompts and place in `public/images/transfers/`.
-- Cross-browser QA on the FAQ section and navbar filter flows.
+- Cross-browser QA on transfer detail pages and bespoke tour dropdown.
 - Continue any remaining UI polish requests from user.

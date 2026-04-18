@@ -142,6 +142,12 @@ Surface clearly: meet & greet, flight tracking, free waiting time, bottled water
 - [x] Navbar destination filter links (By Region, Top Places) correctly sync with DestinationsPage
 - [x] DestinationsPage wrapped in Suspense for useSearchParams compatibility
 
+## UI Polish (2026-04-19 - Session 3)
+- [x] Transfer detail pages redesigned with liquid-glass aesthetics and 2-column sidebar layout matching journey packages
+- [x] Fixed broken navbar transfer links (colombo-to-galle, yala-to-tangalle)
+- [x] Bespoke Tour dropdown updated — removed placeholder links, added "Popular Tour Plans" and "Signature Experiences" with real package routes
+- [x] Fixed broken ceylon-grand-circuit package link
+
 ---
 
 # Risks
