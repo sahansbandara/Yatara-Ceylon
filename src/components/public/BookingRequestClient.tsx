@@ -269,8 +269,16 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                                     onChange={e => {
                                         const fromDateStr = e.target.value;
                                         let toDateStr = form.dates.to;
-                                        if (pkg && pkg.durationDays && fromDateStr) {
-                                            const daysToAdd = Math.max(0, pkg.durationDays - 1);
+                                        
+                                        // Attempt to find duration days
+                                        let dDays = pkg?.durationDays;
+                                        if (pkg && !dDays && pkg.duration) {
+                                            const match = pkg.duration.match(/^(\d+)\s+Day/i);
+                                            if (match) dDays = parseInt(match[1], 10);
+                                        }
+
+                                        if (pkg && dDays && fromDateStr) {
+                                            const daysToAdd = Math.max(0, dDays - 1);
                                             const fromDateObj = new Date(fromDateStr);
                                             if (!isNaN(fromDateObj.getTime())) {
                                                 fromDateObj.setDate(fromDateObj.getDate() + daysToAdd);
