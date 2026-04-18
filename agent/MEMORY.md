@@ -49,6 +49,7 @@
 - [2026-04-02] After pushing commit `19dc2f1` to `main`, Vercel’s Git-connected production deployment `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` went `Ready` and `https://www.yataraceylon.me/api/bookings?limit=5` returned seeded booking data successfully. The missing-schema fix is confirmed live.
 - [2026-04-02] Vercel production uses the seeded `toms` database and currently contains `36` non-deleted bookings, `31` users, and `4` invoices. The blank bookings dashboard was caused by `/api/bookings` crashing with `MissingSchemaError`, not by missing seed data.
 - [2026-04-02] Production smoke testing showed the finance dashboard's "Outstanding Balances" panel is still ranked purely by `remainingBalance DESC`, which hides nearer operational demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` behind older high-balance records. For operator follow-up panels, prioritize actionable current bookings over raw historical debt size.
+- [2026-04-18] GitHub raw content URLs (e.g., `raw.githubusercontent.com`) for `.mp4` video elements return `text/plain` lacking correct MIME types, causing HTML5 videos to break or fail playing when directly embedded. Repositories changing from public to private instantly return 404s breaking the application externally. → Always serve static background looping videos locally from the `/public` directory (e.g. `src="/Hero-Section.mp4"`) to ensure reliability regardless of GitHub repository visibility.
 
 ---
 

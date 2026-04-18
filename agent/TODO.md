@@ -134,29 +134,38 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
+## Just Completed (2026-04-18 - Session 5)
+### Video Assets & Reliability
+- [x] Swapped `raw.githubusercontent.com` public URLs for local `/Hero-Section.mp4` paths in `HeroSection`, `PaymentConfirmingClient`, and `Auth/Login` Page to permanently fix video loops.
+### My Booking UX & Drafts
+- [x] Replaced the native `window.confirm` modal on User Cancellations with a branded, custom built modern sleek Modal to bypass Vercel INP lag locking.
+- [x] Engineered the `Save Draft` feature inside the Bespoke Tour Planner to communicate with `/api/plans`, capture custom regions properly, and securely bind custom trip blueprints to accounts.
+### Admin Refund Visibility
+- [x] Added `REFUND_PENDING` badge widgets explicitly exposing awaiting cancellations front-and-center inside the Admin Bookings Dashboard.
+- [x] Added specialized `Pending Refunds` glass panels into the Finance Dashboard for streamlined accounting operations.
+
+---
+
 ## Last Session
 **Date**: 2026-04-18
 **What was done**:
-- Refactored the PayHere `PaymentConfirmingClient` UX to fail gracefully and allow manual override during test scenarios (localhost).
-- Built central `PaymentService.recalculateBookingFinance()` allowing exact reconciliation of net paid amounts vs total cost.
-- Fixed UI hover inconsistencies on the Archive and Vehicles pages.
-- Fixed 404 on the Dashboard pending partner requests link.
-- Implemented and wired up automated email notifications when responding to support tickets!
+- Fixed video assets by referencing them locally instead of GitHub raw content endpoints.
+- Developed polished React Modals for `Cancel Booking` to avert main-thread locking.
+- Completed the `Save Draft` bespoke architecture to push draft planner configs to the backend.
+- Added deep Admin visibility metrics pointing exactly to how many `REFUND_PENDING` statuses need attention.
 
 **What to do next**:
 - The user is checking if their production Vercel `.env` instances fully replicate `.env.local` to securely unlock Webhooks.
-- Verify production audit CSV exports against local test data.
+- Final verifications on production.
 
 **Current state**:
 - Branch: `main`
-- PayHere ledger handles `ADVANCE_PAID`, `BALANCE_PENDING`, and refunds properly.
-- Full Invoice lifecycle (Create, Edit, Delete, Finalize, Void) is complete.
-- Financial exports are functional.
-- Support tickets now trigger direct email alerts to users dynamically.
+- All background videos play reliably regardless of repository visibility.
+- Draft Custom plans post seamlessly to `/api/plans`.
+- Bookings gracefully manage `REFUND_PENDING` cancellations through to finance actioning.
 
 **Files changed (This Session)**:
-- `src/app/dashboard/archive/page.tsx`
-- `src/components/dashboard/VehicleTable.tsx`
-- `src/app/dashboard/page.tsx`
-- `src/lib/email.ts`
-- `src/app/api/tickets/[id]/route.ts`
+- `src/components/public/HeroSection.tsx`, `src/app/auth/login/page.tsx`, `src/app/payment/return/PaymentConfirmingClient.tsx`
+- `src/app/(public)/build-tour/_components/BuildTourClient.tsx`, `src/app/(public)/build-tour/_components/PlannerSidebar.tsx`
+- `src/components/dashboard/MyBookingsClient.tsx`
+- `src/app/dashboard/bookings/page.tsx`, `src/app/dashboard/finance/page.tsx`
