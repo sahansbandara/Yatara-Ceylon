@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const faqCategories = [
     {
@@ -80,32 +81,56 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="border-b border-deep-emerald/10 last:border-0">
+        <div className={`relative group border-b border-black/10 transition-colors duration-500 ${isOpen ? 'border-black/30' : 'hover:border-black/20'}`}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between py-5 text-left group"
+                className="w-full py-6 flex items-center text-left focus:outline-none"
             >
-                <span className="text-deep-emerald font-medium text-[15px] pr-4 group-hover:text-[#D4AF37] transition-colors">
-                    {question}
-                </span>
-                <ChevronDown
-                    className={`w-5 h-5 text-deep-emerald/40 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#D4AF37]' : ''}`}
-                />
+                <div className="flex-1 pr-6">
+                    <h3 className={`text-[15px] md:text-[17px] font-display transition-colors duration-500 leading-snug tracking-wide ${isOpen ? 'text-[#043927]' : 'text-[#2a2a2a] group-hover:text-black'} font-light`}>
+                        {question}
+                    </h3>
+                </div>
+
+                <div className="shrink-0 relative flex items-center justify-center w-6 h-6 transition-transform duration-500">
+                    <div className={`absolute transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] ${isOpen ? 'rotate-180 opacity-0 scale-50' : 'rotate-0 opacity-100 scale-100'}`}>
+                        <Plus className="w-4 h-4 text-black/40 font-light" strokeWidth={1} />
+                    </div>
+                    <div className={`absolute transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] ${isOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-180 opacity-0 scale-50'}`}>
+                        <Minus className="w-4 h-4 text-[#043927]" strokeWidth={1} />
+                    </div>
+                </div>
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pb-5' : 'max-h-0'}`}>
-                <p className="text-gray-500 font-light text-sm leading-relaxed">{answer}</p>
-            </div>
+            <AnimatePresence initial={false}>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                        <div className="pb-8 pr-12 pt-0">
+                            <p className="text-[#6a6a6a] font-sans font-light leading-[1.8] text-[13px] md:text-[14px]">
+                                {answer}
+                            </p>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
 
 export default function FAQPage() {
     return (
-        <div className="min-h-screen bg-off-white">
+        <div className="min-h-screen bg-[#F9F8F6]">
             {/* Hero Section */}
+            {/* To update this image realistically using 'generate_image', use a prompt like:
+                "A cinematic, high-end photography of a serene Sri Lankan tea plantation or ancient ruins covered in mist at dawn. Luxurious, calming atmosphere, deep rich greens."
+             */}
             <section className="relative h-[50vh] md:h-[60vh] overflow-hidden">
                 <Image
-                    src="/images/home/curated-kingdoms.png"
+                    src="/images/faq/faq-hero.webp"
                     alt="Frequently Asked Questions"
                     fill
                     className="object-cover"
@@ -128,15 +153,34 @@ export default function FAQPage() {
             </section>
 
             {/* FAQ Content */}
-            <section className="py-28">
-                <div className="max-w-4xl mx-auto px-4 md:px-8">
+            <section className="py-20 lg:py-28 relative overflow-hidden font-sans">
+                {/* Background Image */}
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                    <Image
+                        src="/images/backgrounds/elite-bg.webp"
+                        alt="Premium Background"
+                        fill
+                        className="object-cover opacity-30"
+                        quality={90}
+                    />
+                </div>
+
+                <div className="max-w-4xl mx-auto px-4 md:px-8 relative z-10">
                     {faqCategories.map((category, catIdx) => (
-                        <div key={catIdx} className="mb-16 last:mb-0">
-                            <div className="flex items-center gap-3 mb-6">
-                                <HelpCircle className="w-5 h-5 text-[#D4AF37]" strokeWidth={1.5} />
-                                <h2 className="text-2xl font-display text-deep-emerald">{category.category}</h2>
-                            </div>
-                            <div className="bg-white rounded-2xl border border-deep-emerald/5 shadow-sm px-6">
+                        <div key={catIdx} className="mb-24 lg:mb-32 last:mb-0">
+                            <motion.div
+                                initial={{ opacity: 0, y: 15 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.8 }}
+                                className="mb-8"
+                            >
+                                <h2 className="text-3xl md:text-4xl font-display text-[#043927] mb-4">
+                                    {category.category}
+                                </h2>
+                                <div className="w-16 h-px bg-[#D4AF37]/50" />
+                            </motion.div>
+                            <div className="w-full flex flex-col">
                                 {category.questions.map((faq, idx) => (
                                     <FAQItem key={idx} question={faq.q} answer={faq.a} />
                                 ))}
@@ -147,15 +191,26 @@ export default function FAQPage() {
             </section>
 
             {/* Still Have Questions */}
-            <section className="py-20 bg-deep-emerald">
-                <div className="max-w-3xl mx-auto px-4 md:px-8 text-center">
-                    <h2 className="text-3xl md:text-4xl font-display text-white mb-4">
+            <section className="py-20 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
+                {/* Background Pattern Overlay */}
+                <div
+                    className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-multiply"
+                    style={{
+                        backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                        backgroundSize: '400px',
+                        backgroundPosition: 'top left',
+                        backgroundRepeat: 'repeat'
+                    }}
+                />
+
+                <div className="max-w-3xl mx-auto px-4 md:px-8 text-center relative z-10">
+                    <h2 className="text-3xl md:text-4xl font-display text-deep-emerald mb-4">
                         Still Have Questions?
                     </h2>
-                    <p className="text-white/60 font-light mb-8">
+                    <p className="text-deep-emerald/70 font-light mb-8">
                         Our concierge team is available 24/7 to help you plan your perfect Sri Lankan journey.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
                         <Link
                             href="/contact"
                             className="inline-block px-8 py-3 rounded-full bg-[#D4AF37] text-[#0a1f15] text-sm tracking-[0.15em] font-semibold uppercase hover:bg-[#D4AF37]/90 transition-all shadow-lg"
@@ -164,7 +219,7 @@ export default function FAQPage() {
                         </Link>
                         <Link
                             href="/inquire"
-                            className="inline-block px-8 py-3 rounded-full border-2 border-white/30 text-white text-sm tracking-[0.15em] font-semibold uppercase hover:bg-white/10 transition-all"
+                            className="inline-block px-8 py-3 rounded-full border-2 border-deep-emerald/30 text-deep-emerald text-sm tracking-[0.15em] font-semibold uppercase hover:bg-deep-emerald/5 transition-all"
                         >
                             SEND AN INQUIRY
                         </Link>

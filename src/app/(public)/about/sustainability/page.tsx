@@ -62,7 +62,7 @@ export default function SustainabilityPage() {
             {/* Hero Section */}
             <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
                 <Image
-                    src="/images/home/signature-wildlife.png"
+                    src="/images/home/sustainability-hero.webp"
                     alt="Sustainable tourism in Sri Lanka"
                     fill
                     className="object-cover"
@@ -165,24 +165,29 @@ export default function SustainabilityPage() {
             </section>
 
             {/* CTA */}
-            <div className="relative h-[50vh] overflow-hidden">
-                <div className="absolute inset-0 bg-fixed bg-cover bg-center" style={{ backgroundImage: "url('/images/home/signature-ceylon.png')" }} />
-                <div className="absolute inset-0 bg-deep-emerald/30" />
-                <div className="relative z-10 flex items-center justify-center h-full">
-                    <div className="text-center">
-                        <p className="text-xs tracking-[0.4em] font-medium text-white/80 uppercase mb-4 drop-shadow-lg">
-                            Travel Responsibly
-                        </p>
-                        <h3 className="text-3xl md:text-5xl font-display text-white drop-shadow-lg mb-8">
-                            Journey with <span className="italic text-[#D4AF37]">Purpose</span>
-                        </h3>
-                        <Link
-                            href="/inquire"
-                            className="inline-block px-10 py-4 rounded-full bg-[#D4AF37] text-[#0a1f15] text-sm tracking-[0.2em] font-semibold uppercase hover:bg-[#D4AF37]/90 transition-all shadow-lg"
-                        >
-                            PLAN AN ECO TOUR
-                        </Link>
-                    </div>
+            <div className="relative py-8 md:py-12 w-full overflow-hidden flex items-center justify-center bg-[#E3EFE9]">
+                <div
+                    className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-multiply"
+                    style={{
+                        backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                        backgroundSize: '400px',
+                        backgroundPosition: 'top left',
+                        backgroundRepeat: 'repeat'
+                    }}
+                />
+                <div className="relative z-10 flex flex-col items-center justify-center px-6 text-center max-w-4xl mx-auto">
+                    <p className="inline-block mb-3 md:mb-4 text-xs md:text-sm tracking-[0.4em] font-medium text-[#D4AF37] uppercase drop-shadow-sm">
+                        Travel Responsibly
+                    </p>
+                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-serif text-deep-emerald font-normal leading-tight tracking-tight mb-8">
+                        Journey with <span className="italic font-light text-[#D4AF37]">Purpose</span>
+                    </h3>
+                    <Link
+                        href="/inquire"
+                        className="inline-block px-10 py-4 rounded-full bg-[#D4AF37] text-[#0a1f15] text-xs md:text-sm tracking-[0.2em] font-semibold uppercase hover:bg-[#D4AF37]/90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
+                    >
+                        PLAN AN ECO TOUR
+                    </Link>
                 </div>
             </div>
         </div>

@@ -148,22 +148,6 @@ const navLinks = [
             }
         ]
     },
-    {
-        href: '/guide',
-        label: 'GUIDE',
-        dropdown: [
-            {
-                title: 'Resources',
-                links: [
-                    { href: '/guide', label: 'Sri Lanka Guide' },
-                    { href: '/guide/best-time-to-visit', label: 'Best Time to Visit' },
-                    { href: '/guide/regions', label: 'Regions' },
-                    { href: '/guide/blog', label: 'Blog' },
-                    { href: '/guide', label: 'View all →', special: true },
-                ]
-            }
-        ]
-    },
 ];
 
 export function Navbar() {
@@ -339,7 +323,7 @@ export function Navbar() {
                             </span>
                         </Link>
 
-                        <NotificationBell userRole={user?.role} />
+                        {user && <NotificationBell userRole={user.role} />}
 
                         {user ? (
                             <div className="relative group flex items-center py-2 -my-2">

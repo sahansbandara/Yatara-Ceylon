@@ -2,58 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, Tag, ArrowRight } from 'lucide-react';
 
-const featuredArticle = {
-    title: 'Sri Lanka Named Top Travel Destination for 2026',
-    excerpt: 'Leading travel publications have recognised Sri Lanka as one of the must-visit destinations for 2026, citing its rich cultural heritage, diverse wildlife, and rapidly growing luxury tourism infrastructure.',
-    date: 'February 28, 2026',
-    category: 'Industry News',
-    image: '/images/home/curated-kingdoms.png',
-};
-
-const articles = [
-    {
-        title: 'Yatara Ceylon Launches New Wellness Tourism Division',
-        excerpt: 'Our new wellness brand combines traditional Ayurveda with modern luxury, offering curated retreat experiences across the island.',
-        date: 'February 20, 2026',
-        category: 'Company News',
-        image: '/images/cat-ayurvedic.png',
-    },
-    {
-        title: 'The Best Time to Visit Sri Lanka: A Season-by-Season Guide',
-        excerpt: 'Sri Lanka is a year-round destination, but timing your visit right can unlock unique experiences from whale migrations to cultural festivals.',
-        date: 'February 15, 2026',
-        category: 'Travel Tips',
-        image: '/images/cat-coastal.png',
-    },
-    {
-        title: 'New Luxury Train Experience Launches on Colombo-Kandy Route',
-        excerpt: 'A premium rail experience offering panoramic windows, gourmet dining, and heritage storytelling along one of Asia\'s most scenic railways.',
-        date: 'February 10, 2026',
-        category: 'Industry News',
-        image: '/images/cat-hillcountry.png',
-    },
-    {
-        title: '5 Hidden Gems in Sri Lanka Most Tourists Miss',
-        excerpt: 'Beyond Sigiriya and Ella — discover lesser-known treasures from secret waterfalls to untouched coastal villages.',
-        date: 'February 5, 2026',
-        category: 'Travel Tips',
-        image: '/images/home/heritage-story.png',
-    },
-    {
-        title: 'Yatara Ceylon Partners with Global Sustainability Initiative',
-        excerpt: 'We are proud to join the Global Sustainable Tourism Council, reinforcing our commitment to responsible and eco-conscious travel.',
-        date: 'January 28, 2026',
-        category: 'Sustainability',
-        image: '/images/home/signature-wildlife.png',
-    },
-    {
-        title: 'Sri Lanka\'s Culinary Renaissance: A Food Lover\'s Guide',
-        excerpt: 'From Michelin-quality restaurants in Colombo to ancestral recipes in village kitchens — Sri Lanka\'s food scene is booming.',
-        date: 'January 20, 2026',
-        category: 'Travel Tips',
-        image: '/images/home/signature-ceylon.png',
-    },
-];
+import { featuredArticle, articles } from '@/data/news';
 
 export default function NewsPage() {
     return (
@@ -61,7 +10,7 @@ export default function NewsPage() {
             {/* Hero Section */}
             <section className="relative h-[50vh] md:h-[60vh] overflow-hidden">
                 <Image
-                    src="/images/home/signature-ceylon.png"
+                    src="/images/news/news-hero.webp"
                     alt="News & Travel Insights"
                     fill
                     className="object-cover"
@@ -89,7 +38,7 @@ export default function NewsPage() {
             {/* Featured Article */}
             <section className="py-28">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
-                    <div className="group grid grid-cols-1 lg:grid-cols-2 gap-0 bg-white rounded-2xl overflow-hidden border border-deep-emerald/5 shadow-sm hover:shadow-xl transition-all duration-500">
+                    <Link href={`/news/${featuredArticle.slug}`} className="group grid grid-cols-1 lg:grid-cols-2 gap-0 bg-white rounded-2xl overflow-hidden border border-deep-emerald/5 shadow-sm hover:shadow-xl transition-all duration-500">
                         <div className="relative h-72 lg:h-auto overflow-hidden">
                             <Image
                                 src={featuredArticle.image}
@@ -117,7 +66,7 @@ export default function NewsPage() {
                                 READ MORE <ArrowRight className="w-4 h-4" />
                             </span>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             </section>
 
@@ -134,47 +83,60 @@ export default function NewsPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {articles.map((article, idx) => (
-                            <article key={idx} className="group rounded-2xl overflow-hidden bg-white border border-deep-emerald/5 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
-                                <div className="relative h-48 overflow-hidden">
-                                    <Image src={article.image} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                                    <div className="absolute top-4 left-4">
-                                        <span className="text-[10px] tracking-[0.1em] uppercase bg-[#D4AF37] text-[#0a1f15] font-semibold px-3 py-1 rounded-full">
-                                            {article.category}
+                            <Link href={`/news/${article.slug}`} key={idx} className="group rounded-2xl overflow-hidden bg-white border border-deep-emerald/5 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 block">
+                                <article>
+                                    <div className="relative h-48 overflow-hidden">
+                                        <Image src={article.image} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <div className="absolute top-4 left-4">
+                                            <span className="text-[10px] tracking-[0.1em] uppercase bg-[#D4AF37] text-[#0a1f15] font-semibold px-3 py-1 rounded-full">
+                                                {article.category}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="p-6">
+                                        <span className="text-xs text-gray-400 flex items-center gap-1 mb-3">
+                                            <Calendar className="w-3 h-3" /> {article.date}
+                                        </span>
+                                        <h3 className="text-lg font-display text-deep-emerald mb-2 leading-snug group-hover:text-[#D4AF37] transition-colors">
+                                            {article.title}
+                                        </h3>
+                                        <p className="text-gray-500 font-light text-sm leading-relaxed mb-4">{article.excerpt}</p>
+                                        <span className="text-xs tracking-[0.15em] uppercase text-[#D4AF37] font-semibold flex items-center gap-2 group-hover:gap-3 transition-all cursor-pointer">
+                                            READ MORE <ArrowRight className="w-3 h-3" />
                                         </span>
                                     </div>
-                                </div>
-                                <div className="p-6">
-                                    <span className="text-xs text-gray-400 flex items-center gap-1 mb-3">
-                                        <Calendar className="w-3 h-3" /> {article.date}
-                                    </span>
-                                    <h3 className="text-lg font-display text-deep-emerald mb-2 leading-snug group-hover:text-[#D4AF37] transition-colors">
-                                        {article.title}
-                                    </h3>
-                                    <p className="text-gray-500 font-light text-sm leading-relaxed mb-4">{article.excerpt}</p>
-                                    <span className="text-xs tracking-[0.15em] uppercase text-[#D4AF37] font-semibold flex items-center gap-2 group-hover:gap-3 transition-all cursor-pointer">
-                                        READ MORE <ArrowRight className="w-3 h-3" />
-                                    </span>
-                                </div>
-                            </article>
+                                </article>
+                            </Link>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* Newsletter CTA */}
-            <section className="py-20 bg-deep-emerald">
-                <div className="max-w-3xl mx-auto px-4 md:px-8 text-center">
-                    <h2 className="text-3xl md:text-4xl font-display text-white mb-4">
+            <section className="py-20 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
+                {/* Background Pattern Overlay */}
+                <div
+                    className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-multiply"
+                    style={{
+                        backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                        backgroundSize: '400px',
+                        backgroundPosition: 'top left',
+                        backgroundRepeat: 'repeat'
+                    }}
+                />
+                
+                <div className="max-w-3xl mx-auto px-4 md:px-8 text-center relative z-10">
+                    <h2 className="text-3xl md:text-4xl font-display text-deep-emerald mb-4">
                         Stay Inspired
                     </h2>
-                    <p className="text-white/60 font-light mb-8">
+                    <p className="text-deep-emerald/70 font-light mb-8">
                         Subscribe to our newsletter for exclusive travel insights, insider tips, and special offers from Yatara Ceylon.
                     </p>
                     <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                         <input
                             type="email"
                             placeholder="Enter your email"
-                            className="flex-1 px-5 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 font-light text-sm focus:outline-none focus:border-[#D4AF37] transition-colors"
+                            className="flex-1 px-5 py-3 rounded-full bg-white border border-deep-emerald/20 text-deep-emerald placeholder:text-deep-emerald/40 font-light text-sm focus:outline-none focus:border-[#D4AF37] transition-colors"
                         />
                         <button
                             type="submit"

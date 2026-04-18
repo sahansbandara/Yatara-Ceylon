@@ -33,6 +33,9 @@
 
 ## Recent Findings
 
+- [2026-04-19] Public search API (`/api/public/search`) was filtering by `isActive: true` which doesn't exist on Package/Destination models. Fixed to use `isPublished: true`. Also fixed Package search to use `summary` field instead of `description`, and added `tags` to the search fields. → Always verify model field names against the actual Mongoose schema before writing query filters.
+- [2026-04-19] SearchModal static index used `?tag=heritage` URL params but the JourneysGrid filters by `?style=heritage`. → Fixed all static search index hrefs to use `?style=` to match the actual filtering logic.
+- [2026-04-19] Removing a section from the SearchModal (e.g., "Experiences") requires also removing unused icon imports (e.g., `Sparkles`) that were only used by that section, otherwise React throws `ReferenceError: Sparkles is not defined` at runtime. → When removing UI sections, always audit and clean up all related imports.
 - [2026-04-12] Destinations Landing Page Preference: Users may strongly prefer staggered masonry layouts and spotlights for high-level indexes over rigid, uniform grids, even if the latter is more orderly. → Restoration of the original `/destinations` landing page while keeping the new detail pages proved to be the correct UX compromise.
 - [2026-04-12] Tag Synonym Matching: Package search bars often fail when users type adjectives (e.g., "Cultural") but data is stored as nouns (e.g., "Culture"). → Implemented a custom synonym matcher in `JourneysGrid.tsx` to ensure filter hits across diverse user inputs.
 - [2026-04-12] Replacing `/public/images/places/*.webp` files does not update the Build Tour planner cards or map popups by itself. → Those surfaces intentionally render generated thumbnails via `getPlaceThumbnailSrc()` (`/images/places/thumbs/*.jpg`) for performance, so the old JPGs keep showing until the thumbnail pipeline is rerun. → After changing any place hero image, rerun `./scripts/generate-place-thumbnails.sh` so planner/map thumbnails stay in sync with the originals.
@@ -46,7 +49,7 @@
 - [2026-04-04] Admin user linking logic `MyBookingsService` now queries using `{ $or: [{ customerEmail: email }, { customerId: user.id }] }` which natively protects lost bookings, joining older bookings via email matching with newer session-tied ID links robustly. 
 - [2026-04-04] Saving "Build Tour" custom plans threw a `500 Server Error` (CastError: Cast to ObjectId failed). The `CustomPlan` backend schema defined `places` as an array of `ObjectId`, but the frontend `build-tour` components use a static curated JSON manifest identifying places via string permutations (e.g., "colombo", "kandy"). → Changed schema to accept `[String]` instead of `[ObjectId]` for `places` to stay natively compatible with frontend string identifiers.
 - [2026-04-02] Local `.env.local` now includes real Turnstile keys, so local signup/public captcha flows can run against Cloudflare once the Next dev server is restarted. Vercel production still needs the same keys configured separately.
-- [2026-04-02] After pushing commit `19dc2f1` to `main`, Vercel’s Git-connected production deployment `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` went `Ready` and `https://www.yataraceylon.me/api/bookings?limit=5` returned seeded booking data successfully. The missing-schema fix is confirmed live.
+- [2026-04-02] After pushing commit `19dc2f1` to `main`, Vercel's Git-connected production deployment `https://yatara-ceylon-ksfxosat9-sithmi.vercel.app` went `Ready` and `https://www.yataraceylon.me/api/bookings?limit=5` returned seeded booking data successfully. The missing-schema fix is confirmed live.
 - [2026-04-02] Vercel production uses the seeded `toms` database and currently contains `36` non-deleted bookings, `31` users, and `4` invoices. The blank bookings dashboard was caused by `/api/bookings` crashing with `MissingSchemaError`, not by missing seed data.
 - [2026-04-02] Production smoke testing showed the finance dashboard's "Outstanding Balances" panel is still ranked purely by `remainingBalance DESC`, which hides nearer operational demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` behind older high-balance records. For operator follow-up panels, prioritize actionable current bookings over raw historical debt size.
 - [2026-04-18] GitHub raw content URLs (e.g., `raw.githubusercontent.com`) for `.mp4` video elements return `text/plain` lacking correct MIME types, causing HTML5 videos to break or fail playing when directly embedded. Repositories changing from public to private instantly return 404s breaking the application externally. → Always serve static background looping videos locally from the `/public` directory (e.g. `src="/Hero-Section.mp4"`) to ensure reliability regardless of GitHub repository visibility.
@@ -109,6 +112,7 @@
 - Dashboard Command Center (page.tsx): Imports AuditLog and PartnerRequest models for activity feed and pending approvals. Uses booking pipeline (horizontal stacked bars by status) and revenue by status charts (CSS-only, no recharts).
 - Bookings page v2: Client component with status tabs (fetch counts per status), KPI summary row (calculated client-side from fetched data), date range filters, balance-due checkbox filter, page number pagination.
 - Global search: `/api/search?q=term` searches 6 entities (Booking, Package, Destination, Vehicle, Partner, User) with regex. CommandBar.tsx uses `cmdk` package with ⌘K shortcut, 300ms debounce, grouped results.
+- Public search: `/api/public/search?q=term` searches Package and Destination collections with regex. SearchModal uses `cmdk` with ESC to close, backdrop blur, static quick links, and live API results. Filters by `isPublished: true` and `isDeleted: { $ne: true }`.
 - TransfersTeaser v2: Data-driven from `transferCategoryCards`. First 3 categories → tall editorial cards (min-h-[650px]), last 2 → compact landscape cards (min-h-[380px], 2-column). `categoryRoutes` dict maps slugs to routes. Safari/Evening currently use anchor links (`/transfers#slug`).
 - Archive/Restore Center: API pattern uses `Promise.all()` to query all collections with `{ isDeleted: true }`, merges results with `collectionName` tag, sorts by `deletedAt` descending. Action route uses a `modelMap` object to resolve collection name to Mongoose model.
 - Soft delete pattern: Set `isDeleted: true` + `deletedAt: new Date()` on DELETE. Restore = `$set: { isDeleted: false }, $unset: { deletedAt: "" }`. Permanent delete = `findByIdAndDelete(id)`.
@@ -206,22 +210,24 @@
 
 ## Last Session
 
-**Date**: 2026-04-19 (Session 3)
+**Date**: 2026-04-19 (Session 4)
 
 **What was done**:
-1. Redesigned `/transfers/[slug]` detail pages with luxury liquid-glass aesthetics — added glassmorphic route overview cards, vehicle tier cards with gold glow borders, and premium inclusion chips.
-2. Refactored transfer detail page layout to match the journey package 2-column sidebar design (sticky booking card, bespoke CTA, upgrade options sidebar).
-3. Fixed broken navbar transfer links — replaced `colombo-to-galle` with correct slug `colombo-to-galle-fort`, replaced non-existent `yala-to-tangalle` with `ella-to-yala`.
-4. Replaced "Bespoke Tour" dropdown — removed non-existent "How It Works" and "Proposal in 24 Hours" links and "Signature Regions" column. Replaced with "Popular Tour Plans" (Luxury Sri Lanka In 10 Days, Wildlife Safari Adventure, Ramayana Trail Deluxe, Adventure & Highlands) and "Signature Experiences" (Artisan in Travel, Curating Your Healing Journey, Escape the Ordinary, Honeymoon Private Villa).
-5. Fixed broken `ceylon-grand-circuit` link (page not found) — replaced with `luxury-sri-lanka-in-10-days`.
+1. Fixed public search API — changed `isActive: true` to `isPublished: true`, added `summary` and `tags` to Package search fields.
+2. Fixed SearchModal static index links — changed `?tag=` to `?style=` to match JourneysGrid filtering.
+3. Removed "Experiences" section from SearchModal and cleaned up unused `Sparkles` icon import that caused `ReferenceError`.
+4. Updated agent files (MEMORY, TODO, BRIEF) with final project state.
+5. Verified all 6 member documentation files in `docs/yatara_member_md_files/` are comprehensive (634-710 lines each).
+6. Pushed all changes to GitHub.
 
 **Current state**:
-- Transfer detail pages have premium 2-column sidebar layout matching journey packages.
-- All navbar dropdown links point to valid, existing pages.
-- "Bespoke Tour" dropdown shows real pre-built packages instead of placeholder links.
-- All changes build successfully.
+- All search functionality working correctly (API + static index).
+- SearchModal shows only Destinations and Journeys sections (Experiences removed).
+- All 6 member documentation files are fully detailed.
+- Project is in final production-readiness state.
+- Branch: `main`
 
 **What to do next**:
 - User to generate 4 "How It Works" images using provided prompts and place in `public/images/transfers/`.
-- Cross-browser QA on transfer detail pages and bespoke tour dropdown.
-- Continue any remaining UI polish requests from user.
+- Cross-browser QA on the production site.
+- Any remaining UI polish requests from user.

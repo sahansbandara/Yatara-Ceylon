@@ -7,25 +7,25 @@ const leadership = [
         name: 'Rajitha Perera',
         role: 'Managing Director',
         bio: 'With over 20 years in the tourism industry, Rajitha leads Yatara Ceylon with a vision for world-class Sri Lankan hospitality.',
-        image: '/images/home/hero-poster.png',
+        image: '/images/about/team/rajitha.webp',
     },
     {
         name: 'Amaya Fernando',
         role: 'Head of Operations',
         bio: 'Amaya oversees all tour operations, ensuring every detail of every journey runs seamlessly from start to finish.',
-        image: '/images/home/hero-poster.png',
+        image: '/images/about/team/amaya.webp',
     },
     {
         name: 'Dinesh Jayawardena',
         role: 'Head of Sales & Marketing',
         bio: 'Dinesh connects travellers worldwide with authentic Sri Lankan experiences through strategic partnerships and digital innovation.',
-        image: '/images/home/hero-poster.png',
+        image: '/images/about/team/dinesh.webp',
     },
     {
         name: 'Nadeesha Silva',
         role: 'Head of Bespoke Travel',
         bio: 'Nadeesha and her team craft custom itineraries that transform travel dreams into reality, one journey at a time.',
-        image: '/images/home/hero-poster.png',
+        image: '/images/about/team/nadeesha.webp',
     },
 ];
 
@@ -78,27 +78,34 @@ export default function TeamPage() {
                         <div className="h-px w-16 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mt-6" />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                         {leadership.map((person, idx) => (
-                            <div key={idx} className="group text-center">
-                                <div className="relative w-48 h-48 mx-auto rounded-full overflow-hidden mb-6 border-2 border-deep-emerald/10 group-hover:border-[#D4AF37]/30 transition-all shadow-lg">
-                                    <Image
-                                        src={person.image}
-                                        alt={person.name}
-                                        fill
-                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                    />
-                                </div>
-                                <h3 className="text-xl font-display text-deep-emerald mb-1">{person.name}</h3>
-                                <p className="text-xs tracking-[0.15em] uppercase text-[#D4AF37] font-medium mb-3">{person.role}</p>
-                                <p className="text-gray-500 font-light text-sm leading-relaxed mb-4">{person.bio}</p>
-                                <div className="flex justify-center gap-3">
-                                    <button className="w-8 h-8 rounded-full bg-deep-emerald/5 flex items-center justify-center hover:bg-[#D4AF37]/10 transition-colors">
-                                        <Mail className="w-4 h-4 text-deep-emerald/50" />
-                                    </button>
-                                    <button className="w-8 h-8 rounded-full bg-deep-emerald/5 flex items-center justify-center hover:bg-[#D4AF37]/10 transition-colors">
-                                        <Linkedin className="w-4 h-4 text-deep-emerald/50" />
-                                    </button>
+                            <div key={idx} className="group relative overflow-hidden rounded-xl aspect-[2/3] shadow-lg bg-deep-emerald/5">
+                                <Image
+                                    src={person.image}
+                                    alt={person.name}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                                {/* Overlay gradient */}
+                                <div className="absolute inset-x-0 bottom-0 top-1/3 bg-gradient-to-t from-[#0a1f15] via-[#0a1f15]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
+                                
+                                {/* Info Container */}
+                                <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col justify-end translate-y-12 group-hover:translate-y-0 transition-transform duration-500">
+                                    <h3 className="text-xl font-serif text-white mb-1 drop-shadow-md">{person.name}</h3>
+                                    <p className="text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] font-medium mb-4">{person.role}</p>
+                                    
+                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75">
+                                        <p className="text-white/80 font-light text-xs leading-relaxed mb-5 line-clamp-4">{person.bio}</p>
+                                        <div className="flex gap-3">
+                                            <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D4AF37] hover:text-[#0a1f15] transition-colors text-white backdrop-blur-sm">
+                                                <Mail className="w-3.5 h-3.5" strokeWidth={2.5} />
+                                            </button>
+                                            <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D4AF37] hover:text-[#0a1f15] transition-colors text-white backdrop-blur-sm">
+                                                <Linkedin className="w-3.5 h-3.5" strokeWidth={2.5} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -107,17 +114,27 @@ export default function TeamPage() {
             </section>
 
             {/* Department Stats */}
-            <section className="py-20 bg-deep-emerald">
-                <div className="max-w-7xl mx-auto px-4 md:px-8">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-display text-white">Our Departments</h2>
+            <section className="relative py-8 md:py-12 bg-[#E3EFE9] overflow-hidden">
+                {/* Background Pattern Overlay */}
+                <div
+                    className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-multiply"
+                    style={{
+                        backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                        backgroundSize: '400px',
+                        backgroundPosition: 'top left',
+                        backgroundRepeat: 'repeat'
+                    }}
+                />
+                <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
+                    <div className="text-center mb-10">
+                        <h2 className="text-3xl md:text-4xl font-display text-deep-emerald">Our Departments</h2>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         {departments.map((dept, idx) => (
                             <div key={idx} className="text-center">
                                 <p className="text-4xl md:text-5xl font-display text-[#D4AF37] mb-2">{dept.count}</p>
-                                <p className="text-white font-medium text-sm mb-1">{dept.name}</p>
-                                <p className="text-white/50 font-light text-xs">{dept.desc}</p>
+                                <p className="text-deep-emerald font-semibold text-sm mb-1">{dept.name}</p>
+                                <p className="text-gray-600 font-light text-xs">{dept.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -147,37 +164,43 @@ export default function TeamPage() {
                             </Link>
                         </div>
 
-                        <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-xl">
+                        <div className="relative rounded-2xl overflow-hidden aspect-[3/2] shadow-2xl group">
                             <Image
-                                src="/images/home/signature-wildlife.png"
+                                src="/images/about/team/culture.webp"
                                 alt="Yatara Ceylon team culture"
                                 fill
-                                className="object-cover"
+                                className="object-cover transition-transform duration-1000 group-hover:scale-105"
                             />
+                            <div className="absolute inset-0 border border-black/5 rounded-2xl pointer-events-none" />
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* CTA */}
-            <div className="relative h-[50vh] overflow-hidden">
-                <div className="absolute inset-0 bg-fixed bg-cover bg-center" style={{ backgroundImage: "url('/images/home/signature-ceylon.png')" }} />
-                <div className="absolute inset-0 bg-deep-emerald/30" />
-                <div className="relative z-10 flex items-center justify-center h-full">
-                    <div className="text-center">
-                        <p className="text-xs tracking-[0.4em] font-medium text-white/80 uppercase mb-4 drop-shadow-lg">
-                            Get in Touch
-                        </p>
-                        <h3 className="text-3xl md:text-5xl font-display text-white drop-shadow-lg mb-8">
-                            We&apos;d Love to <span className="italic text-[#D4AF37]">Hear From You</span>
-                        </h3>
-                        <Link
-                            href="/contact"
-                            className="inline-block px-10 py-4 rounded-full bg-[#D4AF37] text-[#0a1f15] text-sm tracking-[0.2em] font-semibold uppercase hover:bg-[#D4AF37]/90 transition-all shadow-lg"
-                        >
-                            CONTACT US
-                        </Link>
-                    </div>
+            <div className="relative py-8 md:py-12 w-full overflow-hidden flex items-center justify-center bg-[#E3EFE9]">
+                <div
+                    className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-multiply"
+                    style={{
+                        backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                        backgroundSize: '400px',
+                        backgroundPosition: 'top left',
+                        backgroundRepeat: 'repeat'
+                    }}
+                />
+                <div className="relative z-10 flex flex-col items-center justify-center px-6 text-center max-w-4xl mx-auto">
+                    <p className="inline-block mb-3 md:mb-4 text-xs md:text-sm tracking-[0.4em] font-medium text-[#D4AF37] uppercase drop-shadow-sm">
+                        Get in Touch
+                    </p>
+                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-serif text-deep-emerald font-normal leading-tight tracking-tight mb-8">
+                        We&apos;d Love to <span className="italic font-light text-[#D4AF37]">Hear From You</span>
+                    </h3>
+                    <Link
+                        href="/contact"
+                        className="inline-block px-10 py-4 rounded-full bg-[#D4AF37] text-[#0a1f15] text-xs md:text-sm tracking-[0.2em] font-semibold uppercase hover:bg-[#D4AF37]/90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
+                    >
+                        CONTACT US
+                    </Link>
                 </div>
             </div>
         </div>

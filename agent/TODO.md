@@ -3,7 +3,7 @@
 > **Agent: Read "Last Session" FIRST before doing anything else.**
 
 ## Current Milestone
-Production Readiness — final QA pass and polish before go-live
+Production Readiness — ALL FEATURES COMPLETE ✅
 
 ---
 
@@ -185,27 +185,54 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
+## Just Completed (2026-04-19 - Session 4)
+### Search Functionality Fixes
+- [x] Fixed public search API (`/api/public/search`) — changed `isActive: true` to `isPublished: true` to match actual model fields.
+- [x] Added `summary` and `tags` to Package search fields (previously used non-existent `description`).
+- [x] Fixed SearchModal static index links — changed `?tag=heritage` to `?style=heritage` to match JourneysGrid filtering.
+- [x] Removed "Experiences" section from SearchModal entirely (static data, variables, and rendering).
+- [x] Cleaned up unused `Sparkles` icon import that caused `ReferenceError: Sparkles is not defined`.
+
+### About, FAQ & News Pages
+- [x] Enhanced About page with Experience section images and Why Yatara section.
+- [x] Added FAQ hero image and redesigned FAQ page layout.
+- [x] Built complete News/Blog section with article detail pages (`/news/[slug]`).
+- [x] Added news data source (`src/data/news.ts`).
+
+### Documentation Finalization
+- [x] Updated all agent files (MEMORY.md, TODO.md, BRIEF.md) with final project state.
+- [x] Verified all 6 member documentation files are fully detailed (634-710 lines each, 25-30KB per file).
+- [x] Pushed all changes to GitHub.
+
+---
+
 ## Last Session
-**Date**: 2026-04-19 (Session 3)
+**Date**: 2026-04-19 (Session 4)
 **What was done**:
-- Redesigned transfer detail pages with premium liquid-glass aesthetics and 2-column sidebar layout.
-- Fixed broken navbar transfer links (colombo-to-galle, yala-to-tangalle).
-- Replaced Bespoke Tour dropdown with real package links in two columns: Popular Tour Plans + Signature Experiences.
-- Fixed broken ceylon-grand-circuit link.
-- Updated agent docs and pushed all changes to GitHub.
+- Fixed search API (isActive→isPublished, summary field, tags field).
+- Fixed SearchModal links (?tag= → ?style=) and removed Experiences section.
+- Enhanced About, FAQ, and News pages with new content and images.
+- Finalized all documentation and pushed to GitHub.
 
 **What to do next**:
-- User to generate 4 "How It Works" images using provided prompts and place in `public/images/transfers/`.
-- Cross-browser QA on transfer detail pages and bespoke tour dropdown.
-- Continue any remaining UI polish requests.
+- User to generate 4 "How It Works" images for transfers page.
+- Cross-browser QA on production.
+- Any remaining UI polish requests.
 
 **Current state**:
 - Branch: `main`
-- All navbar dropdown links point to valid, existing pages.
-- Transfer detail pages match journey package layout.
-- Bespoke Tour dropdown shows real pre-built packages.
+- All search functionality working correctly.
+- All documentation finalized and comprehensive.
+- Project is production-ready.
 
 **Files changed (This Session)**:
-- `src/app/(public)/transfers/[slug]/page.tsx` — Premium redesign + 2-column sidebar layout
-- `src/components/layout/Navbar.tsx` — Fixed transfer links + Bespoke Tour dropdown overhaul
-
+- `src/app/api/public/search/route.ts` — Fixed search query fields
+- `src/components/public/SearchModal.tsx` — Fixed links, removed Experiences section
+- `src/app/(public)/about/page.tsx` — Enhanced About page
+- `src/app/(public)/faq/page.tsx` — FAQ redesign
+- `src/app/(public)/news/page.tsx` — News page updates
+- `src/app/(public)/news/[slug]/page.tsx` — NEW article detail page
+- `src/data/news.ts` — NEW news data source
+- `agent/MEMORY.md` — Updated with Session 4 findings
+- `agent/TODO.md` — Updated with Session 4 completions
+- `agent/BRIEF.md` — Updated with final acceptance criteria

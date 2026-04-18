@@ -32,6 +32,7 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@stripe/stripe-js": "^8.9.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@turf/centroid": "^7.3.4",
     "@turf/helpers": "^7.3.4",
     "bcryptjs": "^2.4.3",
