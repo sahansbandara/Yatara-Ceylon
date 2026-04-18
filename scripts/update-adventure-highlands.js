@@ -73,8 +73,8 @@ async function main() {
             durationDays: 6,
             type: 'journey',
             style: 'adventure',
-            priceMin: 245000,
-            priceMax: 290000,
+            priceMin: 24500,
+            priceMax: 29000,
             tags: ['Adventure', 'Highlands', 'Private', 'Scenic', 'Couples', 'Nature'],
             highlights: [
                 'Scenic train and mountain-road transitions through Sri Lanka\'s most beautiful highland landscapes',

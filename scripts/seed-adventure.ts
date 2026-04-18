@@ -56,9 +56,9 @@ const adventurePackage = {
     durationDays: 6,
     type: "journey",
     style: "adventure",
-    priceMin: 1800,
-    priceMax: 3500,
-    price: 1800,
+    priceMin: 180,
+    priceMax: 350,
+    price: 180,
     rating: 5,
     reviewCount: 12,
     images: [

@@ -27,8 +27,8 @@ async function seedRamayana() {
           summary: 'Trace the legendary Ramayana path across Sri Lanka — ancient temples, serene hill-country roads, and sacred sites with premium comfort.',
           fullDescription: 'Embark on a spiritually enriching and luxuriously comfortable journey across Sri Lanka, following the ancient and legendary Ramayana trail. From the sacred grounds where Sita was held captive to the miraculous herbs of Rumassala, this meticulously crafted itinerary blends deep heritage with elite hospitality. \n\nDesigned for luxury seekers and spiritual travelers alike, this package ensures private transfers, knowledgeable guides well-versed in epic histories, and stays in handpicked boutique properties offering modern comfort at every stop.',
           duration: '7 Days / 6 Nights',
-          priceMin: 2200,
-          priceMax: 3800,
+          priceMin: 220,
+          priceMax: 380,
           currency: 'USD',
           images: [
             '/images/packages/ramayana-trail-deluxe/hero.webp',

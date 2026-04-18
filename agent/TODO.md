@@ -102,12 +102,27 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
+## Just Completed (2026-04-18 - Session 2)
+### Booking Request Improvements
+- [x] Auto-computed `Date To` based on `Date From` and package duration days. Made the field read-only for packages.
+- [x] Updated booking price total calculation to dynamically multiply base package price (`pkg.priceMin`) by the selected `pax` (number of passengers).
+- [x] Relocated the price summary UI card below the form for better visibility.
+- [x] Fixed "Adventure & Highlands" pricing discrepancy by prioritizing `pkg.priceMin` over `pkg.price`.
+
+### Package Pricing Update
+- [x] Divided all package prices by 10 (removed trailing zero) globally in the database.
+- [x] Updated hardcoded prices inside `scripts/seed-adventure.ts`, `scripts/seed-adventure2.ts`, `scripts/seed-ramayana.ts`, and `scripts/update-adventure-highlands.js`.
+
+---
+
 ## Last Session
 **Date**: 2026-04-18
 **What was done**:
 - Refactored the PayHere `PaymentConfirmingClient` UX to fail gracefully and allow manual override during test scenarios (localhost).
 - Built central `PaymentService.recalculateBookingFinance()` allowing exact reconciliation of net paid amounts vs total cost.
 - Handled the remaining 80% admin-recordable balance and integrated a refund handler directly into the Admin UI sidebar.
+- Improved the public Booking Request page with auto-calculating dates, passenger-based pricing multiplication, and reordered UI.
+- Ran a database script to globally drop the trailing zero on all package prices and updated corresponding seed scripts.
 
 **What to do next**:
 - The user is checking if their production Vercel `.env` instances fully replicate `.env.local` to securely unlock Webhooks.
@@ -116,18 +131,11 @@ Production Readiness — final QA pass and polish before go-live
 **Current state**:
 - Branch: `main`
 - PayHere ledger handles `ADVANCE_PAID`, `BALANCE_PENDING`, and refunds properly.
+- Public booking forms and global package prices are refined.
 
 **Files changed (This Session)**:
-- `src/lib/payhere/config.ts`, `src/app/payment/return/PaymentConfirmingClient.tsx`
-- `src/services/payment.service.ts`, `src/components/dashboard/finance/RecordRefundModal.tsx`
-- `src/app/dashboard/bookings/[id]/page.tsx`, `src/app/api/payments/route.ts`
-- `src/lib/validations.ts`, `src/models/Payment.ts`, `src/lib/constants.ts`
-- `agent/TASK.md`, `agent/PLAN.md`, `agent/WALKTHROUGH.md`
-- `agent/TODO.md`, `agent/MEMORY.md`
-- `src/app/(public)/destinations/page.tsx`
-- `src/app/(public)/destinations/[slug]/page.tsx`
-- `src/app/(public)/packages/page.tsx`
-- `src/components/public/JourneysGrid.tsx`
-- `src/lib/districtContent.ts`
-- `agent/TASK.md`, `agent/PLAN.md`, `agent/WALKTHROUGH.md`
+- `src/components/public/BookingRequestClient.tsx`
+- `scripts/divide-package-prices.js` (new)
+- `scripts/seed-adventure.ts`, `scripts/seed-adventure2.ts`, `scripts/seed-ramayana.ts`
+- `scripts/update-adventure-highlands.js`
 - `agent/TODO.md`, `agent/MEMORY.md`

@@ -49,7 +49,9 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
     // Calculate amounts
     const getAmounts = () => {
         if (pkg) {
-            const total = pkg.price || pkg.priceMin || 0;
+            const basePrice = pkg.priceMin || pkg.price || 0;
+            const pax = form.pax || 1;
+            const total = basePrice * pax;
             const advance = total * 0.20;
             const remaining = total - advance;
             return { total, advance, remaining, hasPayment: total > 0 };
@@ -210,33 +212,6 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                 </div>
             ) : (
                 <div className="space-y-6">
-                    {/* Package/Vehicle Summary Card */}
-                    {(pkg || vehicle) && amounts.hasPayment && (
-                        <div className="mb-6 p-5 rounded-xl bg-gradient-to-r from-deep-emerald/5 to-antique-gold/5 border border-antique-gold/20">
-                            <h3 className="text-sm font-display font-semibold text-deep-emerald mb-3">
-                                {pkg ? pkg.title : `${vehicle.model} Transfer`}
-                            </h3>
-                            <div className="grid grid-cols-3 gap-4 text-center">
-                                <div>
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Total</p>
-                                    <p className="text-lg font-bold text-deep-emerald">{formatPrice(amounts.total, currency, convertRate)}</p>
-                                </div>
-                                <div className="border-x border-gray-200/60">
-                                    <p className="text-[10px] text-antique-gold uppercase tracking-wider mb-1 font-medium">20% Advance</p>
-                                    <p className="text-lg font-bold text-antique-gold">{formatPrice(amounts.advance, currency, convertRate)}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Remaining</p>
-                                    <p className="text-lg font-bold text-gray-600">{formatPrice(amounts.remaining, currency, convertRate)}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
-                                <AlertCircle className="h-3 w-3 text-antique-gold" />
-                                <span>Pay 20% advance now to confirm your booking. Remaining balance due before departure.</span>
-                            </div>
-                        </div>
-                    )}
-
                     <form onSubmit={handleCreateBookingAndPay} className="space-y-6">
                         {status && (
                             <div className={`p-4 rounded-md ${status.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
@@ -285,11 +260,39 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
                             <div className="space-y-2">
                                 <Label htmlFor="dateFrom">Date From</Label>
-                                <Input id="dateFrom" type="date" required min={new Date().toISOString().split('T')[0]} value={form.dates.from} onChange={e => setForm({ ...form, dates: { ...form.dates, from: e.target.value } })} />
+                                <Input 
+                                    id="dateFrom" 
+                                    type="date" 
+                                    required 
+                                    min={new Date().toISOString().split('T')[0]} 
+                                    value={form.dates.from} 
+                                    onChange={e => {
+                                        const fromDateStr = e.target.value;
+                                        let toDateStr = form.dates.to;
+                                        if (pkg && pkg.durationDays && fromDateStr) {
+                                            const daysToAdd = Math.max(0, pkg.durationDays - 1);
+                                            const fromDateObj = new Date(fromDateStr);
+                                            if (!isNaN(fromDateObj.getTime())) {
+                                                fromDateObj.setDate(fromDateObj.getDate() + daysToAdd);
+                                                toDateStr = fromDateObj.toISOString().split('T')[0];
+                                            }
+                                        }
+                                        setForm({ ...form, dates: { ...form.dates, from: fromDateStr, to: toDateStr } });
+                                    }} 
+                                />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="dateTo">Date To</Label>
-                                <Input id="dateTo" type="date" required min={form.dates.from || new Date().toISOString().split('T')[0]} value={form.dates.to} onChange={e => setForm({ ...form, dates: { ...form.dates, to: e.target.value } })} />
+                                <Input 
+                                    id="dateTo" 
+                                    type="date" 
+                                    required 
+                                    min={form.dates.from || new Date().toISOString().split('T')[0]} 
+                                    value={form.dates.to} 
+                                    onChange={e => setForm({ ...form, dates: { ...form.dates, to: e.target.value } })}
+                                    readOnly={!!pkg}
+                                    className={pkg ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""}
+                                />
                             </div>
                         </div>
 
@@ -308,6 +311,33 @@ export default function BookingRequestClient({ vehicle, pkg, user }: BookingRequ
                                 className="w-full min-h-[80px] px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-antique-gold/30 focus:border-antique-gold"
                             />
                         </div>
+
+                        {/* Package/Vehicle Summary Card */}
+                        {(pkg || vehicle) && amounts.hasPayment && (
+                            <div className="my-6 p-5 rounded-xl bg-gradient-to-r from-deep-emerald/5 to-antique-gold/5 border border-antique-gold/20">
+                                <h3 className="text-sm font-display font-semibold text-deep-emerald mb-3">
+                                    {pkg ? pkg.title : `${vehicle.model} Transfer`}
+                                </h3>
+                                <div className="grid grid-cols-3 gap-4 text-center">
+                                    <div>
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Total</p>
+                                        <p className="text-lg font-bold text-deep-emerald">{formatPrice(amounts.total, currency, convertRate)}</p>
+                                    </div>
+                                    <div className="border-x border-gray-200/60">
+                                        <p className="text-[10px] text-antique-gold uppercase tracking-wider mb-1 font-medium">20% Advance</p>
+                                        <p className="text-lg font-bold text-antique-gold">{formatPrice(amounts.advance, currency, convertRate)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Remaining</p>
+                                        <p className="text-lg font-bold text-gray-600">{formatPrice(amounts.remaining, currency, convertRate)}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
+                                    <AlertCircle className="h-3 w-3 text-antique-gold" />
+                                    <span>Pay 20% advance now to confirm your booking. Remaining balance due before departure.</span>
+                                </div>
+                            </div>
+                        )}
 
                         <TurnstileField token={turnstileToken} onTokenChange={setTurnstileToken} />
 

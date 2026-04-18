@@ -206,10 +206,14 @@
 1. Completed final multi-stage PayHere payment ledger, bridging initial deposits via PayHere, and follow-up Admin collections + refunds via `PaymentService.recalculateBookingFinance()`.
 2. Brought down PayHere verification lag UI polling loops from 40 seconds to 7.5 seconds for manual Sandbox bypass.
 3. Isolated local URL issues affecting real Vercel hosted callbacks and notified User of EXACT mandatory Vercel env keys needed (`NEXT_PUBLIC_APP_URL`, `PAYHERE_APP_ID`, `PAYHERE_MERCHANT_SECRET_PROD`, `PAYHERE_APP_SECRET`).
+4. Enhanced the public Booking Request page with auto-calculating `Date To` (read-only for packages) and dynamic passenger-based price multiplication. Re-ordered the layout to push the price summary below the form.
+5. Successfully migrated database package prices globally to drop the trailing zero (e.g., 245,000 to 24,500 LKR). All `priceMin`, `priceMax`, `price`, `originalPrice` fields were updated and seed scripts were corrected.
 
 **Current state**:
 - `yataraceylon.me` production requires updated `.env` mirroring of local before PayHere Webhooks confirm natively.
 - Admin dashboards for Collections/Balances are 100% active.
+- Public booking forms correctly calculate dynamic totals per `pax` (number of passengers).
+- Package catalog globally displays correctly adjusted prices (divided by 10).
 
 **What to do next**:
 - Await test cases driven by exact Vercel Environment key parity.
