@@ -189,6 +189,8 @@ export const createPaymentSchema = z.object({
     paidAt: z.string().optional(),
     reference: z.string().optional(),
     type: z.enum(['PAYMENT', 'REFUND']).default('PAYMENT'),
+    paymentStage: z.enum(['ADVANCE', 'FINAL', 'REFUND']).default('FINAL'),
+    relatedPaymentId: z.string().optional(),
     notes: z.string().optional(),
 });
 

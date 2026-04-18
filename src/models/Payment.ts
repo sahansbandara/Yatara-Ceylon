@@ -16,6 +16,8 @@ export interface IPayment extends Document {
     paidAt?: Date;
     reference?: string;
     type: 'PAYMENT' | 'REFUND';
+    paymentStage?: 'ADVANCE' | 'FINAL' | 'REFUND';
+    relatedPaymentId?: Types.ObjectId;
     notes?: string;
     recordedBy?: Types.ObjectId;
     voidedAt?: Date;
@@ -63,6 +65,12 @@ const PaymentSchema = new Schema<IPayment>(
             enum: ['PAYMENT', 'REFUND'],
             default: 'PAYMENT',
         },
+        paymentStage: {
+            type: String,
+            enum: ['ADVANCE', 'FINAL', 'REFUND'],
+            default: 'FINAL',
+        },
+        relatedPaymentId: { type: Schema.Types.ObjectId, ref: 'Payment' },
         notes: String,
         recordedBy: { type: Schema.Types.ObjectId, ref: 'User' },
         voidedAt: Date,

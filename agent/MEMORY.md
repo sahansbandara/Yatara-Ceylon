@@ -56,6 +56,7 @@
 
 > Solutions and approaches that proved reliable.
 
+- Two-Stage Payments (Advance vs Balance): Use single uniform instances of the `Payment` model. Mark advance chunks via distinct `type: 'PAYMENT' | 'REFUND'` rows rather than hacking dynamic columns. Aggregate them reliably in a central service (`recalculateBookingFinance`).
 - Asynchronous Webhook Polling: On payment gateways like PayHere, wait for the webhook callback to update the DB using a client-side polling shell (`loading.tsx` or `<Suspense>` wrapper). This avoids 404s when the user returns before the background request completes.
 - UX Loading Boundaries: Define `loading.tsx` heavily at layouts (`src/app/dashboard/loading.tsx`) avoiding direct perceived server response lag across complex data-heavy tables.
 - Auth/signup flows with required captcha: let the server-side verifier own the final captcha message, but block the UI submit button until a token exists and surface the first field-level API error instead of raw `Validation failed`.
@@ -66,7 +67,7 @@
 - Auth routes: verify credentials first, then treat audit/profile updates like `lastLogin` as best-effort follow-up work so a transient write issue cannot block a valid login.
 - Next.js local workflow: keep development output separate from production build output when both commands may run on the same repo; `.next-dev` for dev and `.next` for build avoids broken route bundles.
 - Saved plan ownership: persist `userId` for authenticated plan saves and let reads fall back to `customerEmail` for legacy records until data is backfilled.
-- Dashboard StatCard KPI rows: Responsive grid (grid-cols-1 md:grid-cols-2 lg:grid-cols-4 or lg:grid-cols-3). Each card shows: title (small uppercase label), numeric value (large bold), icon with hover effects. Use accentColor prop like "text-blue-400" or "text-amber-400".
+- StatCard KPI rows: Responsive grid (grid-cols-1 md:grid-cols-2 lg:grid-cols-4 or lg:grid-cols-3). Each card shows: title (small uppercase label), numeric value (large bold), icon with hover effects. Use accentColor prop like "text-blue-400" or "text-amber-400".
 - Dashboard data queries: All server-side in page.tsx. Pattern: fetch with .find({ isDeleted: false }), filter in-memory for stats, serialize with JSON.parse(JSON.stringify()). GlassPanel wraps table content with liquid-glass-stat-dark styling.
 - Dashboard button styling: Gold CTA buttons use class="bg-antique-gold hover:bg-antique-gold/90 text-deep-emerald font-semibold tracking-wider text-xs rounded-lg" for consistency across Support/Notifications/Users pages.
 - Server Components by default: pages in (public) are async server components, client components only in src/components/public/
@@ -199,21 +200,17 @@
 
 ## Last Session
 
-**Date**: 2026-04-05
+**Date**: 2026-04-18
 
 **What was done**:
-1. Transitioned the `BuildTourMap` to a full-screen bleed layout via responsive Tailwind viewports.
-2. Tuned the scale, container boundaries, and zoom controls to flexibly fit the island of Sri Lanka across varying screen sizes.
-3. Implemented realistic road routing utilizing OSRM APIs with nearest-neighbor fallbacks to trace actual driving paths.
-4. Finalized "My Journey" and "Select Region" interactive sliding transparent floating sidebars matching luxury aesthetics.
+1. Completed final multi-stage PayHere payment ledger, bridging initial deposits via PayHere, and follow-up Admin collections + refunds via `PaymentService.recalculateBookingFinance()`.
+2. Brought down PayHere verification lag UI polling loops from 40 seconds to 7.5 seconds for manual Sandbox bypass.
+3. Isolated local URL issues affecting real Vercel hosted callbacks and notified User of EXACT mandatory Vercel env keys needed (`NEXT_PUBLIC_APP_URL`, `PAYHERE_APP_ID`, `PAYHERE_MERCHANT_SECRET_PROD`, `PAYHERE_APP_SECRET`).
 
 **Current state**:
-- `BuildTourMap` scales properly, calculates realistic driving paths, and correctly reflects added destination nodes dynamically.
-- `BuildTourClient` handles viewport constraints properly without CSS overflow clipping the sidebar.
-- Validated on desktop & responsive layouts.
-- Readied changes to push to Github `main`.
-- Vercel is handling the real-time application deployment as expected.
+- `yataraceylon.me` production requires updated `.env` mirroring of local before PayHere Webhooks confirm natively.
+- Admin dashboards for Collections/Balances are 100% active.
 
 **What to do next**:
-- Check dynamic route fidelity and ensure nearest-neighbor fallbacks run gracefully for distant nodes missing direct mapping data.
-- Let User execute manual QA testing across the interactive planner.
+- Await test cases driven by exact Vercel Environment key parity.
+- Provide any last minute UI tweaks needed on `.md` file layouts or Payment UI responses.

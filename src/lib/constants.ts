@@ -24,11 +24,15 @@ export const BookingStatus = {
     PAYMENT_PENDING: 'PAYMENT_PENDING',
     CONTACTED: 'CONTACTED',
     ADVANCE_PAID: 'ADVANCE_PAID',
+    BALANCE_PENDING: 'BALANCE_PENDING', // Waiting for the 80% remainder
+    FULLY_PAID: 'FULLY_PAID', // 100% collected
     CONFIRMED: 'CONFIRMED',
     ASSIGNED: 'ASSIGNED',
     IN_PROGRESS: 'IN_PROGRESS',
     COMPLETED: 'COMPLETED',
     CANCELLED: 'CANCELLED',
+    REFUND_PENDING: 'REFUND_PENDING',
+    REFUNDED: 'REFUNDED',
 } as const;
 
 export const VehicleTypes = {
@@ -95,6 +99,12 @@ export const PaymentMethods = {
 export const PaymentTypes = {
     PAYMENT: 'PAYMENT',
     REFUND: 'REFUND',
+} as const;
+
+export const PaymentStages = {
+    ADVANCE: 'ADVANCE', // The initial ~20% payment online
+    FINAL: 'FINAL',     // The 80% remainder normally collected manually
+    REFUND: 'REFUND',   // Return of funds
 } as const;
 
 export const InvoiceStatus = {

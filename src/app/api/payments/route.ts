@@ -7,6 +7,7 @@ import { staffOrAdmin } from '@/lib/rbac';
 import { validateBody } from '@/lib/validate';
 import { createPaymentSchema } from '@/lib/validations';
 import { logAudit } from '@/lib/audit';
+import { PaymentService } from '@/services/payment.service';
 
 // GET /api/payments – protected: staff/admin only
 export const GET = staffOrAdmin(async (request) => {
@@ -37,23 +38,8 @@ export const POST = staffOrAdmin(async (request, { user }) => {
             recordedBy: user.userId,
         });
 
-        // Automatically update the booking balances
-        const booking = await Booking.findById(payment.bookingId);
-        if (booking) {
-            const newPaidAmount = (booking.paidAmount || 0) + payment.amount;
-            let newStatus = booking.status;
-
-            // Advance status if this is the first payment
-            if (['NEW', 'PAYMENT_PENDING', 'CONTACTED'].includes(booking.status)) {
-                newStatus = 'ADVANCE_PAID';
-            }
-
-            await Booking.findByIdAndUpdate(payment.bookingId, {
-                paidAmount: newPaidAmount,
-                remainingBalance: Math.max((booking.totalCost || 0) - newPaidAmount, 0),
-                status: newStatus
-            });
-        }
+        // Automatically update the booking balances from aggregate calculations
+        await PaymentService.recalculateBookingFinance(payment.bookingId.toString());
 
         await logAudit({ actorUserId: user.userId, action: 'CREATE', entity: 'Payment', entityId: payment._id.toString(), meta: { amount: data!.amount, type: data!.type } });
         return NextResponse.json({ payment }, { status: 201 });

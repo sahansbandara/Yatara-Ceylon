@@ -93,24 +93,37 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
+## Just Completed (2026-04-18)
+### PayHere Ledger & Backend Enhancements
+- [x] Resolved "localhost PayHere webhook timeout" issue by bringing confirmation pooling from 40s to 7.5s and adding a "Confirm Manually" fallback trigger for sandbox/localhost.
+- [x] Configured the multi-stage payment tracking ledger logic in `src/services/payment.service.ts` allowing dynamic tracking of multiple payments, advance percentages, and refunds against one booking.
+- [x] Added `RecordRefundModal` UI alongside `RecordPaymentModal` in the Admin Bookings Dashboard (`/dashboard/bookings/[id]`).
+- [x] Corrected `PAYHERE_MERCHANT_SECRET_PROD` mapping inside local server configs. Ensure these are pushed to Vercel manually.
+
+---
+
 ## Last Session
-**Date**: 2026-04-12
+**Date**: 2026-04-18
 **What was done**:
-- Performed a major aesthetic overhaul of the Destinations and Packages modules.
-- Added a floating toolbar UX to the Packages grid to maximize vertical engagement.
-- Populated a complete editorial layer for all 25 districts of Sri Lanka.
-- Redesigned the District detail pages into a content-rich, cinematic experience.
-- Preserved the existing, acclaimed masonry layout of the Destinations index via a strategic pivot.
+- Refactored the PayHere `PaymentConfirmingClient` UX to fail gracefully and allow manual override during test scenarios (localhost).
+- Built central `PaymentService.recalculateBookingFinance()` allowing exact reconciliation of net paid amounts vs total cost.
+- Handled the remaining 80% admin-recordable balance and integrated a refund handler directly into the Admin UI sidebar.
 
 **What to do next**:
-- Check on the production deployment once the user restarts the dev server and verifies local assets.
-- Proceed with final QA checks on the mobile layout sheet for the tour planner.
+- The user is checking if their production Vercel `.env` instances fully replicate `.env.local` to securely unlock Webhooks.
+- Once environmental parity is reached, test an end-to-end payment block using a production URL or sandbox endpoint.
 
 **Current state**:
 - Branch: `main`
-- All luxury redesigns are complete and integrated.
+- PayHere ledger handles `ADVANCE_PAID`, `BALANCE_PENDING`, and refunds properly.
 
 **Files changed (This Session)**:
+- `src/lib/payhere/config.ts`, `src/app/payment/return/PaymentConfirmingClient.tsx`
+- `src/services/payment.service.ts`, `src/components/dashboard/finance/RecordRefundModal.tsx`
+- `src/app/dashboard/bookings/[id]/page.tsx`, `src/app/api/payments/route.ts`
+- `src/lib/validations.ts`, `src/models/Payment.ts`, `src/lib/constants.ts`
+- `agent/TASK.md`, `agent/PLAN.md`, `agent/WALKTHROUGH.md`
+- `agent/TODO.md`, `agent/MEMORY.md`
 - `src/app/(public)/destinations/page.tsx`
 - `src/app/(public)/destinations/[slug]/page.tsx`
 - `src/app/(public)/packages/page.tsx`

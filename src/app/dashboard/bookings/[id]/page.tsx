@@ -1,6 +1,7 @@
 import { BookingDetailService } from '@/services/crud.service';
 import { formatLKR } from '@/lib/currency';
 import RecordPaymentModal from "@/components/dashboard/finance/RecordPaymentModal";
+import RecordRefundModal from "@/components/dashboard/finance/RecordRefundModal";
 import CreateInvoiceModal from "@/components/dashboard/finance/CreateInvoiceModal";
 import FinalizeInvoiceButton from "@/components/dashboard/finance/FinalizeInvoiceButton";
 import VoidInvoiceButton from "@/components/dashboard/finance/VoidInvoiceButton";
@@ -257,11 +258,14 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                                 <span className="text-sm font-bold text-orange-600">{formatLKR(booking.remainingBalance || 0)}</span>
                             </div>
                         </div>
-                        {booking.remainingBalance > 0 && (
-                            <div className="mt-6 pt-4 border-t border-white/[0.08] flex justify-center flex-col gap-2">
+                        <div className="mt-6 pt-4 border-t border-white/[0.08] flex justify-center flex-col gap-2">
+                            {booking.remainingBalance > 0 && (
                                 <RecordPaymentModal bookingId={booking._id} remainingBalance={booking.remainingBalance} />
-                            </div>
-                        )}
+                            )}
+                            {(userRole === 'ADMIN' || userRole === 'STAFF') && booking.paidAmount > 0 && (
+                                <RecordRefundModal bookingId={booking._id} maxRefundable={booking.paidAmount} />
+                            )}
+                        </div>
                         {userRole === 'ADMIN' && booking.status === 'NEW' && (
                             <div className="mt-2 text-center">
                                 <FinalizePricingModal bookingId={booking._id} currentTotalCost={booking.totalCost || 0} />
