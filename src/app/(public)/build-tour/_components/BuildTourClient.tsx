@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import type { District, Place, JourneyStop } from '@/lib/trip/buildTourTypes';
+import curatedPlacesRaw from '@/data/places/sri-lanka.curated.json';
 import dynamic from 'next/dynamic';
 import type { BuildTourMapProps } from './BuildTourMap';
 import PlannerSidebar from './PlannerSidebar';
@@ -22,6 +24,62 @@ export default function BuildTourClient() {
     const [selectedPlaceIds, setSelectedPlaceIds] = useState<string[]>([]);
     const [journeyStops, setJourneyStops] = useState<JourneyStop[]>([]);
     const [routeVisible, setRouteVisible] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const router = useRouter();
+
+    const handleSaveDraft = async () => {
+        setIsSaving(true);
+        try {
+            const daysMap = new Map<number, string[]>();
+            journeyStops.forEach(stop => {
+                const day = stop.day || 1;
+                if (!daysMap.has(day)) daysMap.set(day, []);
+                daysMap.get(day)!.push(stop.placeId);
+            });
+
+            const days = Array.from(daysMap.entries()).map(([dayNo, places]) => ({
+                dayNo,
+                places
+            }));
+
+            const curatedPlaces = curatedPlacesRaw as any[];
+            const districtsUsed = Array.from(new Set(
+                journeyStops
+                    .map(s => curatedPlaces.find((p: any) => p.id === s.placeId)?.districtId)
+                    .filter(Boolean)
+            )) as string[];
+
+            const payload = {
+                title: 'Custom Tour Draft',
+                days,
+                districtsUsed,
+                status: 'DRAFT',
+            };
+
+            const res = await fetch('/api/plans', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            if (res.ok) {
+                router.push('/dashboard/my-plans');
+            } else {
+                const data = await res.json();
+                if (res.status === 401 || res.status === 403) {
+                    alert('Please sign in to save your draft.');
+                    router.push('/login?callbackUrl=/build-tour');
+                } else {
+                    alert(data.error || 'Failed to save draft.');
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An error occurred while saving the draft.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     // Sync with external components (e.g. PopularTours, ThemeCarousel)
     useEffect(() => {
@@ -85,6 +143,8 @@ export default function BuildTourClient() {
                     journeyStops={journeyStops}
                     setJourneyStops={setJourneyStops}
                     setSelectedDistrictId={setSelectedDistrictId}
+                    onSaveDraft={handleSaveDraft}
+                    isSaving={isSaving}
                 />
             </div>
         </section>

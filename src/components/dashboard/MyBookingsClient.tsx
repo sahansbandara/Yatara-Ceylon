@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarCheck, ArrowUpRight, Package as PackageIcon, Clock, CreditCard, CheckCircle2, ShieldAlert } from "lucide-react";
+import { CalendarCheck, ArrowUpRight, Package as PackageIcon, Clock, CreditCard, CheckCircle2, ShieldAlert, X, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCurrency, formatPrice } from '@/lib/CurrencyContext';
@@ -23,12 +23,20 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
     const { currency, convertRate } = useCurrency();
     const router = useRouter();
     const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [cancelModal, setCancelModal] = useState<{ isOpen: boolean; bookingId: string | null; isPaid: boolean }>({ isOpen: false, bookingId: null, isPaid: false });
 
-    const handleCancel = async (bookingId: string, isPaid: boolean) => {
-        const msg = isPaid 
-            ? "Are you sure you want to request a refund? Your booking will be marked for cancellation and reviewed by our staff." 
-            : "Are you sure you want to cancel this booking?";
-        if (!window.confirm(msg)) return;
+    const openCancelModal = (bookingId: string, isPaid: boolean) => {
+        setCancelModal({ isOpen: true, bookingId, isPaid });
+    };
+
+    const closeCancelModal = () => {
+        setCancelModal({ isOpen: false, bookingId: null, isPaid: false });
+    };
+
+    const confirmCancel = async () => {
+        if (!cancelModal.bookingId) return;
+        const { bookingId } = cancelModal;
+        closeCancelModal();
 
         setActionLoading(bookingId);
         try {
@@ -155,7 +163,7 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                                     {!['CANCELLED', 'REFUND_PENDING', 'REFUNDED', 'COMPLETED'].includes(booking.status) && (
                                         <div className="mt-4 pt-4 border-t border-white/[0.03] flex justify-end">
                                             <button
-                                                onClick={() => handleCancel(booking._id, booking.paidAmount > 0)}
+                                                onClick={() => openCancelModal(booking._id, booking.paidAmount > 0)}
                                                 disabled={actionLoading === booking._id}
                                                 className="text-[11px] font-medium tracking-wider px-4 py-2 border border-red-500/20 text-red-300/80 hover:text-red-300 hover:bg-red-500/10 hover:border-red-500/40 rounded-lg transition-all duration-300 disabled:opacity-50"
                                             >
@@ -180,6 +188,52 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                     >
                         Explore Curated Packages <ArrowUpRight className="h-4 w-4" />
                     </Link>
+                </div>
+            )}
+
+            {/* Cancel / Refund Modal */}
+            {cancelModal.isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a110e]/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[#121c17] border border-white/10 shadow-2xl rounded-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className={`p-2 rounded-full ${cancelModal.isPaid ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
+                                        <AlertTriangle className="h-5 w-5" />
+                                    </div>
+                                    <h3 className="text-xl font-display font-semibold text-white">
+                                        {cancelModal.isPaid ? 'Request Refund' : 'Cancel Booking'}
+                                    </h3>
+                                </div>
+                                <button onClick={closeCancelModal} className="text-white/40 hover:text-white transition-colors">
+                                    <X className="h-5 w-5" />
+                                </button>
+                            </div>
+                            <p className="text-sm text-gray-300 leading-relaxed mb-8">
+                                {cancelModal.isPaid 
+                                    ? "Are you sure you want to request a refund? Your booking will be marked for cancellation and our finance team will review your payment to schedule a refund." 
+                                    : "Are you sure you want to cancel this booking? This action cannot be undone."}
+                            </p>
+                            <div className="flex gap-3 justify-end">
+                                <button
+                                    onClick={closeCancelModal}
+                                    className="px-4 py-2 rounded-lg text-sm font-medium border border-white/10 text-white/70 hover:bg-white/5 hover:text-white transition-all"
+                                >
+                                    Go Back
+                                </button>
+                                <button
+                                    onClick={confirmCancel}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium font-bold uppercase tracking-wider transition-all ${
+                                        cancelModal.isPaid 
+                                            ? 'bg-amber-500 hover:bg-amber-400 text-[#121c17]' 
+                                            : 'bg-red-500 hover:bg-red-400 text-white'
+                                    }`}
+                                >
+                                    {cancelModal.isPaid ? 'Request Refund' : 'Cancel Booking'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

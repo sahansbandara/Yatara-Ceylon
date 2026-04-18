@@ -105,7 +105,7 @@ export default function HeroSection() {
                     className="object-cover scale-[1.15] object-[center_30%]"
                 />
                 <video
-                    src="https://raw.githubusercontent.com/sahansbandara/Yatara-Ceylon/main/public/Hero-Section.mp4"
+                    src="/Hero-Section.mp4"
                     poster="/images/home/hero-poster.png"
                     autoPlay
                     loop

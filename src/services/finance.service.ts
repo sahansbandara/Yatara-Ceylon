@@ -44,6 +44,7 @@ export const FinanceService = {
                 bookingsWithBalance,
                 revenueByMonth,
                 agingBucketsData,
+                pendingRefundsAgg,
             ] = await Promise.all([
                 Payment.aggregate([
                     { $match: paymentBaseMatch },
@@ -86,7 +87,10 @@ export const FinanceService = {
                             "30+": [{ $match: { daysOverdue: { $gt: 30 } } }, { $count: "count" }]
                         }
                     }
-                ])
+                ]),
+                Booking.find({ isDeleted: false, status: 'REFUND_PENDING' })
+                    .select('bookingNo customerName totalCost paidAmount remainingBalance status dates createdAt')
+                    .lean(),
             ]);
 
             const agingData = agingBucketsData[0] || {};
@@ -111,6 +115,7 @@ export const FinanceService = {
                     FINAL: invoiceSummaryMap.get('FINAL')?.count || 0,
                     VOID: invoiceSummaryMap.get('VOID')?.count || 0,
                 },
+                pendingRefunds: JSON.parse(JSON.stringify(pendingRefundsAgg)),
                 bookingsWithBalance: rankedOutstandingBalances,
                 revenueByMonth: JSON.parse(JSON.stringify(revenueByMonth)),
                 aging: {
@@ -125,6 +130,7 @@ export const FinanceService = {
             return {
                 totalRevenue: 0, pendingBalances: 0, pendingCount: 0,
                 advancePaid: 0, advanceCount: 0, recentPayments: [], recentInvoices: [], bookingsWithBalance: [],
+                pendingRefunds: [],
                 invoiceSummary: { DRAFT: 0, FINAL: 0, VOID: 0 },
                 revenueByMonth: [], aging: { "0-7": 0, "8-14": 0, "15-30": 0, "30+": 0 }
             };

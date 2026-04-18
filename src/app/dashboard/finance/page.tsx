@@ -175,6 +175,39 @@ export default async function FinancePage({
                 </div>
             </div>
 
+            {/* Pending Refunds (High Priority) */}
+            {data.pendingRefunds && data.pendingRefunds.length > 0 && (
+                <GlassPanel
+                    title="Action Required: Pending Refunds"
+                    subtitle="These bookings have been cancelled but refunds are pending. Please process the refunds and update their status."
+                >
+                    <div className="space-y-2">
+                        {data.pendingRefunds.map((b: any) => (
+                            <Link
+                                key={b._id}
+                                href={`/dashboard/bookings/${b._id}`}
+                                className="flex items-center justify-between px-4 py-3 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 transition-all duration-300 group"
+                            >
+                                <div className="min-w-0">
+                                    <div className="flex items-center gap-2">
+                                        <AlertTriangle className="h-4 w-4 text-orange-400" />
+                                        <p className="text-xs font-mono font-medium text-white/80">{b.bookingNo}</p>
+                                    </div>
+                                    <p className="text-[10px] text-white/40 mt-0.5">{b.customerName}</p>
+                                </div>
+                                <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+                                    <div className="text-right">
+                                        <p className="text-[10px] text-white/35">Total Cost: {formatLKR(b.totalCost || 0)}</p>
+                                        <p className="text-sm font-bold text-orange-400">Refund: {formatLKR(b.paidAmount || 0)}</p>
+                                    </div>
+                                    <ArrowUpRight className="h-4 w-4 text-orange-400/50 group-hover:text-orange-400 transition-colors" />
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </GlassPanel>
+            )}
+
             {/* Two Column: Payments + Outstanding */}
             <div className="grid gap-6 lg:grid-cols-2">
                 {/* Recent Payments */}

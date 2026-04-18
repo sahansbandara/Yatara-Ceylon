@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { DashboardHero } from '@/components/dashboard/DashboardHero';
 import { EmptyStateCard } from '@/components/dashboard/EmptyStateCard';
 import { StatCard } from '@/components/dashboard/StatCard';
+import { AlertTriangle } from 'lucide-react';
 
 const STATUS_MAP: Record<string, string> = {
     NEW: 'status-pill-info',
@@ -19,6 +20,7 @@ const STATUS_MAP: Record<string, string> = {
     IN_PROGRESS: 'status-pill-info',
     COMPLETED: 'status-pill-neutral',
     CANCELLED: 'status-pill-danger',
+    REFUND_PENDING: 'status-pill-orange',
     CONTACTED: 'status-pill-gold',
 };
 
@@ -32,9 +34,10 @@ const STATUS_DISPLAY_NAMES: Record<string, string> = {
     IN_PROGRESS: 'In Progress',
     COMPLETED: 'Completed',
     CANCELLED: 'Cancelled',
+    REFUND_PENDING: 'Refund Pending',
 };
 
-const ALL_STATUSES = ['NEW', 'CONTACTED', 'PAYMENT_PENDING', 'ADVANCE_PAID', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
+const ALL_STATUSES = ['NEW', 'CONTACTED', 'PAYMENT_PENDING', 'ADVANCE_PAID', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'REFUND_PENDING', 'CANCELLED'];
 
 interface BookingSummary {
     totalBookings: number;
@@ -223,6 +226,27 @@ export default function BookingsPage() {
                 title="Bookings"
                 subtitle={`${statusCounts.all || total} total bookings • ${statusCounts['PAYMENT_PENDING'] || 0} pending payments`}
             />
+
+            {/* Attention Required Banner */}
+            {statusCounts['REFUND_PENDING'] > 0 && (
+                <div className="flex items-center justify-between p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 animate-in fade-in">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-orange-500/20 rounded-lg">
+                            <AlertTriangle className="h-5 w-5 text-orange-400" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-semibold text-orange-400">Attention Required</h3>
+                            <p className="text-xs text-orange-400/80 mt-0.5">There are {statusCounts['REFUND_PENDING']} bookings pending refund. Please review and process them.</p>
+                        </div>
+                    </div>
+                    <button 
+                        onClick={() => handleStatusTabClick('REFUND_PENDING')}
+                        className="px-4 py-2 text-xs font-semibold bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                    >
+                        View Requests
+                    </button>
+                </div>
+            )}
 
             {/* Status Tabs */}
             <div className="flex gap-2 overflow-x-auto pb-2 -mx-6 px-6">

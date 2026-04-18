@@ -16,6 +16,8 @@ interface PlannerSidebarProps {
     journeyStops: JourneyStop[];
     setJourneyStops: (stops: JourneyStop[]) => void;
     setSelectedDistrictId: (id: string | null) => void;
+    onSaveDraft: () => void;
+    isSaving: boolean;
 }
 
 export default function PlannerSidebar({
@@ -24,7 +26,9 @@ export default function PlannerSidebar({
     setSelectedPlaceIds,
     journeyStops,
     setJourneyStops,
-    setSelectedDistrictId
+    setSelectedDistrictId,
+    onSaveDraft,
+    isSaving
 }: PlannerSidebarProps) {
     const [activeMobileTab, setActiveMobileTab] = useState<'explore' | 'journey'>('explore');
 
@@ -268,11 +272,12 @@ export default function PlannerSidebar({
                             Clear
                         </button>
                         <button
-                            disabled={journeyStops.length === 0}
+                            onClick={onSaveDraft}
+                            disabled={journeyStops.length === 0 || isSaving}
                             className="flex-[2] py-3.5 rounded-xl bg-deep-emerald text-white shadow-[0_8px_20px_rgba(4,57,39,0.15)] hover:shadow-[0_8px_25px_rgba(4,57,39,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none transition-all flex items-center justify-center gap-2 text-xs tracking-widest uppercase font-bold"
                         >
-                            Save Draft
-                            <ChevronRight className="w-4 h-4" />
+                            {isSaving ? "Saving..." : "Save Draft"}
+                            {!isSaving && <ChevronRight className="w-4 h-4" />}
                         </button>
                     </div>
                 </div>
