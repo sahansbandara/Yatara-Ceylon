@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Search, MapPin, Calendar, Compass, SlidersHorizontal, X, ChevronRight, Mountain, TreePalm, Building2, Waves, Tent, Heart } from 'lucide-react';
 import { DESTINATIONS } from '@/data/destinations';
@@ -61,11 +62,33 @@ const cardReveal = {
    ────────────────────────────────────────────── */
 
 export default function DestinationsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-off-white" />}>
+            <DestinationsContent />
+        </Suspense>
+    );
+}
+
+function DestinationsContent() {
+    const searchParams = useSearchParams();
     const [activeRegion, setActiveRegion] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeStyle, setActiveStyle] = useState<string | null>(null);
     const [showFilters, setShowFilters] = useState(false);
     const filterContainerRef = useRef<HTMLDivElement>(null);
+
+    // Sync state with URL params for navigation from Navbar
+    useEffect(() => {
+        const regionParam = searchParams.get('region');
+        if (regionParam) {
+            // E.g. 'hill-country' -> 'Hill Country'
+            const normalizedParam = regionParam.toLowerCase().replace(/-/g, ' ');
+            const matchedRegion = ALL_REGIONS.find(r => r.toLowerCase().replace(/-/g, ' ') === normalizedParam);
+            setActiveRegion(matchedRegion || null);
+        } else {
+            setActiveRegion(null);
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {

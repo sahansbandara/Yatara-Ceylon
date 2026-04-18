@@ -65,6 +65,15 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
     const [showFilters, setShowFilters] = useState(false);
     const filterContainerRef = useRef<HTMLDivElement>(null);
 
+    // Sync state with props when URL navigation happens via Navbar
+    useEffect(() => {
+        setSelectedStyle(initialStyle);
+    }, [initialStyle]);
+
+    useEffect(() => {
+        setSelectedDuration(initialDuration);
+    }, [initialDuration]);
+
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (filterContainerRef.current && !filterContainerRef.current.contains(event.target as Node)) {

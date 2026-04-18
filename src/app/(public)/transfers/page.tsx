@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
     ArrowRight,
     Handshake,
@@ -18,6 +19,8 @@ import {
     ShieldCheck,
     Car,
     Star,
+    Plus,
+    Minus
 } from 'lucide-react';
 
 import { JsonLd, buildTravelAgency, buildFAQPage, buildBreadcrumb } from '@/lib/jsonLd';
@@ -397,34 +400,54 @@ export default function TransfersPage() {
             {/* ═══════════════════════════════════════════════════════════
                 SECTION 9: FAQ
                 ═══════════════════════════════════════════════════════════ */}
-            <section className="py-24 lg:py-32 bg-off-white">
-                <div className="max-w-4xl mx-auto px-4 md:px-8">
+            <section className="py-24 lg:py-32 bg-[#E3EFE9] text-deep-emerald relative overflow-hidden">
+                {/* Background Pattern Overlay */}
+                <div
+                    className="absolute inset-0 z-0 opacity-30 pointer-events-none mix-blend-multiply"
+                    style={{
+                        backgroundImage: "url('/images/home/curated-bg-pattern.webp')",
+                        backgroundSize: '400px',
+                        backgroundPosition: 'top left',
+                        backgroundRepeat: 'repeat'
+                    }}
+                />
+
+                {/* Subtle background accents */}
+                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-antique-gold/[0.03] rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-deep-emerald/[0.02] rounded-full blur-3xl pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
                     <FadeIn className="text-center mb-16 lg:mb-20">
-                        <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-nav font-semibold block mb-4">
+                        <span className="text-[10px] tracking-[0.3em] uppercase text-[#043927]/60 font-nav font-bold block mb-4">
                             Questions Answered
                         </span>
-                        <h2 className="font-serif text-4xl md:text-5xl font-bold text-deep-emerald mb-6">
-                            Transfer FAQ
+                        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light text-black mb-6">
+                            Transfer <span className="italic">FAQ</span>
                         </h2>
-                        <div className="w-16 h-px bg-antique-gold/30 mx-auto" />
+                        <div className="w-16 h-px bg-black/20 mx-auto" />
                     </FadeIn>
 
-                    <FadeIn delay={0.2} className="space-y-4">
+                    <FadeIn delay={0.2} className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-start">
                         {transferFaq.map((item, idx) => (
                             <details
                                 key={idx}
-                                className="group liquid-glass-gold rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-500 border border-antique-gold/10"
+                                className="group relative bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden hover:bg-white/60 transition-all duration-500 border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
                             >
-                                <summary className="flex items-center justify-between gap-4 p-6 border-b border-transparent group-open:border-antique-gold/10 sm:p-8 cursor-pointer select-none bg-white/20 hover:bg-white/40 transition-colors">
-                                    <h3 className="font-nav uppercase tracking-widest font-bold text-deep-emerald text-sm pr-4 group-hover:text-antique-gold transition-colors">
+                                <summary className="flex items-center justify-between gap-4 p-6 sm:p-8 cursor-pointer select-none outline-none list-none [&::-webkit-details-marker]:hidden">
+                                    <h3 className="font-display text-[15px] sm:text-[17px] tracking-wide text-black/80 font-light pr-4 group-hover:text-black group-open:text-[#043927] transition-colors leading-snug">
                                         {item.question}
                                     </h3>
-                                    <div className="w-8 h-8 rounded-full bg-deep-emerald/5 flex justify-center items-center group-hover:bg-antique-gold/10 transition-colors shrink-0">
-                                        <ChevronDown className="w-4 h-4 text-deep-emerald/50 group-hover:text-antique-gold group-open:rotate-180 transition-transform duration-300" />
+                                    <div className="shrink-0 relative flex items-center justify-center w-6 h-6 transition-transform duration-500">
+                                        <div className="absolute transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] group-open:rotate-180 group-open:opacity-0 group-open:scale-50 rotate-0 opacity-100 scale-100">
+                                            <Plus className="w-5 h-5 text-black/30 font-light" strokeWidth={1} />
+                                        </div>
+                                        <div className="absolute transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] group-open:rotate-0 group-open:opacity-100 group-open:scale-100 -rotate-180 opacity-0 scale-50">
+                                            <Minus className="w-5 h-5 text-[#043927]" strokeWidth={1} />
+                                        </div>
                                     </div>
                                 </summary>
-                                <div className="px-6 sm:px-8 pb-6 sm:pb-8 pt-6 bg-white/10">
-                                    <p className="text-deep-emerald/70 text-sm md:text-base font-light leading-relaxed">
+                                <div className="px-6 sm:px-8 pb-6 sm:pb-8 pt-0 animation-content-expand overflow-hidden">
+                                    <p className="text-[#6a6a6a] font-sans font-light leading-[1.8] text-[13px] md:text-[14px]">
                                         {item.answer}
                                     </p>
                                 </div>

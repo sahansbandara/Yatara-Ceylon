@@ -50,6 +50,9 @@
 - [2026-04-02] Vercel production uses the seeded `toms` database and currently contains `36` non-deleted bookings, `31` users, and `4` invoices. The blank bookings dashboard was caused by `/api/bookings` crashing with `MissingSchemaError`, not by missing seed data.
 - [2026-04-02] Production smoke testing showed the finance dashboard's "Outstanding Balances" panel is still ranked purely by `remainingBalance DESC`, which hides nearer operational demo bookings like `YC-DEMO-1005` and `YC-DEMO-1006` behind older high-balance records. For operator follow-up panels, prioritize actionable current bookings over raw historical debt size.
 - [2026-04-18] GitHub raw content URLs (e.g., `raw.githubusercontent.com`) for `.mp4` video elements return `text/plain` lacking correct MIME types, causing HTML5 videos to break or fail playing when directly embedded. Repositories changing from public to private instantly return 404s breaking the application externally. → Always serve static background looping videos locally from the `/public` directory (e.g. `src="/Hero-Section.mp4"`) to ensure reliability regardless of GitHub repository visibility.
+- [2026-04-19] React `useState(initialProp)` only captures the value on first mount — subsequent prop changes from URL navigation (e.g., clicking navbar filter links) are ignored. → Always add `useEffect(() => setState(prop), [prop])` sync hooks when a client component's filter state comes from URL search params that may change during SPA navigation.
+- [2026-04-19] The `DestinationsPage` is a `'use client'` component that needs `useSearchParams()` to read URL query params like `?region=hill-country`. Next.js requires wrapping any component using `useSearchParams()` in a `<Suspense>` boundary to avoid build errors. → Split into a wrapper component that provides `<Suspense>` and an inner content component that calls the hook.
+- [2026-04-19] Navbar destination links pass region slugs like `hill-country` in URL params, but the destinations data uses display names like `Hill Country`. → Normalize both sides to lowercase with hyphens replaced by spaces before comparing: `regionParam.toLowerCase().replace(/-/g, ' ') === region.toLowerCase()`.
 
 ---
 
@@ -203,22 +206,21 @@
 
 ## Last Session
 
-**Date**: 2026-04-19
+**Date**: 2026-04-19 (Session 2)
 
 **What was done**:
-1. Rebuilt the `/transfers` page with a full premium redesign: new `TransfersHero` component, `TransferCategoryGrid`, `FadeIn` animation wrapper, `BookingStrip`, `FleetTierCard`, and `SignatureRouteCard` components.
-2. Redesigned "What's Included" (Premium Promises) section — flattened from a full-screen dark section into an ultra-thin, elegant 6-column trust bar on white background with hover-reveal descriptions.
-3. Redesigned "Trust Strip" section — replaced heavy dark metallic glassmorphism box with a minimalist horizontal layout using 4 distinct icons (`ShieldCheck`, `Headphones`, `Car`, `Star`) side-by-side with text in a single thin row.
-4. Provided image generation specs (folder paths, filenames, 3:2 aspect ratio, photorealistic prompts) for 4 "How It Works" images — user generates manually.
-5. Polished `FleetTierCard`, `SignatureRouteCard`, `BookingStrip`, `HowItWorks`, `TransfersTeaser`, `Footer`, and `Inquire` page to align with the new transfer page architecture.
+1. Redesigned the `/transfers` FAQ section — replaced copy-pasted PremiumStory layout with a fresh 2-column grid of glassmorphic accordion items using native `<details>`/`<summary>` with `Plus`/`Minus` icons, light green pattern background (`bg-[#E3EFE9]`), and blur orbs.
+2. Fixed `Image is not defined` runtime error on transfers page by adding missing `import Image from 'next/image'`.
+3. Fixed navbar journey filter links not working — `JourneysGrid` component now syncs `selectedStyle` and `selectedDuration` state with URL props via `useEffect` hooks.
+4. Fixed navbar destination region filter links not working — `DestinationsPage` now reads `?region=` search params via `useSearchParams()`, normalizes slug format (`hill-country` → `Hill Country`), and sets `activeRegion` state. Added required `<Suspense>` wrapper.
 
 **Current state**:
-- `/transfers` page fully rebuilt with premium sections: Hero → BookingStrip → Premium Promises → Transfer Categories → Signature Routes → Fleet Tiers → How It Works → Trust Strip → FAQ → CTA.
-- Trust Strip and Premium Promises are ultra-thin "trust bar" style sections.
-- 4 process images pending user generation at `public/images/transfers/process-{1-4}.webp`.
-- All transfer data lives in `src/data/transfers.ts` (static, no DB dependency).
+- `/transfers` FAQ section is a clean 2-column grid with light green pattern background.
+- Navbar "By Style" and "By Duration" dropdown links correctly filter the `/packages` journeys grid.
+- Navbar "By Region" and "Top Places" destination links correctly filter the `/destinations` grid.
+- All changes build successfully.
 
 **What to do next**:
 - User to generate 4 "How It Works" images using provided prompts and place in `public/images/transfers/`.
-- Cross-browser QA on the newly slimmed-down trust sections (mobile responsiveness).
+- Cross-browser QA on the FAQ section and navbar filter flows.
 - Continue any remaining UI polish requests from user.

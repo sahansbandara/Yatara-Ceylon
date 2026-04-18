@@ -157,40 +157,41 @@ Production Readiness — final QA pass and polish before go-live
 
 ---
 
+## Just Completed (2026-04-19 - Session 2)
+### Transfers FAQ Redesign
+- [x] Redesigned `/transfers` FAQ section — replaced copy-pasted PremiumStory layout with a fresh 2-column grid of glassmorphic accordion items.
+- [x] Used native `<details>`/`<summary>` with animated `Plus`/`Minus` icons, light green pattern background, and blur orbs.
+- [x] Fixed `Image is not defined` runtime error on transfers page.
+
+### Navbar Filter Navigation Fixes
+- [x] Fixed Journey filter links ("By Style", "By Duration") not updating the grid when clicking navbar dropdown items — added `useEffect` sync hooks in `JourneysGrid.tsx`.
+- [x] Fixed Destination filter links ("By Region", "Top Places") not filtering the grid — added `useSearchParams()` with region slug normalization in `destinations/page.tsx`.
+- [x] Added `<Suspense>` wrapper to `DestinationsPage` for `useSearchParams()` compatibility.
+- [x] Updated all agent MD files and pushed to GitHub.
+
+---
+
 ## Last Session
-**Date**: 2026-04-19
+**Date**: 2026-04-19 (Session 2)
 **What was done**:
-- Full premium redesign of `/transfers` page with new component architecture.
-- Flattened "What's Included" and "Trust Strip" sections into ultra-thin, minimalist trust bars.
-- Added 4 distinct trust signal icons and horizontal inline layout.
-- Provided photorealistic image specs for user to generate "How It Works" assets.
+- Redesigned transfers FAQ section as a clean 2-column glassmorphic accordion grid.
+- Fixed navbar journey filter links not syncing with JourneysGrid component state.
+- Fixed navbar destination region filter links not syncing with DestinationsPage state.
 - Updated agent docs and pushed all changes to GitHub.
 
 **What to do next**:
 - User to generate 4 "How It Works" images using provided prompts and place in `public/images/transfers/`.
-- Cross-browser QA on the newly slimmed-down trust sections (mobile responsiveness).
+- Cross-browser QA on the FAQ section and navbar filter flows.
 - Continue any remaining UI polish requests.
 
 **Current state**:
 - Branch: `main`
-- `/transfers` redesign fully pushed to GitHub.
-- Trust Strip and Premium Promises are ultra-thin "trust bar" style.
-- 4 process images pending user generation.
+- All navbar filter navigation working correctly.
+- Transfers FAQ uses 2-column glassmorphic grid.
+- 4 process images still pending user generation.
 
 **Files changed (This Session)**:
-- `src/app/(public)/transfers/page.tsx`
-- `src/app/(public)/transfers/_components/TransfersHero.tsx` (NEW)
-- `src/app/(public)/transfers/_components/TransferCategoryGrid.tsx` (NEW)
-- `src/app/(public)/transfers/_components/FadeIn.tsx` (NEW)
-- `src/components/public/transfers/BookingStrip.tsx`
-- `src/components/public/transfers/FleetTierCard.tsx`
-- `src/components/public/transfers/SignatureRouteCard.tsx`
-- `src/components/public/HowItWorks.tsx`
-- `src/components/public/TransfersTeaser.tsx`
-- `src/components/layout/Footer.tsx`
-- `src/app/(public)/inquire/page.tsx`
-- `src/app/(public)/build-tour/_components/BuildTourClient.tsx`
-- `src/app/(public)/build-tour/page.tsx`
-- `public/images/transfers/process-{1-4}.webp` (NEW placeholders)
-- `public/images/transfers/transfers-hero-bg.webp` (NEW)
+- `src/app/(public)/transfers/page.tsx` — FAQ section redesign + Image import fix
+- `src/components/public/JourneysGrid.tsx` — Added useEffect sync for style/duration filters
+- `src/app/(public)/destinations/page.tsx` — Added useSearchParams + Suspense for region filter sync
 
