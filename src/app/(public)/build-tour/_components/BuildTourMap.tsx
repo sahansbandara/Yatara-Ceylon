@@ -380,6 +380,7 @@ export default function BuildTourMap({
         <div className="w-full h-full relative z-0">
             <Map
                 ref={mapRef}
+                reuseMaps
                 {...viewState}
                 onMove={evt => setViewState(evt.viewState)}
                 onLoad={fitSriLankaBounds}

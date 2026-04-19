@@ -7,6 +7,7 @@ import curatedPlacesRaw from '@/data/places/sri-lanka.curated.json';
 import dynamic from 'next/dynamic';
 import type { BuildTourMapProps } from './BuildTourMap';
 import PlannerSidebar from './PlannerSidebar';
+import RequestProposalModal from './RequestProposalModal';
 
 const BuildTourMap = dynamic<BuildTourMapProps>(() => import('./BuildTourMap'), {
     ssr: false,
@@ -17,7 +18,7 @@ const BuildTourMap = dynamic<BuildTourMapProps>(() => import('./BuildTourMap'), 
     )
 });
 
-export default function BuildTourClient({ initialPlanId }: { initialPlanId?: string }) {
+export default function BuildTourClient({ initialPlanId, userProfile }: { initialPlanId?: string, userProfile?: any | null }) {
     // ── Global Planner State ──────────────────────────────────
     const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
     const [hoveredDistrictId, setHoveredDistrictId] = useState<string | null>(null);
@@ -25,6 +26,10 @@ export default function BuildTourClient({ initialPlanId }: { initialPlanId?: str
     const [journeyStops, setJourneyStops] = useState<JourneyStop[]>([]);
     const [routeVisible, setRouteVisible] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [isRequestingProposal, setIsRequestingProposal] = useState(false);
+    const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
+    const [estimatedPrice, setEstimatedPrice] = useState(0);
+    const [isPlanSubmitted, setIsPlanSubmitted] = useState(false);
     const router = useRouter();
 
     // Reopen an existing plan if initialPlanId is provided
@@ -55,6 +60,11 @@ export default function BuildTourClient({ initialPlanId }: { initialPlanId?: str
                     });
                     setJourneyStops(stops);
                     setSelectedPlaceIds(placeIds);
+
+                    // Track if this plan already has a proposal submitted
+                    if (plan.isProposalRequested || plan.status === 'SUBMITTED') {
+                        setIsPlanSubmitted(true);
+                    }
                 }
             } catch (err) {
                 console.error('Failed to load saved plan', err);
@@ -63,6 +73,44 @@ export default function BuildTourClient({ initialPlanId }: { initialPlanId?: str
 
         loadSavedPlan();
     }, [initialPlanId]);
+
+    // Reset isPlanSubmitted when user modifies the plan (adds/removes stops)
+    const [initialStopsLoaded, setInitialStopsLoaded] = useState(false);
+    useEffect(() => {
+        if (!initialStopsLoaded && journeyStops.length > 0) {
+            setInitialStopsLoaded(true);
+            return; // Skip the first load — don't reset on initial hydration
+        }
+        if (initialStopsLoaded && isPlanSubmitted) {
+            setIsPlanSubmitted(false);
+        }
+    }, [journeyStops.length]);
+
+    // Restore from localStorage if returning from a login redirect
+    useEffect(() => {
+        if (initialPlanId) return; // DB plan takes precedence
+
+        const savedDraft = localStorage.getItem('yatara-draft-plan');
+        if (savedDraft) {
+            try {
+                const draft = JSON.parse(savedDraft);
+                if (draft.journeyStops) setJourneyStops(draft.journeyStops);
+                if (draft.selectedPlaceIds) setSelectedPlaceIds(draft.selectedPlaceIds);
+                if (draft.selectedDistrictId) setSelectedDistrictId(draft.selectedDistrictId);
+                
+                // Clear the state so it doesn't endlessly auto-load on new sessions
+                localStorage.removeItem('yatara-draft-plan');
+
+                // If user meant to propose and is now logged in, prompt the modal
+                if (draft.intent === 'proposal' && userProfile) {
+                    if (draft.estimatedPrice) setEstimatedPrice(draft.estimatedPrice);
+                    setIsProposalModalOpen(true);
+                }
+            } catch (err) {
+                console.error('Failed to parse draft from local storage:', err);
+            }
+        }
+    }, [initialPlanId, userProfile]);
 
     const handleSaveDraft = async () => {
         setIsSaving(true);
@@ -93,21 +141,43 @@ export default function BuildTourClient({ initialPlanId }: { initialPlanId?: str
                 status: 'DRAFT',
             };
 
-            const res = await fetch('/api/plans', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
+            // If we are editing an existing plan, update it instead of creating a duplicate
+            if (initialPlanId) {
+                const res = await fetch(`/api/plans?id=${initialPlanId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
 
-            if (res.ok) {
-                router.push('/dashboard/my-plans');
-            } else {
-                const data = await res.json();
-                if (res.status === 401 || res.status === 403) {
-                    alert('Please sign in to save your draft.');
-                    router.push('/login?callbackUrl=/build-tour');
+                if (res.ok) {
+                    alert('✅ Plan updated successfully!');
                 } else {
-                    alert(data.error || 'Failed to save draft.');
+                    const data = await res.json();
+                    if (res.status === 401 || res.status === 403) {
+                        alert('Please sign in to save your draft.');
+                        router.push('/login?callbackUrl=/build-tour');
+                    } else {
+                        alert(data.error || 'Failed to update plan.');
+                    }
+                }
+            } else {
+                // Creating a brand new plan
+                const res = await fetch('/api/plans', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+
+                if (res.ok) {
+                    router.push('/dashboard/my-plans');
+                } else {
+                    const data = await res.json();
+                    if (res.status === 401 || res.status === 403) {
+                        alert('Please sign in to save your draft.');
+                        router.push('/login?callbackUrl=/build-tour');
+                    } else {
+                        alert(data.error || 'Failed to save draft.');
+                    }
                 }
             }
         } catch (err) {
@@ -115,6 +185,91 @@ export default function BuildTourClient({ initialPlanId }: { initialPlanId?: str
             alert('An error occurred while saving the draft.');
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleRequestProposal = async (formData: any) => {
+        setIsRequestingProposal(true);
+        try {
+            // First, save the draft plan so we have an ID
+            const daysMap = new Map<number, string[]>();
+            journeyStops.forEach(stop => {
+                const day = stop.day || 1;
+                if (!daysMap.has(day)) daysMap.set(day, []);
+                daysMap.get(day)!.push(stop.placeId);
+            });
+
+            const days = Array.from(daysMap.entries()).map(([dayNo, places]) => ({
+                dayNo,
+                places
+            }));
+
+            const curatedPlaces = curatedPlacesRaw as any[];
+            const districtsUsed = Array.from(new Set(
+                journeyStops
+                    .map(s => curatedPlaces.find((p: any) => p.id === s.placeId)?.districtId)
+                    .filter(Boolean)
+            )) as string[];
+
+            const planPayload = {
+                title: 'Custom Tour Draft',
+                days,
+                districtsUsed,
+                status: 'DRAFT',
+            };
+
+            let currentPlanId = initialPlanId;
+
+            if (currentPlanId) {
+                // Update the existing plan first (this resets proposal flags server-side)
+                const updateRes = await fetch(`/api/plans?id=${currentPlanId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(planPayload),
+                });
+                if (!updateRes.ok) {
+                    const errData = await updateRes.json();
+                    throw new Error(errData.error || 'Failed to update plan.');
+                }
+            } else {
+                // Create a brand new plan
+                const draftRes = await fetch('/api/plans', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(planPayload),
+                });
+                if (!draftRes.ok) {
+                    if (draftRes.status === 401 || draftRes.status === 403) {
+                        alert('Please sign in to request a proposal.');
+                        router.push('/login?callbackUrl=/build-tour');
+                        return;
+                    }
+                    throw new Error('Failed to save draft plan.');
+                }
+                const draftData = await draftRes.json();
+                currentPlanId = draftData.plan?._id || draftData.planId;
+            }
+
+            // Now request the proposal
+            const propRes = await fetch(`/api/custom-plans/${currentPlanId}/request-proposal`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (propRes.ok) {
+                setIsPlanSubmitted(true);
+                router.push('/dashboard/my-plans');
+            } else {
+                const errorData = await propRes.json();
+                alert(errorData.error || 'Failed to submit proposal request.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An error occurred while submitting the request.');
+        } finally {
+            setIsRequestingProposal(false);
+            setIsProposalModalOpen(false);
         }
     };
 
@@ -182,8 +337,35 @@ export default function BuildTourClient({ initialPlanId }: { initialPlanId?: str
                     setSelectedDistrictId={setSelectedDistrictId}
                     onSaveDraft={handleSaveDraft}
                     isSaving={isSaving}
+                    isEditing={!!initialPlanId}
+                    isPlanSubmitted={isPlanSubmitted}
+                    onRequestProposal={(price: number) => {
+                        if (!userProfile) {
+                            alert('Please sign in to request a proposal. We will safely auto-save your current route mapping until you return!');
+                            localStorage.setItem('yatara-draft-plan', JSON.stringify({
+                                journeyStops,
+                                selectedPlaceIds,
+                                selectedDistrictId,
+                                intent: 'proposal',
+                                estimatedPrice: price
+                            }));
+                            router.push('/login?callbackUrl=/build-tour');
+                            return;
+                        }
+                        setEstimatedPrice(price);
+                        setIsProposalModalOpen(true);
+                    }}
                 />
             </div>
+            
+            <RequestProposalModal 
+                isOpen={isProposalModalOpen}
+                onClose={() => setIsProposalModalOpen(false)}
+                onSubmit={handleRequestProposal}
+                estimatedPrice={estimatedPrice}
+                isSaving={isRequestingProposal}
+                defaultContact={userProfile}
+            />
         </section>
     );
 }

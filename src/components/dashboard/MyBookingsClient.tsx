@@ -23,14 +23,21 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
     const { currency, convertRate } = useCurrency();
     const router = useRouter();
     const [actionLoading, setActionLoading] = useState<string | null>(null);
-    const [cancelModal, setCancelModal] = useState<{ isOpen: boolean; bookingId: string | null; isPaid: boolean }>({ isOpen: false, bookingId: null, isPaid: false });
+    const [cancelModal, setCancelModal] = useState<{ isOpen: boolean; bookingId: string | null; isPaid: boolean; tripStartDate: string | null }>({ isOpen: false, bookingId: null, isPaid: false, tripStartDate: null });
 
-    const openCancelModal = (bookingId: string, isPaid: boolean) => {
-        setCancelModal({ isOpen: true, bookingId, isPaid });
+    const [refundReason, setRefundReason] = useState("");
+    const [refundMethod, setRefundMethod] = useState("BANK");
+    const [bankDetails, setBankDetails] = useState({ accountName: '', accountNumber: '', bankName: '', branch: '' });
+
+    const openCancelModal = (bookingId: string, isPaid: boolean, tripStartDate: string) => {
+        setCancelModal({ isOpen: true, bookingId, isPaid, tripStartDate });
+        setRefundReason("");
+        setRefundMethod("BANK");
+        setBankDetails({ accountName: '', accountNumber: '', bankName: '', branch: '' });
     };
 
     const closeCancelModal = () => {
-        setCancelModal({ isOpen: false, bookingId: null, isPaid: false });
+        setCancelModal({ isOpen: false, bookingId: null, isPaid: false, tripStartDate: null });
     };
 
     const confirmCancel = async () => {
@@ -40,7 +47,25 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
 
         setActionLoading(bookingId);
         try {
-            const res = await fetch(`/api/bookings/${bookingId}/cancel`, { method: 'POST' });
+            const diffTime = cancelModal.tripStartDate ? new Date(cancelModal.tripStartDate).getTime() - new Date().getTime() : 0;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const isEligibleForRefund = diffDays >= 5 && cancelModal.isPaid;
+
+            if (isEligibleForRefund && (!refundReason || !refundMethod)) {
+                alert("Please fill in the refund reason and method.");
+                setActionLoading(null);
+                return;
+            }
+
+            const res = await fetch(`/api/bookings/${bookingId}/cancel`, { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    reason: refundReason,
+                    refundMethod,
+                    bankDetails
+                })
+            });
             if (res.ok) {
                 router.refresh();
             } else {
@@ -163,7 +188,7 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                                     {!['CANCELLED', 'REFUND_PENDING', 'REFUNDED', 'COMPLETED'].includes(booking.status) && (
                                         <div className="mt-4 pt-4 border-t border-white/[0.03] flex justify-end">
                                             <button
-                                                onClick={() => openCancelModal(booking._id, booking.paidAmount > 0)}
+                                                onClick={() => openCancelModal(booking._id, booking.paidAmount > 0, booking.dates.from)}
                                                 disabled={actionLoading === booking._id}
                                                 className="text-[11px] font-medium tracking-wider px-4 py-2 border border-red-500/20 text-red-300/80 hover:text-red-300 hover:bg-red-500/10 hover:border-red-500/40 rounded-lg transition-all duration-300 disabled:opacity-50"
                                             >
@@ -192,50 +217,135 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
             )}
 
             {/* Cancel / Refund Modal */}
-            {cancelModal.isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a110e]/80 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-[#121c17] border border-white/10 shadow-2xl rounded-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2 rounded-full ${cancelModal.isPaid ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
-                                        <AlertTriangle className="h-5 w-5" />
+            {cancelModal.isOpen && (() => {
+                const diffTime = cancelModal.tripStartDate ? new Date(cancelModal.tripStartDate).getTime() - new Date().getTime() : 0;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const isEligibleForRefund = diffDays >= 5 && cancelModal.isPaid;
+
+                return (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a110e]/80 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div className="bg-[#121c17] border border-white/10 shadow-2xl rounded-2xl w-full max-w-lg overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-200">
+                            <div className="p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2 rounded-full ${isEligibleForRefund ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
+                                            <AlertTriangle className="h-5 w-5" />
+                                        </div>
+                                        <h3 className="text-xl font-display font-semibold text-white">
+                                            {isEligibleForRefund ? 'Request Refund' : 'Cancel Booking'}
+                                        </h3>
                                     </div>
-                                    <h3 className="text-xl font-display font-semibold text-white">
-                                        {cancelModal.isPaid ? 'Request Refund' : 'Cancel Booking'}
-                                    </h3>
+                                    <button onClick={closeCancelModal} className="text-white/40 hover:text-white transition-colors">
+                                        <X className="h-5 w-5" />
+                                    </button>
                                 </div>
-                                <button onClick={closeCancelModal} className="text-white/40 hover:text-white transition-colors">
-                                    <X className="h-5 w-5" />
-                                </button>
-                            </div>
-                            <p className="text-sm text-gray-300 leading-relaxed mb-8">
-                                {cancelModal.isPaid 
-                                    ? "Are you sure you want to request a refund? Your booking will be marked for cancellation and our finance team will review your payment to schedule a refund." 
-                                    : "Are you sure you want to cancel this booking? This action cannot be undone."}
-                            </p>
-                            <div className="flex gap-3 justify-end">
-                                <button
-                                    onClick={closeCancelModal}
-                                    className="px-4 py-2 rounded-lg text-sm font-medium border border-white/10 text-white/70 hover:bg-white/5 hover:text-white transition-all"
-                                >
-                                    Go Back
-                                </button>
-                                <button
-                                    onClick={confirmCancel}
-                                    className={`px-4 py-2 rounded-lg text-sm font-medium font-bold uppercase tracking-wider transition-all ${
-                                        cancelModal.isPaid 
-                                            ? 'bg-amber-500 hover:bg-amber-400 text-[#121c17]' 
-                                            : 'bg-red-500 hover:bg-red-400 text-white'
-                                    }`}
-                                >
-                                    {cancelModal.isPaid ? 'Request Refund' : 'Cancel Booking'}
-                                </button>
+                                <div className="text-sm text-gray-300 leading-relaxed mb-6 space-y-4">
+                                    {isEligibleForRefund ? (
+                                        <p>
+                                            Since your trip is {diffDays} days away, you are eligible to request a refund for your advance payment. 
+                                            Our finance team will process this request, and your booking will be cancelled immediately.
+                                        </p>
+                                    ) : (
+                                        <p className="text-red-300/80 bg-red-900/10 p-3 rounded-lg border border-red-500/20">
+                                            {cancelModal.isPaid 
+                                                ? `Your trip starts in less than 5 days (${diffDays} days). Under our policy, cancellations made this close to the start date are not eligible for a refund. You can still cancel the booking.` 
+                                                : `Are you sure you want to cancel this booking? This action cannot be undone.`}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {isEligibleForRefund && (
+                                    <div className="space-y-4 mb-8">
+                                        <div>
+                                            <label className="block text-xs font-medium text-white/70 mb-1">Reason for Cancellation *</label>
+                                            <textarea 
+                                                className="w-full bg-[#0a110e] border border-white/10 rounded-lg p-3 text-white focus:border-antique-gold outline-none text-sm placeholder:text-white/20"
+                                                rows={3}
+                                                placeholder="Please provide a reason..."
+                                                value={refundReason}
+                                                onChange={e => setRefundReason(e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-white/70 mb-1">Preferred Refund Method *</label>
+                                            <select 
+                                                className="w-full bg-[#0a110e] border border-white/10 rounded-lg p-3 text-white focus:border-antique-gold outline-none text-sm"
+                                                value={refundMethod}
+                                                onChange={e => setRefundMethod(e.target.value)}
+                                            >
+                                                <option value="BANK">Bank Transfer</option>
+                                                <option value="CARD">Credit/Debit Card Reversal</option>
+                                                <option value="OTHER">Other Method</option>
+                                            </select>
+                                        </div>
+
+                                        {refundMethod === 'BANK' && (
+                                            <div className="grid grid-cols-2 gap-3 p-3 bg-white/5 rounded-xl border border-white/5">
+                                                <div className="col-span-2">
+                                                    <label className="block text-[10px] uppercase font-bold text-white/50 mb-1">Account Name</label>
+                                                    <input 
+                                                        type="text" 
+                                                        className="w-full bg-[#0a110e] border border-white/10 rounded-md p-2.5 text-white text-sm"
+                                                        value={bankDetails.accountName}
+                                                        onChange={e => setBankDetails({...bankDetails, accountName: e.target.value})}
+                                                    />
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <label className="block text-[10px] uppercase font-bold text-white/50 mb-1">Account Number</label>
+                                                    <input 
+                                                        type="text" 
+                                                        className="w-full bg-[#0a110e] border border-white/10 rounded-md p-2.5 text-white text-sm"
+                                                        value={bankDetails.accountNumber}
+                                                        onChange={e => setBankDetails({...bankDetails, accountNumber: e.target.value})}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] uppercase font-bold text-white/50 mb-1">Bank Name</label>
+                                                    <input 
+                                                        type="text" 
+                                                        className="w-full bg-[#0a110e] border border-white/10 rounded-md p-2.5 text-white text-sm"
+                                                        value={bankDetails.bankName}
+                                                        onChange={e => setBankDetails({...bankDetails, bankName: e.target.value})}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] uppercase font-bold text-white/50 mb-1">Branch</label>
+                                                    <input 
+                                                        type="text" 
+                                                        className="w-full bg-[#0a110e] border border-white/10 rounded-md p-2.5 text-white text-sm"
+                                                        value={bankDetails.branch}
+                                                        onChange={e => setBankDetails({...bankDetails, branch: e.target.value})}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="flex gap-3 justify-end mt-6">
+                                    <button
+                                        onClick={closeCancelModal}
+                                        className="px-4 py-2 rounded-lg text-sm font-medium border border-white/10 text-white/70 hover:bg-white/5 hover:text-white transition-all"
+                                    >
+                                        Go Back
+                                    </button>
+                                    <button
+                                        onClick={confirmCancel}
+                                        disabled={isEligibleForRefund && (!refundReason || !refundMethod)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium font-bold uppercase tracking-wider transition-all ${
+                                            isEligibleForRefund 
+                                                ? 'bg-amber-500 hover:bg-amber-400 text-[#121c17] disabled:bg-amber-500/50 disabled:text-amber-900/50' 
+                                                : 'bg-red-500 hover:bg-red-400 text-white disabled:bg-red-500/50'
+                                        }`}
+                                    >
+                                        {isEligibleForRefund ? 'Submit Refund Request' : 'Force Cancel Booking'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
         </div>
     );
 }

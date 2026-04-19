@@ -125,15 +125,17 @@ export default function MyPlansClient({ initialPlans }: { initialPlans: any[] })
                                     <Pencil className="h-3.5 w-3.5" />
                                     Reopen
                                 </Link>
-                                <button
-                                    type="button"
-                                    disabled={deletingId === plan._id}
-                                    onClick={() => handleDelete(plan._id)}
-                                    className="inline-flex items-center justify-center p-3 rounded-xl border border-red-400/20 bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-all duration-300 disabled:opacity-50"
-                                    title="Delete Plan"
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </button>
+                                {plan.status !== 'SUBMITTED' && (
+                                    <button
+                                        type="button"
+                                        disabled={deletingId === plan._id}
+                                        onClick={() => handleDelete(plan._id)}
+                                        className="inline-flex items-center justify-center p-3 rounded-xl border border-red-400/20 bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-all duration-300 disabled:opacity-50"
+                                        title="Delete Plan"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -116,6 +116,10 @@ Create booking, update status, assign staff, assign vehicle, attach custom plan,
 - **Description:** Flag `isDeleted=true` or move to archived state; preserves finance audit trail.
 - **Example:** Completed bookings older than 90 days archived; cancelled test bookings soft-deleted.
 
+### Cancel & Refund
+- **Description:** Handling of customer-initiated cancellations via `[id]/cancel` API. Strict `<5 day` policy enforcement preventing refunds. Automatically invokes Refund pipeline creating a Mongoose `RefundRequest` for Staff / Admin approval.
+- **Example:** Customer cancels a trip 20 days prior; system prompts for Bank details, generates Refund Request, cancels Booking.
+
 ---
 
 ## 6. Unique Features
@@ -252,8 +256,10 @@ Create booking, update status, assign staff, assign vehicle, attach custom plan,
 ### 9.5 Support Ticket / Chat
 - Two-pane chat UI, message bubbles aligned by sender, timestamp, status pill.
 
-### 9.6 Cancel Dialog
+### 9.6 Cancel / Refund Modal
 - Reason textarea, warning about vehicle block release.
+- For trips `> 5 days` away, collects preferred refund method, bank tracking details if `BANK_TRANSFER`.
+- Strict UI lockout preventing Refunds completely inside the `< 5 day` window based on Booking Start Date.
 
 **Design rules:** status badges color-coded, glass cards, Playfair/Montserrat, consistent action button palette.
 

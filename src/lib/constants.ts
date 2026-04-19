@@ -136,6 +136,20 @@ export const GalleryPostTypes = {
     BLOG: 'BLOG',
 } as const;
 
+export const RefundStatus = {
+    SUBMITTED: 'SUBMITTED',
+    UNDER_REVIEW: 'UNDER_REVIEW',
+    APPROVED: 'APPROVED',
+    REJECTED: 'REJECTED',
+    REFUNDED: 'REFUNDED',
+} as const;
+
+export const RefundMethod = {
+    BANK: 'BANK',
+    CARD: 'CARD',
+    OTHER: 'OTHER',
+} as const;
+
 export const DistrictPlaceCategories = {
     TEMPLE: 'TEMPLE',
     BEACH: 'BEACH',
@@ -151,4 +165,6 @@ export const DistrictPlaceCategories = {
 export const CustomPlanStatus = {
     DRAFT: 'DRAFT',
     SAVED: 'SAVED',
+    SUBMITTED: 'SUBMITTED',
+    ARCHIVED: 'ARCHIVED',
 } as const;

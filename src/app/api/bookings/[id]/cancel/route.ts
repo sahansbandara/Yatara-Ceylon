@@ -3,15 +3,18 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
 import VehicleBlock from '@/models/VehicleBlock';
+import RefundRequest from '@/models/RefundRequest';
 import { withAuth } from '@/lib/rbac';
 import { logAudit } from '@/lib/audit';
 
 // POST /api/bookings/[id]/cancel
 // Accessible by the booking owner (USER) to request a cancellation/refund
-export const POST = withAuth(async (_req, context) => {
+export const POST = withAuth(async (req, context) => {
     try {
         await connectDB();
         const { id } = await context.params;
+
+        const body = await req.json().catch(() => ({}));
 
         const booking = await Booking.findOne({ _id: id, isDeleted: false });
         if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -29,11 +32,35 @@ export const POST = withAuth(async (_req, context) => {
         const paidAmount = booking.paidAmount || 0;
         
         let newStatus = 'CANCELLED';
+
+        const tripStartDate = new Date(booking.dates.from);
+        const today = new Date();
+        const diffTime = tripStartDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
         if (paidAmount > 0) {
-            newStatus = 'REFUND_PENDING';
-            // If it's refund pending, we don't immediately unblock the vehicle?
-            // Actually, we should probably unblock the vehicle if it's cancelled
-            // A REFUND_PENDING is essentially cancelled but requires financial settlement.
+            if (diffDays >= 5) {
+                newStatus = 'REFUND_PENDING';
+                
+                // Create refund request
+                const { reason, refundMethod, bankDetails } = body;
+                if (!reason || !refundMethod) {
+                    return NextResponse.json({ error: 'Reason and refund method are required for a refund request.' }, { status: 400 });
+                }
+
+                await RefundRequest.create({
+                    bookingId: booking._id,
+                    customerId: booking.customerId || context.user.userId,
+                    status: 'SUBMITTED',
+                    requestedAmount: paidAmount,
+                    reason,
+                    refundMethod,
+                    bankDetails: bankDetails || {}
+                });
+            } else {
+                // Not eligible for refund, forced cancellation with no money back
+                newStatus = 'CANCELLED';
+            }
         }
 
         // Delete blocks if changing status to cancelled or refund_pending

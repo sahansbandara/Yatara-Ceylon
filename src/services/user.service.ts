@@ -11,5 +11,15 @@ export const UserService = {
             console.error("[UserService] Failed to fetch dashboard users:", error);
             return [];
         }
+    },
+    async getUserById(id: string) {
+        try {
+            await connectDB();
+            const user = await User.findById(id).lean();
+            return user ? JSON.parse(JSON.stringify(user)) : null;
+        } catch (error) {
+            console.error("[UserService] Failed to fetch user by ID:", error);
+            return null;
+        }
     }
 };

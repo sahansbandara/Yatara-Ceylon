@@ -601,6 +601,7 @@ flowchart LR
 | Day-by-Day Itinerary | `itinerary[]` | Timeline with day numbers and activities |
 | What's Included | `inclusions[]` | Green checkmark list |
 | What's Excluded | `exclusions[]` | Red X list |
+| Cancellation Policy | Hardcoded | Standard `<5 Days No Refund` policy text |
 | Booking Sidebar | `priceMin`, `priceMax` | Price display + Book Now button |
 | Related Journeys | Related packages query | 3 related packages by tags |
 

@@ -56,6 +56,10 @@
 - [2026-04-19] React `useState(initialProp)` only captures the value on first mount — subsequent prop changes from URL navigation (e.g., clicking navbar filter links) are ignored. → Always add `useEffect(() => setState(prop), [prop])` sync hooks when a client component's filter state comes from URL search params that may change during SPA navigation.
 - [2026-04-19] The `DestinationsPage` is a `'use client'` component that needs `useSearchParams()` to read URL query params like `?region=hill-country`. Next.js requires wrapping any component using `useSearchParams()` in a `<Suspense>` boundary to avoid build errors. → Split into a wrapper component that provides `<Suspense>` and an inner content component that calls the hook.
 - [2026-04-19] Navbar destination links pass region slugs like `hill-country` in URL params, but the destinations data uses display names like `Hill Country`. → Normalize both sides to lowercase with hyphens replaced by spaces before comparing: `regionParam.toLowerCase().replace(/-/g, ' ') === region.toLowerCase()`.
+- [2026-04-19] The `request-proposal` API route must handle Mongoose ValidationError and duplicate key errors (11000) explicitly — returning generic 'Internal server error' hides actionable error messages from the user. → Always destructure `error.name === 'ValidationError'` and `error.code === 11000` in catch blocks for Mongoose create/save operations.
+- [2026-04-19] Duplicate proposal submissions must be blocked at BOTH the server (check `isProposalRequested` flag AND check for existing non-cancelled bookings) AND the client (track `isPlanSubmitted` state and disable the button). → Double protection prevents spam from race conditions or rapid clicks.
+- [2026-04-19] The `CsrfBootstrap` component patches `window.fetch` globally to auto-inject CSRF headers for all POST/PATCH/PUT/DELETE requests to `/api/*`. This means individual fetch calls do NOT need to manually add CSRF headers — it's handled automatically. → Never manually add CSRF headers in client components; rely on the bootstrap interceptor.
+- [2026-04-19] Built a strict Refund Management flow. Date gating (<5 days) blocked refunds. Required explicit Backend enforcement. Introduced `RefundRequest` Mongoose pipeline connecting Staff (Review) -> Admin (Approve) -> Finance (Execute Ledger).
 
 ---
 
@@ -210,24 +214,20 @@
 
 ## Last Session
 
-**Date**: 2026-04-19 (Session 4)
+## Last Session
+
+**Date**: 2026-04-19 (Session 6)
 
 **What was done**:
-1. Fixed public search API — changed `isActive: true` to `isPublished: true`, added `summary` and `tags` to Package search fields.
-2. Fixed SearchModal static index links — changed `?tag=` to `?style=` to match JourneysGrid filtering.
-3. Removed "Experiences" section from SearchModal and cleaned up unused `Sparkles` icon import that caused `ReferenceError`.
-4. Updated agent files (MEMORY, TODO, BRIEF) with final project state.
-5. Verified all 6 member documentation files in `docs/yatara_member_md_files/` are comprehensive (634-710 lines each).
-6. Pushed all changes to GitHub.
+1. Implemented the strict Refund Management System. 
+2. Updated Customer Cancellation Modal to enforce <5 days date gating. Captured refund method, reason, and bank details.
+3. Created `RefundRequest` mongoose model to govern Staff > Admin > Ledger execution.
+4. Added `Refunds` pane in the Dashboard Sidebar for Admins & Staff.
+5. Allowed Admins to formally trigger `Mark as Refunded` which reduces Booking `paidAmount` and records the Ledger entry.
 
 **Current state**:
-- All search functionality working correctly (API + static index).
-- SearchModal shows only Destinations and Journeys sections (Experiences removed).
-- All 6 member documentation files are fully detailed.
-- Project is in final production-readiness state.
-- Branch: `main`
+- Refund management pipeline is natively merged and complete.
 
 **What to do next**:
-- User to generate 4 "How It Works" images using provided prompts and place in `public/images/transfers/`.
-- Cross-browser QA on the production site.
-- Any remaining UI polish requests from user.
+- Check if `02-products-content-management-wasala.md` or next files require updates to log these system capabilities.
+- Proceed with any missing notification triggers (emails/slack) when a Refund Request is entered.

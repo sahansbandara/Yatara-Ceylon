@@ -206,33 +206,53 @@ Production Readiness — ALL FEATURES COMPLETE ✅
 
 ---
 
+## Just Completed (2026-04-19 - Session 5)
+### Bespoke Tour Proposal Flow
+- [x] Fixed `request-proposal` API route — added proper Mongoose ValidationError and duplicate key error handling.
+- [x] Added server-side duplicate proposal prevention — checks `isProposalRequested` flag AND existing non-cancelled bookings.
+- [x] Added client-side `isPlanSubmitted` state tracking — disables "Request Proposal" button after submission.
+- [x] Fixed Booking creation with safe defaults (customerName, phone, pax) to prevent validation errors.
+- [x] Passed `isPlanSubmitted` prop through BuildTourClient → PlannerSidebar for visual feedback.
+- [x] Added `setIsPlanSubmitted(true)` on successful proposal submission before router redirect.
+
+---
+
+## Just Completed (2026-04-19 - Session 6)
+### Refund Management System
+- [x] Implemented explicit `< 5 days` prior cancellation rule; strictly enforcing straight cancellation with NO refund capability if trip approaches inside restricted window.
+- [x] Captured Refund Method, optional Bank Transfer details, and Customer Reason from frontend Cancellation Modal.
+- [x] Backend created `RefundRequest` Mongoose schema and corresponding APIs (`/api/refunds` and `/api/refunds/[id]`).
+- [x] Integrated Staff, Admin and Finance pipeline into Dashboard. Staff can leave recommendations. Admin triggers `APPROVED`/`REJECTED`.
+- [x] Finance marks approved requests as `REFUNDED`, uploading a Proof ID which natively triggers ledger balancing reducing `paidAmount` directly on the linked Booking and creating a Payment Log representation.
+
+---
+
 ## Last Session
-**Date**: 2026-04-19 (Session 4)
+**Date**: 2026-04-19 (Session 6)
 **What was done**:
-- Fixed search API (isActive→isPublished, summary field, tags field).
-- Fixed SearchModal links (?tag= → ?style=) and removed Experiences section.
-- Enhanced About, FAQ, and News pages with new content and images.
-- Finalized all documentation and pushed to GitHub.
+- Solidified the unified Booking Cancellation / Refund processing pipeline.
+- Implemented robust UI for capturing requests and tracking the lifecycle against ledger.
+- Dashboard sidebars reflect the new tool natively.
 
 **What to do next**:
-- User to generate 4 "How It Works" images for transfers page.
-- Cross-browser QA on production.
-- Any remaining UI polish requests.
+- Refine Notification and Email triggers upon Refund transitions, keeping customers informed when their refunds process successfully.
+- Look at remaining `02-products-content-management-wasala.md` or next files.
 
 **Current state**:
-- Branch: `main`
-- All search functionality working correctly.
-- All documentation finalized and comprehensive.
-- Project is production-ready.
+- Branch: `main` (local changes not yet pushed)
+- Refund workflows completely implemented.
+- Dev server on port 3001.
 
 **Files changed (This Session)**:
-- `src/app/api/public/search/route.ts` — Fixed search query fields
-- `src/components/public/SearchModal.tsx` — Fixed links, removed Experiences section
-- `src/app/(public)/about/page.tsx` — Enhanced About page
-- `src/app/(public)/faq/page.tsx` — FAQ redesign
-- `src/app/(public)/news/page.tsx` — News page updates
-- `src/app/(public)/news/[slug]/page.tsx` — NEW article detail page
-- `src/data/news.ts` — NEW news data source
-- `agent/MEMORY.md` — Updated with Session 4 findings
-- `agent/TODO.md` — Updated with Session 4 completions
-- `agent/BRIEF.md` — Updated with final acceptance criteria
+- `src/components/dashboard/MyBookingsClient.tsx`
+- `src/app/api/bookings/[id]/cancel/route.ts`
+- `src/lib/constants.ts`
+- `src/models/RefundRequest.ts`
+- `src/app/api/refunds/route.ts`
+- `src/app/api/refunds/[id]/route.ts`
+- `src/app/dashboard/refunds/page.tsx`
+- `src/app/dashboard/refunds/RefundsClient.tsx`
+- `src/app/dashboard/refunds/[id]/page.tsx`
+- `src/app/dashboard/refunds/[id]/RefundDetailClient.tsx`
+- `src/components/layout/DashboardSidebar.tsx`
+- `agent/MEMORY.md` & `agent/TODO.md`

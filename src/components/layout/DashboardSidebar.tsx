@@ -25,6 +25,7 @@ import {
     Activity,
     ArchiveRestore,
     TrendingUp,
+    CreditCard,
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -72,6 +73,7 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
             links: [
                 { href: '/dashboard/admin-applications', label: 'Applications', icon: ClipboardList },
                 { href: '/dashboard/finance', label: 'Finance', icon: DollarSign },
+                { href: '/dashboard/refunds', label: 'Refunds', icon: CreditCard },
                 { href: '/dashboard/partners', label: 'Partners', icon: Handshake },
                 { href: '/dashboard/users', label: 'Users', icon: Users },
                 { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
@@ -91,6 +93,7 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
             label: 'Operations',
             links: [
                 { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
+                { href: '/dashboard/refunds', label: 'Refunds', icon: CreditCard },
                 { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
                 { href: '/dashboard/support', label: 'Support', icon: Headphones },
             ],

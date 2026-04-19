@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
-import { X, Plus, Minus, ChevronRight, MapPin, Clock } from 'lucide-react';
+import { X, Plus, Minus, ChevronRight, MapPin, Clock, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
 import type { JourneyStop } from '@/lib/trip/buildTourTypes';
 import curatedPlacesRaw from '@/data/places/sri-lanka.curated.json';
@@ -18,6 +18,21 @@ interface PlannerSidebarProps {
     setSelectedDistrictId: (id: string | null) => void;
     onSaveDraft: () => void;
     isSaving: boolean;
+    onRequestProposal?: (estimatedPrice: number) => void;
+    isEditing?: boolean;
+    isPlanSubmitted?: boolean;
+}
+
+function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
 }
 
 export default function PlannerSidebar({
@@ -28,7 +43,10 @@ export default function PlannerSidebar({
     setJourneyStops,
     setSelectedDistrictId,
     onSaveDraft,
-    isSaving
+    isSaving,
+    onRequestProposal,
+    isEditing,
+    isPlanSubmitted
 }: PlannerSidebarProps) {
     const [activeMobileTab, setActiveMobileTab] = useState<'explore' | 'journey'>('explore');
 
@@ -58,6 +76,23 @@ export default function PlannerSidebar({
             return { ...stop, place };
         }).filter(s => s.place);
     }, [journeyStops]);
+
+    const estimatedDistance = useMemo(() => {
+        let dist = 0;
+        for (let i = 0; i < activeJourneyPlaces.length - 1; i++) {
+            const p1 = activeJourneyPlaces[i].place;
+            const p2 = activeJourneyPlaces[i + 1].place;
+            if (p1 && p2 && p1.lat && p1.lng && p2.lat && p2.lng) {
+                dist += getDistanceFromLatLonInKm(p1.lat, p1.lng, p2.lat, p2.lng);
+            }
+        }
+        return dist;
+    }, [activeJourneyPlaces]);
+
+    const estimatedPrice = useMemo(() => {
+        if (activeJourneyPlaces.length === 0) return 0;
+        return 10000 + (estimatedDistance * 100);
+    }, [estimatedDistance, activeJourneyPlaces]);
 
     // Handlers
     const handleAddPlace = (placeId: string) => {
@@ -196,9 +231,14 @@ export default function PlannerSidebar({
                                 </span>
                             </div>
                             {journeyStops.length > 1 && (
-                                <span className="text-[10px] text-deep-emerald/50 flex flex-row items-center gap-1">
-                                    <Clock className="w-3 h-3" /> ~{Math.round(journeyStops.length * 1.5)} hrs driving
-                                </span>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-[10px] text-deep-emerald/50 flex flex-row items-center gap-1">
+                                        <Clock className="w-3 h-3" /> ~{Math.round(journeyStops.length * 1.5)} hrs / {Math.round(estimatedDistance)} km
+                                    </span>
+                                    <span className="text-xs font-bold text-deep-emerald mt-0.5">
+                                        Est: LKR {estimatedPrice.toLocaleString()}/person
+                                    </span>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -263,21 +303,37 @@ export default function PlannerSidebar({
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="p-5 border-t border-black/5 bg-white/50 shrink-0 flex gap-3">
+                    <div className="p-4 border-t border-black/5 bg-white/50 shrink-0 flex flex-col gap-2">
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleClearPlan}
+                                disabled={journeyStops.length === 0}
+                                className="flex-1 py-3 rounded-xl border border-deep-emerald/20 text-deep-emerald hover:bg-red-50 hover:border-red-900/30 hover:text-red-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-deep-emerald disabled:border-deep-emerald/20 transition-all text-xs tracking-widest uppercase font-bold"
+                            >
+                                Clear
+                            </button>
+                            <button
+                                onClick={onSaveDraft}
+                                disabled={journeyStops.length === 0 || isSaving}
+                                className="flex-1 py-3 rounded-xl bg-deep-emerald/10 text-deep-emerald hover:bg-deep-emerald/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2 text-xs tracking-widest uppercase font-bold"
+                            >
+                                {isSaving ? "Saving..." : isEditing ? "Update Plan" : "Save Draft"}
+                            </button>
+                        </div>
                         <button
-                            onClick={handleClearPlan}
+                            onClick={() => onRequestProposal?.(estimatedPrice)}
                             disabled={journeyStops.length === 0}
-                            className="flex-1 py-3.5 rounded-xl border border-deep-emerald/20 text-deep-emerald hover:bg-red-50 hover:border-red-900/30 hover:text-red-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-deep-emerald disabled:border-deep-emerald/20 transition-all text-xs tracking-widest uppercase font-bold"
+                            className={`w-full py-3.5 rounded-xl shadow-[0_8px_20px_rgba(4,57,39,0.15)] transition-all flex items-center justify-center gap-2 text-xs tracking-widest uppercase font-bold ${
+                                isPlanSubmitted
+                                    ? 'bg-amber-600 text-white hover:-translate-y-0.5'
+                                    : 'bg-deep-emerald text-white hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0'
+                            }`}
                         >
-                            Clear
-                        </button>
-                        <button
-                            onClick={onSaveDraft}
-                            disabled={journeyStops.length === 0 || isSaving}
-                            className="flex-[2] py-3.5 rounded-xl bg-deep-emerald text-white shadow-[0_8px_20px_rgba(4,57,39,0.15)] hover:shadow-[0_8px_25px_rgba(4,57,39,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none transition-all flex items-center justify-center gap-2 text-xs tracking-widest uppercase font-bold"
-                        >
-                            {isSaving ? "Saving..." : "Save Draft"}
-                            {!isSaving && <ChevronRight className="w-4 h-4" />}
+                            {isPlanSubmitted ? (
+                                <>Update & Re-submit <ChevronRight className="w-4 h-4" /></>
+                            ) : (
+                                <>Request Proposal <ChevronRight className="w-4 h-4" /></>
+                            )}
                         </button>
                     </div>
                 </div>

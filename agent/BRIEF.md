@@ -80,6 +80,7 @@ A Next.js 15 full-stack application with MongoDB, deployed on Vercel, covering 6
 - Multi-stage payment ledger (advance → balance → refund)
 - Invoice lifecycle (Draft → Final → Void)
 - Booking status workflow (PENDING → CONFIRMED → BALANCE_PENDING → FULLY_PAID)
+- Unified Booking Cancellation and Refund Rules Pipeline (<5 Day Refund blocks logic via explicit model workflows)
 
 ### 5. Search Functionality
 - Public search API (`/api/public/search`) for packages and destinations
@@ -132,6 +133,7 @@ A Next.js 15 full-stack application with MongoDB, deployed on Vercel, covering 6
 ### Finance Management ✅
 - [x] Invoice lifecycle (Draft/Final/Void) with auto-calculated totals
 - [x] Payment ledger with advance/balance/refund tracking
+- [x] Refunds workflow encompassing Admin review and Ledger generation tracking rules explicitly
 - [x] Aging analysis (0-7, 8-14, 15-30, 30+ days)
 - [x] Audit report generation with date ranges and CSV export
 - [x] Outstanding balances with smart ranking

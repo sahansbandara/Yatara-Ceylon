@@ -101,13 +101,31 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Package</p>
-                                <p className="text-sm font-medium text-off-white">{pkg?.title || booking.type}</p>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Package / Route</p>
+                                {booking.type === 'CUSTOM' ? (
+                                    <div className="flex flex-col items-start gap-1.5 mt-0.5">
+                                        <span className="text-sm font-medium text-off-white leading-none">Bespoke Tour</span>
+                                        {booking.customPlanId && (
+                                            <Link href={`/dashboard/bookings/${booking._id}/custom-plan`} className="text-[10px] px-2 py-1 bg-antique-gold/10 text-antique-gold hover:bg-antique-gold/20 rounded border border-antique-gold/20 transition-colors uppercase tracking-widest font-semibold flex items-center gap-1">
+                                                View Itinerary <MapPin className="w-2.5 h-2.5" />
+                                            </Link>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm font-medium text-off-white">{pkg?.title || booking.type}</p>
+                                )}
                             </div>
-                            <div>
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Pickup</p>
-                                <p className="text-sm text-off-white">{booking.pickupLocation || '—'}</p>
-                            </div>
+                            {booking.type === 'CUSTOM' ? (
+                                <div>
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Preferences</p>
+                                    <p className="text-xs text-white/80">{booking.hotelPreference || 'Any Hotel'} · {booking.transferPreference || 'Any Transfer'}</p>
+                                </div>
+                            ) : (
+                                <div>
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Pickup</p>
+                                    <p className="text-sm text-off-white">{booking.pickupLocation || '—'}</p>
+                                </div>
+                            )}
                             <div>
                                 <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">From</p>
                                 <p className="text-sm text-off-white">{booking.dates?.from ? new Date(booking.dates.from).toLocaleDateString() : '—'}</p>

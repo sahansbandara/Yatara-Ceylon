@@ -7,12 +7,10 @@ import { createTicketSchema } from '@/lib/validations';
 import { rateLimit } from '@/lib/rate-limit';
 import { enforceCsrf } from '@/lib/csrf';
 import { verifyTurnstileToken } from '@/lib/turnstile';
+import { withAuth } from '@/lib/rbac';
 
-// Public ticket submission – no auth required
-export async function POST(request: NextRequest) {
-    const csrfError = await enforceCsrf(request);
-    if (csrfError) return csrfError;
-
+// Ticket submission – auth required
+export const POST = withAuth(async (request, context) => {
     const limitError = await rateLimit(request);
     if (limitError) return limitError;
 
@@ -43,4 +41,4 @@ export async function POST(request: NextRequest) {
         console.error(error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-}
+});

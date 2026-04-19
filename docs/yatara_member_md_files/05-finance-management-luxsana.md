@@ -74,7 +74,7 @@ The Finance Management module owns every rupee moving through Yatara Ceylon – 
 - FR-FN-04 DRAFT / FINAL invoice states.
 - FR-FN-05 Downloadable receipt per payment.
 - FR-FN-06 Finance dashboard with key metrics.
-- FR-FN-07 Refund handling as a negative payment.
+- FR-FN-07 Refund handling as a negative payment via Refund Requests lifecycle (`PENDING` -> `REVIEWING` -> `APPROVED/REJECTED` -> `REFUNDED`).
 - FR-FN-08 Soft-delete (void) with reason.
 
 ### Should
@@ -157,6 +157,18 @@ Record payment, create invoice, finalize invoice, issue refund, void payment, ex
 | `rawNotifyPayload` | Object | Webhook snapshot. |
 | `isDeleted` | Boolean | Soft-void. |
 | `voidReason` | String |  |
+| `createdAt`, `updatedAt` | Date |  |
+
+### Entity: `RefundRequest`
+| Field | Type | Notes |
+|---|---|---|
+| `_id` | ObjectId (PK) |  |
+| `bookingId` | ObjectId → Booking (FK) |  |
+| `customerId` | ObjectId → User (FK) |  |
+| `requestedAmount` | Number |  |
+| `status` | Enum | `PENDING | REVIEWING | APPROVED | REJECTED | REFUNDED` |
+| `refundMethod` | Enum | `ORIGINAL_METHOD | BANK_TRANSFER` |
+| `customerReason` | String |  |
 | `createdAt`, `updatedAt` | Date |  |
 
 ### Entity: `Invoice`

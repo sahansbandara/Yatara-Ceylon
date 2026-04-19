@@ -96,6 +96,14 @@ export const PATCH = withAuth(async (request, { user }) => {
             update.customerEmail = user.email;
         }
 
+        // If the plan was previously submitted, reset proposal flags
+        // so the user can re-submit after modifying
+        if (existingPlan.isProposalRequested || existingPlan.status === 'SUBMITTED') {
+            update.isProposalRequested = false;
+            update.status = 'DRAFT';
+            update.linkedBookingId = null;
+        }
+
         const plan = await CustomPlan.findByIdAndUpdate(
             id,
             { $set: update },
@@ -123,6 +131,11 @@ export const DELETE = withAuth(async (request, { user }) => {
         }
         if (!canAccessPlan(existingPlan, user)) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        // Block deletion of plans with active proposals
+        if (existingPlan.status === 'SUBMITTED' || existingPlan.isProposalRequested) {
+            return NextResponse.json({ error: 'Cannot delete a plan with an active proposal. Please contact support if you need to cancel.' }, { status: 400 });
         }
 
         await CustomPlan.findByIdAndUpdate(id, {

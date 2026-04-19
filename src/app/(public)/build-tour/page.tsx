@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import BuildTourHero from './_components/BuildTourHero';
 import QuickStartModes from './_components/QuickStartModes';
 import BuildTourClient from './_components/BuildTourClient';
+import { getSessionUser } from "@/lib/auth";
+import { UserService } from "@/services/user.service";
 import HowItWorks from './_components/HowItWorks';
 import PopularTours from './_components/PopularTours';
 import ThemeCarousel from './_components/ThemeCarousel';
@@ -20,6 +22,20 @@ export default async function BuildTourPage({
 }) {
     const { planId } = await searchParams;
 
+    const session = await getSessionUser();
+    let userProfile = null;
+    if (session) {
+        const user = await UserService.getUserById(session.userId);
+        if (user) {
+            userProfile = {
+                id: user._id.toString(),
+                name: user.name,
+                email: user.email,
+                phone: user.phone || ''
+            };
+        }
+    }
+
     return (
         <main className="bg-off-white min-h-screen">
             {/* 1. Hero — compact, product-led framing */}
@@ -30,7 +46,7 @@ export default async function BuildTourPage({
 
             {/* 3. Main planner — the star of the page */}
             <div id="planner" className="w-full">
-                <BuildTourClient initialPlanId={planId} />
+                <BuildTourClient initialPlanId={planId} userProfile={userProfile} />
             </div>
 
             {/* 4. How it works — 3-step strip */}

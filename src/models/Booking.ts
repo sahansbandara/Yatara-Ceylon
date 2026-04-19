@@ -24,6 +24,9 @@ export interface IBooking extends Document {
     assignedVehicleId?: Types.ObjectId;
     notes?: string;
     specialRequests?: string;
+    hotelPreference?: string;
+    transferPreference?: string;
+    quoteStatus?: 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED';
     totalCost: number;
     paidAmount: number;
     remainingBalance: number;
@@ -64,6 +67,12 @@ const BookingSchema = new Schema<IBooking>(
         assignedVehicleId: { type: Schema.Types.ObjectId, ref: 'Vehicle' },
         notes: String,
         specialRequests: String,
+        hotelPreference: String,
+        transferPreference: String,
+        quoteStatus: {
+            type: String,
+            enum: ['DRAFT', 'SENT', 'ACCEPTED', 'REJECTED']
+        },
         totalCost: { type: Number, default: 0 },
         paidAmount: { type: Number, default: 0 },
         remainingBalance: { type: Number, default: 0 },

@@ -15,7 +15,10 @@ export interface ICustomPlan extends Document {
     days: IPlanDay[];
     districtsUsed: string[];
     totalDays: number;
-    status: 'DRAFT' | 'SAVED';
+    status: 'DRAFT' | 'SAVED' | 'SUBMITTED' | 'ARCHIVED';
+    isProposalRequested?: boolean;
+    linkedBookingId?: Types.ObjectId;
+    submittedAt?: Date;
     isDeleted: boolean;
     deletedAt?: Date;
     createdAt: Date;
@@ -43,9 +46,12 @@ const CustomPlanSchema = new Schema<ICustomPlan>(
         totalDays: { type: Number, default: 1 },
         status: {
             type: String,
-            enum: ['DRAFT', 'SAVED'],
+            enum: ['DRAFT', 'SAVED', 'SUBMITTED', 'ARCHIVED'],
             default: 'DRAFT',
         },
+        isProposalRequested: { type: Boolean, default: false },
+        linkedBookingId: { type: Schema.Types.ObjectId, ref: 'Booking' },
+        submittedAt: Date,
         isDeleted: { type: Boolean, default: false },
         deletedAt: Date,
     },
