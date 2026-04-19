@@ -57,6 +57,7 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
             label: 'Operations',
             links: [
                 { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
+                { href: '/dashboard/custom-bookings', label: 'Custom Plans', icon: Logs },
                 { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
                 { href: '/dashboard/support', label: 'Support', icon: Headphones },
             ],
@@ -93,6 +94,7 @@ const NAV_GROUPS_BY_ROLE: Record<string, NavGroup[]> = {
             label: 'Operations',
             links: [
                 { href: '/dashboard/bookings', label: 'Bookings', icon: CalendarCheck },
+                { href: '/dashboard/custom-bookings', label: 'Custom Plans', icon: Logs },
                 { href: '/dashboard/refunds', label: 'Refunds', icon: CreditCard },
                 { href: '/dashboard/vehicles', label: 'Vehicles', icon: Car },
                 { href: '/dashboard/support', label: 'Support', icon: Headphones },

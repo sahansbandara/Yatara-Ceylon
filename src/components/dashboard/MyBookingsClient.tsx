@@ -17,13 +17,77 @@ const STATUS_CONFIG: Record<string, { color: string; icon: any; label: string }>
     COMPLETED: { color: 'from-white/10 to-white/5 text-white/70 border-white/20', icon: CheckCircle2, label: 'Completed' },
     CANCELLED: { color: 'from-red-500/20 to-red-400/10 text-red-300 border-red-500/30', icon: ShieldAlert, label: 'Cancelled' },
     CONTACTED: { color: 'from-sky-500/20 to-sky-400/10 text-sky-300 border-sky-500/30', icon: CalendarCheck, label: 'Contacted' },
+    REFUND_PENDING: { color: 'from-orange-500/20 to-orange-400/10 text-orange-300 border-orange-500/30', icon: Clock, label: 'Refund Pending' },
+    REFUNDED: { color: 'from-pink-500/20 to-pink-400/10 text-pink-300 border-pink-500/30', icon: CreditCard, label: 'Refunded' },
+    BALANCE_PENDING: { color: 'from-amber-500/20 to-amber-400/10 text-amber-300 border-amber-500/30', icon: CreditCard, label: 'Balance Due' },
 };
 
 export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
     const { currency, convertRate } = useCurrency();
     const router = useRouter();
     const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [payLoading, setPayLoading] = useState<string | null>(null);
     const [cancelModal, setCancelModal] = useState<{ isOpen: boolean; bookingId: string | null; isPaid: boolean; tripStartDate: string | null }>({ isOpen: false, bookingId: null, isPaid: false, tripStartDate: null });
+
+    const handlePayAdvance = async (booking: any) => {
+        setPayLoading(booking._id);
+        try {
+            const advanceAmount = Math.round((booking.totalCost || 0) * 0.2);
+            if (advanceAmount <= 0) {
+                alert('No advance amount to pay.');
+                return;
+            }
+
+            const nameParts = (booking.customerName || 'Customer').split(' ');
+            const res = await fetch('/api/payhere/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    bookingId: booking._id,
+                    customer: {
+                        firstName: nameParts[0],
+                        lastName: nameParts.slice(1).join(' ') || 'N/A',
+                        email: booking.email || '',
+                        phone: booking.phone || '',
+                    },
+                    items: `20% Advance - ${booking.packageId?.title || 'Custom Booking'} (${booking.bookingNo})`,
+                    amount: advanceAmount,
+                }),
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Payment initialization failed');
+            }
+
+            const payData = await res.json();
+
+            if (payData.isDevMode) {
+                alert('Dev Mode: Payment simulated successfully!');
+                router.refresh();
+                return;
+            }
+
+            // Redirect to PayHere checkout via hidden form POST
+            const payForm = document.createElement('form');
+            payForm.method = 'POST';
+            payForm.action = payData.checkoutUrl;
+            Object.entries(payData.fields as Record<string, string>).forEach(([key, value]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = String(value);
+                payForm.appendChild(input);
+            });
+            document.body.appendChild(payForm);
+            payForm.submit();
+        } catch (error: any) {
+            console.error(error);
+            alert(error.message || 'Failed to initiate payment. Please try again.');
+        } finally {
+            setPayLoading(null);
+        }
+    };
 
     const [refundReason, setRefundReason] = useState("");
     const [refundMethod, setRefundMethod] = useState("BANK");
@@ -184,9 +248,26 @@ export default function MyBookingsClient({ bookings }: { bookings: any[] }) {
                                     </div>
 
 
+                                    {/* Pay 20% Advance Button */}
+                                    {booking.status === 'PAYMENT_PENDING' && booking.totalCost > 0 && (
+                                        <div className="mt-4 pt-4 border-t border-white/[0.03]">
+                                            <button
+                                                onClick={() => handlePayAdvance(booking)}
+                                                disabled={payLoading === booking._id}
+                                                className="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-xl text-sm font-bold uppercase tracking-wider bg-gradient-to-r from-antique-gold to-[#c59b27] hover:from-[#c59b27] hover:to-[#b0891e] text-[#061a15] shadow-[0_0_20px_rgba(212,175,55,0.25)] hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                <CreditCard className="h-4 w-4" />
+                                                {payLoading === booking._id
+                                                    ? 'Initiating Payment...'
+                                                    : `Pay 20% Advance — ${formatPrice(Math.round((booking.totalCost || 0) * 0.2), currency, convertRate)}`}
+                                            </button>
+                                            <p className="text-[10px] text-white/30 text-center mt-2">Secure payment via PayHere</p>
+                                        </div>
+                                    )}
+
                                     {/* Action Buttons */}
                                     {!['CANCELLED', 'REFUND_PENDING', 'REFUNDED', 'COMPLETED'].includes(booking.status) && (
-                                        <div className="mt-4 pt-4 border-t border-white/[0.03] flex justify-end">
+                                        <div className={`mt-4 pt-4 border-t border-white/[0.03] flex justify-end ${booking.status === 'PAYMENT_PENDING' ? '' : ''}`}>
                                             <button
                                                 onClick={() => openCancelModal(booking._id, booking.paidAmount > 0, booking.dates.from)}
                                                 disabled={actionLoading === booking._id}

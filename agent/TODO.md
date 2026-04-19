@@ -227,32 +227,31 @@ Production Readiness — ALL FEATURES COMPLETE ✅
 
 ---
 
+## Just Completed (2026-04-19 - Session 7)
+### Hotel Dashboard Navigation Fixes
+- [x] Fixed "Edit Details" button on `/dashboard/hotel` by creating `/dashboard/hotel/[id]/edit/page.tsx` which uses the existing `PartnerForm` directly.
+- [x] Fixed "View Property" button by creating a new clean, responsive, read-only property detail viewer at `/dashboard/hotel/[id]/page.tsx`.
+- [x] Fixed "Manage Availability" button by creating `/dashboard/hotel/[id]/availability/page.tsx` that directly targets `HotelServicesManager` constrained to the specific hotel property id.
+- [x] Ensured the system gracefully falls back to empty states allowing immediate "Add First Service" linking to specific `partnerId`.
+
+---
+
 ## Last Session
-**Date**: 2026-04-19 (Session 6)
+**Date**: 2026-04-19 (Session 7)
 **What was done**:
-- Solidified the unified Booking Cancellation / Refund processing pipeline.
-- Implemented robust UI for capturing requests and tracking the lifecycle against ledger.
-- Dashboard sidebars reflect the new tool natively.
+- Fixed the Hotel Dashboard Property Card action buttons resolving 404s.
+- Created standalone pages for managing specific property parameters decoupled from the global view.
 
 **What to do next**:
-- Refine Notification and Email triggers upon Refund transitions, keeping customers informed when their refunds process successfully.
-- Look at remaining `02-products-content-management-wasala.md` or next files.
+- Look at remaining member docs or proceed with final checklist verification.
 
 **Current state**:
-- Branch: `main` (local changes not yet pushed)
-- Refund workflows completely implemented.
-- Dev server on port 3001.
+- Branch: `main`
+- Hotel dashboard pages and routing operational.
+- Dev server running.
 
 **Files changed (This Session)**:
-- `src/components/dashboard/MyBookingsClient.tsx`
-- `src/app/api/bookings/[id]/cancel/route.ts`
-- `src/lib/constants.ts`
-- `src/models/RefundRequest.ts`
-- `src/app/api/refunds/route.ts`
-- `src/app/api/refunds/[id]/route.ts`
-- `src/app/dashboard/refunds/page.tsx`
-- `src/app/dashboard/refunds/RefundsClient.tsx`
-- `src/app/dashboard/refunds/[id]/page.tsx`
-- `src/app/dashboard/refunds/[id]/RefundDetailClient.tsx`
-- `src/components/layout/DashboardSidebar.tsx`
+- `src/app/dashboard/hotel/[id]/page.tsx` (NEW)
+- `src/app/dashboard/hotel/[id]/edit/page.tsx` (NEW)
+- `src/app/dashboard/hotel/[id]/availability/page.tsx` (NEW)
 - `agent/MEMORY.md` & `agent/TODO.md`
