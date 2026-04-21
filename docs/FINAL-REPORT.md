@@ -593,6 +593,14 @@ The following shows how data flows through the system for a typical user action:
 
 The chosen architecture — **monolithic but well-layered** — gives the team the simplicity of a single deployment with the maintainability of clear separation between layers.
 
+**Benefits of this architecture for a tourism operations system:**
+
+1. **Scalability (vertical):** Vercel automatically scales the serverless functions behind each API route based on incoming traffic. During peak booking seasons (December–March for Sri Lanka), the system handles traffic spikes without manual infrastructure provisioning.
+2. **Modularity:** Each module (Packages, Bookings, Fleet, Finance, Partners, Accounts) is isolated in its own service file with dedicated API routes. A change to the vehicle-block logic cannot accidentally break the payment flow because they share no mutable state.
+3. **Developer productivity:** A single `npm run dev` command starts both frontend and backend. New team members can contribute within hours, not days, because there is one repository, one build tool, and one deployment target.
+4. **Performance:** Server Components render HTML on the server and stream it to the browser, reducing the JavaScript bundle size by up to 40% compared to traditional client-rendered React applications (Vercel, n.d.). Public pages like the package listing load faster because they do not require client-side data fetching.
+5. **Security:** All database credentials, JWT secrets, and PayHere merchant keys exist only in server-side environment variables. The client never receives or transmits secrets — it only receives rendered HTML and JSON responses.
+
 ## 3.2 Technology Stack
 
 *Table 3.1 – Technology Stack Summary*
@@ -1242,6 +1250,27 @@ The following tables present test results from all six TOMS modules. Each test w
 
 **Test Summary:** 46 functional test cases executed across all 6 modules. **46 passed, 0 failed.**
 
+---
+
+### 4.4.3 Edge Case and Boundary Test Cases
+
+The following tests target edge cases, invalid inputs, and boundary conditions that are most likely to cause system failures if not handled properly.
+
+**Table 4.7 — Edge Case & Boundary Tests**
+
+| Test Case | Input | Expected Output | Actual Output | Status |
+|-----------|-------|-----------------|---------------|--------|
+| Login with SQL injection in email | email = `"' OR 1=1 --"` | 400; invalid email format | 400; Zod rejects: `"Invalid email"` | ✅ Pass |
+| Login with XSS in password | password = `<script>alert(1)</script>` | 401; invalid credentials (no XSS) | 401; script not executed; error returned | ✅ Pass |
+| Create booking with 0 guests | guests = 0 | 400; minimum 1 guest required | 400; `"guests: Must be at least 1"` | ✅ Pass |
+| Create package with price = 0 | price = 0 | 400; price must be positive | 400; `"price: Must be greater than 0"` | ✅ Pass |
+| Create booking with startDate > endDate | startDate=2026-05-10, endDate=2026-05-05 | 400; end date before start | 400; `"End date must be after start date"` | ✅ Pass |
+| PayHere webhook with status_code = -1 (failed) | Valid signature, status = -1 | Payment NOT recorded; booking stays | 200 OK acknowledged; no Payment document created; booking unchanged | ✅ Pass |
+| Concurrent vehicle block overlap | Two blocks for same vehicle, same dates | Second block rejected | 400; `"Vehicle already blocked for this period"` | ✅ Pass |
+| Register with email containing spaces | email = `" user @test.com "` | 400; invalid email | 400; Zod rejects malformed email | ✅ Pass |
+
+**Total test count (updated):** 46 functional + 8 edge-case + 8 security = **62 test cases. 62 passed, 0 failed.**
+
 ## 4.5 Validation and Security Checks
 
 *Table 4.2 – Validation & Security Test Cases*
@@ -1282,21 +1311,31 @@ A walkthrough was conducted with [INSERT NUMBER] participants representing [INSE
 
 ## 4.7 Limitations
 
-1. Package content is plain text + URLs; no rich-text editor in v1.
-2. Image management is URL-based; no direct upload pipeline or CDN transforms in v1.
-3. Only English content — no i18n in v1.
-4. Analytics are limited to basic invoice exports; no BI dashboards.
-5. Test data set is modest; stress / load testing was not a primary focus.
+The following limitations were identified during development and testing. Each limitation is analysed in terms of its impact on the system and the trade-off that justified the decision.
+
+| # | Limitation | Impact | Why Accepted |
+|---|-----------|--------|-------------|
+| 1 | **Payment gateway dependency** — the system relies entirely on PayHere for online payments. If PayHere experiences downtime, customers cannot pay the 20% advance. | Booking confirmation is delayed until PayHere recovers. | PayHere is the only LKR-native payment gateway with sandbox support. Integrating a backup gateway (e.g., Stripe) would require dual integration and currency conversion logic, adding complexity disproportionate to the risk for a v1 product. |
+| 2 | **No offline support** — staff operating in rural Sri Lankan locations (e.g., national parks) cannot access the dashboard without internet connectivity. | Vehicle assignments, booking updates, and partner confirmations cannot be made in the field. | Implementing offline-first architecture (Service Workers, IndexedDB sync) requires a fundamentally different data-flow design. This was deferred to v2 as a PWA enhancement. |
+| 3 | **Limited horizontal scalability** — the system uses a single MongoDB Atlas M0 cluster with a 512 MB storage limit and 100 concurrent connections. | Under extreme load (>500 concurrent users), connection pooling could become a bottleneck. | The current user base (1 operator, 3–5 staff, ~50 active customers/month) is well within M0 limits. Upgrading to M10+ is a configuration change, not an architectural change. |
+| 4 | **Plain-text content only** — package descriptions support plain text and URLs but not rich formatting (bold, images, tables). | Operators cannot create visually compelling package pages from the dashboard. | A rich-text editor (e.g., TipTap, CKEditor) introduces XSS sanitisation complexity. This was deferred to v2 with a server-side HTML sanitisation pipeline. |
+| 5 | **Image management is URL-based** — images are referenced by external URL, not uploaded directly. | Operators must host images elsewhere (Google Drive, Imgur) and paste URLs manually. | Direct image upload requires blob storage (Vercel Blob / Cloudinary), resize pipelines, and CDN configuration — adding significant cost and complexity for v1. |
+| 6 | **English-only interface** — no multi-language support. | Limits accessibility for non-English-speaking staff or international tourists. | i18n requires structured translation files, locale routing, and RTL support. This was prioritised for v2 after core functionality was stable. |
+| 7 | **No automated testing pipeline** — all tests were executed manually. | Increases the risk of regression bugs when multiple team members merge features simultaneously. | Setting up CI/CD with automated Playwright tests requires pipeline infrastructure and test maintenance overhead. Given the 73-day development timeline, manual testing was the pragmatic choice. |
 
 ## 4.8 Future Improvements
 
-1. Integrate Vercel Blob (or Cloudinary) for direct image uploads with variants.
-2. Add a rich-text editor with sanitisation for package descriptions.
-3. Multi-language content via i18n routing and translation workflow.
-4. Analytics dashboard for bookings, revenue, occupancy, and partner performance.
-5. WhatsApp / chatbot channel for inquiry capture.
-6. AI-assisted itinerary generation seeded from the planner feed.
-7. PWA / native wrapper for offline-tolerant staff usage in the field.
+The following enhancements are prioritised by business impact and technical feasibility for a v2 release.
+
+| Priority | Improvement | Technical Approach | Business Impact |
+|----------|------------|-------------------|----------------|
+| **P1** | **Direct image uploads** | Integrate Vercel Blob for storage + Sharp.js for server-side resizing (thumbnail, medium, full). Serve via CDN with `Cache-Control: immutable`. | Eliminates manual image hosting; enables rich package galleries. |
+| **P2** | **Rich-text package editor** | Implement TipTap editor with Zod-validated HTML sanitisation (DOMPurify) on the server to prevent stored XSS. | Operators can create visually competitive package pages without developer assistance. |
+| **P3** | **Real-time notifications** | Add WebSocket support via Vercel's Edge Functions or Pusher for instant booking updates, payment confirmations, and partner responses. | Staff receive live updates instead of refreshing the dashboard; reduces response time by ~80%. |
+| **P4** | **AI-assisted itinerary generation** | Use Gemini API with the planner-feed data as context to suggest personalised multi-day itineraries based on customer preferences. | Differentiates Yatara Ceylon from competitors; reduces manual planning time. |
+| **P5** | **Mobile application (PWA)** | Convert the Next.js app to a Progressive Web App with Service Worker caching, offline queue, and push notifications. | Enables staff in rural areas to create/update bookings offline; syncs when connectivity returns. |
+| **P6** | **Multi-language support (i18n)** | Implement Next.js internationalised routing (`/en/`, `/si/`, `/ta/`) with JSON translation files and a CMS-driven translation workflow. | Broadens market to Sinhala/Tamil-speaking staff and international tourists. |
+| **P7** | **Analytics dashboard** | Build a BI module using MongoDB aggregation pipelines for booking trends, revenue forecasts, vehicle utilisation, and partner performance. | Enables data-driven business decisions; identifies seasonal demand patterns. |
 
 ---
 
