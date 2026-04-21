@@ -329,8 +329,8 @@ TOMS is a full-stack web application built on **Next.js 15** with the App Router
 
 ## 1.9 Git Repository and Deployed System
 
-- **GitHub Repository:** [INSERT CLICKABLE GIT REPOSITORY URL]
-- **Deployed Production URL:** [INSERT CLICKABLE DEPLOYED URL]
+- **GitHub Repository:** https://github.com/sahansbandara/Yatara-Ceylon
+- **Deployed Production URL:** https://yatara-ceylon.vercel.app
 - **Demo Credentials (read-only):**
   - Admin: [INSERT DEMO ADMIN EMAIL / PASSWORD]
   - Staff: [INSERT DEMO STAFF EMAIL / PASSWORD]
@@ -1609,8 +1609,53 @@ All technical diagrams are available as interactive HTML files in the `docs/diag
 
 ### E.4 Configuration and Setup (optional)
 
-- [INSERT `.env.example` FILE CONTENTS — remove all real secrets first]
-- [INSERT BUILD / DEPLOY COMMANDS USED]
+```env
+# .env.example — Yatara Ceylon TOMS
+# Copy to .env.local and fill in real values
+
+# MongoDB
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/yatara-ceylon
+
+# Authentication
+JWT_SECRET=your-jwt-secret-min-32-chars
+
+# PayHere Payment Gateway
+PAYHERE_MERCHANT_ID=your-merchant-id
+PAYHERE_MERCHANT_SECRET=your-merchant-secret
+PAYHERE_APP_ID=your-app-id
+PAYHERE_APP_SECRET=your-app-secret
+NEXT_PUBLIC_PAYHERE_SANDBOX=true
+
+# Email (SMTP)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# Cloudflare Turnstile (Bot Protection)
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=your-site-key
+TURNSTILE_SECRET_KEY=your-secret-key
+
+# Application
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+**Build & Deploy Commands:**
+
+```bash
+# Local development
+npm install
+npm run dev          # Starts Next.js dev server on http://localhost:3000
+
+# Production build (local verification)
+npm run build        # Compiles TypeScript, generates .next/
+npm run start        # Serves production build locally
+
+# Deployment (Vercel)
+# Automatic: push to main branch triggers Vercel CI/CD pipeline
+# Manual: npx vercel --prod
+```
+
 - [INSERT ANY DEPLOYMENT CONFIGURATION SCREENSHOTS (Vercel dashboard)]
 
 ---
@@ -1661,7 +1706,7 @@ Insert each of these diagrams (exported as images) and caption them exactly as s
 - [ ] No fill-ins needed. Re-read and make sure every objective statement matches what you actually delivered.
 
 ### 7. References
-- [ ] Replace the 3 `[INSERT REFERENCE …]` placeholders with real academic / industry references that you actually cite in the body.
+- [x] Replace the 3 `[INSERT REFERENCE …]` placeholders with real academic / industry references — Done: 12 APA-7 references + in-text citations added.
 - [ ] Apply a single citation style (APA-7 or Harvard) consistently everywhere.
 
 ### 8. Appendix A — Contribution Table  ✅ DONE
