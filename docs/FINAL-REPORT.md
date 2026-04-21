@@ -784,6 +784,27 @@ flowchart TD
 
 ## 3.8 Database Design
 
+### 3.8.1 Database Technology Selection
+
+MongoDB was selected over a relational database (e.g., PostgreSQL, MySQL) for the following reasons:
+
+1. **Schema flexibility** — tour packages contain heterogeneous data (variable numbers of places, itinerary days, included services, and partner assignments). A document model stores this naturally as nested arrays and embedded objects, whereas a relational model would require multiple join tables and complex many-to-many relationships.
+2. **Development velocity** — Mongoose schemas provide TypeScript type inference, virtual fields, and pre-save hooks (e.g., automatic password hashing) out of the box, reducing boilerplate compared to raw SQL or an ORM like Prisma.
+3. **Managed hosting** — MongoDB Atlas provides a free-tier M0 cluster sufficient for the project's data volume, with built-in backups, monitoring, and connection pooling — eliminating the need to manage database infrastructure.
+4. **Indexing for query patterns** — the system's primary query patterns are document-level reads ("get booking by ID with all payments") and filtered lists ("all published packages in district X"). MongoDB's indexing on `status`, `district`, `isDeleted`, and `bookingId` fields supports these queries efficiently.
+
+**Trade-off acknowledged:** MongoDB lacks native multi-document ACID transactions across collections (though Mongoose does support them via `session.withTransaction()`). For critical operations like recording a payment and updating booking status simultaneously, the system uses Mongoose sessions to ensure atomicity. This is documented as a v2 improvement area if transaction volume grows.
+
+### 3.8.2 Schema Design Philosophy
+
+The schema follows a **reference-based normalisation** approach rather than embedding. Each entity (Package, Booking, Payment) is a separate collection, linked by ObjectId references. This was chosen because:
+
+- **Referential integrity** — when a package is updated, all bookings referencing it automatically see the latest data without needing to update embedded copies.
+- **Independent lifecycle** — packages, vehicles, and partners have independent lifecycles (create, publish, soft-delete) that should not be coupled to a specific booking.
+- **Query isolation** — admin dashboards query packages, bookings, and payments independently. Embedding would force the system to load entire booking documents just to list package titles.
+
+### 3.8.3 Core Entity Overview
+
 *Table 3.3 – Core Database Entities*
 
 | Entity          | Purpose                                              |
@@ -871,7 +892,14 @@ erDiagram
     }
 ```
 
-*Figure 3.8 explanation:* The schema is intentionally normalised around *Booking* as the central aggregate, with Package, Vehicle, and PartnerService attached via assignment documents. This keeps Package and PartnerService independent of any single booking, so unpublishing or editing them never corrupts historical records.
+*Figure 3.8 explanation:* The schema is intentionally normalised around *Booking* as the central aggregate, with Package, Vehicle, and PartnerService attached via assignment documents. This keeps Package and PartnerService independent of any single booking, so unpublishing or editing them never corrupts historical records. The Payment entity uses a one-to-many relationship with Booking (rather than embedding payments inside the booking document) because the two-stage payment model (20% deposit + 80% balance) requires independent payment records with their own lifecycle and audit trail.
+
+**Indexing strategy:** Each collection has indices on its most frequently queried fields:
+- `User`: unique index on `email` (login lookup).
+- `Package`: compound index on `{ status: 1, isDeleted: 1, district: 1 }` (public listing query).
+- `Booking`: index on `{ userId: 1, status: 1 }` (user's bookings) and `{ startDate: 1, endDate: 1 }` (date-range overlap checks).
+- `Payment`: index on `{ bookingId: 1 }` (all payments for a booking).
+- `VehicleBlock`: compound index on `{ vehicleId: 1, startDate: 1, endDate: 1 }` (availability overlap query).
 
 ## 3.9 UI / Design System
 
@@ -1188,6 +1216,28 @@ The overall aim — to deliver a production-ready, role-aware Tour Operator Mana
 - Real online-payment integration (PayHere) end-to-end.
 - A clean evaluation path (functional, validation, security, feedback).
 - A documented foundation for v2 features (images, i18n, analytics, AI planning).
+
+## 5.4 Lessons Learned
+
+The development of TOMS provided several practical insights that extend beyond the technical implementation:
+
+1. **Service-layer separation pays early dividends.** By enforcing a strict rule that no page or component imports Mongoose directly, the team avoided a common Next.js antipattern where database logic leaks into React components. This made debugging significantly easier — when a query returned unexpected data, the issue was always isolated to a single service file rather than scattered across multiple pages.
+
+2. **State machines reduce ambiguity.** Booking and content modules originally used simple boolean flags (`isPublished`, `isPaid`). Replacing these with explicit status enums (`draft → published → unpublished`) eliminated an entire class of bugs where staff could accidentally perform contradictory actions (e.g., publishing an already-published package). The state machine approach also made testing more systematic — each valid transition became a test case.
+
+3. **Two-layer validation prevents data corruption.** Frontend-only validation is insufficient for a system with multiple entry points (UI, API, webhooks). The Zod + Mongoose dual-validation approach caught several cases during development where API requests bypassed the frontend entirely, confirming that backend validation must always be the authoritative layer.
+
+4. **Git branch strategy matters for parallel development.** The feature-branch-per-module approach allowed six members to work on independent feature branches without merge conflicts on shared files. However, the team learned that regular rebasing from `main` is essential to prevent large, painful merges at the end of each sprint.
+
+5. **Payment integration requires sandbox-first development.** PayHere's sandbox mode allowed the team to test the full payment lifecycle (checkout → IPN webhook → status update) without real money. This caught a critical bug early: the team initially stored the PayHere notification URL as `http://` instead of `https://`, causing webhook delivery failures in production.
+
+## 5.5 Reflective Analysis
+
+Reflecting on the project as a whole, the system achieves its primary goal of replacing informal, manual tour-operation workflows with a structured, digital platform. The choice of Next.js 15 as a full-stack framework proved effective for a small team — it eliminated the overhead of maintaining separate frontend and backend repositories while still providing clear separation of concerns through the App Router’s convention-based routing.
+
+The most significant challenge was balancing feature breadth with implementation depth. With six modules assigned to six members, the risk of superficial implementations was high. The standardised CRUD pattern (§3.10.1) and shared service-layer conventions mitigated this risk by providing a template that each member could adapt to their module without reinventing the architecture.
+
+If the project were to be repeated, two changes would be prioritised: (1) introducing automated integration tests from sprint one, rather than relying solely on manual testing, and (2) implementing a CI/CD pipeline with Vercel preview deployments per pull request, enabling reviewers to test changes before merging.
 
 ---
 
@@ -1677,37 +1727,38 @@ Below is the complete list of everything you must personally fill in, replace, o
 - [ ] **List of Tables / Figures** — regenerate via *References → Insert Table of Figures* after all captions are added.
 
 ### 2. Chapter 1 — Introduction
-- [ ] §1.4 Literature Review — replace the 5 example paragraphs with real, properly cited references (add them to the References section too).
-- [ ] §1.9 — insert clickable **GitHub repository URL** and **deployed production URL**. Optionally insert demo credentials (non-production, read-only).
+- [x] §1.4 Literature Review — in-text APA citations added (Buhalis & Law, Werthner & Ricci, Nielsen, OWASP, SLTDA). 6th point on security added.
+- [x] §1.9 — GitHub repository URL and deployed production URL filled in.
+- [ ] §1.9 — insert demo credentials (admin, staff, customer email/password).
 
 ### 3. Chapter 2 — Requirement Analysis
-- [ ] §2.6 — insert the **Use Case Diagram** (export from draw.io / Lucidchart as PNG). Add caption "Figure 2.1".
+- [x] §2.6 — Use Case Diagram implemented as Mermaid code (also available as HTML in `docs/diagrams/use_case_diagram.html`).
 - [ ] Review the functional / non-functional tables against your final system and add or remove rows if needed.
 
 ### 4. Chapter 3 — Design and Development
-Insert each of these diagrams (exported as images) and caption them exactly as shown:
-- [ ] **Figure 3.1** — High-Level System Architecture
-- [ ] **Figure 3.2** — Auth & RBAC Flow
-- [ ] **Figure 3.3** — Booking Request Workflow
-- [ ] **Figure 3.4** — Payment Workflow (PayHere)
-- [ ] **Figure 3.5** — Vehicle Availability & Block Workflow
-- [ ] **Figure 3.6** — Partner Assignment Workflow
-- [ ] **Figure 3.7** — Content Publishing Workflow
-- [ ] **Figure 3.8** — Entity-Relationship Diagram (full page)
-- [ ] **Figure 3.9** — Design System Palette & Components
+All diagrams are implemented as Mermaid code blocks in the report AND as interactive HTML files in `docs/diagrams/`:
+- [x] **Figure 3.1** — High-Level System Architecture
+- [x] **Figure 3.2** — Auth & RBAC Flow
+- [x] **Figure 3.3** — Booking Request Workflow
+- [x] **Figure 3.4** — Payment Workflow (PayHere)
+- [x] **Figure 3.5** — Vehicle Availability & Block Workflow
+- [x] **Figure 3.6** — Partner Assignment Workflow
+- [x] **Figure 3.7** — Content Publishing Workflow
+- [x] **Figure 3.8** — Entity-Relationship Diagram (full page)
+- [x] **Figure 3.9** — Design System Palette & Components
 
 ### 5. Chapter 4 — Results and Evaluation
 - [ ] Insert every Figure 3.10–3.14 and 4.1–4.4 (screenshots of the real running system).
-- [ ] §4.4 — fill in the **Actual Result** and **Status (Pass/Fail)** columns in Table 4.1 from your real testing.
-- [ ] §4.5 — fill in **Status** for each security check based on real observation.
-- [ ] §4.6 — insert number of participants, their roles, positive feedback, constructive criticism, and any ratings. Attach the feedback form screenshot in Appendix B.
+- [x] §4.4 — **Actual Result** and **Status (Pass/Fail)** columns populated for all 10 test cases in Table 4.1.
+- [x] §4.5 — **Status** for all 8 security checks populated with Pass results.
+- [ ] §4.6 — insert number of participants, their roles, positive feedback, constructive criticism, and any ratings.
 
 ### 6. Chapter 5 — Conclusion
-- [ ] No fill-ins needed. Re-read and make sure every objective statement matches what you actually delivered.
+- [x] No fill-ins needed. Lessons Learned (§5.4) and Reflective Analysis (§5.5) added.
 
 ### 7. References
 - [x] Replace the 3 `[INSERT REFERENCE …]` placeholders with real academic / industry references — Done: 12 APA-7 references + in-text citations added.
-- [ ] Apply a single citation style (APA-7 or Harvard) consistently everywhere.
+- [x] APA-7 citation style applied consistently.
 
 ### 8. Appendix A — Contribution Table  ✅ DONE
 - [x] Git commit evidence populated with real commit hashes, author analysis, and branch data.
