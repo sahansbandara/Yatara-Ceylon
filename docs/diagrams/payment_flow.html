@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Yatara Ceylon - Payment Flow Diagram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #fff; display: flex; justify-content: center; padding: 15px; }
+  .container { width: 1400px; }
+  .title { text-align: center; font-size: 20px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 12px; color: #666; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Payment Processing Flow — Two-Stage Model</div>
+  <div class="subtitle">Yatara Ceylon — Tourism Operations Management System (TOMS)</div>
+
+  <svg viewBox="0 0 1380 1050" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+      </marker>
+      <marker id="arr-green" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/>
+      </marker>
+      <marker id="arr-red" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
+      </marker>
+      <marker id="arr-orange" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/>
+      </marker>
+      <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+      </filter>
+    </defs>
+
+    <!-- ========== SWIMLANE HEADERS ========== -->
+    <rect x="30" y="15" width="220" height="35" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="140" y="38" text-anchor="middle" font-size="12" font-weight="700" fill="#0c4a6e">👤 Customer</text>
+
+    <rect x="280" y="15" width="280" height="35" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="420" y="38" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">🏢 TOMS Server</text>
+
+    <rect x="590" y="15" width="220" height="35" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+    <text x="700" y="38" text-anchor="middle" font-size="12" font-weight="700" fill="#9a3412">💳 PayHere</text>
+
+    <rect x="840" y="15" width="220" height="35" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="950" y="38" text-anchor="middle" font-size="12" font-weight="700" fill="#7f1d1d">🗄️ MongoDB</text>
+
+    <rect x="1090" y="15" width="220" height="35" rx="6" fill="#faf5ff" stroke="#9333ea" stroke-width="1.5"/>
+    <text x="1200" y="38" text-anchor="middle" font-size="12" font-weight="700" fill="#581c87">📧 Email</text>
+
+    <!-- Swimlane lines -->
+    <line x1="265" y1="55" x2="265" y2="1000" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="575" y1="55" x2="575" y2="1000" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="825" y1="55" x2="825" y2="1000" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="1075" y1="55" x2="1075" y2="1000" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+
+    <!-- ========== STAGE 1: 20% ADVANCE (ONLINE) ========== -->
+    <rect x="20" y="65" width="1290" height="30" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+    <text x="690" y="85" text-anchor="middle" font-size="12" font-weight="700" fill="#854d0e">STAGE 1 — 20% Advance Payment (Online via PayHere)</text>
+
+    <!-- Step 1: Start -->
+    <circle cx="140" cy="120" r="14" fill="#0284c7" stroke="#0c4a6e" stroke-width="1.5"/>
+    <text x="140" y="125" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">1</text>
+    <text x="140" y="145" text-anchor="middle" font-size="9" fill="#334155">Click "Pay Now"</text>
+
+    <!-- Arrow to TOMS -->
+    <line x1="175" y1="120" x2="380" y2="120" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="280" y="115" text-anchor="middle" font-size="8" fill="#64748b">POST /api/payments/initiate</text>
+
+    <!-- Step 2: TOMS generates hash -->
+    <rect x="360" y="155" width="120" height="55" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="420" y="175" text-anchor="middle" font-size="10" font-weight="600" fill="#14532d">Generate</text>
+    <text x="420" y="190" text-anchor="middle" font-size="8" fill="#64748b">MD5 hash</text>
+    <text x="420" y="202" text-anchor="middle" font-size="7" fill="#64748b">merchant_id + order_id</text>
+
+    <!-- Arrow to PayHere -->
+    <line x1="480" y1="180" x2="660" y2="180" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arr-orange)"/>
+    <text x="570" y="175" text-anchor="middle" font-size="8" fill="#9a3412">Redirect with params</text>
+
+    <!-- Step 3: PayHere checkout -->
+    <rect x="640" y="215" width="120" height="55" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="700" y="235" text-anchor="middle" font-size="10" font-weight="600" fill="#9a3412">Hosted</text>
+    <text x="700" y="248" text-anchor="middle" font-size="10" font-weight="600" fill="#9a3412">Checkout</text>
+    <text x="700" y="262" text-anchor="middle" font-size="8" fill="#64748b">Card / Bank</text>
+
+    <!-- Customer pays -->
+    <line x1="175" y1="240" x2="638" y2="240" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="400" y="235" text-anchor="middle" font-size="9" fill="#334155">3. Enter card details & submit</text>
+
+    <!-- PayHere processes -->
+    <rect x="640" y="290" width="120" height="35" rx="6" fill="#d1fae5" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="700" y="312" text-anchor="middle" font-size="10" font-weight="600" fill="#065f46">✓ Approved</text>
+
+    <!-- Two parallel paths from PayHere -->
+    <!-- Path A: return_url to customer -->
+    <line x1="640" y1="310" x2="175" y2="350" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-green)"/>
+    <text x="400" y="325" text-anchor="middle" font-size="8" fill="#16a34a">4a. Redirect to return_url (success page)</text>
+
+    <!-- Customer sees success -->
+    <rect x="70" y="345" width="140" height="40" rx="8" fill="#d1fae5" stroke="#16a34a" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="140" y="363" text-anchor="middle" font-size="10" font-weight="600" fill="#065f46">✓ "Payment</text>
+    <text x="140" y="378" text-anchor="middle" font-size="10" font-weight="600" fill="#065f46">Received!"</text>
+
+    <!-- Path B: notify_url to server (IPN) -->
+    <line x1="700" y1="325" x2="460" y2="425" stroke="#ea580c" stroke-width="2" marker-end="url(#arr-orange)"/>
+    <text x="600" y="370" text-anchor="middle" font-size="9" font-weight="600" fill="#9a3412">4b. POST /api/payhere/notify</text>
+    <text x="600" y="383" text-anchor="middle" font-size="8" fill="#64748b">(Server-to-Server IPN)</text>
+
+    <!-- Step 5: TOMS verifies -->
+    <rect x="340" y="415" width="160" height="70" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="420" y="435" text-anchor="middle" font-size="10" font-weight="700" fill="#14532d">5. Verify Signature</text>
+    <text x="420" y="452" text-anchor="middle" font-size="7" fill="#64748b">expected = MD5(</text>
+    <text x="420" y="462" text-anchor="middle" font-size="7" fill="#64748b">merchant_id + order_id +</text>
+    <text x="420" y="472" text-anchor="middle" font-size="7" fill="#64748b">amount + currency +</text>
+    <text x="420" y="482" text-anchor="middle" font-size="7" fill="#64748b">status + md5(secret))</text>
+
+    <!-- Decision: Hash match? -->
+    <polygon points="420,510 470,540 420,570 370,540" fill="#fef3c7" stroke="#ca8a04" stroke-width="1.5"/>
+    <text x="420" y="538" text-anchor="middle" font-size="9" font-weight="600" fill="#854d0e">Match?</text>
+    <text x="420" y="552" text-anchor="middle" font-size="8" fill="#854d0e">& status=2</text>
+
+    <!-- NO path -->
+    <line x1="370" y1="540" x2="175" y2="540" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arr-red)"/>
+    <text x="275" y="535" text-anchor="middle" font-size="9" font-weight="600" fill="#dc2626">NO</text>
+
+    <rect x="70" y="520" width="140" height="40" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="140" y="538" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">✗ 403 Rejected</text>
+    <text x="140" y="552" text-anchor="middle" font-size="8" fill="#64748b">Forged notification</text>
+
+    <!-- YES path -->
+    <line x1="470" y1="540" x2="890" y2="540" stroke="#16a34a" stroke-width="2" marker-end="url(#arr-green)"/>
+    <text x="680" y="535" text-anchor="middle" font-size="9" font-weight="600" fill="#16a34a">YES ✓</text>
+
+    <!-- Step 6: Save to MongoDB -->
+    <rect x="880" y="520" width="140" height="60" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="950" y="540" text-anchor="middle" font-size="10" font-weight="700" fill="#7f1d1d">6. Save Payment</text>
+    <text x="950" y="556" text-anchor="middle" font-size="8" fill="#64748b">type: ADVANCE</text>
+    <text x="950" y="568" text-anchor="middle" font-size="8" fill="#64748b">status: succeeded</text>
+
+    <!-- Update booking -->
+    <rect x="880" y="600" width="140" height="40" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="950" y="618" text-anchor="middle" font-size="10" font-weight="600" fill="#7f1d1d">7. Update Booking</text>
+    <text x="950" y="633" text-anchor="middle" font-size="8" fill="#64748b">→ BALANCE_PENDING</text>
+    <line x1="950" y1="580" x2="950" y2="600" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- Send email -->
+    <line x1="1020" y1="620" x2="1140" y2="620" stroke="#9333ea" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="1130" y="600" width="140" height="40" rx="8" fill="#faf5ff" stroke="#9333ea" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="1200" y="618" text-anchor="middle" font-size="10" font-weight="600" fill="#581c87">8. Confirmation</text>
+    <text x="1200" y="633" text-anchor="middle" font-size="8" fill="#64748b">Email to customer</text>
+
+    <!-- ========== SEPARATOR ========== -->
+    <rect x="20" y="670" width="1290" height="30" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+    <text x="690" y="690" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">STAGE 2 — 80% Balance Collection (Manual / In-Person)</text>
+
+    <!-- Step 9: Staff dashboard -->
+    <rect x="340" y="720" width="160" height="50" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="420" y="742" text-anchor="middle" font-size="10" font-weight="700" fill="#14532d">9. Staff Dashboard</text>
+    <text x="420" y="758" text-anchor="middle" font-size="8" fill="#64748b">Record manual payment</text>
+
+    <!-- Methods -->
+    <rect x="80" y="730" width="130" height="55" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1" filter="url(#shadow)"/>
+    <text x="145" y="748" text-anchor="middle" font-size="9" font-weight="600" fill="#1e293b">Payment Methods</text>
+    <text x="145" y="762" text-anchor="middle" font-size="8" fill="#64748b">• Bank Transfer</text>
+    <text x="145" y="774" text-anchor="middle" font-size="8" fill="#64748b">• Cash • Card</text>
+
+    <line x1="210" y1="750" x2="338" y2="750" stroke="#64748b" stroke-width="1" stroke-dasharray="4,3"/>
+
+    <!-- Save balance payment -->
+    <line x1="500" y1="745" x2="888" y2="745" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arr-green)"/>
+    <text x="700" y="740" text-anchor="middle" font-size="9" fill="#14532d">10. Payment.create(type: BALANCE)</text>
+
+    <rect x="880" y="720" width="140" height="50" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="950" y="742" text-anchor="middle" font-size="10" font-weight="600" fill="#7f1d1d">Save Balance</text>
+    <text x="950" y="758" text-anchor="middle" font-size="8" fill="#64748b">Immutable ledger</text>
+
+    <!-- Update to FULLY_PAID -->
+    <rect x="880" y="790" width="140" height="40" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="950" y="808" text-anchor="middle" font-size="10" font-weight="700" fill="#065f46">11. FULLY_PAID</text>
+    <text x="950" y="822" text-anchor="middle" font-size="8" fill="#64748b">Booking complete</text>
+    <line x1="950" y1="770" x2="950" y2="790" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- ========== REFUND SECTION ========== -->
+    <rect x="20" y="860" width="1290" height="30" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+    <text x="690" y="880" text-anchor="middle" font-size="12" font-weight="700" fill="#991b1b">REFUND PATH — If Applicable</text>
+
+    <rect x="340" y="905" width="160" height="50" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="420" y="927" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">12. Process Refund</text>
+    <text x="420" y="943" text-anchor="middle" font-size="8" fill="#64748b">Admin approves</text>
+
+    <line x1="500" y1="930" x2="888" y2="930" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arr-red)"/>
+    <text x="700" y="925" text-anchor="middle" font-size="9" fill="#dc2626">Payment.create(type: REFUND, amount: -X)</text>
+
+    <rect x="880" y="910" width="140" height="40" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="950" y="928" text-anchor="middle" font-size="10" font-weight="600" fill="#7f1d1d">Refund Record</text>
+    <text x="950" y="943" text-anchor="middle" font-size="8" fill="#64748b">Negative ledger entry</text>
+
+    <line x1="1020" y1="930" x2="1140" y2="930" stroke="#9333ea" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="1130" y="910" width="140" height="40" rx="8" fill="#faf5ff" stroke="#9333ea" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="1200" y="928" text-anchor="middle" font-size="10" font-weight="600" fill="#581c87">13. Refund Email</text>
+    <text x="1200" y="943" text-anchor="middle" font-size="8" fill="#64748b">to customer</text>
+
+    <!-- ========== KEY PRINCIPLES ========== -->
+    <rect x="30" y="970" width="1280" height="65" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="55" y="990" font-size="11" font-weight="700" fill="#1e293b">Key Principles:</text>
+    <text x="55" y="1007" font-size="9" fill="#475569">🔒 Immutable Ledger — Payment records are never updated or deleted; each transaction is a new document (ADVANCE, BALANCE, REFUND, VOID)</text>
+    <text x="55" y="1022" font-size="9" fill="#475569">🔐 MD5 Signature — Server validates PayHere IPN using MD5(merchant_id + order_id + amount + currency + status_code + md5(merchant_secret))</text>
+
+    <text x="690" y="1045" text-anchor="middle" font-size="10" fill="#94a3b8">SLIIT ITP · IT24100559 · Yatara Ceylon TOMS · Payment Flow Diagram</text>
+  </svg>
+</div>
+</body>
+</html>

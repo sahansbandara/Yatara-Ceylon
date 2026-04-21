@@ -907,6 +907,72 @@ Each member owns one module, but all modules share the same conventions: Zod req
 | Finance Management                | Luxsana (IT24102586)    | Invoice generation, PayHere integration, deposit/balance/refund recording, exports                                         |
 | Supplier / Partner Management     | Muthubadiwila (IT24101070) | Partner and PartnerService CRUD, BookingPartner assignment, partner-side confirmation                                   |
 
+### 3.10.1 CRUD Operations — Standardised Pattern
+
+Every entity in the system follows the same four-layer CRUD flow, which ensures consistency and reduces the cognitive overhead of maintaining six modules in parallel:
+
+1. **Request arrives** at a Route Handler (`/app/api/<entity>/route.ts`) as an HTTP request.
+2. **Validation** — the request body is parsed against a Zod schema. If validation fails, the handler returns `400 Bad Request` with field-level error messages (e.g., `{"error": "title: Required"}`) *before* any database operation is attempted. This prevents malformed data from reaching the service layer.
+3. **Authorisation** — the handler calls `getSessionUser()` to extract the authenticated user from the JWT cookie, then passes the user to the service method. The service method calls `adminOnly(user.role)` or `staffOnly(user.role)` as appropriate. If the role check fails, the service throws a `ForbiddenError` which the handler catches and returns as `403 Forbidden`.
+4. **Database operation** — the service method calls Mongoose model methods (`.create()`, `.findById()`, `.findByIdAndUpdate()`, `.findByIdAndDelete()`) with appropriate options. For reads, the service applies `.select()` to exclude sensitive fields and `.populate()` to resolve foreign-key references.
+5. **Serialisation** — the result is serialised via `JSON.parse(JSON.stringify(doc))` to strip Mongoose metadata and produce a plain JavaScript object safe for client consumption.
+6. **Response** — the handler returns the serialised result with the appropriate HTTP status code (`200 OK` for reads/updates, `201 Created` for creates, `204 No Content` for deletes).
+
+**Example — Create Package (end-to-end):**
+
+```
+Client POST /api/packages { title: "Sigiriya Explorer", price: 45000, district: "...", places: [...] }
+  → Route Handler parses body with Zod PackageCreateSchema
+  → Zod validates: all fields present, price > 0, title length 3–200 ✓
+  → getSessionUser() extracts { userId, role: "admin" } from JWT cookie
+  → PackageService.create(data, user) called
+  → Service checks adminOnly(user.role) → passes ✓
+  → Service calls Package.create({ ...data, status: "draft", createdBy: userId })
+  → Mongoose validates schema-level constraints (required fields, enum values)
+  → MongoDB inserts document, returns _id
+  → Service serialises result → strips __v, $__ metadata
+  → Handler returns 201 { _id, title, price, status: "draft", ... }
+```
+
+### 3.10.2 Validation — Two-Layer Defence
+
+The system implements validation at two distinct layers to ensure defence-in-depth. This design ensures that even if one layer is bypassed (e.g., a direct API call skipping the frontend), the other layer catches invalid data:
+
+1. **Frontend validation** — React forms use controlled components with `onChange` handlers that provide instant visual feedback (red borders, inline error messages). This layer exists purely for user experience — it reduces round-trips to the server and gives the user immediate guidance. Frontend validation is *never* trusted as authoritative.
+
+2. **Backend validation (authoritative)** — Zod schemas in the Route Handler parse and validate every incoming request body *before* any business logic executes. Zod schemas define the exact shape, types, and constraints of each request:
+   - **Type coercion:** `z.coerce.number()` converts string inputs to numbers.
+   - **String constraints:** `z.string().min(3).max(200)` enforces length bounds.
+   - **Enum validation:** `z.enum(["draft", "published", "unpublished"])` restricts allowed values.
+   - **Optional fields:** `z.string().optional()` allows omission without error.
+   - **Nested objects:** `z.object({ ... })` validates nested structures recursively.
+
+### 3.10.3 API Request → Response Flow
+
+The following illustrates the complete lifecycle of an API request through the system, demonstrating how each layer contributes to security, validation, and data integrity:
+
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────┐
+│   Browser    │───▶│  Middleware   │───▶│Route Handler │───▶│Service Layer │───▶│ MongoDB  │
+│  (Client)    │    │ (JWT verify)  │    │ (Zod parse)  │    │ (Biz rules)  │    │          │
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘    └──────────┘
+       │                   │                   │                   │                 │
+       │  Cookie: JWT      │  Decode user      │  Validate body    │  Apply rules    │
+       │  ─────────▶       │  ─────────▶       │  ─────────▶       │  ─────────▶     │
+       │                   │                   │                   │   Query/Write   │
+       │                   │                   │                   │  ◀─────────     │
+       │                   │                   │  Serialise JSON   │                 │
+       │  HTTP Response     │                   │  ◀─────────       │                 │
+       │  ◀─────────       │                   │                   │                 │
+```
+
+**Error handling at each layer:**
+- **Middleware failure** → `302 Redirect` to `/login` (no JSON body, since the user is unauthenticated)
+- **Zod validation failure** → `400 Bad Request` with structured error object `{ errors: { field: message } }`
+- **RBAC failure** → `403 Forbidden` with `{ error: "Access denied" }`
+- **Business rule failure** → `400 Bad Request` with descriptive message (e.g., `"Cannot publish: missing required fields"`)
+- **Database error** → `500 Internal Server Error` (logged server-side, generic message to client)
+
 ## 3.11 Focused Module: Products & Content Management
 
 *(Authored by Wasala W.M.S.S.B. – IT24100559)*
@@ -940,10 +1006,26 @@ Each member owns one module, but all modules share the same conventions: Zod req
 | GET    | `/api/planner/feed`                  | Combined planner feed                         | Public       |
 | GET    | `/api/faqs`                          | Published FAQs                                | Public       |
 
-**Design decisions.**
-- *Soft delete over hard delete* so historical bookings and invoices never orphan.
-- *Explicit publish guard* rather than a boolean flag, to make state transitions auditable.
-- *Separate planner feed* endpoint so the public planner does not over-fetch admin-only fields.
+**Design decisions and rationale:**
+- *Soft delete over hard delete* — was chosen because historical bookings and invoices contain foreign-key references to packages. A hard delete would orphan those references, causing cascading null-pointer errors when staff view past bookings. Soft delete sets `isDeleted: true` and excludes the package from public queries while preserving referential integrity.
+- *Explicit publish guard* rather than a simple boolean flag — because a flag offers no audit trail. The explicit workflow records WHO published/unpublished and WHEN, enabling accountability and rollback. The service method checks `if (package.status !== 'draft') throw 'Only draft packages can be published'`, preventing accidental double-publishes.
+- *Separate planner feed endpoint* — the public planner component (`BespokeTourPlanner.tsx`) needs packages, destinations, and places in a combined payload. Rather than requiring three separate API calls (which increases latency and complicates error handling), a single `/api/planner/feed` endpoint returns a pre-shaped response with only the fields the planner UI needs — excluding `internalNotes`, `status`, `isDeleted`, and `createdBy` fields that would expose admin-only data to public users.
+
+*Figure 3.7 — Content Publishing Workflow*
+
+```mermaid
+stateDiagram-v2
+    [*] --> draft: Admin creates package
+    draft --> published: Admin publishes (all required fields present)
+    published --> unpublished: Admin unpublishes (hidden from public)
+    unpublished --> published: Admin re-publishes
+    draft --> softDeleted: Admin deletes
+    unpublished --> softDeleted: Admin deletes
+    Note right of published: Only this state is visible on the public website
+    Note right of softDeleted: Package hidden but still referenced by historical bookings
+```
+
+*Figure 3.7 explanation:* The content publishing workflow ensures that only fully prepared packages reach the public website. The `draft` state serves as a staging area where staff can iteratively build content. The `unpublished` state allows temporary removal without losing the package data. The `softDeleted` state is terminal for public access but preserves the document for historical booking references, ensuring invoices and past customer records remain valid.
 
 ---
 
@@ -1480,12 +1562,19 @@ Place supporting content here — material that is useful but not essential to t
 
 ### E.2 Extended Diagrams
 
-- [INSERT FULL-SIZE ER DIAGRAM]
-- [INSERT FULL-SIZE USE CASE DIAGRAM]
-- [INSERT SEQUENCE DIAGRAM — Booking flow]
-- [INSERT SEQUENCE DIAGRAM — Payment flow]
-- [INSERT SEQUENCE DIAGRAM — Publish/Unpublish flow]
-- [INSERT DEPLOYMENT DIAGRAM]
+All technical diagrams are available as interactive HTML files in the `docs/diagrams/` directory of the project repository. These can be opened directly in any modern web browser for full-resolution viewing and printing.
+
+| Figure Reference | Diagram Name                                      | File Path                                     |
+|------------------|---------------------------------------------------|-----------------------------------------------|
+| Figure 2.1       | Use Case Diagram — Actor–Use-Case Relationships   | `docs/diagrams/use_case_diagram.html`         |
+| Figure 3.1       | System Architecture — High-Level Layers            | `docs/diagrams/system_architecture.html`      |
+| Figure 3.3       | Booking Lifecycle — State Machine Flow             | `docs/diagrams/booking_flow.html`             |
+| Figure 3.4       | Payment Processing Flow — Two-Stage Model          | `docs/diagrams/payment_flow.html`             |
+| Figure 3.8       | Entity-Relationship Diagram — Full Schema          | `docs/diagrams/er_diagram.html`               |
+| Figure E.1       | Activity Diagram — System Workflows                | `docs/diagrams/activity_diagram.html`         |
+| Figure E.2       | Sequence Diagram — Booking → Payment → Confirmation| `docs/diagrams/sequence_diagram.html`         |
+
+> **Note:** Each HTML diagram is self-contained (no external dependencies) and uses SVG rendering for print-quality output. Export to PNG/PDF via the browser's *Print → Save as PDF* function with landscape orientation for best results.
 
 ### E.3 Meeting / Progress Evidence (optional)
 
@@ -1571,7 +1660,7 @@ Insert each of these diagrams (exported as images) and caption them exactly as s
 
 ### 12. Appendix E — Extended Material
 - [ ] Paste the additional screenshots listed in §E.1.
-- [ ] Paste the extended diagrams listed in §E.2.
+- [x] Extended diagrams populated in §E.2 — all 7 HTML diagram files referenced with file paths.
 - [ ] (Optional) Add meeting logs, sprint board snapshots, PR review samples.
 - [ ] (Optional) Paste sanitised `.env.example` (NO real secrets).
 
