@@ -97,10 +97,11 @@ Select District → Browse Gems → Add to Itinerary → Reorder Days → Previe
 - Block dates for maintenance
 
 ### 12. Financial Reports
-- Revenue tracking
-- Payment ledger
-- Invoice generation (PDF)
-- Monthly/quarterly reports
+- Revenue tracking (monthly, quarterly)
+- Two-stage payment ledger (20% advance + 80% balance)
+- Invoice generation (PDF) with auto-numbering
+- Aging reports for outstanding balances
+- Payment reconciliation dashboard
 
 ### 13. User Management (Admin)
 - Create/edit/deactivate users
@@ -110,11 +111,21 @@ Select District → Browse Gems → Add to Itinerary → Reorder Days → Previe
 ### 14. Partner Management
 - Add hotel/activity/transport partners
 - Track partnership details
+- Service management and rate cards
+- Availability blocking
 
 ### 15. Support Tickets
 - View/reply to customer support tickets
 - Priority-based ticket management
 - Status tracking
+- Email notifications on replies
+
+### 16. Refund Management
+- Customer cancellation with <5 days restriction
+- Refund request pipeline: Staff Review → Admin Approval → Finance Execution
+- Refund method capture (bank transfer, original payment)
+- Payment ledger auto-adjustment on refund completion
+- Proof of refund upload and audit trail
 
 ---
 
@@ -127,7 +138,16 @@ Login Page → Enter email/password → JWT token issued → Cookie set → Midd
 ## Payment Flow
 
 ```
-Booking Confirmed → Admin generates payment link → User pays via PayHere → Webhook notification → Payment recorded → Receipt generated
+Booking CONFIRMED → Admin sets totalAmount → 20% advance payment link generated → Customer pays via PayHere
+→ Webhook records payment → Status: BALANCE_PENDING → 80% collected manually → Staff records manual payment
+→ Status: FULLY_PAID → Invoice auto-generated → PDF receipt available
+```
+
+## Refund Flow
+
+```
+Customer cancels (>5 days before trip) → RefundRequest created → Staff adds recommendation
+→ Admin approves/rejects → Finance marks as refunded with proof → Ledger auto-adjusted
 ```
 
 ---

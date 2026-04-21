@@ -28,7 +28,8 @@ graph TB
 
     subgraph External["🔗 External Services"]
         Vercel["Vercel (Hosting)"]
-        Cloudinary["Image CDN"]
+        Turnstile["Cloudflare Turnstile"]
+        SMTP["Nodemailer (Zoho SMTP)"]
     end
 
     Browser --> |HTTPS| Middleware
@@ -54,8 +55,16 @@ graph TB
 - **Server Components**: Data fetching with `async` server components
 - **Client Components**: Interactive UI with React hooks
 
-### 3. Data Access Layer
-- **Mongoose Models** (`src/models/`): Schema definitions with validation
+### 3. Data Access Layer (Services)
+- **Service Layer** (`src/services/`): Centralised database query functions
+  - `package.service.ts` — Package listing, featured, signature
+  - `dashboard.service.ts` — KPI aggregations, pipeline, activity
+  - `fleet.service.ts` — Fleet calendar, availability
+  - `finance.service.ts` — Revenue, invoices, aging reports
+  - `analytics.service.ts` — Monthly bookings, revenue trends
+  - `hotel.service.ts` — Hotel partners, services, blocks
+  - `crud.service.ts` — All remaining CRUD operations
+- **Mongoose Models** (`src/models/`): 25 schema definitions with validation
 - **Database Connection** (`src/lib/mongodb.ts`): Singleton connection pool
 
 ---
@@ -170,10 +179,45 @@ erDiagram
         string priority
     }
 
+    REFUND_REQUEST {
+        ObjectId bookingId
+        ObjectId requestedBy
+        string reason
+        string refundMethod
+        string status
+        number amount
+    }
+
+    INVOICE {
+        ObjectId bookingId
+        string invoiceNo
+        number totalAmount
+        number paidAmount
+        string status
+    }
+
+    CUSTOM_PLAN {
+        ObjectId userId
+        string title
+        object[] itinerary
+        string status
+    }
+
+    AUDIT_LOG {
+        ObjectId actorId
+        string action
+        string target
+        Date timestamp
+    }
+
     USER ||--o{ BOOKING : creates
     PACKAGE ||--o{ BOOKING : "booked as"
     BOOKING ||--o{ PAYMENT : "paid via"
+    BOOKING ||--o{ REFUND_REQUEST : "refund for"
+    BOOKING ||--|| INVOICE : "invoiced as"
     USER ||--o{ TICKET : submits
+    USER ||--o{ CUSTOM_PLAN : plans
+    USER ||--o{ AUDIT_LOG : triggers
 ```
 
 ---
@@ -240,8 +284,9 @@ Yatara-Ceylon/
 │   │   ├── public/          # Homepage sections, cards
 │   │   ├── dashboard/       # Dashboard tables, forms
 │   │   └── ui/              # Radix UI primitives
-│   ├── lib/                 # Utilities (DB, auth, currency)
-│   ├── models/              # Mongoose schemas
+│   ├── services/            # Centralised data access layer
+│   ├── lib/                 # Utilities (DB, auth, currency, rbac)
+│   ├── models/              # Mongoose schemas (25 models)
 │   └── middleware.ts        # Auth middleware
 ├── tailwind.config.ts       # Design tokens + animations
 ├── next.config.ts           # Next.js configuration

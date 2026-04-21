@@ -190,6 +190,58 @@ List partners (Admin/Staff only).
 ### POST `/api/partners` 🔒
 Create a partner.
 
+### PUT `/api/partners/:id` 🔒
+Update partner details.
+
+---
+
+## Refunds
+
+### GET `/api/refunds` 🔒
+List refund requests (Admin/Staff only).
+
+### POST `/api/refunds` 🔒
+Create a refund request for a cancelled booking.
+
+### PUT `/api/refunds/:id` 🔒
+Update refund status (approve/reject/mark as refunded).
+
+---
+
+## Invoices
+
+### GET `/api/invoices` 🔒
+List invoices (Admin/Staff only).
+
+### GET `/api/invoices/:id` 🔒
+Get invoice details.
+
+### POST `/api/invoices` 🔒
+Generate an invoice for a booking.
+
+---
+
+## Custom Plans
+
+### GET `/api/custom-plans` 🔒
+List custom tour plans.
+
+### POST `/api/custom-plans`
+Submit a custom tour plan from the Bespoke Tour Builder.
+
+### PUT `/api/custom-plans/:id` 🔒
+Update custom plan status (Admin/Staff only).
+
+---
+
+## Notifications
+
+### GET `/api/notifications` 🔒
+List notifications for the current user.
+
+### PUT `/api/notifications/:id` 🔒
+Mark notification as read.
+
 ---
 
 ## Error Responses

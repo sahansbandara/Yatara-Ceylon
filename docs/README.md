@@ -15,6 +15,8 @@ Welcome to the Yatara Ceylon documentation. This folder contains comprehensive g
 | [API Reference](./API.md) | REST API endpoints, request/response schemas, authentication |
 | [Design System](./DESIGN-SYSTEM.md) | Liquid Glass design system — colors, typography, components |
 | [Features](./FEATURES.md) | Complete feature breakdown by module with user flows |
+| [Style Contract](./style-contract.md) | Typography scale, spacing rules, card/button/image conventions |
+| [Demo Script](./demo_script.md) | Structured demo walkthrough for presentations |
 | [MongoDB Backups](./mongodb-backups.md) | Manual restore points and daily Atlas free-tier backup workflow |
 
 ---
@@ -23,7 +25,7 @@ Welcome to the Yatara Ceylon documentation. This folder contains comprehensive g
 
 ```bash
 # Clone the repo
-git clone https://github.com/YourOrg/Yatara-Ceylon.git
+git clone https://github.com/sahansbandara/Yatara-Ceylon.git
 cd Yatara-Ceylon
 
 # Install dependencies
@@ -50,9 +52,13 @@ npm run dev
 - **Styling**: Tailwind CSS + Liquid Glass Design System
 - **Database**: MongoDB Atlas (Mongoose ODM)
 - **Auth**: JWT + bcrypt + middleware-based role guards
-- **Payments**: PayHere integration
-- **Maps**: Leaflet + GeoJSON
+- **Payments**: PayHere integration (20% advance + 80% balance)
+- **Maps**: MapLibre GL + react-map-gl + Leaflet
+- **Animations**: Framer Motion
+- **State**: Zustand
 - **UI**: Radix UI primitives + custom glass components
+- **Email**: Nodemailer (Zoho SMTP)
+- **Captcha**: Cloudflare Turnstile
 
 ---
 
