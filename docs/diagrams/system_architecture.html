@@ -47,7 +47,7 @@
   <div class="title">System Architecture Diagram</div>
   <div class="subtitle">Yatara Ceylon — Tourism Operations Management System (TOMS)</div>
   
-  <svg viewBox="0 0 1140 920" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 1140 960" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-auto">
         <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
@@ -186,8 +186,8 @@
     <text x="802" y="585" text-anchor="middle" font-size="9" fill="#64748b">Customer Inquiries</text>
 
     <rect x="920" y="545" width="175" height="55" rx="8" fill="#fff" stroke="#a78bfa" stroke-width="1.5" filter="url(#shadow)"/>
-    <text x="1007" y="570" text-anchor="middle" font-size="11" font-weight="700" fill="#4c1d95">Invoice System</text>
-    <text x="1007" y="585" text-anchor="middle" font-size="9" fill="#64748b">Generation + PDF</text>
+    <text x="1007" y="570" text-anchor="middle" font-size="11" font-weight="700" fill="#4c1d95">Refund Manager</text>
+    <text x="1007" y="585" text-anchor="middle" font-size="9" fill="#64748b">Pipeline + Ledger</text>
 
     <!-- ========== LAYER 5: DATA LAYER ========== -->
     <rect x="30" y="645" width="740" height="120" rx="10" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
@@ -207,50 +207,61 @@
     <text x="645" y="728" text-anchor="middle" font-size="9" fill="#64748b">Finance Metrics · Search · Pagination</text>
 
     <!-- ========== EXTERNAL SERVICES ========== -->
-    <rect x="790" y="645" width="320" height="120" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+    <rect x="790" y="645" width="320" height="165" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
     <text x="820" y="670" font-size="13" font-weight="700" fill="#9a3412">🔌 EXTERNAL SERVICES</text>
 
-    <rect x="810" y="685" width="140" height="60" rx="8" fill="#fff" stroke="#fb923c" stroke-width="1.5" filter="url(#shadow)"/>
-    <text x="880" y="710" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">PayHere</text>
-    <text x="880" y="728" text-anchor="middle" font-size="9" fill="#64748b">Payment Gateway (LKR)</text>
+    <rect x="810" y="685" width="140" height="50" rx="8" fill="#fff" stroke="#fb923c" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="880" y="705" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">PayHere</text>
+    <text x="880" y="720" text-anchor="middle" font-size="9" fill="#64748b">Payment Gateway (LKR)</text>
 
-    <rect x="960" y="685" width="130" height="60" rx="8" fill="#fff" stroke="#fb923c" stroke-width="1.5" filter="url(#shadow)"/>
-    <text x="1025" y="710" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">Leaflet Maps</text>
-    <text x="1025" y="728" text-anchor="middle" font-size="9" fill="#64748b">Tour Map Builder</text>
+    <rect x="960" y="685" width="130" height="50" rx="8" fill="#fff" stroke="#fb923c" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="1025" y="705" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">MapLibre GL</text>
+    <text x="1025" y="720" text-anchor="middle" font-size="9" fill="#64748b">Tour Map Builder</text>
+
+    <rect x="810" y="745" width="140" height="50" rx="8" fill="#fff" stroke="#fb923c" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="880" y="765" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">Turnstile</text>
+    <text x="880" y="780" text-anchor="middle" font-size="9" fill="#64748b">Cloudflare Captcha</text>
+
+    <rect x="960" y="745" width="130" height="50" rx="8" fill="#fff" stroke="#fb923c" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="1025" y="765" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">Nodemailer</text>
+    <text x="1025" y="780" text-anchor="middle" font-size="9" fill="#64748b">Zoho SMTP Email</text>
 
     <!-- ========== TECH STACK BAR ========== -->
-    <rect x="30" y="790" width="1080" height="55" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
-    <text x="60" y="815" font-size="13" font-weight="700" fill="#334155">🛠️ TECH STACK</text>
+    <rect x="30" y="835" width="1080" height="55" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="60" y="860" font-size="13" font-weight="700" fill="#334155">🛠️ TECH STACK</text>
     
-    <rect x="165" y="800" width="90" height="28" rx="5" fill="#000" />
-    <text x="210" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Next.js 15</text>
+    <rect x="165" y="845" width="85" height="28" rx="5" fill="#000" />
+    <text x="207" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Next.js 15</text>
     
-    <rect x="265" y="800" width="90" height="28" rx="5" fill="#3178c6" />
-    <text x="310" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">TypeScript</text>
+    <rect x="258" y="845" width="85" height="28" rx="5" fill="#3178c6" />
+    <text x="300" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">TypeScript</text>
     
-    <rect x="365" y="800" width="90" height="28" rx="5" fill="#47a248" />
-    <text x="410" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">MongoDB</text>
+    <rect x="351" y="845" width="80" height="28" rx="5" fill="#47a248" />
+    <text x="391" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">MongoDB</text>
     
-    <rect x="465" y="800" width="90" height="28" rx="5" fill="#880000" />
-    <text x="510" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Mongoose</text>
+    <rect x="439" y="845" width="80" height="28" rx="5" fill="#880000" />
+    <text x="479" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Mongoose</text>
     
-    <rect x="565" y="800" width="70" height="28" rx="5" fill="#e11d48" />
-    <text x="600" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">JWT</text>
+    <rect x="527" y="845" width="55" height="28" rx="5" fill="#e11d48" />
+    <text x="554" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">JWT</text>
     
-    <rect x="645" y="800" width="80" height="28" rx="5" fill="#7c3aed" />
-    <text x="685" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">bcryptjs</text>
+    <rect x="590" y="845" width="55" height="28" rx="5" fill="#0ea5e9" />
+    <text x="617" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Zod</text>
     
-    <rect x="735" y="800" width="60" height="28" rx="5" fill="#0ea5e9" />
-    <text x="765" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Zod</text>
+    <rect x="653" y="845" width="75" height="28" rx="5" fill="#06b6d4" />
+    <text x="690" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Tailwind</text>
     
-    <rect x="805" y="800" width="80" height="28" rx="5" fill="#06b6d4" />
-    <text x="845" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Tailwind</text>
+    <rect x="736" y="845" width="85" height="28" rx="5" fill="#7c3aed" />
+    <text x="778" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Framer</text>
     
-    <rect x="895" y="800" width="85" height="28" rx="5" fill="#f97316" />
-    <text x="937" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">PayHere</text>
+    <rect x="829" y="845" width="80" height="28" rx="5" fill="#f97316" />
+    <text x="869" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">PayHere</text>
     
-    <rect x="990" y="800" width="100" height="28" rx="5" fill="#22c55e" />
-    <text x="1040" y="819" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">shadcn/ui</text>
+    <rect x="917" y="845" width="75" height="28" rx="5" fill="#22c55e" />
+    <text x="954" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Radix UI</text>
+    
+    <rect x="1000" y="845" width="90" height="28" rx="5" fill="#334155" />
+    <text x="1045" y="864" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Zustand</text>
 
     <!-- ========== CONNECTING ARROWS (Layer to Layer) ========== -->
     <!-- Public to Auth -->
@@ -276,7 +287,7 @@
     <text x="955" y="635" font-size="9" fill="#64748b">Webhooks / API</text>
 
     <!-- Module label -->
-    <text x="570" y="875" text-anchor="middle" font-size="10" fill="#94a3b8">SLIIT ITP · IT24100559 · Yatara Ceylon TOMS</text>
+    <text x="570" y="920" text-anchor="middle" font-size="10" fill="#94a3b8">SLIIT ITP · IT24100559 · Yatara Ceylon TOMS</text>
   </svg>
 </div>
 </body>

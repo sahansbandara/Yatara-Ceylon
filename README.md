@@ -133,20 +133,31 @@ graph TB
 
 ## 🛠 Tech Stack
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Framework** | Next.js 15 (App Router) | Full-stack React framework with server components |
-| **Language** | TypeScript 5.x | Type-safe development across frontend and backend |
-| **Database** | MongoDB + Mongoose | Document database with schema validation |
-| **Auth** | JWT + bcryptjs + HttpOnly Cookies | Secure stateless authentication |
-| **Payments** | PayHere (Sandbox + Production) | Sri Lankan payment gateway for LKR transactions |
-| **Validation** | Zod | Runtime schema validation for all API inputs |
-| **Styling** | Tailwind CSS | Utility-first CSS with custom design tokens |
-| **UI Library** | shadcn/ui + Radix Primitives | Accessible, composable component library |
-| **Icons** | Lucide React | Modern icon library |
-| **Maps** | Leaflet (OpenStreetMap) | Interactive maps for destinations and tour routes |
-| **Rate Limiting** | Custom in-memory limiter | API abuse prevention |
-| **Audit Trail** | Custom logging system | Tracks all admin/staff actions |
+| Layer | Technology | Version | Purpose |
+|-------|-----------|---------|--------|
+| **Framework** | Next.js (App Router) | 15.1.0 | Full-stack React framework with server components |
+| **UI Library** | React | 19.0.0 | Component-based user interface library |
+| **Language** | TypeScript | 5.7.x | Type-safe development across frontend and backend |
+| **Database** | MongoDB Atlas + Mongoose | 8.9.5 | Cloud document database with schema validation (ODM) |
+| **Auth** | JWT (jose + jsonwebtoken) + bcryptjs | — | Secure stateless authentication with HttpOnly cookies |
+| **Payments** | PayHere (Sandbox + Production) | — | Sri Lankan payment gateway for LKR transactions |
+| **Validation** | Zod | 3.24.x | Runtime schema validation for all API inputs |
+| **Styling** | Tailwind CSS | 3.4.17 | Utility-first CSS with custom design tokens |
+| **UI Primitives** | Radix UI + shadcn/ui patterns | — | Accessible dialogs, dropdowns, tabs, tooltips, popovers |
+| **Animations** | Framer Motion | 11.18.x | Page transitions, scroll-based parallax, micro-interactions |
+| **Icons** | Lucide React | 0.563.x | Modern SVG icon library |
+| **Maps** | MapLibre GL + react-map-gl + Leaflet | — | Interactive maps for tour planner and destination explorer |
+| **State** | Zustand | 5.0.x | Lightweight client-side state management |
+| **Drag & Drop** | @dnd-kit | 6.3.x | Sortable itinerary items in tour builder |
+| **Search** | cmdk + Fuse.js | — | Command palette (⌘K) and fuzzy search |
+| **PDF** | jsPDF + jspdf-autotable | — | Invoice and receipt PDF generation |
+| **Email** | Nodemailer (Zoho SMTP) | 8.0.x | Verification emails, support reply notifications |
+| **Carousel** | Swiper | 11.2.x | Touch-friendly carousels for packages and galleries |
+| **Calendar** | react-big-calendar | 1.19.x | Fleet availability and booking calendar views |
+| **Dates** | date-fns | 4.1.x | Date formatting, parsing, and manipulation |
+| **Captcha** | Cloudflare Turnstile | — | Bot protection on public forms |
+| **Rate Limiting** | Custom in-memory limiter | — | API abuse prevention per IP |
+| **Audit Trail** | Custom AuditLog model | — | Tracks all admin/staff actions with actor ID |
 
 ---
 
@@ -340,7 +351,7 @@ stateDiagram-v2
 
 ## 🗄️ Database Schema (ER Diagram)
 
-The system uses **MongoDB** with **14 collections**. Here's how they relate:
+The system uses **MongoDB** with **25 Mongoose models**. Here are the primary entity relationships:
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px', 'fontFamily': 'Helvetica'}}}%%
@@ -404,12 +415,15 @@ flowchart TB
 Yatara-Ceylon/
 ├── docs/                           # 📚 Project documentation
 │   ├── diagrams/                   #    Interactive HTML diagrams (architecture, ER, use case, activity)
-│   ├── account-management.md       #    Auth & RBAC docs
-│   ├── booking-reservation-management.md
-│   ├── finance-management.md
-│   ├── products-content-management.md
-│   ├── supplier-partner-management.md
-│   └── vehicle-fleet-management.md
+│   ├── yatara_member_md_files/     #    Individual member documentation (6 files)
+│   ├── API.md                      #    API endpoint reference
+│   ├── ARCHITECTURE.md             #    System architecture overview
+│   ├── DESIGN-SYSTEM.md            #    Design tokens and component patterns
+│   ├── FEATURES.md                 #    Feature list and status
+│   ├── SETUP.md                    #    Development environment setup guide
+│   ├── demo_script.md              #    Demo walkthrough script
+│   ├── mongodb-backups.md          #    Database backup procedures
+│   └── style-contract.md           #    Design style contract
 │
 ├── scripts/                        # 🔧 Utility & seed scripts
 │
@@ -459,10 +473,15 @@ Yatara-Ceylon/
 │   │   ├── dashboard.service.ts    #    Main dashboard KPIs
 │   │   └── crud.service.ts         #    All remaining CRUD + detail lookups
 │   │
-│   ├── models/                     # 📋 Mongoose schemas (14 models)
+│   ├── models/                     # 📋 Mongoose schemas (25 models)
 │   │   ├── User.ts, Booking.ts, Payment.ts, Invoice.ts
 │   │   ├── Package.ts, Vehicle.ts, Partner.ts, Destination.ts
-│   │   └── CustomPlan.ts, VehicleBlock.ts, Notification.ts, etc.
+│   │   ├── CustomPlan.ts, VehicleBlock.ts, Notification.ts
+│   │   ├── RefundRequest.ts, PartnerService.ts, PartnerServiceBlock.ts
+│   │   ├── SupportTicket.ts, AuditLog.ts, Attachment.ts
+│   │   ├── BookingPartnerAssignment.ts, PartnerRequest.ts
+│   │   ├── FAQ.ts, GalleryPost.ts, Testimonial.ts
+│   │   └── Customer.ts, District.ts, DistrictPlace.ts
 │   │
 │   ├── components/                 # 🎨 React UI components
 │   │   ├── dashboard/              #    Dashboard-specific components
@@ -630,16 +649,16 @@ After running `npm run seed`, these demo accounts are available:
 
 ## 📦 Management Modules
 
-The system is organised into **6 core modules**, each with detailed documentation:
+The system is organised into **6 core modules**, each managed by a team member with detailed documentation:
 
-| # | Module | What it does | Documentation |
-|---|--------|-------------|--------------|
-| 1 | **Account Management** | User registration, login, JWT auth, 5 roles, RBAC | [📄 Read →](./docs/account-management.md) |
-| 2 | **Products & Content** | Tour packages, destinations, FAQs, gallery, testimonials | [📄 Read →](./docs/products-content-management.md) |
-| 3 | **Vehicle Fleet** | Vehicle registry, availability blocking, fleet calendar, booking assignments | [📄 Read →](./docs/vehicle-fleet-management.md) |
-| 4 | **Booking & Reservation** | Full booking lifecycle, custom tour plans, status pipeline | [📄 Read →](./docs/booking-reservation-management.md) |
-| 5 | **Finance** | PayHere payments, manual payments, invoices, aging reports, advance tracking | [📄 Read →](./docs/finance-management.md) |
-| 6 | **Supplier/Partner** | Hotels, guides, restaurants — onboarding, rate cards, booking assignments | [📄 Read →](./docs/supplier-partner-management.md) |
+| # | Module | Member | What it does | Documentation |
+|---|--------|--------|-------------|------|
+| 1 | **Account Management** | Nawarathna K.M.G.D.I. | User registration, login, JWT auth, 5 roles, RBAC | [📄 Read →](./docs/yatara_member_md_files/01-account-management-nawarathna.md) |
+| 2 | **Products & Content** | Wasala W.A.I. | Tour packages, destinations, FAQs, gallery, testimonials | [📄 Read →](./docs/yatara_member_md_files/02-products-content-management-wasala.md) |
+| 3 | **Vehicle Fleet** | Melisha L.A. | Vehicle registry, availability blocking, fleet calendar, booking assignments | [📄 Read →](./docs/yatara_member_md_files/03-vehicle-fleet-management-melisha.md) |
+| 4 | **Booking & Reservation** | Sanujan N. | Full booking lifecycle, custom tour plans, status pipeline | [📄 Read →](./docs/yatara_member_md_files/04-booking-reservation-management-sanujan.md) |
+| 5 | **Finance** | Luxsana S. | PayHere payments, manual payments, invoices, aging reports, refund pipeline | [📄 Read →](./docs/yatara_member_md_files/05-finance-management-luxsana.md) |
+| 6 | **Supplier/Partner** | Muthubadiwila D.H.S. | Hotels, guides, restaurants — onboarding, rate cards, booking assignments | [📄 Read →](./docs/yatara_member_md_files/06-supplier-partner-management-muthubadiwila.md) |
 
 ---
 
@@ -717,7 +736,7 @@ All detailed diagrams are available as interactive HTML files in the [`docs/diag
 
 > **How to view:** Download or clone the repo, then open the `.html` files in any web browser.
 
-Additional module documentation is available in the [`docs/`](./docs/) folder — see [Management Modules](#-management-modules) above.
+Additional module documentation is available in [`docs/yatara_member_md_files/`](./docs/yatara_member_md_files/) — see [Management Modules](#-management-modules) above. Technical docs including API reference, architecture overview, design system, and setup guide are in the [`docs/`](./docs/) folder.
 
 ---
 

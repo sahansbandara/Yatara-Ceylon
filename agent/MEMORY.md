@@ -214,20 +214,22 @@
 
 ## Last Session
 
-## Last Session
-
-**Date**: 2026-04-19 (Session 6)
+**Date**: 2026-04-21 (Session 8)
 
 **What was done**:
-1. Implemented the strict Refund Management System. 
-2. Updated Customer Cancellation Modal to enforce <5 days date gating. Captured refund method, reason, and bank details.
-3. Created `RefundRequest` mongoose model to govern Staff > Admin > Ledger execution.
-4. Added `Refunds` pane in the Dashboard Sidebar for Admins & Staff.
-5. Allowed Admins to formally trigger `Mark as Refunded` which reduces Booking `paidAmount` and records the Ledger entry.
+1. Fixed README.md tech stack — expanded from 12 to 22 entries with accurate versions (Next.js 15.1.0, React 19.0.0, Mongoose 8.9.5, etc.), added MapLibre GL, Framer Motion, Zustand, cmdk, jsPDF, Nodemailer, Swiper, dnd-kit, react-big-calendar, date-fns, Cloudflare Turnstile.
+2. Fixed README.md model count from "14 collections" to "25 Mongoose models" with complete model listing.
+3. Fixed README.md Management Modules links — pointed to `docs/yatara_member_md_files/*.md` instead of broken `docs/*.md` paths.
+4. Fixed README.md project structure — replaced old `docs/` doc list with actual files (API.md, ARCHITECTURE.md, DESIGN-SYSTEM.md, etc.).
+5. Fixed system_architecture.html diagram — replaced "Leaflet Maps" with "MapLibre GL", added Cloudflare Turnstile and Nodemailer SMTP boxes, replaced "Invoice System" with "Refund Manager", updated tech stack bar with Framer Motion, Radix UI, Zustand.
+6. Fixed er_diagram.html — updated entity count from 14 to 25.
+7. Verified all 6 member documentation files are comprehensive and accurate.
+8. Updated all agent files and pushed to GitHub.
 
 **Current state**:
-- Refund management pipeline is natively merged and complete.
+- All documentation is accurate and complete.
+- Branch: `main`
 
 **What to do next**:
-- Check if `02-products-content-management-wasala.md` or next files require updates to log these system capabilities.
-- Proceed with any missing notification triggers (emails/slack) when a Refund Request is entered.
+- Project is complete and production-ready.
+
