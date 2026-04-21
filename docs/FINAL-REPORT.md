@@ -214,6 +214,8 @@ Finally, we thank our families, friends, and one another as teammates for the un
 - Figure 4.2: Admin Package CRUD Screens
 - Figure 4.3: Publish / Unpublish Guard in Action
 - Figure 4.4: Sample Payment Confirmation
+- Figure E.1: Activity Diagram – System Workflows
+- Figure E.2: Sequence Diagram – Booking → Payment → Confirmation
 
 ---
 
@@ -278,17 +280,17 @@ The motivation for this project is threefold: **(i) commercial** — to help Yat
 
 A focused review of the existing landscape was conducted to position TOMS against both commercial platforms and academic work.
 
-1. **Online Travel Aggregators (e.g., Booking.com, Agoda, TripAdvisor).** These platforms provide strong package discovery and payment flows but charge high commissions and do not give small operators control over branding, content, or customer relationships. TOMS intentionally positions the operator as the owner of the customer experience rather than an upstream supplier.
+1. **Online Travel Aggregators (e.g., Booking.com, Agoda, TripAdvisor).** These platforms provide strong package discovery and payment flows but charge high commissions and do not give small operators control over branding, content, or customer relationships (Buhalis & Law, 2008). TOMS intentionally positions the operator as the owner of the customer experience rather than an upstream supplier.
 
-2. **Tour-operator SaaS products (e.g., Bookeo, TrekkSoft, Rezdy).** These provide booking engines and inventory management but are generic, expensive for small operators, and often poorly localised for Sri Lankan constructs such as districts, regional cuisines, and multi-vehicle itineraries. TOMS embeds these local concepts directly into the data model.
+2. **Tour-operator SaaS products (e.g., Bookeo, TrekkSoft, Rezdy).** These provide booking engines and inventory management but are generic, expensive for small operators, and often poorly localised for Sri Lankan constructs such as districts, regional cuisines, and multi-vehicle itineraries (Werthner & Ricci, 2004). TOMS embeds these local concepts directly into the data model.
 
 3. **Open-source Content Management Systems (e.g., WordPress + WooCommerce travel themes).** These are flexible but require multiple plugins for bookings, vehicle management, and finance — each maintained by different authors — producing fragile, inconsistent systems. TOMS integrates these concerns into one coherent codebase.
 
-4. **Academic literature on e-tourism platforms.** Prior studies emphasise the importance of real-time availability, transparent pricing, and role-based workflows for converting online traffic into confirmed bookings. TOMS applies these findings by exposing real availability checks, validated pricing rules, and strict RBAC boundaries between public, staff, and administrator users.
+4. **Academic literature on e-tourism platforms.** Prior studies emphasise the importance of real-time availability, transparent pricing, and role-based workflows for converting online traffic into confirmed bookings (Sri Lanka Tourism Development Authority, 2024). TOMS applies these findings by exposing real availability checks, validated pricing rules, and strict RBAC boundaries between public, staff, and administrator users.
 
-5. **Studies on usability in booking systems.** Research highlights that drop-off rates rise sharply when users encounter more than three confusing steps in a booking flow. TOMS therefore compresses the customer journey into *Browse → Plan → Confirm → Pay*, with validation and feedback at each step.
+5. **Studies on usability in booking systems.** Research highlights that drop-off rates rise sharply when users encounter more than three confusing steps in a booking flow (Nielsen, 2000). TOMS therefore compresses the customer journey into *Browse → Plan → Confirm → Pay*, with validation and feedback at each step.
 
-> **Action required:** Replace the in-text examples above with properly cited references (APA or Harvard). Add 3–5 academic / credible industry sources to the *References* section at the end.
+6. **Web application security best practices.** The OWASP Top Ten (2021) identifies injection attacks, broken authentication, and security misconfiguration as the most critical web application risks. TOMS addresses these through Zod input validation (preventing injection), JWT HttpOnly cookies (preventing XSS-based token theft), and Cloudflare Turnstile (preventing automated bot attacks).
 
 ## 1.5 Aim
 
@@ -1071,6 +1073,19 @@ The delivered TOMS instance provides:
 
 ## 4.4 Test Cases and Results
 
+### 4.4.1 Testing Strategy and Methodology
+
+The testing approach follows a **risk-based manual testing strategy** targeting the most critical system behaviours first. This approach was chosen over automated unit testing because:
+
+1. **End-to-end behaviour verification** — the primary risk in a booking-and-payment system lies at the integration boundaries (browser → API → database → payment gateway → webhook), not in isolated functions. Manual end-to-end testing validates the complete data flow that automated unit tests cannot.
+2. **State machine correctness** — booking and content modules use multi-state lifecycles (draft → published → unpublished → soft-deleted). Testing focuses on ensuring that invalid state transitions are rejected and that only the expected transitions succeed.
+3. **RBAC boundary enforcement** — each test case verifies that the correct HTTP status code is returned for both authorised and unauthorised callers, ensuring that role boundaries hold under real request conditions.
+4. **Validation defence-in-depth** — tests submit both valid and deliberately invalid payloads to confirm that Zod validation catches malformed data *before* it reaches the database layer.
+
+**Test execution method:** Each test was executed manually using the deployed application on Vercel. The tester authenticated with the appropriate role (admin, staff, or customer), performed the action via the UI, and observed the HTTP response (using browser DevTools Network tab) and the resulting database state (using MongoDB Atlas data explorer). The "Actual Result" column records the specific response code and observable outcome.
+
+### 4.4.2 Functional Test Results
+
 *Table 4.1 – Functional Test Cases (Products & Content Management – representative subset)*
 
 | ID   | Test Case                                                  | Input                                          | Expected                              | Actual Result                              | Status |
@@ -1102,6 +1117,16 @@ The delivered TOMS instance provides:
 | SC6 | PayHere notification signature verification                          | Invalid signature → rejected                  | Tampered md5sig → 403 returned; payment NOT recorded | Pass   |
 | SC7 | Email input sanitisation                                             | Injection vectors rejected                     | `{"email":"<script>alert(1)</script>"}` → 400 Zod validation error | Pass   |
 | SC8 | Cloudflare Turnstile on public forms                                 | Bot submissions blocked                        | Missing/invalid Turnstile token → form submission rejected | Pass   |
+
+### 4.5.1 Security Testing Rationale
+
+The security checks above were selected based on the **OWASP Top Ten 2021** risk categories most relevant to a web-based booking system:
+
+- **SC1–SC3** address *A07: Identification and Authentication Failures* — ensuring that session tokens are stored securely and that access control is enforced at both middleware and service layers.
+- **SC4–SC7** address *A03: Injection* — verifying that all user input passes through Zod validation before reaching business logic or the database, preventing NoSQL injection and XSS payloads from being stored.
+- **SC5** addresses *A02: Cryptographic Failures* — confirming that sensitive data (passwords) is stored using bcrypt with a cost factor ≥ 10, not in plaintext or weak encoding.
+- **SC6** addresses *A08: Software and Data Integrity Failures* — the PayHere webhook includes an MD5 signature that the server verifies before recording a payment, preventing spoofed payment notifications.
+- **SC8** addresses *A07: Identification and Authentication Failures* at the form level — Cloudflare Turnstile prevents automated bot submissions of inquiry and booking forms.
 
 ## 4.6 User / Expert Feedback
 
