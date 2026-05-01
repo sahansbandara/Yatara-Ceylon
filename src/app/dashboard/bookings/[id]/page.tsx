@@ -14,6 +14,7 @@ import BookingWhatsAppCard from "@/components/dashboard/bookings/BookingWhatsApp
 import BookingStatusUpdater from "./BookingStatusUpdater";
 import { getSessionUser } from "@/lib/auth";
 import AssignVehicleModal from "@/components/dashboard/bookings/AssignVehicleModal";
+import AssignPartnerModal from "@/components/dashboard/bookings/AssignPartnerModal";
 import FinalizePricingModal from "@/components/dashboard/bookings/FinalizePricingModal";
 import EditInvoiceModal from "@/components/dashboard/finance/EditInvoiceModal";
 import DeleteInvoiceButton from "@/components/dashboard/finance/DeleteInvoiceButton";
@@ -38,7 +39,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
     const session = await getSessionUser();
     const userRole = session?.role || 'USER';
 
-    const { booking, payments, invoices, vehicles } = data;
+    const { booking, payments, invoices, vehicles, bookingPartners, partners, partnerServices } = data;
     const pkg = booking.packageId;
 
     return (
@@ -252,6 +253,55 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                                 currentVehicleId={booking.assignedVehicleId?._id}
                                 vehicles={vehicles}
                             />
+                        )}
+                    </div>
+
+                    {/* Partner Assignments */}
+                    <div className="liquid-glass-stat-dark rounded-2xl p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4 text-antique-gold" />
+                                <h3 className="text-sm font-display font-semibold text-antique-gold uppercase tracking-wider">Partner Assignments</h3>
+                            </div>
+                            {(userRole === 'ADMIN' || userRole === 'STAFF') && (
+                                <AssignPartnerModal
+                                    bookingId={String(booking._id)}
+                                    partners={partners || []}
+                                    partnerServices={partnerServices || []}
+                                />
+                            )}
+                        </div>
+                        {bookingPartners && bookingPartners.length > 0 ? (
+                            <div className="space-y-3">
+                                {bookingPartners.map((bp: any) => (
+                                    <div key={bp._id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <div>
+                                            <p className="text-sm font-semibold text-off-white flex items-center gap-2">
+                                                {bp.partnerId?.name}
+                                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60">
+                                                    {bp.partnerId?.type}
+                                                </span>
+                                            </p>
+                                            {bp.serviceId && (
+                                                <p className="text-xs text-white/60 mt-1">
+                                                    {bp.serviceId.serviceName}
+                                                </p>
+                                            )}
+                                            {bp.notes && (
+                                                <p className="text-xs text-white/40 mt-1 italic">"{bp.notes}"</p>
+                                            )}
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-sm font-semibold text-antique-gold">{formatLKR(bp.agreedRate || 0)}</p>
+                                            {bp.serviceId && (
+                                                <p className="text-[10px] text-white/40 mt-0.5">Rate Ref: {formatLKR(bp.serviceId.rate)} / {bp.serviceId.unit}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-400 italic">No partners assigned yet.</p>
                         )}
                     </div>
 
