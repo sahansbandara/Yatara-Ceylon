@@ -12,7 +12,7 @@ import User from "@/models/User";
 import Payment from "@/models/Payment";
 import Invoice from "@/models/Invoice";
 import Package from "@/models/Package";
-import PartnerService from "@/models/PartnerService";
+import PartnerServiceModel from "@/models/PartnerService";
 import BookingPartnerAssignment from "@/models/BookingPartnerAssignment";
 import { VehicleStatus, PartnerStatus, PartnerTypes } from "@/lib/constants";
 
@@ -243,7 +243,7 @@ export const BookingDetailService = {
                 .select('name type')
                 .lean();
 
-            const partnerServices = await PartnerService.find({ isActive: true, isDeleted: false })
+            const partnerServices = await PartnerServiceModel.find({ isActive: true, isDeleted: false })
                 .select('partnerId serviceName rate unit')
                 .lean();
 
@@ -334,7 +334,7 @@ export const PartnerDetailService = {
         if (!id.match(/^[0-9a-fA-F]{24}$/)) return [];
         try {
             await connectDB();
-            const services = await PartnerService.find({ partnerId: id, isDeleted: false }).sort({ createdAt: -1 }).lean();
+            const services = await PartnerServiceModel.find({ partnerId: id, isDeleted: false }).sort({ createdAt: -1 }).lean();
             return JSON.parse(JSON.stringify(services));
         } catch (error) {
             console.error("Failed to fetch partner services:", error);
