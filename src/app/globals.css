@@ -2401,3 +2401,90 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(4, 57, 39, 0.3);
 }
+
+/* ============================================
+   📞 Phone Input — Liquid Glass Dark Theme
+   (react-phone-number-input)
+   ============================================ */
+
+.yc-phone-wrapper {
+  position: relative;
+}
+
+/* Main container */
+.yc-phone-input.PhoneInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 0 12px;
+  height: 2.75rem;
+  transition: all 0.3s ease;
+}
+
+.yc-phone-input.PhoneInput:focus-within {
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Country select button */
+.yc-phone-input .PhoneInputCountry {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.yc-phone-input .PhoneInputCountryIcon {
+  width: 22px;
+  height: 16px;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.yc-phone-input .PhoneInputCountryIcon--border {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.yc-phone-input .PhoneInputCountrySelectArrow {
+  border-color: rgba(255, 255, 255, 0.4);
+  opacity: 0.6;
+  margin-left: 4px;
+}
+
+.yc-phone-input .PhoneInputCountrySelect {
+  cursor: pointer;
+}
+
+/* The actual phone number text input */
+.yc-phone-input .PhoneInputInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 13px;
+  flex: 1;
+  height: 100%;
+  padding: 0;
+  letter-spacing: 0.02em;
+}
+
+.yc-phone-input .PhoneInputInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Country select dropdown (native) styling */
+.yc-phone-input .PhoneInputCountrySelect option {
+  background: #0a1f15;
+  color: #ffffff;
+  padding: 8px;
+}
+
+.yc-phone-input .PhoneInputCountrySelect:focus + .PhoneInputCountryIcon {
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.4);
+  border-radius: 3px;
+}

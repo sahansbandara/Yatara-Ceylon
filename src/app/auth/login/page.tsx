@@ -5,10 +5,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Loader2, User, Building2, Car, Shield, Users, Mail, Lock, Phone, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Loader2, User, Building2, Car, Shield, Users, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import TurnstileField from '@/components/public/TurnstileField';
+import PhoneInput from 'react-phone-number-input';
+import { isValidPhoneNumber } from 'libphonenumber-js';
+import 'react-phone-number-input/style.css';
 
 type AuthMode = 'login' | 'signup';
+
 
 export default function EliteLoginPage() {
     return (
@@ -35,7 +39,7 @@ function LoginContent() {
     // Form fields
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
+    const [phone, setPhone] = useState<string | undefined>('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
@@ -128,9 +132,8 @@ function LoginContent() {
         }
 
         setLoading(true);
-        const phoneRegex = /^\+?[\d\s\-()]{7,}$/;
-        if (!phone.trim() || !phoneRegex.test(phone.trim())) {
-            setError('Please enter a valid phone number (at least 7 digits, e.g., +94 77 123 4567).');
+        if (!phone || !isValidPhoneNumber(phone)) {
+            setError('Please enter a valid phone number with country code.');
             setSuccessMsg('');
             setLoading(false);
             return;
@@ -334,15 +337,20 @@ function LoginContent() {
 
                             <form onSubmit={handleSignup} className="space-y-3">
                                 {/* Reduced input heights from h-14 to h-11 to fit 13inch screens easily */}
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="relative group">
-                                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
-                                        <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
-                                    </div>
-                                    <div className="relative group">
-                                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
-                                        <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
-                                    </div>
+                                <div className="relative group">
+                                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />
+                                    <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required className="w-full bg-white/5 border border-white/10 text-white text-[13px] h-11 pl-10 pr-3 rounded-xl focus:border-antique-gold focus:outline-none placeholder:text-white/40" />
+                                </div>
+
+                                {/* Phone Input — react-phone-number-input */}
+                                <div className="yc-phone-wrapper">
+                                    <PhoneInput
+                                        international
+                                        defaultCountry="LK"
+                                        value={phone}
+                                        onChange={setPhone}
+                                        className="yc-phone-input"
+                                    />
                                 </div>
                                 <div className="relative group">
                                     <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 group-hover:text-antique-gold transition-colors duration-300" />

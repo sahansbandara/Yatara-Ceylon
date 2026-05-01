@@ -5,20 +5,18 @@ import User from '@/models/User';
 import { hashPassword } from '@/lib/auth';
 import { z } from 'zod';
 import { rateLimit } from '@/lib/rate-limit';
-import { passwordSchema, phoneRegex } from '@/lib/password-policy';
+import { passwordSchema, phoneSchema } from '@/lib/password-policy';
 import { issueEmailVerificationState } from '@/lib/account-security';
 import { buildAppUrl } from '@/lib/token-utils';
 import { sendVerificationEmail } from '@/lib/email';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { enforceCsrf } from '@/lib/csrf';
+import { parsePhoneNumberFromString } from 'libphonenumber-js/max';
 
 const registerSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
     email: z.string().email('Invalid email address'),
-    phone: z.string().optional().refine(
-        (phone) => !phone || phoneRegex.test(phone),
-        'Invalid phone number format'
-    ),
+    phone: phoneSchema,
     password: passwordSchema,
     role: z.enum(['USER', 'VEHICLE_OWNER', 'HOTEL_OWNER']).default('USER'),
     turnstileToken: z.string().optional(),
@@ -42,7 +40,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { name, email, phone, password, role, turnstileToken } = result.data;
+        const { name, email, password, role, turnstileToken } = result.data;
         const captchaResult = await verifyTurnstileToken(
             turnstileToken?.trim() || null,
             request.headers.get('x-forwarded-for')
@@ -51,13 +49,35 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: captchaResult.error }, { status: 400 });
         }
 
+        // Parse & normalize phone to E.164 format
+        const parsedPhone = parsePhoneNumberFromString(result.data.phone);
+        if (!parsedPhone || !parsedPhone.isValid()) {
+            return NextResponse.json(
+                { error: 'Invalid phone number' },
+                { status: 400 }
+            );
+        }
+        const normalizedPhone = parsedPhone.number; // E.164: +94771234567
+        const phoneCountry = parsedPhone.country || undefined; // ISO 3166-1 alpha-2: "LK"
+
         await connectDB();
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        // Check if user already exists (email OR phone)
+        const existingUser = await User.findOne({
+            $or: [
+                { email: email.toLowerCase() },
+                { phone: normalizedPhone },
+            ]
+        });
         if (existingUser) {
+            if (existingUser.email === email.toLowerCase()) {
+                return NextResponse.json(
+                    { error: 'An account with this email already exists' },
+                    { status: 409 }
+                );
+            }
             return NextResponse.json(
-                { error: 'An account with this email already exists' },
+                { error: 'An account with this phone number already exists' },
                 { status: 409 }
             );
         }
@@ -72,7 +92,8 @@ export async function POST(request: NextRequest) {
         const user = await User.create({
             name,
             email: email.toLowerCase(),
-            phone: phone || undefined,
+            phone: normalizedPhone,
+            phoneCountry,
             passwordHash,
             role,
             status,
