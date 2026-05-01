@@ -213,6 +213,7 @@ const partnerServiceBaseSchema = z.object({
     unit: z.enum(['PER_DAY', 'PER_TRIP', 'PER_PERSON', 'PER_NIGHT', 'FLAT']),
     description: z.string().optional(),
     notes: z.string().optional(),
+    isActive: z.boolean().optional().default(true),
 });
 
 const normalizePartnerServicePayload = ({
@@ -225,6 +226,7 @@ const normalizePartnerServicePayload = ({
     serviceName?: string;
     rate?: number;
     unit?: 'PER_DAY' | 'PER_TRIP' | 'PER_PERSON' | 'PER_NIGHT' | 'FLAT';
+    isActive?: boolean;
 }) => ({
     ...rest,
     description: description ?? notes,

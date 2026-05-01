@@ -12,6 +12,7 @@ import User from "@/models/User";
 import Payment from "@/models/Payment";
 import Invoice from "@/models/Invoice";
 import Package from "@/models/Package";
+import PartnerService from "@/models/PartnerService";
 import { VehicleStatus, PartnerStatus, PartnerTypes } from "@/lib/constants";
 
 // ── Notifications ────────────────────────────────
@@ -310,6 +311,17 @@ export const PartnerDetailService = {
         } catch (error) {
             console.error("Failed to fetch partner:", error);
             return null;
+        }
+    },
+    async getPartnerServices(id: string) {
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) return [];
+        try {
+            await connectDB();
+            const services = await PartnerService.find({ partnerId: id, isDeleted: false }).sort({ createdAt: -1 }).lean();
+            return JSON.parse(JSON.stringify(services));
+        } catch (error) {
+            console.error("Failed to fetch partner services:", error);
+            return [];
         }
     }
 };
