@@ -1,7 +1,6 @@
 import RefundsClient from './RefundsClient';
 import { getSessionUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { adminOnly, staffOnly } from '@/lib/rbac';
 import connectDB from '@/lib/mongodb';
 import RefundRequest from '@/models/RefundRequest';
 
@@ -9,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function RefundsPage() {
     const user = await getSessionUser();
-    if (!user || (!adminOnly(user) && !staffOnly(user))) {
+    if (!user || (user.role !== 'ADMIN' && user.role !== 'STAFF')) {
         redirect('/login');
     }
 
