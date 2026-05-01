@@ -55,7 +55,7 @@ function TourCard({ cat, idx }: { cat: any; idx: number }) {
             ref={cardRef}
             onMouseEnter={playHoverSound}
             onMouseMove={handleMouseMove}
-            className={`relative rounded-2xl overflow-hidden group w-full block shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform
+            className={`relative rounded-2xl overflow-hidden group w-full block shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-700 ease-expo will-change-transform
                 ${isBespoke ? 'md:col-span-2 md:row-span-2 bg-black' : 'bg-stone-900'}
             `}
             style={{
@@ -74,7 +74,7 @@ function TourCard({ cat, idx }: { cat: any; idx: number }) {
                     ? "(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 800px"
                     : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
                 }
-                className="object-cover transform group-hover:scale-[1.05] transition-transform duration-[1.2s] ease-[cubic-bezier(0.23,1,0.32,1)] origin-center"
+                className="object-cover transform group-hover:scale-[1.05] transition-transform duration-1.2s ease-expo origin-center"
             />
 
             {/* Base Overlay */}
@@ -181,8 +181,8 @@ export default function TourCategoriesCarousel() {
             />
 
             {/* Subtle background accents */}
-            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-antique-gold/[0.03] rounded-full blur-3xl transition-transform duration-[10s] hover:scale-110" />
-            <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-deep-emerald/[0.02] rounded-full blur-3xl transition-transform duration-[10s] hover:scale-110" />
+            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-antique-gold/[0.03] rounded-full blur-3xl transition-transform duration-10s hover:scale-110" />
+            <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-deep-emerald/[0.02] rounded-full blur-3xl transition-transform duration-10s hover:scale-110" />
 
             <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 relative z-10 w-full flex flex-col items-center">
                 {/* ── Header ── */}

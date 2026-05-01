@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, Edit, Eye, EyeOff, Search, Star, Trash2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -38,15 +38,18 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
         direction: 'asc',
     });
 
-    const visiblePackages = sortedData.filter((pkg) => {
-        if (!searchQuery.trim()) return true;
-        const q = searchQuery.toLowerCase();
-        return (
-            pkg.title.toLowerCase().includes(q) ||
-            pkg.slug.toLowerCase().includes(q) ||
-            (pkg.duration || '').toLowerCase().includes(q)
-        );
-    });
+    const visiblePackages = useMemo(() => {
+        return sortedData.filter((pkg) => {
+            if (!searchQuery.trim()) return true;
+            const q = searchQuery.toLowerCase();
+            return (
+                pkg.title.toLowerCase().includes(q) ||
+                pkg.slug.toLowerCase().includes(q) ||
+                (pkg.duration || '').toLowerCase().includes(q)
+            );
+        });
+    }, [sortedData, searchQuery]);
+
     const allVisibleSelected =
         visiblePackages.length > 0 &&
         visiblePackages.every((pkg) => selectedIds.has(pkg._id));
@@ -285,7 +288,7 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                         visiblePackages.map((pkg) => (
                             <div
                                 key={pkg._id}
-                                className="group relative overflow-hidden rounded-3xl h-[340px] destination-card-shine ring-1 ring-white/[0.08] hover:ring-antique-gold/30 transition-all duration-700 shadow-xl cursor-default"
+                                className="group relative overflow-hidden rounded-3xl h-[340px] destination-card-shine ring-1 ring-white/[0.08] hover:ring-antique-gold/30 transition-all duration-500 shadow-xl cursor-default will-change-transform"
                             >
                                 {/* Selection Indicator Outline */}
                                 <div className={`absolute inset-0 rounded-3xl transition-all duration-300 pointer-events-none z-20 ${selectedIds.has(pkg._id) ? 'ring-2 ring-antique-gold/80 bg-antique-gold/[0.05]' : ''}`} />
@@ -296,7 +299,7 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                                         <img
                                             src={pkg.images[0]}
                                             alt={pkg.title}
-                                            className={`object-cover w-full h-full absolute inset-0 transform group-hover:scale-[1.05] transition-transform duration-[1200ms] ease-out ${selectedIds.has(pkg._id) ? 'scale-[1.02]' : ''}`}
+                                            className={`object-cover w-full h-full absolute inset-0 transform group-hover:scale-[1.05] transition-transform duration-1000 ease-out will-change-transform ${selectedIds.has(pkg._id) ? 'scale-[1.02]' : ''}`}
                                         />
                                     ) : (
                                         <div className="flex items-center justify-center w-full h-full absolute inset-0 bg-white/5 shadow-inner">
@@ -305,7 +308,7 @@ export default function PackageTable({ initialPackages }: PackageTableProps) {
                                     )}
 
                                     {/* Gradient overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#021a10] via-[#021a10]/40 to-black/30 opacity-90 group-hover:opacity-100 transition-opacity duration-700" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#021a10] via-[#021a10]/40 to-black/30 opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
 
                                     {/* Top Left: Selection Checkbox */}
                                     <div className="absolute top-4 left-4 z-30">

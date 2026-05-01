@@ -89,7 +89,7 @@ export default function HowItWorks() {
                                         src={step.image}
                                         alt={step.title}
                                         fill
-                                        className="object-cover transform group-hover:scale-105 transition-transform duration-[2s] ease-out"
+                                        className="object-cover transform group-hover:scale-105 transition-transform duration-2s ease-out"
                                     />
                                     {/* Subtle gradient overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />

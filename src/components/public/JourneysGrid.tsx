@@ -342,7 +342,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                 <img
                                     src={featuredJourneys[0].images?.[0] || '/images/home/curated-kingdoms.png'}
                                     alt={featuredJourneys[0].title}
-                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-1200 ease-out"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
@@ -388,7 +388,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                 <img
                                     src={featuredJourneys[1].images?.[0] || '/images/home/curated-kingdoms.png'}
                                     alt={featuredJourneys[1].title}
-                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-1200 ease-out"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
@@ -422,7 +422,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                 <img
                                     src={featuredJourneys[2].images?.[0] || '/images/home/curated-kingdoms.png'}
                                     alt={featuredJourneys[2].title}
-                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-[1200ms] ease-out"
+                                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-1200 ease-out"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
@@ -464,7 +464,7 @@ export default function JourneysGrid({ packages, initialStyle = '', initialDurat
                                     <img
                                         src={pkg.images?.[0] || '/images/home/curated-kingdoms.png'}
                                         alt={pkg.title}
-                                        className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-[1000ms] ease-out"
+                                        className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-1000 ease-out"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 

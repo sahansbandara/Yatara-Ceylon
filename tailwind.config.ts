@@ -215,6 +215,24 @@ const config: Config = {
 				'xl': '24px',
 				'2xl': '32px',
 				'3xl': '48px',
+			},
+			transitionDuration: {
+				'800': '800ms',
+				'1000': '1000ms',
+				'1200': '1200ms',
+				'1500': '1500ms',
+				'2000': '2000ms',
+				'4000': '4000ms',
+				'7000': '7000ms',
+				'1.2s': '1.2s',
+				'1.5s': '1.5s',
+				'2s': '2s',
+				'10s': '10s',
+			},
+			transitionTimingFunction: {
+				'liquid': 'cubic-bezier(0.22, 1, 0.36, 1)',
+				'expo': 'cubic-bezier(0.23, 1, 0.32, 1)',
+				'reveal': 'cubic-bezier(0.87, 0, 0.13, 1)',
 			}
 		}
 	},

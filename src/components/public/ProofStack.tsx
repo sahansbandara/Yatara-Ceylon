@@ -91,7 +91,7 @@ export default function ProofStack() {
                                     src={pillar.image}
                                     alt={pillar.title}
                                     fill
-                                    className="object-cover transform scale-100 group-hover:scale-110 transition-transform duration-[2s] ease-out will-change-transform"
+                                    className="object-cover transform scale-100 group-hover:scale-110 transition-transform duration-2s ease-out will-change-transform"
                                 />
                                 {/* Permanent Dark Overlay for Text Readability */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/80 z-10" />

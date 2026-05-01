@@ -46,7 +46,7 @@ export default function FeaturedDestinationSpotlight({ destination, badgeLabel =
                 href={`/destinations/${destination.slug}`}
                 className="group block relative"
             >
-                <div className="relative z-10 w-full rounded-[2rem] overflow-hidden group-hover:shadow-2xl transition-all duration-[1000ms] shadow-lg shadow-black/5">
+                <div className="relative z-10 w-full rounded-[2rem] overflow-hidden group-hover:shadow-2xl transition-all duration-1000 shadow-lg shadow-black/5">
                     <div className={`flex flex-col ${reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-stretch`}>
                         {/* Image side */}
                         <div className="relative w-full flex-1 h-[340px] sm:h-[400px] lg:h-auto min-h-[480px] overflow-hidden">
@@ -54,7 +54,7 @@ export default function FeaturedDestinationSpotlight({ destination, badgeLabel =
                                 src={heroImage}
                                 alt={`${destination.title} — featured luxury destination in Sri Lanka`}
                                 fill
-                                className="object-cover transform group-hover:scale-105 group-hover:-rotate-1 transition-all duration-[2000ms] ease-out"
+                                className="object-cover transform group-hover:scale-105 group-hover:-rotate-1 transition-all duration-2000 ease-out"
                                 sizes="(max-width: 1024px) 100vw, 60vw"
                                 priority
                             />

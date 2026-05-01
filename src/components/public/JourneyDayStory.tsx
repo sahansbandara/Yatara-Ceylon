@@ -92,7 +92,7 @@ export default function DedicatedBrands() {
                                         alt={pkg.title.replace('\n', ' ')}
                                         fill
                                         sizes="(max-width: 768px) 100vw, 33vw"
-                                        className="object-cover transform scale-100 group-hover:scale-105 transition-transform duration-[2s] ease-out brightness-75"
+                                        className="object-cover transform scale-100 group-hover:scale-105 transition-transform duration-2s ease-out brightness-75"
                                     />
                                     {/* Dark overlay so white text reads clearly on hover */}
                                     <div className="absolute inset-0 bg-black/40" />

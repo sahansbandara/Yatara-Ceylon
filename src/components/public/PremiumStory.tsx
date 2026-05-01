@@ -79,7 +79,7 @@ export default function PremiumStory() {
                         {/* Parallax Image inside overflow-hidden box */}
                         <motion.div
                             style={{ y }}
-                            className="absolute -top-[35%] -bottom-[35%] -left-[10%] -right-[10%] -z-10 transition-transform duration-[2s] ease-out group-hover:scale-105"
+                            className="absolute -top-[35%] -bottom-[35%] -left-[10%] -right-[10%] -z-10 transition-transform duration-2s ease-out group-hover:scale-105"
                         >
                             <Image
                                 src="/images/home/faq-luxury-experience.webp"
@@ -170,10 +170,10 @@ export default function PremiumStory() {
                                         <motion.div 
                                             className="shrink-0 relative flex items-center justify-center w-6 h-6 transition-transform duration-500"
                                         >
-                                            <div className={`absolute transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] ${isOpen ? 'rotate-180 opacity-0 scale-50' : 'rotate-0 opacity-100 scale-100'}`}>
+                                            <div className={`absolute transition-all duration-500 ease-reveal ${isOpen ? 'rotate-180 opacity-0 scale-50' : 'rotate-0 opacity-100 scale-100'}`}>
                                                 <Plus className="w-4 h-4 text-black/40 font-light" strokeWidth={1} />
                                             </div>
-                                            <div className={`absolute transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] ${isOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-180 opacity-0 scale-50'}`}>
+                                            <div className={`absolute transition-all duration-500 ease-reveal ${isOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-180 opacity-0 scale-50'}`}>
                                                 <Minus className="w-4 h-4 text-[#043927]" strokeWidth={1} />
                                             </div>
                                         </motion.div>

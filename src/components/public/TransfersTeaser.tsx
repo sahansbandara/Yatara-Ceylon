@@ -99,7 +99,7 @@ export default function TransfersTeaser() {
                                     src={cat.image}
                                     alt={cat.title}
                                     fill
-                                    className="object-cover object-center transition-all duration-[2s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-75"
+                                    className="object-cover object-center transition-all duration-2s ease-out group-hover:scale-105 opacity-50 group-hover:opacity-75"
                                     sizes="(max-width: 768px) 100vw, 33vw"
                                 />
 

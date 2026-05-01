@@ -114,7 +114,7 @@ function JourneyCard({ pkg }: { pkg: PackageData }) {
             ref={cardRef}
             onMouseEnter={playHoverSound}
             onMouseMove={handleMouseMove}
-            className="group relative flex flex-col w-full h-[380px] md:h-[420px] rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform"
+            className="group relative flex flex-col w-full h-[380px] md:h-[420px] rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-700 ease-expo will-change-transform"
             style={{
                 '--mouse-x': '150px',
                 '--mouse-y': '150px',
@@ -127,7 +127,7 @@ function JourneyCard({ pkg }: { pkg: PackageData }) {
                     alt={pkg.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transform group-hover:scale-[1.05] transition-transform duration-[1.2s] ease-[cubic-bezier(0.23,1,0.32,1)] origin-center z-0"
+                    className="object-cover transform group-hover:scale-[1.05] transition-transform duration-1.2s ease-expo origin-center z-0"
                 />
             </div>
 
@@ -212,7 +212,7 @@ export default function FeaturedJourneysClient({ packages }: { packages: Package
     return (
         <section className="py-8 md:py-10 bg-white text-deep-emerald relative overflow-hidden">
             {/* Subtle background accents for empty areas */}
-            <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-antique-gold/[0.03] rounded-full blur-3xl transition-transform duration-[10s] hover:scale-110" />
+            <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-antique-gold/[0.03] rounded-full blur-3xl transition-transform duration-10s hover:scale-110" />
 
             <div className="max-w-[1400px] mx-auto px-4 md:px-8 relative z-10 w-full overflow-hidden">
 

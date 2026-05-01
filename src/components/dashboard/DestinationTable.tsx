@@ -289,7 +289,7 @@ export default function DestinationTable({ initialDestinations }: DestinationTab
                                         <img
                                             src={destination.images[0]}
                                             alt={destination.title}
-                                            className={`object-cover w-full h-full absolute inset-0 transform group-hover:scale-[1.05] transition-transform duration-[1200ms] ease-out ${selectedIds.has(destination._id) ? 'scale-[1.02]' : ''}`}
+                                            className={`object-cover w-full h-full absolute inset-0 transform group-hover:scale-[1.05] transition-transform duration-1200 ease-out ${selectedIds.has(destination._id) ? 'scale-[1.02]' : ''}`}
                                         />
                                     ) : (
                                         <div className="flex items-center justify-center w-full h-full absolute inset-0 bg-white/5 shadow-inner">

@@ -152,7 +152,7 @@ export default function BuildTourTeaser() {
                                 src="/images/home/bespoke-teaser-main.webp" 
                                 alt="Bespoke luxury journey in Sri Lanka"
                                 fill
-                                className="object-cover transform scale-[1.03] group-hover:scale-[1.08] transition-transform duration-[7000ms] ease-out brightness-95 group-hover:brightness-105"
+                                className="object-cover transform scale-[1.03] group-hover:scale-[1.08] transition-transform duration-7000 ease-out brightness-95 group-hover:brightness-105"
                             />
                         </div>
 
@@ -204,7 +204,7 @@ export default function BuildTourTeaser() {
                                     src="/images/home/bespoke-galle-card.webp"
                                     alt="Galle coast"
                                     fill
-                                    className="object-cover transform group-hover/card:scale-105 transition-transform duration-[4000ms] ease-out"
+                                    className="object-cover transform group-hover/card:scale-105 transition-transform duration-4000 ease-out"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                 <div className="absolute bottom-2 left-2 flex items-center gap-2">
