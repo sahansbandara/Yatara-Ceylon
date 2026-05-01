@@ -110,14 +110,25 @@ export default function AssignPartnerModal({
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-wider text-gray-400 font-semibold">Service (Optional)</label>
+                        <label className="text-xs uppercase tracking-wider text-gray-400 font-semibold flex items-center justify-between">
+                            Service (Optional)
+                            {selectedPartner && availableServices.length === 0 && (
+                                <span className="text-red-400 text-[10px] ml-2">No rate cards defined</span>
+                            )}
+                        </label>
                         <select
                             value={selectedService}
                             onChange={(e) => setSelectedService(e.target.value)}
                             disabled={!selectedPartner || availableServices.length === 0}
                             className="w-full bg-[#111A16] border border-white/10 rounded-xl px-4 py-3 text-sm text-off-white focus:outline-none focus:border-antique-gold/50 disabled:opacity-50"
                         >
-                            <option value="">Select a service</option>
+                            <option value="">
+                                {!selectedPartner 
+                                    ? "Select a partner first" 
+                                    : availableServices.length === 0 
+                                        ? "No services available" 
+                                        : "Select a service"}
+                            </option>
                             {availableServices.map(s => (
                                 <option key={s._id} value={s._id}>{s.serviceName} - {s.rate} LKR / {s.unit}</option>
                             ))}
