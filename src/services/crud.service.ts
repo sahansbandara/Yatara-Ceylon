@@ -13,6 +13,7 @@ import Payment from "@/models/Payment";
 import Invoice from "@/models/Invoice";
 import Package from "@/models/Package";
 import PartnerService from "@/models/PartnerService";
+import BookingPartnerAssignment from "@/models/BookingPartnerAssignment";
 import { VehicleStatus, PartnerStatus, PartnerTypes } from "@/lib/constants";
 
 // ── Notifications ────────────────────────────────
@@ -233,11 +234,27 @@ export const BookingDetailService = {
 
             const vehicles = await Vehicle.find({ status: 'AVAILABLE' }).select('model type seats dailyRate').lean();
 
+            const bookingPartners = await BookingPartnerAssignment.find({ bookingId: id })
+                .populate('partnerId', 'name type phone email')
+                .populate('serviceId', 'serviceName rate unit')
+                .lean();
+
+            const partners = await Partner.find({ status: 'ACTIVE', isDeleted: false })
+                .select('name type')
+                .lean();
+
+            const partnerServices = await PartnerService.find({ isActive: true, isDeleted: false })
+                .select('partnerId serviceName rate unit')
+                .lean();
+
             return {
                 booking: JSON.parse(JSON.stringify(booking)),
                 payments: JSON.parse(JSON.stringify(payments)),
                 invoices: JSON.parse(JSON.stringify(invoices)),
                 vehicles: JSON.parse(JSON.stringify(vehicles)),
+                bookingPartners: JSON.parse(JSON.stringify(bookingPartners)),
+                partners: JSON.parse(JSON.stringify(partners)),
+                partnerServices: JSON.parse(JSON.stringify(partnerServices)),
             };
         } catch {
             return null;
