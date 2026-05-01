@@ -16,11 +16,12 @@ export async function validateBody<T>(
         return { data, error: null };
     } catch (err) {
         if (err instanceof ZodError) {
+            const errorMessages = err.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
             return {
                 data: null,
                 error: NextResponse.json(
                     {
-                        error: 'Validation failed',
+                        error: `Validation failed: ${errorMessages}`,
                         details: err.errors.map((e) => ({
                             field: e.path.join('.'),
                             message: e.message,
@@ -52,11 +53,12 @@ export function validateQuery<T>(
         return { data, error: null };
     } catch (err) {
         if (err instanceof ZodError) {
+            const errorMessages = err.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
             return {
                 data: null,
                 error: NextResponse.json(
                     {
-                        error: 'Invalid query parameters',
+                        error: `Invalid query parameters: ${errorMessages}`,
                         details: err.errors.map((e) => ({
                             field: e.path.join('.'),
                             message: e.message,
